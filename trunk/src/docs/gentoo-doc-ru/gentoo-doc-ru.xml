@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "../../../tools/docbook-dtd/docbookx.dtd" [
+    <!ENTITY releasenotes-ru SYSTEM "releasenotes-ru.xml">
     <!ENTITY overview-ru SYSTEM "overview-ru.xml">
     <!ENTITY introductory-word-ru SYSTEM "introductory-word-ru.xml">
 <!--    <!ENTITY gentoo_doc-1.5-ru SYSTEM "gentoo_doc-1.5-ru.xml">-->
@@ -38,6 +39,7 @@
     <!-- Intro should be extended first, and some things left out -->
 
     <!-- &firebirdintro; -->
+    &releasenotes-ru;
     &overview-ru;
     &introductory-word-ru;
     <!--&gentoo_doc-1.5-ru;--><!--
