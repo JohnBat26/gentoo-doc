@@ -3,6 +3,8 @@
     <!ENTITY releasenotes-ru SYSTEM "releasenotes-ru.xml">
     <!ENTITY overview-ru SYSTEM "overview-ru.xml">
     <!ENTITY introductory-word-ru SYSTEM "introductory-word-ru.xml">
+    <!ENTITY intro-unix-wiki SYSTEM "intro-unix-wiki.xml">
+<!--    <!ENTITY introduction SYSTEM "introduction.xml"> -->
 <!--    <!ENTITY gentoo_doc-1.5-ru SYSTEM "gentoo_doc-1.5-ru.xml">-->
     <!ENTITY quickstartguide15-ru SYSTEM "quickstartguide-1.5-ru.xml">
     <!ENTITY migration-mssql-ru SYSTEM "migrationmssql-ru.xml">
@@ -42,12 +44,22 @@
     &releasenotes-ru;
     &overview-ru;
     &introductory-word-ru;
+    
+    <chapter>
+       <title> Введение </title>
+    &intro-unix-wiki;
+<!--    &introduction; -->
+    </chapter>
+    <part>
+       <title> Тест -пустая глава </title>
+    </part>
+
     <!--&gentoo_doc-1.5-ru;--><!--
     &quickstartguide15-ru;
     &migration-mssql-ru;
     &nbackup-ru;
-    &fbmetasecur-ru;
-    &nullguide-ru;
-    &ibfbcoex-ru;
-    &generatorguide-ru;
-  --></book>
+    &fbmetasecur-ru; 
+    &nullguide-ru; 
+    &ibfbcoex-ru; 
+    &generatorguide-ru;-->
+  </book>
