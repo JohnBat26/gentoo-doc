@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- For standalone validation, uncomment the following DOCTYPE declaration. -->
 <!-- DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"> "file:../docs/docbookx/docbookx.dtd" -->
 <article id="generatorguide-ru" lang="ru">
@@ -70,7 +70,7 @@
   </section>
 
   <section id="generatorguide-basics-ru">
-    <title>Основные положения о генераторах</title>
+    <title>Основные положения о генераторах (Оставлено для образца оформления!!!)</title>
 
     <section id="generatorguide-basics-whatis-ru">
       <title>Что такое генератор?</title>
