@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    For standalone validation, uncomment the following DOCTYPE
+    declaration.
+    -->
+<!--
+    DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN">
+"file:../docs/docbookx/docbookx.dtd"
+-->
+	<section id="release-notes-1">
+		<title>Новоё и измененное a.k.a changelog</title>
+		<para>Версия 2.0 от 01.10.2008</para>
+		
+		<para>Версия 1.5 от 02.04.2008</para>
+		<orderedlist>
+			<listitem>
+				<para>Добавлены новые участники проекта:</para>
+				<itemizedlist>
+					<listitem>
+						<para>Калинников Вадим a.k.a. MooSe;</para>
+					</listitem>
+					<listitem>	
+						<para>Шевцов Константин a.k.a integer || night_fever.</para>
+					</listitem>
+				</itemizedlist>
+			</listitem>
+			<listitem>
+				<para>
+					Добавлен перевод
+					<ulink
+					      url="http://www.gentoo.org/doc/en/power-management-guide.xml"
+					      >Power Management Guide</ulink>
+					:
+					<ulink
+					      url="http://iandmyfriendgentoo.blogspot.com/2007/12/blog-post_12.html"
+					      >Управление питанием компьютера</ulink>
+					(автор перевода:  vah).
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Добавлена статья:
+					<link>Использование rpm-пакетов в Gentoo</link>
+					(автор:<ulink url="mailto:bulvinkl@gmail.com">MooSe</ulink>
+					).
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Добавлена статья:
+					<link>Настройка спутникового интернета в Gentoo</link>
+					(автор:	<ulink 					      url="mailto:tuxmaster@list.ru?subject=По%20поводу%20Вашей%20статьи%20о%20настройке%20спутникового%20интернета%20в%20Gentoo"
+										>tuxmaster</ulink>
+					).
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Добавлена статья:
+					<link>Unix Toolbox</link>
+					.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Добавлена статья:
+					<link
+					     linkend=""
+					     >Советы пользователям Gentoo (вариант 2)</link>
+					(автор Алексеев А.);
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Добавлена статья:
+					<link
+					     linkend=""
+					     >Ещё раз о главном - жизнь после установки</link>
+					(автор: gentoo).
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Добавлена статья:
+					<link
+					     linkend=""
+					     >HOWTO ivman</link>
+					.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Добавлена статья:
+					<link
+					     linkend=""
+					     >Изучаем параметры gcc.</link>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Создан новый раздел:
+					<link
+					     linkend=""
+					     >Gentoo и СУБД</link>
+					, а в нем добавлены:
+				</para>
+				<itemizedlist>
+					<listitem>
+						<para>
+							<link linkend="">Руководство по MySQL для начинающих;</link>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							
+							<link
+							     linkend=""
+							     >PostgreSQL Guide</link>
+							.
+						</para>
+					</listitem>
+				</itemizedlist>
+			</listitem>
+			<listitem>
+				<para>
+					Создан новый раздел:
+					<link
+					     linkend=""
+					     >Тюнинг Gentoo</link>
+					, а в нем добавлены:</para>
+				
+				<itemizedlist>
+					<listitem>
+						<para>
+							
+							<link
+							     linkend=""
+							     >Ядро 2.6: Тонкости настройки</link>
+							;
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							
+							<link
+							     linkend=""
+							     >Тюнинг системы и запуска некоторых программ</link>
+							;
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							
+							<link
+							     linkend=""
+							     >Тюнинг настроек программ из семейства Mozilla</link>
+							;
+						</para>
+					</listitem>	
+				</itemizedlist>
+				<para>перенесены:</para>
+				<itemizedlist>
+					<listitem>
+						<para>
+							<link    linkend="">Руководство по предварительному связыванию в Gentoo Linux</link>;
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							
+							<link
+							     linkend=""
+							     >Тонкая настройка IDE дисков с помощью hdparm</link>
+							;
+						</para>
+					</listitem>	
+					<listitem>
+						<para>
+							-
+							<link
+							     linkend=""
+							     >Ускорение загрузки системы</link>
+							.
+						</para>
+					</listitem>
+				</itemizedlist>
+				</listitem>
+				<listitem>
+					<para>
+						Создан новый раздел:
+						<link
+						     linkend=""
+						     >Gentoo и системы контроля версий</link>
+						, а в нем:
+					</para>
+					<itemizedlist>
+						<listitem>
+							<para>
+								
+								<link
+								     linkend=""
+								     >HOWTO Subversion сервер при помощи Apache2 и WebDav</link>
+								.
+							</para>
+						</listitem>
+					</itemizedlist>
+				</listitem>
+				<listitem>
+					<para>
+						Добавлена статья:
+						<link
+						     linkend=""
+						     >Создание LiveCD дистрибутива на базе Gentoo Linux</link>
+						(автор: P
+						<ulink
+						      url="mailto:pizgin@gmail.com"
+						      >izgin).</ulink>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Добавлена статья:
+						<link
+						     linkend=""
+						     >Что делать, если система «зависла»</link>
+						(автор:  Perlovk
+						<ulink
+						      url="mailto:pizgin@gmail.com"
+						      >a).</ulink>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<ulink
+						      url="mailto:pizgin@gmail.com"
+						      > Добавлена статья:</ulink>
+						<link
+						     linkend=""
+						     >Hardened Gentoo</link>
+						<link
+						     linkend=""
+						     > (автор: powerman).</link>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Обновлен перевод статьи:
+						<link
+						     linkend=""
+						     >Gentoo and KDE 4.0</link>
+						<link
+						     linkend=""
+						     >.</link>
+					</para>
+				</listitem>
+				<listitem>
+					<para> Исправлены многие орфографические ошибки.</para>
+				</listitem>
+				<listitem>
+					<para> Практически завершено форматирование текста.</para>
+				</listitem>
+				<listitem>
+					<para>
+						Обновлены: "
+						<link
+						     linkend=""
+						     >Примеры конфигурационных файлов</link>
+						"
+					</para>
+				</listitem>
+			</orderedlist>
+			
+			<para>Версия 1.4 от 01.02.2008</para>
+			<orderedlist>
+				<listitem>
+					<para>Добавлено: <link linkend="">Обращение к русскому сообществу Gentoo</link>.</para>
+				</listitem>
+				<listitem>
+					<para>Дополнены цели написания данного сборника. ;)</para>
+				</listitem>
+				<listitem>
+					<para>В связи с выходом KDE 4.0.0, оформил раздел: <link linkend="">Gentoo и KDE</link>
+					</para>
+					<itemizedlist>
+						<listitem>
+							<para>добавлен собственный перевод статьи: <link linkend="">Gentoo and KDE 4.0</link>
+							</para>
+						</listitem>
+						<listitem>
+							<para>добавлен материал: <link linkend="">Способы переключения раскладок клавиатуры в KDE (3в1).</link>
+							</para>
+						</listitem>	
+					</itemizedlist>
+				</listitem>
+				<listitem>
+					<para>Так как мы используем Java, то  решено оформить раздел: <link linkend="">Gentoo и Java</link>
+					</para>
+					<itemizedlist>
+						<listitem>
+							<para>заново переведена и дополнена статья: <link linkend="">Gentoo Java Guide;</link>
+							</para>		
+						</listitem>
+						<listitem>
+							<para>переведена статья: <link linkend="">Gentoo Java Upgrade Guide</link>;</para>
+						</listitem>
+					</itemizedlist>
+				</listitem>
+				<listitem>
+					<para>Добавлена статья (автор: <ulink url="mailto:moose@home.ylsoftware.com?subject=По%20поводу%20вашей%20статьи%20о%20OpenVPN">MooSe</ulink>): <link linkend="">Соединение нескольких офисов в одну сеть с помощью OpenVPN.</link>
+					</para>
+				</listitem>
+				<listitem>
+					<para>Добавлена статья из русского wiki: <link linkend="">Шпаргалка по установке Gentoo.</link>
+					</para>
+				</listitem>
+				<listitem>
+					<para>Добавлено очень актуальное HOWTO: <link linkend="">HOWTO hal и устройства ввода.</link>
+					</para>
+				</listitem>
+				<listitem>
+					<para>Добавлено: <link linkend="">Ebuild HOWTO (Англ)</link>.</para>
+				</listitem>
+				<listitem>
+					<para>Изменена статья о <link linkend="">XkbLayouts</link> в связи с переходом на  hal версии 0.5.10 и возникшими проблемами с переключением раскладки клавиатуры.</para>
+				</listitem>
+				<listitem>
+					<para>Обновлено руководство: <link linkend="">Power Management Guide (Англ.)</link>
+					</para>
+				</listitem>
+				<listitem>
+					<para>Обновлена и перенесена статья: <link linkend="">Windows-эквиваленты</link>.</para>
+				</listitem>
+				<listitem>
+					<para>Исправлены многие орфографические ошибки.</para>
+				</listitem>
+				<listitem>
+					<para>Продолжено форматирование текста.</para>
+				</listitem>
+				<listitem>
+					<para>Обновлены: "<link linkend="">Примеры конфигурационных файлов</link>"</para>
+				</listitem>
+			</orderedlist>
+			
+			<para>Версия 1.3 от 01.11.2007</para>
+			<orderedlist>
+				<listitem>
+					<para>Изменены цели написания данного сборника.</para>
+				</listitem>
+				<listitem>
+					<para>Появилось вступительное слово. :)</para>
+				</listitem>
+				<listitem>
+					<para>По просьбе MAA (<ulink url="http://linuxforum.ru/">http://linuxforum.ru</ulink>) включена информация о Linux для новичков.</para>
+				</listitem>
+				<listitem>
+					<para>Сборник "Linux не для идиотов" перенесён  в начало сборника !</para>
+				</listitem>
+				<listitem>
+					<para>Добавлен собственный перевод   Wiki-статьи:  <ulink url="http://gentoo-wiki.com/HOWTO_Xorg_and_Fonts">HOWTO Xorg and Fonts.</ulink>
+					</para>
+				</listitem>
+				<listitem>
+					<para>Оформлен новый раздел: "<link linkend="">Gentoo и GPRS</link>".</para>
+					</listitem>
+					<listitem>
+						<para>Перенесены <link linkend="">XkbOptions.</link>
+						</para>
+					</listitem>
+					<listitem>
+						<para>Оформлен раздел: "<link linkend="">Gentoo и  X.Org</link>"</para>
+					</listitem>
+					<listitem>
+						<para>Создан новый раздел: "<link linkend="">Файловые системы Linux</link></para>
+					</listitem>
+					<listitem>
+						<para>Заново импортирована: "<link linkend="">Настольная книга по безопасности Gentoo</link>" т.к. безопасность это очень важный вопрос. Теперь на русском языке.</para>
+					</listitem>
+					<listitem>
+						<para>Обновлены: "<link linkend="">Примеры конфигурационных файлов</link>"</para>
+					</listitem>
+					<listitem>
+						<para>Обновлен и дополнен: "<link linkend="">HOWTO Соединение с Internet</link>"</para>
+					</listitem>
+					<listitem>
+						<para>Продолжено форматирование текста.</para>
+						<para/>
+					</listitem>
+				</orderedlist>
+				
+				<para>Версия 1.2 от 01.09.2007</para>
+				<orderedlist>
+					<listitem>
+						<para>Полностью переработан раздел по <link linkend="">обновлению Gentoo.</link>
+						</para>
+					</listitem>
+					<listitem>
+						<para>Произведено значительное форматирование текста.</para>
+					</listitem>
+					<listitem>
+						<para>Обновился раздел: <link linkend="">Полезные утилиты Gentoo Linux</link>
+						</para>
+					</listitem>
+					<listitem>
+						<para>Полностью оформлен и дополнен <link linkend="">Handbook </link>!</para>
+					</listitem>
+					<listitem>
+						<para>По просьбе <emphasis>inhab</emphasis>
+							<emphasis> </emphasis>
+							<emphasis>(linuxforum.ru):</emphasis>
+						</para>
+						<para>
+							<emphasis>добавлена статья: </emphasis>
+							<link linkend="">
+								<emphasis>Настройка Samba в режиме PDC с использованием LDAP</emphasis>
+							</link>
+							<emphasis>.</emphasis>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>Добавлено: </emphasis>
+							<link linkend="">
+								<emphasis>Руководство по настройке GNOME</emphasis>
+							</link>.</para>
+					</listitem>
+					<listitem>
+						<para>Добавлено: <link linkend="">HOWTO fbsplash</link>
+						</para>
+						<para/>
+					</listitem>
+				</orderedlist>
+				<para>Версия 1.1 от 15.07.2007</para>
+				<orderedlist>
+					<listitem>
+						<para>По просьбе Mati_maniak (linuxforum.ru):</para>
+					</listitem>
+					<listitem>
+						<para>Дополнительное форматирование текста.</para>
+					</listitem>
+					<listitem>
+						<para>
+							Добавлен сборник статей:
+							<link
+							     linkend=""
+							     >Linux не для идиотов</link>,
+							автор: Артем Капитула (no-dashi, dalth &amp; viking).</para>
+					</listitem>
+					<listitem>
+						<para>Добавлен: <link linkend="">список IRC каналов</link>.</para>
+					</listitem>
+					<listitem>
+						<para>Добавил: <link linkend="">примеры моих конфигурационных файлов</link>.</para>
+					</listitem>
+				</orderedlist>
+				<para/>
+				
+			</section>
