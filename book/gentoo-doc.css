@@ -8,6 +8,7 @@ body
     margin: 0.5in;
     font-family: arial,helvetica,sans-serif;
     font-size: medium;
+    text-align:justify;
 }
 
 h1.title
