@@ -4,29 +4,17 @@
     <!ENTITY overview-ru SYSTEM "overview-ru.xml">
     <!ENTITY introductory-word-ru SYSTEM "introductory-word-ru.xml">
     <!ENTITY intro-unix-wiki SYSTEM "intro-unix-wiki.xml">
-<!--    <!ENTITY introduction SYSTEM "introduction.xml"> -->
-<!--    <!ENTITY gentoo_doc-1.5-ru SYSTEM "gentoo_doc-1.5-ru.xml">-->
-    <!ENTITY quickstartguide15-ru SYSTEM "quickstartguide-1.5-ru.xml">
-    <!ENTITY migration-mssql-ru SYSTEM "migrationmssql-ru.xml">
-    <!ENTITY nbackup-ru SYSTEM "nbackup-ru.xml">
-    <!ENTITY fbmetasecur-ru SYSTEM "fbmetasecur-ru.xml">
-    <!ENTITY nullguide-ru SYSTEM "nullguide-ru.xml">
-    <!ENTITY ibfbcoex-ru SYSTEM "ib-fb-coexist-ru.xml">
+    <!ENTITY introduction SYSTEM "introduction.xml">
+    <!ENTITY gentoo_doc-1.5-ru SYSTEM "gentoo_doc-1.5-ru.xml">
     <!ENTITY generatorguide-ru SYSTEM "generatorguide-ru.xml">
-    <!ENTITY fbutils-intro-ru SYSTEM "fbutil_intro-ru.xml">
-    <!ENTITY fbutils-gsec-ru SYSTEM "fbutil_gsec-ru.xml">
-    <!ENTITY fbutils-gsplit-ru SYSTEM "fbutil_gsplit-ru.xml">
-    <!ENTITY fbutils-outro-ru SYSTEM "fbutil_outro-ru.xml">
-    <!ENTITY fbutils-scripts-ru SYSTEM "fbutil_scripts-ru.xml">
-    <!ENTITY fbutils-appendix-ru SYSTEM "fbutil_appndx-ru.xml">
 ]>
   <book id="gentoo-doc" lang="ru">
     <bookinfo>
       <title>Gentoo Linux</title>
       <titleabbrev>Сборник статей</titleabbrev>
       <productname>Сборник статей</productname>
-      <edition>Версия 2.0-dev  от 31.08.08</edition>
-      <date>31.08.08</date>
+      <edition>Версия 2.0-dev от 07.10.08</edition>
+      <date>07.10.08</date>
       <copyright>
         <year>2007-2008</year>
       </copyright>
@@ -36,30 +24,13 @@
     <!-- Preface superseded by docbuilding/writing howtos;
          also, many links are now broken: -->
 
-    <!-- &preface; -->
-
     <!-- Intro should be extended first, and some things left out -->
 
-    <!-- &firebirdintro; -->
     &releasenotes-ru;
     &overview-ru;
     &introductory-word-ru;
-    
-    <chapter>
-       <title> Введение </title>
-<!--    &intro-unix-wiki;-->
+    &intro-unix-wiki;
 <!--    &introduction; -->
-    </chapter>
-    <part>
-       <title> Тест -пустая глава </title>
-    </part>
-
-    <!--&gentoo_doc-1.5-ru;--><!--
-    &quickstartguide15-ru;
-    &migration-mssql-ru;
-    &nbackup-ru;
-    &fbmetasecur-ru; 
-    &nullguide-ru; 
-    &ibfbcoex-ru; 
-    &generatorguide-ru;-->
+    &gentoo_doc-1.5-ru; 
+    &generatorguide-ru; <!-- ОСТАВЛЕНО ДЛЯ ОБРАЗЦА ОФОРМЛЕНИЯ !!! НЕ УДАЛЯТЬ!!! -->
   </book>
