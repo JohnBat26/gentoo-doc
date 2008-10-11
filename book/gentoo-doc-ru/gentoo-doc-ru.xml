@@ -3,7 +3,7 @@
     <!ENTITY releasenotes-ru SYSTEM "releasenotes-ru.xml">
     <!ENTITY overview-ru SYSTEM "overview-ru.xml">
     <!ENTITY introductory-word-ru SYSTEM "introductory-word-ru.xml">
-    <!ENTITY unix-info SYSTEM "unix-info.xml">
+    <!ENTITY general-info SYSTEM "general-info.xml">
     <!ENTITY introduction SYSTEM "introduction.xml">
     <!ENTITY gentoo_doc-1.5-ru SYSTEM "gentoo_doc-1.5-ru.xml">
     <!ENTITY generatorguide-ru SYSTEM "generatorguide-ru.xml">
@@ -29,8 +29,8 @@
     &releasenotes-ru;
     &overview-ru;
     &introductory-word-ru;
-    &unix-info;
+    &general-info;
 <!--    &introduction; -->
-    &gentoo_doc-1.5-ru; 
+<!--    &gentoo_doc-1.5-ru; -->
     &generatorguide-ru; <!-- ОСТАВЛЕНО ДЛЯ ОБРАЗЦА ОФОРМЛЕНИЯ !!! НЕ УДАЛЯТЬ!!! -->
   </book>
