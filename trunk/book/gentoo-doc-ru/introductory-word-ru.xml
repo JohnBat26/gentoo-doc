@@ -1,25 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-	<!--
-		For standalone validation, uncomment the following DOCTYPE
-		declaration.
-	-->
-	<!--
-		DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN">
-		"file:../docs/docbookx/docbookx.dtd"
-	-->
-<article id="introductory-word">
-	<articleinfo>
-		<title>Вступительное слово</title>
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:id="introductory-word">
+	<info><title>Вступительное слово</title>
+		
 		<authorgroup>
-			<othercredit>
-				<firstname>Евгений</firstname>
-				<surname>Батогов a.k.a JohnBat26</surname>
-			</othercredit>
+			<othercredit><personname><firstname>Евгений</firstname><surname>Батогов a.k.a JohnBat26</surname></personname></othercredit>
 		</authorgroup>
 		<edition> С версии: 1.3</edition>
 		<edition> Обновлено: 2.0</edition>
-	</articleinfo>
-	<section id="introductory-word-1">
+	</info>
+	<section xml:id="introductory-word-1"><info/>
 		<para> Добро пожаловать всем, кто решил вступить на путь освоения операционной системы Linux (и Gentoo в особенности).
 			Немного забегая вперед, хочется заметить, что путь предстоит не легкий, но очень интересный. Главное помните одну
 			известную истину: "Лучше день подождать, а потом за 5 минут долететь!"</para>

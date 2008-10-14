@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "../../tools/docbook-dtd/docbookx.dtd" [
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book[
     <!ENTITY releasenotes-ru SYSTEM "releasenotes-ru.xml">
     <!ENTITY overview-ru SYSTEM "overview-ru.xml">
     <!ENTITY introductory-word-ru SYSTEM "introductory-word-ru.xml">
@@ -7,9 +7,10 @@
     <!ENTITY gentoo_doc-1.5-ru SYSTEM "gentoo_doc-1.5-ru.xml">
     <!ENTITY generatorguide-ru SYSTEM "generatorguide-ru.xml">
 ]>
-<book id="gentoo-doc" lang="ru">
-	<bookinfo>
-		<title>Gentoo Linux</title>
+<book xmlns="http://docbook.org/ns/docbook" version="5.0" xml:id="gentoo-doc" xml:lang="ru">
+
+	<info>
+	        <title>Gentoo Linux</title>
 		<titleabbrev>Сборник статей</titleabbrev>
 		<productname>Сборник статей</productname>
 		<edition>Версия 2.0-dev от 12.10.08</edition>
@@ -17,8 +18,10 @@
 		<copyright>
 			<year>2007-2008</year>
 		</copyright>
-		<corpauthor>Gentoo-doc TEAM</corpauthor>
-	</bookinfo>
+		<author>
+		  <orgname>Gentoo-doc TEAM</orgname>
+	        </author>
+	</info>
 
 	<!--
 		Preface superseded by docbuilding/writing howtos; also, many links are
