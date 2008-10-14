@@ -14,7 +14,7 @@
                 version='1.0'>
 
   <!-- Import default DocBook stylesheet for fo generation: -->
-  <xsl:import href="../../tools/docbook-stylesheets/fo/docbook.xsl"/>
+  <xsl:import href="../../tools/docbook-xsl/fo/docbook.xsl"/>
 
 
   <xsl:output method="xml"

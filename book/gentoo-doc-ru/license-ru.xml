@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<para >
-<![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<para xmlns="http://docbook.org/ns/docbook" version="5.0">
+
    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
 
@@ -341,5 +341,5 @@ proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.
-]]>
+
 </para>

@@ -2,7 +2,7 @@
 
 
 <!-- ======================================================================= -->
-<!-- Firebird documentation build file                                       -->
+<!-- Gentoo-doc documentation build file                                       -->
 <!-- ======================================================================= -->
 
 <project name="Gentoo-doc" default="help" basedir="..">

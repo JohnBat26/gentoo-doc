@@ -1,44 +1,32 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- For standalone validation, uncomment the following DOCTYPE declaration. -->
-<!-- DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"> "file:../docs/docbookx/docbookx.dtd" -->
-<article id="generatorguide-ru" lang="ru">
-  <articleinfo>
-    <title>Использование генераторов в СУБД Firebird</title>
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:id="generatorguide-ru" xml:lang="ru">
+  <info><title>Использование генераторов в СУБД Firebird</title><titleabbrev>Генераторы в Firebird</titleabbrev><subtitle>Как и когда нужно использовать генераторы в СУБД Firebird</subtitle>
+    
 
-    <titleabbrev>Генераторы в Firebird</titleabbrev>
+    
 
-    <subtitle>Как и когда нужно использовать генераторы в СУБД Firebird</subtitle>
+    
 
-    <author>
-      <firstname>Frank</firstname>
+    <author><personname><firstname>Frank</firstname><surname>Ingermann</surname></personname></author>
 
-      <surname>Ingermann</surname>
-    </author>
-
-    <othercredit class="translator">
-      <firstname>Сергей</firstname>
-
-      <surname>Ковалёв</surname>
-
-      <contrib>Перевод документа на русский язык</contrib>
-    </othercredit>
+    <othercredit class="translator"><personname><firstname>Сергей</firstname><surname>Ковалёв</surname></personname><contrib>Перевод документа на русский язык</contrib></othercredit>
 
     <edition>29 октября 2006 – Версия документа 0.2-ru</edition>
-  </articleinfo>
+  </info>
 
-  <section id="generatorguide-intro-ru">
-    <title>Введение</title>
+  <section xml:id="generatorguide-intro-ru"><info><title>Введение</title></info>
+    
 
-    <section id="generatorguide-intro-about-ru">
-      <title>О чем эта статья?</title>
+    <section xml:id="generatorguide-intro-about-ru"><info><title>О чем эта статья?</title></info>
+      
 
       <para>Эта статья объясняет, что такое генераторы в СУБД Firebird, как и
       почему вы должны использовать их. В этой статье предпринята попытка
       собрать всю информацию, относящуюся к генераторам, в одном месте.</para>
     </section>
 
-    <section id="generatorguide-intro-forwhom-ru">
-      <title>Кому нужно это прочитать?</title>
+    <section xml:id="generatorguide-intro-forwhom-ru"><info><title>Кому нужно это прочитать?</title></info>
+      
 
       <para>Прочтите эту статью, если вы:</para>
 
@@ -69,11 +57,11 @@
     </section>
   </section>
 
-  <section id="generatorguide-basics-ru">
-    <title>Основные положения о генераторах (Оставлено для образца оформления!!!)</title>
+  <section xml:id="generatorguide-basics-ru"><info><title>Основные положения о генераторах (Оставлено для образца оформления!!!)</title></info>
+    
 
-    <section id="generatorguide-basics-whatis-ru">
-      <title>Что такое генератор?</title>
+    <section xml:id="generatorguide-basics-whatis-ru"><info><title>Что такое генератор?</title></info>
+      
 
       <para>Думайте о генераторе, как о
       <quote>потокобезопасном</quote> (<quote>thread-safe</quote>)
@@ -90,8 +78,8 @@
       транзакциями</emphasis>.</para>
     </section>
 
-    <section id="generatorguide-basics-sequence-ru">
-      <title>Что такое последовательность (sequence)?</title>
+    <section xml:id="generatorguide-basics-sequence-ru"><info><title>Что такое последовательность (sequence)?</title></info>
+      
 
       <para><quote>Последовательность</quote> (<quote>sequence</quote>) - это
       официальный термин SQL для обозначения того, что в СУБД Firebird называется генератором.
@@ -115,8 +103,8 @@
       <programlisting>CREATE SEQUENCE SeqTest;</programlisting>
     </section>
 
-    <section id="generatorguide-basics-storage-ru">
-      <title>Где хранятся генераторы?</title>
+    <section xml:id="generatorguide-basics-storage-ru"><info><title>Где хранятся генераторы?</title></info>
+      
 
       <para><emphasis>Декларации</emphasis> генераторов хранятся в системной
       таблице <database>RDB$GENERATORS</database>. Однако, их
@@ -180,11 +168,11 @@
 
       <informaltable>
         <tgroup cols="3">
-          <colspec colname="colGenName" colwidth="5*" />
+          <colspec colname="colGenName" colwidth="5*"/>
 
-          <colspec align="center" colname="colGenID" colwidth="4*" />
+          <colspec align="center" colname="colGenID" colwidth="4*"/>
 
-          <colspec align="center" colname="colSysFlag" colwidth="4*" />
+          <colspec align="center" colname="colSysFlag" colwidth="4*"/>
 
           <thead>
             <row>
@@ -270,10 +258,10 @@
             </row>
           </tbody>
         </tgroup>
-      </informaltable>
+ </informaltable>
 
-      <note>
-        <title>Примечание для СУБД Firebird 2</title>
+      <note><info><title>Примечание для СУБД Firebird 2</title></info>
+        
 
         <itemizedlist>
           <listitem>
@@ -292,8 +280,8 @@
       </note>
     </section>
 
-    <section id="generatorguide-basics-maxval-ru">
-      <title>Каково максимальное значение генератора?</title>
+    <section xml:id="generatorguide-basics-maxval-ru"><info><title>Каково максимальное значение генератора?</title></info>
+      
 
       <para>Генераторы хранят и возвращают 64-битные значения во всех версиях
       СУБД Firebird. Это дает диапазон значений:</para>
@@ -355,8 +343,8 @@
         проверке диапазона по сравнению с диалектом 1!</para>
       </note>
 
-      <section>
-        <title>Диалект клиентов и значения генераторов</title>
+      <section><info><title>Диалект клиентов и значения генераторов</title></info>
+        
 
         <para>При общении с сервером СУБД Firebird клиент может установить как
         диалект 1, так и диалект 3, независимо от того, к какой базе данных он
@@ -383,8 +371,8 @@
       </section>
     </section>
 
-    <section id="generatorguide-basics-howmany-ru">
-      <title>Сколько генераторов доступно для одной базы данных?</title>
+    <section xml:id="generatorguide-basics-howmany-ru"><info><title>Сколько генераторов доступно для одной базы данных?</title></info>
+      
 
       <para>Начиная с СУБД Firebird версии 1.0, количество генераторов, которые вы
       можете создать в одной базе данных, ограничено только максимальным
@@ -399,8 +387,8 @@
       влияет на производительность, то вы можете чувствовать себя свободным и
       использовать столько генераторов, сколько хотите.</para>
 
-      <section>
-        <title>Старые версии InterBase и Firebird</title>
+      <section><info><title>Старые версии InterBase и Firebird</title></info>
+        
 
         <para>В ранних версия СУБД Firebird до версии 1.0, также, как и в СУБД InterBase, для
         хранения значений генераторов использовалась только одна страница базы
@@ -412,17 +400,17 @@
 
         <informaltable>
           <tgroup cols="5">
-            <colspec colname="colVersion" colwidth="2*" />
+            <colspec colname="colVersion" colwidth="2*"/>
 
-            <colspec align="center" colname="col1k" />
+            <colspec align="center" colname="col1k"/>
 
-            <colspec align="center" colname="col2k" />
+            <colspec align="center" colname="col2k"/>
 
-            <colspec align="center" colname="col4k" />
+            <colspec align="center" colname="col4k"/>
 
-            <colspec align="center" colname="col8k" />
+            <colspec align="center" colname="col8k"/>
 
-            <spanspec nameend="col8k" namest="col1k" spanname="spanpagesize" />
+            <spanspec nameend="col8k" namest="col1k" spanname="spanpagesize"/>
 
             <thead>
               <row>
@@ -435,7 +423,7 @@
 
             <tbody>
               <row>
-                <entry></entry>
+                <entry/>
 
                 <entry align="center"><emphasis>1K</emphasis></entry>
 
@@ -516,8 +504,8 @@
       </section>
     </section>
 
-    <section id="generatorguide-basics-transactions-ru">
-      <title>Генераторы и транзакции</title>
+    <section xml:id="generatorguide-basics-transactions-ru"><info><title>Генераторы и транзакции</title></info>
+      
 
       <para>Как уже было сказано, генераторы находятся вне механизма управления
       транзакциями. Это означает, что вы не можете безопасно
@@ -543,19 +531,18 @@
     </section>
   </section>
 
-  <section id="generatorguide-sqlsyntax-ru">
-    <title>Операторы SQL для генераторов</title>
+  <section xml:id="generatorguide-sqlsyntax-ru"><info><title>Операторы SQL для генераторов</title></info>
+    
 
-    <section id="generatorguide-sqlsyntax-overview-ru">
-      <title>Обзор операторов</title>
+    <section xml:id="generatorguide-sqlsyntax-overview-ru"><info><title>Обзор операторов</title></info>
+      
 
       <para>Имя генератора должно являться обычным идентификатором метаданных базы
       данных: максимум 31 символ, без специальных символов за исключением
       символа подчеркивания <quote>_</quote> (если вы не используете регистрозависимые
       идентификаторы в кавычках). Команды и операторы SQL, применяемые к
       генераторам, перечислены ниже. Их использование более подробно будет
-      описано в разделе <citetitle><link
-      linkend="generatorguide-sqlsyntax-use">Использование операторов для
+      описано в разделе <citetitle><link linkend="generatorguide-sqlsyntax-use">Использование операторов для
       генераторов</link></citetitle>.</para>
 
       <para>Операторы DDL (Data Definition Language - язык определения
@@ -575,8 +562,8 @@ DROP GENERATOR &lt;name&gt;;</programlisting>
 
       <programlisting>&lt;intvar&gt; = GEN_ID(&lt;GeneratorName&gt;, &lt;increment&gt;);</programlisting>
 
-      <section>
-        <title>Синтаксис, рекомендованный для Firebird 2</title>
+      <section><info><title>Синтаксис, рекомендованный для Firebird 2</title></info>
+        
 
         <para>Хотя в СУБД Firebird 2 все еще полностью поддерживается традиционный
         синтаксис, существует рекомендуемый DDL-эквивалент для СУБД Firebird
@@ -599,8 +586,8 @@ DROP SEQUENCE &lt;name&gt;;</programlisting>
       </section>
     </section>
 
-    <section id="generatorguide-sqlsyntax-use-ru">
-      <title>Использование операторов для генераторов</title>
+    <section xml:id="generatorguide-sqlsyntax-use-ru"><info><title>Использование операторов для генераторов</title></info>
+      
 
       <para>Доступность операторов и функций зависит от того, где вы
       их используете:</para>
@@ -617,8 +604,8 @@ DROP SEQUENCE &lt;name&gt;;</programlisting>
         </listitem>
       </itemizedlist>
 
-      <section id="generatorguide-sqlsyntax-create-ru">
-        <title>Создание генератора (<quote>Insert</quote>)</title>
+      <section xml:id="generatorguide-sqlsyntax-create-ru"><info><title>Создание генератора (<quote>Insert</quote>)</title></info>
+        
 
         <variablelist>
           <varlistentry>
@@ -650,8 +637,8 @@ DROP SEQUENCE &lt;name&gt;;</programlisting>
         </variablelist>
       </section>
 
-      <section id="generatorguide-sqlsyntax-getvalue-ru">
-        <title>Получение текущего значения (<quote>Select</quote>)</title>
+      <section xml:id="generatorguide-sqlsyntax-getvalue-ru"><info><title>Получение текущего значения (<quote>Select</quote>)</title></info>
+        
 
         <variablelist>
           <varlistentry>
@@ -707,9 +694,9 @@ SHOW SEQUENCES;</programlisting>
         </variablelist>
       </section>
 
-      <section id="generatorguide-sqlsyntax-genvalue-ru">
-        <title>Генерация следующего значения (<quote>Update</quote> +
-        <quote>Select</quote>)</title>
+      <section xml:id="generatorguide-sqlsyntax-genvalue-ru"><info><title>Генерация следующего значения (<quote>Update</quote> +
+        <quote>Select</quote>)</title></info>
+        
 
         <para>Так же, как и в случае получения текущего значения, это
         выполняется с помощью <database>GEN_ID</database>, но в этом случае вы
@@ -757,9 +744,9 @@ SHOW SEQUENCES;</programlisting>
         </variablelist>
       </section>
 
-      <section id="generatorguide-sqlsyntax-setvalue-ru">
-        <title>Прямое указание определенного значения генератора
-        (<quote>Update</quote>)</title>
+      <section xml:id="generatorguide-sqlsyntax-setvalue-ru"><info><title>Прямое указание определенного значения генератора
+        (<quote>Update</quote>)</title></info>
+        
 
         <variablelist>
           <varlistentry>
@@ -802,8 +789,8 @@ SHOW SEQUENCES;</programlisting>
         </variablelist>
       </section>
 
-      <section id="generatorguide-sqlsyntax-drop-ru">
-        <title>Удаление генератора (<quote>Delete</quote>)</title>
+      <section xml:id="generatorguide-sqlsyntax-drop-ru"><info><title>Удаление генератора (<quote>Delete</quote>)</title></info>
+        
 
         <variablelist>
           <varlistentry>
@@ -841,8 +828,8 @@ SHOW SEQUENCES;</programlisting>
         зависимости от ситуации, восстановленной базе данных может
         понадобиться меньше страниц для хранения значений генераторов.</para>
 
-        <section>
-          <title>Удаление генераторов в старых версиях IB и Firebird</title>
+        <section><info><title>Удаление генераторов в старых версиях IB и Firebird</title></info>
+          
 
           <para>СУБД InterBase 6 и более ранние версии, точно так же, как и
           ранние версии СУБД Firebird, предшествующие версии 1.0, не имеют команды <database>DROP
@@ -862,14 +849,14 @@ SHOW SEQUENCES;</programlisting>
     </section>
   </section>
 
-  <section id="generatorguide-rowids-ru">
-    <title>Использование генераторов для создания уникальных идентификаторов
-    строк</title>
+  <section xml:id="generatorguide-rowids-ru"><info><title>Использование генераторов для создания уникальных идентификаторов
+    строк</title><titleabbrev>Генераторы для создания идентификаторов строк</titleabbrev></info>
+    
 
-    <titleabbrev>Генераторы для создания идентификаторов строк</titleabbrev>
+    
 
-    <section id="generatorguide-rowids-why-ru">
-      <title>Зачем вообще нужны идентификаторы (ID)?</title>
+    <section xml:id="generatorguide-rowids-why-ru"><info><title>Зачем вообще нужны идентификаторы (ID)?</title></info>
+      
 
       <para>Ответ на этот вопрос выходит далеко за пределы темы этой статьи.
       Если вы не видите необходимости иметь общий, уникальный
@@ -879,8 +866,8 @@ SHOW SEQUENCES;</programlisting>
       раздел...</para>
     </section>
 
-    <section id="generatorguide-rowids-howmanygens-ru">
-      <title>Один для всего или один для каждого?</title>
+    <section xml:id="generatorguide-rowids-howmanygens-ru"><info><title>Один для всего или один для каждого?</title></info>
+      
 
       <para>Хорошо... Итак, вы хотите использовать идентификаторы. { примечание автора: мои
       поздравления! :-) }</para>
@@ -945,8 +932,8 @@ SHOW SEQUENCES;</programlisting>
         </itemizedlist></para>
     </section>
 
-    <section id="generatorguide-rowids-reusevals-ru">
-      <title>Можно ли использовать значения генератора повторно?</title>
+    <section xml:id="generatorguide-rowids-reusevals-ru"><info><title>Можно ли использовать значения генератора повторно?</title></info>
+      
 
       <para>В действительности – да, технически это
       <emphasis>возможно</emphasis>. В реальности – НЕТ, вы не должны.
@@ -963,8 +950,8 @@ SHOW SEQUENCES;</programlisting>
       ДЕЛАЙТЕ ЭТОГО!</para>
     </section>
 
-    <section id="generatorguide-rowids-autoinc-ru">
-      <title>Генераторы для идентификации, или автоинкрементные поля</title>
+    <section xml:id="generatorguide-rowids-autoinc-ru"><info><title>Генераторы для идентификации, или автоинкрементные поля</title></info>
+      
 
       <para>Указание ID для вновь вставляемой записи (в терминах уникальности
       - <quote>серийный номер</quote>) легче всего выполнить с помощью
@@ -973,8 +960,8 @@ SHOW SEQUENCES;</programlisting>
       <database>TTEST</database> с колонкой ID, объявленной как Integer. Имя
       нашего генератора: <database>GIDTEST</database>.</para>
 
-      <section>
-        <title>Триггер Before Insert, версия 1</title>
+      <section><info><title>Триггер Before Insert, версия 1</title></info>
+        
 
         <programlisting>CREATE TRIGGER trgTTEST_BI_V1 for TTEST
 active before insert position 0
@@ -992,8 +979,8 @@ end</programlisting>
         в <database>INSERT</database>:</para>
       </section>
 
-      <section>
-        <title>Триггер Before Insert, версия 2</title>
+      <section><info><title>Триггер Before Insert, версия 2</title></info>
+        
 
         <programlisting>CREATE TRIGGER trgTTEST_BI_V2 for TTEST
 active before insert position 0
@@ -1023,8 +1010,8 @@ end</programlisting>
         записи <quote>по умолчанию</quote> в каждой таблице.</para>
       </section>
 
-      <section>
-        <title>Триггер Before Insert, версия 3</title>
+      <section><info><title>Триггер Before Insert, версия 3</title></info>
+        
 
         <programlisting>CREATE TRIGGER trgTTEST_BI_V3 for TTEST
 active before insert position 0
@@ -1080,15 +1067,15 @@ end</programlisting>
     </section>
   </section>
 
-  <section id="generatorguide-misc-ru">
-    <title>Что еще делают с помощью генераторов</title>
+  <section xml:id="generatorguide-misc-ru"><info><title>Что еще делают с помощью генераторов</title></info>
+    
 
     <para>Здесь вы можете найти некоторые идеи, как использовать генераторы не
     только для генерации уникальных идентификаторов для строк.</para>
 
-    <section id="generatorguide-misc-uniquenums-ru">
-      <title>Использование генераторов для получения, например, уникального
-      номера передаваемого файла</title>
+    <section xml:id="generatorguide-misc-uniquenums-ru"><info><title>Использование генераторов для получения, например, уникального
+      номера передаваемого файла</title></info>
+      
 
       <para><quote>Классическое</quote> использование генераторов должно
       гарантировать уникальность, последовательность чисел, скажем, для любого
@@ -1101,9 +1088,9 @@ end</programlisting>
       работает безопасно и четко).</para>
     </section>
 
-    <section id="generatorguide-misc-usagecount-ru">
-      <title>Генераторы, как <quote>счетчик использований</quote> для SP,
-      обеспечивающие основную статистику</title>
+    <section xml:id="generatorguide-misc-usagecount-ru"><info><title>Генераторы, как <quote>счетчик использований</quote> для SP,
+      обеспечивающие основную статистику</title></info>
+      
 
       <para>Представьте, что вы разработали в базе данных фантастическую новую
       возможность, которая реализована с помощью хранимой процедуры. Теперь вы обновили систему
@@ -1127,9 +1114,9 @@ end</programlisting>
       использовалась ваша процедура, была реально подтверждена (commit).</para>
     </section>
 
-    <section id="generatorguide-misc-rowcount-ru">
-      <title>Генераторы, эмулирующие <quote>Select count(*)
-      from...</quote></title>
+    <section xml:id="generatorguide-misc-rowcount-ru"><info><title>Генераторы, эмулирующие <quote>Select count(*)
+      from...</quote></title></info>
+      
 
       <para>В СУБД InterBase и Firebird существует известная проблема, когда
       <database>SELECT COUNT(*)</database> (без выражения <database>Where</database>) для очень
@@ -1182,9 +1169,9 @@ end</programlisting>
       того, чтобы увидеть, что существует ровно 2,313,498,229 строк...</para>
     </section>
 
-    <section id="generatorguide-misc-progresscount-ru">
-      <title>Генераторы для мониторинга и/или управления долго работающей
-      SP</title>
+    <section xml:id="generatorguide-misc-progresscount-ru"><info><title>Генераторы для мониторинга и/или управления долго работающей
+      SP</title></info>
+      
 
       <para>Когда у вас есть хранимые процедуры, которые, например, генерируют отчет по
       большим таблицам и/или с помощью сложных соединений (join), они могут
@@ -1249,7 +1236,7 @@ CREATE PROCEDURE spTest (...)
 AS
 DECLARE VARIABLE lockcount INTEGER;
 BEGIN
-  lockcount = GEN_ID(gen_spTestLocked, 1); 
+  lockcount = GEN_ID(gen_spTestLocked, 1);
     /* Самый первый шаг: инкремент блокирующего генератора */
 
   if (lockcount = 1) then /* _мы_ получили блокировку, продолжаем */
@@ -1259,9 +1246,9 @@ BEGIN
 
   lockcount = GEN_ID(gen_spTestLocked, -1); /* выполняем декремент */
 
-  /* Убеждаемся, что генератор сброшен в самом конце, когда исключение было 
+  /* Убеждаемся, что генератор сброшен в самом конце, когда исключение было
      выброшено внутри <quote>обычного</quote> тела процедуры: */
-     
+
   WHEN ANY DO
     lockcount = GEN_ID(gen_spTestLocked, -1); /* декрементируем */
   exit;
@@ -1281,12 +1268,10 @@ END^</programlisting>
     </section>
   </section>
 
-  <appendix id="generatorguide-dochist-ru">
-    <title>История документа</title>
+  <appendix xml:id="generatorguide-dochist-ru"><info><title>История документа</title></info>
+    
 
-    <para>Полная история документа записана в модуле <filename
-    class="directory">manual</filename> в нашем дереве CVS; смотрите <ulink
-    url="http://sourceforge.net/cvs/?group_id=9028">http://sourceforge.net/cvs/?group_id=9028</ulink></para>
+    <para>Полная история документа записана в модуле <filename class="directory">manual</filename> в нашем дереве CVS; смотрите <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://sourceforge.net/cvs/?group_id=9028">http://sourceforge.net/cvs/?group_id=9028</link></para>
 
     <para><revhistory>
         <revision>
@@ -1356,16 +1341,14 @@ END^</programlisting>
       </revhistory></para>
   </appendix>
 
-  <appendix id="generatorguide-license-ru">
-    <title>Лицензионное соглашение</title>
+  <appendix xml:id="generatorguide-license-ru"><info><title>Лицензионное соглашение</title></info>
+    
 
     <para>Содержимое этой документации распространяется на условиях Public
     Documentation License Version 1.0 (<quote>Лицензия</quote>); вы можете
     использовать эту документацию, если вы выполняете условия Лицензии. Копия
-    Лицензии доступна на <ulink
-    url="http://www.firebirdsql.org/pdfmanual/pdl.pdf">http://www.firebirdsql.org/pdfmanual/pdl.pdf</ulink>
-    (PDF) и <ulink
-    url="http://www.firebirdsql.org/manual/pdl.html">http://www.firebirdsql.org/manual/pdl.html</ulink>
+    Лицензии доступна на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.firebirdsql.org/pdfmanual/pdl.pdf">http://www.firebirdsql.org/pdfmanual/pdl.pdf</link>
+    (PDF) и <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.firebirdsql.org/manual/pdl.html">http://www.firebirdsql.org/manual/pdl.html</link>
     (HTML).</para>
 
     <para>Оригинальное название документа: <citetitle>Firebird Generator
@@ -1376,8 +1359,7 @@ END^</programlisting>
     <para>Copyright (C) 2006. Все права защищены. Адрес электронной почты для
     контакта с автором: frank at fingerman dot de.</para>
 
-    <para>Соавтор: Paul Vinkenoog – см. <link
-    linkend="generatorguide-dochist-ru">историю документа</link>.</para>
+    <para>Соавтор: Paul Vinkenoog – см. <link linkend="generatorguide-dochist-ru">историю документа</link>.</para>
 
     <para>Части документа, созданные Paul Vinkenoog: Copyright (C) 2006. Все
     права защищены. Контактный адрес электронной почты:

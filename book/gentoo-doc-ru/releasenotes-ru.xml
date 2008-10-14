@@ -1,15 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-    For standalone validation, uncomment the following DOCTYPE
-    declaration.
-    -->
-<!--
-    DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN">
-"file:../docs/docbookx/docbookx.dtd"
--->
-<article id="release-notes">
-	<section id="release-notes-1">
-		<title>Новоё и измененное a.k.a changelog</title>
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:id="release-notes">
+	<section xml:id="release-notes-1"><info><title>Новоё и измененное a.k.a changelog</title></info>
+		
 		<para>Версия 2.0 от 01.10.2008</para>
 		
 		<para>Версия 1.5 от 02.04.2008</para>
@@ -27,14 +19,7 @@
 			</listitem>
 			<listitem>
 				<para>
-					Добавлен перевод
-					<ulink
-					      url="http://www.gentoo.org/doc/en/power-management-guide.xml"
-					      >Power Management Guide</ulink>
-					:
-					<ulink
-					      url="http://iandmyfriendgentoo.blogspot.com/2007/12/blog-post_12.html"
-					      >Управление питанием компьютера</ulink>
+					Добавлен перевод Power Management Guide: Управление питанием компьютера
 					(автор перевода:  vah).
 				</para>
 			</listitem>
@@ -42,17 +27,14 @@
 				<para>
 					Добавлена статья:
 					<link>Использование rpm-пакетов в Gentoo</link>
-					(автор:<ulink url="mailto:bulvinkl@gmail.com">MooSe</ulink>
-					).
+					(автор: MooSe).
 				</para>
 			</listitem>
 			<listitem>
 				<para>
 					Добавлена статья:
 					<link>Настройка спутникового интернета в Gentoo</link>
-					(автор:	<ulink 					      url="mailto:tuxmaster@list.ru?subject=По%20поводу%20Вашей%20статьи%20о%20настройке%20спутникового%20интернета%20в%20Gentoo"
-										>tuxmaster</ulink>
-					).
+					(автор:tuxmaster).
 				</para>
 			</listitem>
 			<listitem>
@@ -65,44 +47,34 @@
 			<listitem>
 				<para>
 					Добавлена статья:
-					<link
-					     linkend=""
-					     >Советы пользователям Gentoo (вариант 2)</link>
+					<link linkend="">Советы пользователям Gentoo (вариант 2)</link>
 					(автор Алексеев А.);
 				</para>
 			</listitem>
 			<listitem>
 				<para>
 					Добавлена статья:
-					<link
-					     linkend=""
-					     >Ещё раз о главном - жизнь после установки</link>
+					<link linkend="">Ещё раз о главном - жизнь после установки</link>
 					(автор: gentoo).
 				</para>
 			</listitem>
 			<listitem>
 				<para>
 					Добавлена статья:
-					<link
-					     linkend=""
-					     >HOWTO ivman</link>
+					<link linkend="">HOWTO ivman</link>
 					.
 				</para>
 			</listitem>
 			<listitem>
 				<para>
 					Добавлена статья:
-					<link
-					     linkend=""
-					     >Изучаем параметры gcc.</link>
+					<link linkend="">Изучаем параметры gcc.</link>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
 					Создан новый раздел:
-					<link
-					     linkend=""
-					     >Gentoo и СУБД</link>
+					<link linkend="">Gentoo и СУБД</link>
 					, а в нем добавлены:
 				</para>
 				<itemizedlist>
@@ -114,9 +86,7 @@
 					<listitem>
 						<para>
 							
-							<link
-							     linkend=""
-							     >PostgreSQL Guide</link>
+							<link linkend="">PostgreSQL Guide</link>
 							.
 						</para>
 					</listitem>
@@ -125,36 +95,28 @@
 			<listitem>
 				<para>
 					Создан новый раздел:
-					<link
-					     linkend=""
-					     >Тюнинг Gentoo</link>
+					<link linkend="">Тюнинг Gentoo</link>
 					, а в нем добавлены:</para>
 				
 				<itemizedlist>
 					<listitem>
 						<para>
 							
-							<link
-							     linkend=""
-							     >Ядро 2.6: Тонкости настройки</link>
+							<link linkend="">Ядро 2.6: Тонкости настройки</link>
 							;
 						</para>
 					</listitem>
 					<listitem>
 						<para>
 							
-							<link
-							     linkend=""
-							     >Тюнинг системы и запуска некоторых программ</link>
+							<link linkend="">Тюнинг системы и запуска некоторых программ</link>
 							;
 						</para>
 					</listitem>
 					<listitem>
 						<para>
 							
-							<link
-							     linkend=""
-							     >Тюнинг настроек программ из семейства Mozilla</link>
+							<link linkend="">Тюнинг настроек программ из семейства Mozilla</link>
 							;
 						</para>
 					</listitem>	
@@ -163,24 +125,20 @@
 				<itemizedlist>
 					<listitem>
 						<para>
-							<link    linkend="">Руководство по предварительному связыванию в Gentoo Linux</link>;
+							<link linkend="">Руководство по предварительному связыванию в Gentoo Linux</link>;
 						</para>
 					</listitem>
 					<listitem>
 						<para>
 							
-							<link
-							     linkend=""
-							     >Тонкая настройка IDE дисков с помощью hdparm</link>
+							<link linkend="">Тонкая настройка IDE дисков с помощью hdparm</link>
 							;
 						</para>
 					</listitem>	
 					<listitem>
 						<para>
 							-
-							<link
-							     linkend=""
-							     >Ускорение загрузки системы</link>
+							<link linkend="">Ускорение загрузки системы</link>
 							.
 						</para>
 					</listitem>
@@ -189,18 +147,14 @@
 				<listitem>
 					<para>
 						Создан новый раздел:
-						<link
-						     linkend=""
-						     >Gentoo и системы контроля версий</link>
+						<link linkend="">Gentoo и системы контроля версий</link>
 						, а в нем:
 					</para>
 					<itemizedlist>
 						<listitem>
 							<para>
 								
-								<link
-								     linkend=""
-								     >HOWTO Subversion сервер при помощи Apache2 и WebDav</link>
+								<link linkend="">HOWTO Subversion сервер при помощи Apache2 и WebDav</link>
 								.
 							</para>
 						</listitem>
@@ -209,49 +163,29 @@
 				<listitem>
 					<para>
 						Добавлена статья:
-						<link
-						     linkend=""
-						     >Создание LiveCD дистрибутива на базе Gentoo Linux</link>
-						(автор: P
-						<ulink
-						      url="mailto:pizgin@gmail.com"
-						      >izgin).</ulink>
+						<link linkend="">Создание LiveCD дистрибутива на базе Gentoo Linux</link>
+						(автор: Pizgin).
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Добавлена статья:
-						<link
-						     linkend=""
-						     >Что делать, если система «зависла»</link>
-						(автор:  Perlovk
-						<ulink
-						      url="mailto:pizgin@gmail.com"
-						      >a).</ulink>
+						<link linkend="">Что делать, если система «зависла»</link>
+						(автор:  Perlovka)
+						
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						<ulink
-						      url="mailto:pizgin@gmail.com"
-						      > Добавлена статья:</ulink>
-						<link
-						     linkend=""
-						     >Hardened Gentoo</link>
-						<link
-						     linkend=""
-						     > (автор: powerman).</link>
+					Добавлена статья: Hardened Gentoo
+						(автор: powerman).
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Обновлен перевод статьи:
-						<link
-						     linkend=""
-						     >Gentoo and KDE 4.0</link>
-						<link
-						     linkend=""
-						     >.</link>
+						Обновлен перевод статьи: Gentoo and KDE 4.0
+						
+						
 					</para>
 				</listitem>
 				<listitem>
@@ -263,9 +197,7 @@
 				<listitem>
 					<para>
 						Обновлены: "
-						<link
-						     linkend=""
-						     >Примеры конфигурационных файлов</link>
+						<link linkend="">Примеры конфигурационных файлов</link>
 						"
 					</para>
 				</listitem>
@@ -307,7 +239,7 @@
 					</itemizedlist>
 				</listitem>
 				<listitem>
-					<para>Добавлена статья (автор: <ulink url="mailto:moose@home.ylsoftware.com?subject=По%20поводу%20вашей%20статьи%20о%20OpenVPN">MooSe</ulink>): <link linkend="">Соединение нескольких офисов в одну сеть с помощью OpenVPN.</link>
+					<para>Добавлена статья (автор: MooSe): <link linkend="">Соединение нескольких офисов в одну сеть с помощью OpenVPN.</link>
 					</para>
 				</listitem>
 				<listitem>
@@ -351,13 +283,13 @@
 					<para>Появилось вступительное слово. :)</para>
 				</listitem>
 				<listitem>
-					<para>По просьбе MAA (<ulink url="http://linuxforum.ru/">http://linuxforum.ru</ulink>) включена информация о Linux для новичков.</para>
+					<para>По просьбе MAA (http://linuxforum.ru) включена информация о Linux для новичков.</para>
 				</listitem>
 				<listitem>
 					<para>Сборник "Linux не для идиотов" перенесён  в начало сборника !</para>
 				</listitem>
 				<listitem>
-					<para>Добавлен собственный перевод   Wiki-статьи:  <ulink url="http://gentoo-wiki.com/HOWTO_Xorg_and_Fonts">HOWTO Xorg and Fonts.</ulink>
+					<para>Добавлен собственный перевод   Wiki-статьи: HOWTO Xorg and Fonts.
 					</para>
 				</listitem>
 				<listitem>
@@ -441,9 +373,7 @@
 					<listitem>
 						<para>
 							Добавлен сборник статей:
-							<link
-							     linkend=""
-							     >Linux не для идиотов</link>,
+							<link linkend="">Linux не для идиотов</link>,
 							автор: Артем Капитула (no-dashi, dalth &amp; viking).</para>
 					</listitem>
 					<listitem>
