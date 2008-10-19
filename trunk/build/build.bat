@@ -11,7 +11,7 @@ goto exit
 
 :gotJavaHome
 
-set cp=..\..\lib\ant-launcher.jar
+set cp=..\tools\lib\ant-launcher.jar
 set class=org.apache.tools.ant.launch.Launcher
 
 "%JAVA_HOME%\bin\java.exe" -showversion -Xmx512m -classpath %cp% -Dant.home=..\tools\lib %class% %1 %2 %3 %4 %5 %6 %7 %8 %9
