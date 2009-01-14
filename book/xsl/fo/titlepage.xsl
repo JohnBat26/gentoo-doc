@@ -13,7 +13,7 @@
     <fo:block/>  <!-- to get spacing right with FOP 0.93 -->
   </xsl:if>
   <fo:block  text-align="center">
-     <fo:external-graphic src="images/gentoo-doc.png"/>
+     <fo:external-graphic src="images/gentoo-doc.png" content-height="80px"  content-width="160px"/>
   </fo:block>
 </xsl:template>
 
