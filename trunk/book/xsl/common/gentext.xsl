@@ -30,7 +30,7 @@
 <xsl:template match="*" mode="unlabeled.title.markup">
   <xsl:param name="allow-anchors" select="0"/>
   <xsl:variable name="template">
-    <xsl:call-template name="gentext.template">
+    <xsl:call-template name="gentext.template">`
       <xsl:with-param name="context" select="'title-unnumbered'"/>
       <xsl:with-param name="name">
         <xsl:call-template name="xpath.location"/>
@@ -42,6 +42,7 @@
     <xsl:with-param name="template" select="$template"/>
   </xsl:call-template>
 </xsl:template>
+
 
 
 

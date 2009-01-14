@@ -12,6 +12,13 @@
   <xsl:param name="runinhead.title.end.punct" select="'.!?:-'"/>
 
 
+<!--<xsl:param name="chapter.autolabel" select="1"></xsl:param>-->
+<xsl:param name="part.autolabel" select="1"/>
+<xsl:param name="section.autolabel" select="1"/>
+
+<xsl:param name="appendix.autolabel">A</xsl:param>
+<xsl:param name="graphic.default.extension"></xsl:param>
+
   <!-- PARAMETERS INTRODUCED BY US -->
 
   <xsl:param name="fb-home.url"   select="'http://gentoo.theserverside.ru/book'"/>
