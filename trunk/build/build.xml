@@ -142,7 +142,7 @@
         <property name="monohtml.dir" value="${dist.dir}/monohtml${sfxsubdir}"/>
         <property name="html.dir"     value="${dist.dir}/html${basesfx}${sfxsubdir}"/>
         <property name="pdf.dir"      value="${dist.dir}/pdf${sfxsubdir}"/>
-        <property name="zip.dir"      value="${dist.dir}/zip${sfxsubdir}"/>
+        <property name="zip.dir"      value="${dist.dir}/zip/ru"/>
 
     </target>
 

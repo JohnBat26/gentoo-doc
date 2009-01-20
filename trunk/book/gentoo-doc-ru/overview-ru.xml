@@ -35,69 +35,58 @@
 				<para>Батогов Е.В. a.k.a. JohnBat26 (ICQ:198710313; Jabber.ru/Yahoo/AIM/Google/MSN/Skype: JohnBat26)</para>
 				<para>
 					e-mail:
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:JohnBat26@gmail.com?subject=Gentoo_doc">JohnBat26@gmail.com</link>
-					,
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:JohnBat26@gmail.com?subject=Gentoo_doc">JohnBat26@yandex.ru</link>
+					<ulink url="mailto:JohnBat26@gmail.com?subject=Gentoo_doc">JohnBat26@gmail.com</ulink>
 				</para>
 				<para>о себе:</para>
 				<itemizedlist>
 					<listitem>
 						<para>
-							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://picasaweb.google.ru/JohnBat26">http://picasaweb.google.ru/JohnBat26</link>
+						   <ulink url="http://picasaweb.google.ru/JohnBat26">http://picasaweb.google.ru/JohnBat26</ulink>
 						</para>
 					</listitem>
 					<listitem>
 						<para>
-							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.odnoklassniki.ru/user/182870623">http://www.odnoklassniki.ru/user/182870623</link>
+						<ulink url="http://www.odnoklassniki.ru/user/182870623">http://www.odnoklassniki.ru/user/182870623</ulink>
 						</para>
 					</listitem>
 					<listitem>
 						<para>
-							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://vkontakte.ru/id4283007">http://vkontakte.ru/id4283007</link>
+						<ulink url="http://vkontakte.ru/id4283007">http://vkontakte.ru/id4283007</ulink>
 						</para>
 					</listitem>
 					<listitem>
 						<para>
-							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://evgeniy-batogov.moikrug.ru/">http://evgeniy-batogov.moikrug.ru/</link>
+						<ulink url="http://evgeniy-batogov.moikrug.ru/">http://evgeniy-batogov.moikrug.ru/</ulink>
 						</para>
 					</listitem>
 				</itemizedlist>
 			</listitem>
 			<listitem>
-				<para>Киселев М.А. a.k.a. Kismih05 (ICQ:77833996); Yahoo/AIM: kismih05)</para>
-				<para>
-					   e-mail:
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:kismih05@yahoo.com?subject=Gentoo_doc">kismih05@yahoo.com</link>
-				</para>
-				<para/>
-			</listitem>
-			<listitem>
 				<para>Шевцов Константин a.k.a integer || night_fever (jabber: night_fever@jabber.ru; ICQ: 496480428)</para>
 				<para>
 					  e-mail:
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:gentoo.integer@gmail.com">gentoo.integer@gmail.com</link>
+					  <ulink url="mailto:gentoo.integer@gmail.com">gentoo.integer@gmail.com</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>Калинников Вадим Валерьевич a.k.a. MooSE (jabber: moose1@jabber.ru)</para>
 				<para>
 					  e-mail:
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:bulvinkl@gmail.com">bulvinkl</link>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:bulvinkl@gmail.com">@gmail.com</link>
+					  <ulink url="mailto:bulvinkl@gmail.com">bulvinkl@gmail.com</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>Горлов Виктор a.k.a. eX (gtalk: gorlov.victor@gmail.com)</para>
 				<para>
 					  e-mail:
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:gorlov.victor@gmail.com">gorlov.victor@gmail.com</link>
+					  <ulink url="mailto:gorlov.victor@gmail.com">gorlov.victor@gmail.com</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>Dmeshr</para>
 				<para>
 					   e-mail:
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:dmeshr@gmail.com">dmeshr@gmail.com</link>
+					    <ulink url="mailto:dmeshr@gmail.com">dmeshr@gmail.com</ulink>
 				</para>
 				<para/>
 				<para/>
@@ -107,7 +96,8 @@
 	<section xml:id="overview-license"><info><title>Лицензия книги</title></info>
 		
 		<para>
-			<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/licenses/gpl-2.0.txt">The GNU General Public License, Version 2</link>
+		        <ulink url="http://www.gnu.org/licenses/gpl-2.0.txt">The GNU General Public License, Version 2</ulink>
+			
 		</para>
 	</section>
 	<section xml:id="overview-links"><info><title>Используемые сайты</title></info>
@@ -115,67 +105,67 @@
 		<itemizedlist>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo.ru/">http://gentoo.ru</link>
+				        <ulink url="http://gentoo.ru/">http://gentoo.ru</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo.org/">http://gentoo.org</link>
+				        <ulink url="http://gentoo.org/">http://gentoo.org</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/">http://ru.gentoo-wiki.com</link>
+				        <ulink url="http://ru.gentoo-wiki.com/">http://ru.gentoo-wiki.com</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo.blog.ru/">http://gentoo.blog.ru</link>
+				        <ulink url="http://gentoo.blog.ru/">http://gentoo.blog.ru</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.rugentoo.org/">http://www.rugentoo.org</link>
+				        <ulink url="http://www.rugentoo.org/">http://www.rugentoo.org</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://linuxforum.ru/">http://linuxforum.ru</link>
+				        <ulink url="http://linuxforum.ru/">http://linuxforum.ru</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://myfotomx.com/dalth/linuxbook.odt">http://myfotomx.com/dalth/linuxbook.odt</link>
+				        <ulink url="http://myfotomx.com/">http://myfotomx.com</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://linuxshop.ru/">http://linuxshop.ru</link>
+				        <ulink url="http://linuxshop.ru/">http://linuxshop.ru</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://citkit.ru/">http://citkit.ru</link>
+				       <ulink url="http://citkit.ru/">http://citkit.ru</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://rus-linux.net/">http://rus-linux.net</link>
+				        <ulink url="http://rus-linux.net/">http://rus-linux.net</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://lxj.endofinternet.net/">http://lxj.endofinternet.net</link>
+				        <ulink url="http://lxj.endofinternet.net/">http://lxj.endofinternet.net</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.habrahabr.ru/blog/linux">http://www.habrahabr.ru/blog/linux</link>
+				        <ulink url="http://www.habrahabr.ru/blog/linux">http://www.habrahabr.ru/blog/linux</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://perlovka.homelinux.net/">http://perlovka.homelinux.net</link>
+				        <ulink url="http://perlovka.homelinux.net/">http://perlovka.homelinux.net</ulink>
 				</para>
 				<para/>
 			</listitem>
@@ -184,40 +174,10 @@
 	<section xml:id="overview-appeal"><info><title>Обращение к сообществу Gentoo Linux</title></info>
 		
 		<para>Дорогие и уважаемые пользователи Gentoo Linux, вся наша команда по созданию данного сборника желает Вам
-			дальнейшего совершенствования в области Linux. Для дальнейшего улучшения книги, мы предлагаем всех Вам написать на  
-			наши e-mail:</para>
-		<orderedlist>
-			<listitem>
-				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:johnbat26@gmail.com">johnbat26@gmail.com</link>
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:mkisa14@gmail.com">kismih05@yahoo.com;</link>
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:gentoo.integer@gmail.com">gentoo.integer@gmail.com</link>
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:bulvinkl@gmail.com">bulvinkl@gmail.com</link>
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:gorlov.victor@gmail.com">gorlov.victor@gmail.com</link>
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:dmeshr@gmail.com">dmeshr@gmail.com.</link>
-				</para>
-			</listitem>
-		</orderedlist>
+			дальнейшего совершенствования в области Linux. Для дальнейшего улучшения книги, мы предлагаем всем  присылать комментарии, замечания и пожелания
+			на наши e-mail или на <ulink url="http://linuxforum.ru/index.php?showforum=29">linuxforum.ru</ulink>
+		</para>
+			
 		<para> Мы будем рады услышать отзывы о том что:</para>
 		<itemizedlist>
 			<listitem>
@@ -244,3 +204,4 @@
 		<para>Еще раз всем удачи на пути освоения, а затем и наслаждения Gentoo Linux !</para>
 	</section>
 </article>
+s
