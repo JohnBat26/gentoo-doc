@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:id="general-info">
-	<info><title>Общая информация</title>
-		
+	<info>
+		<title>Общая информация</title>
+
 
 	</info>
-	<section xml:id="general-info-unix"><info><title>UNIX</title></info>
-		
-<!--		<para>
-			<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/UNIX">Ссылка на оригинал</link>
-		</para>-->
+	<section xml:id="general-info-unix">
+		<info>
+			<title>UNIX</title>
+		</info>
+
+		<!--
+			<para> <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/UNIX">Ссылка на
+			оригинал</link> </para>
+		-->
 		<para>С версии: 1.3</para>
 		<para>Обновлено: 2.0</para>
-		<section xml:id="general-info-unix-1"><info><title>Введение</title></info>
-			
+		<section xml:id="general-info-unix-1">
+			<info>
+				<title>Введение</title>
+			</info>
+
 
 			<para>
 				<emphasis role="bold">UNIX</emphasis>
@@ -56,10 +64,10 @@ UNIX-системы имеют большую историческую важн�
 	     <imagedata fileref="images/Unix_history-simple.png" format="PNG"  content-width="scale-to-fit" content-height="100%" width="100%"/>
 	 </imageobject>
       <textobject>
-         <phrase>Генеалогическое древо UNIX-систем</phrase>	 
+         <phrase> Генеалогическое древо UNIX-систем</phrase>	 
       </textobject>
       <caption>
-	  <para><emphasis role="bold">Генеалогическое древо UNIX-систем.</emphasis></para>
+	      <para><emphasis role="strong">Генеалогическое древо UNIX-систем.</emphasis></para>
       </caption>
     </mediaobject>
     <para>В 1964 году появились компьютеры третьего поколения, для которых возможности BESYS уже не подходили. Высотский и его коллеги приняли

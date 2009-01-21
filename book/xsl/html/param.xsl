@@ -12,11 +12,11 @@
 
 
   <!-- Names, titles, captions... -->
-  <xsl:param name="use.id.as.filename">1</xsl:param>
+  <xsl:param name="use.id.as.filename">1</xsl:param><!--
   <xsl:param name="chapter.autolabel" select="1"/>
 
 
-  <!-- Admonitions -->
+  --><!-- Admonitions -->
   <xsl:param name="admon.graphics">0</xsl:param>
   <xsl:param name="admon.style"></xsl:param>
     <!-- default margins overridden as this can't be done in
