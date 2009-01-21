@@ -75,6 +75,7 @@ tt,pre
     font-family: courier new,courier,fixed;
     font-style: normal;
     font-weight: normal;
+    align: left;
 }
 
 .filename
