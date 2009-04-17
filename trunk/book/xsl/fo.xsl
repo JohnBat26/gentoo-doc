@@ -23,7 +23,6 @@
   <!-- if the 2nd pass (next-in-chain) is no longer necessary,
        we should change the method to saxon:net.sf.foxon.FOIndenter -->
 
-
   <!-- then include our own customizations: -->
   <xsl:include href="common/param.xsl"/>
   <xsl:include href="common/l10n.xsl"/>
@@ -45,10 +44,11 @@
   <xsl:include href="fo/titlepage.templates.xsl"/>
   <xsl:include href="fo/admon.xsl"/>
   <xsl:include href="fo/index.xsl"/>
-  <xsl:include href="fo/xref.xsl"/>
+  <!--xsl:include href="fo/xref.xsl"/-->
   <xsl:include href="fo/autotoc.xsl"/>
   <xsl:include href="fo/fop1.xsl"/>
   <xsl:include href="fo/component.xsl"/>
+
 
 
 
