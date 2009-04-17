@@ -7,12 +7,15 @@
     <!ENTITY gentoo_doc-1.5-ru SYSTEM "gentoo_doc-1.5-ru.xml">
     <!ENTITY linuxndi-ru SYSTEM "linuxndi-ru.xml">    
     <!ENTITY linux-fs SYSTEM "linux-fs.xml">
+    <!ENTITY windows-counterparts SYSTEM "windows-counterparts.xml">
+    
+    
     <!ENTITY generatorguide-ru SYSTEM "generatorguide-ru.xml">
     ]>
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="gentoo-doc" xml:lang="ru">
 
 	<info>
-	        <title>Gentoo Linux</title>
+	    <title>Gentoo Linux</title>
 		<subtitle>cборник статей</subtitle>
 		<titleabbrev>Сборник статей</titleabbrev>
 		<productname>Сборник статей</productname>
@@ -23,7 +26,7 @@
 		</copyright>
 		<author>
 		  <orgname>Gentoo-doc TEAM</orgname>
-	        </author>
+	    </author>
 	</info>
 
 	<!--
@@ -33,12 +36,13 @@
 
 	<!-- Intro should be extended first, and some things left out -->
 
-<!--    &releasenotes-ru;-->
+    &releasenotes-ru;
     &overview-ru;
     &introductory-word-ru;
     &general-info;
     &linuxndi-ru;
     &linux-fs;
+    &windows-counterparts;
     
 <!--    &gentoo_doc-1.5-ru;-->
     <!--&generatorguide-ru; --> <!-- ОСТАВЛЕНО ДЛЯ ОБРАЗЦА ОФОРМЛЕНИЯ !!! НЕ УДАЛЯТЬ!!! -->
