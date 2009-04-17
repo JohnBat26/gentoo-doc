@@ -40,7 +40,7 @@
        SPECIFIC TO EITHER CHUNKED OR MONOLITH HTML -->
 
   <xsl:output method="html"
-              encoding="ISO-8859-1"
+              encoding="UTF-8"
               indent="yes"/>
 
   <xsl:include href="common/param.xsl"/>
