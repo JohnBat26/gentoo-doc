@@ -12,11 +12,11 @@
 		
 		<orderedlist>
 			<listitem>
-				<para>Избавить  от необходимости серфинга по различным ресурсам в поисках информации о Linux и Gentoo в
+				<para>Избавить от необходимости серфинга по различным ресурсам в поисках информации о Linux и Gentoo в
 					частности.</para>
 			</listitem>
 			<listitem>
-				<para>Увеличить количество  пользователей  Gentoo Linux в России.</para>
+				<para>Увеличить количество пользователей Gentoo Linux в России.</para>
 			</listitem>
 			<listitem>
 				<para>Упростить освоение Gentoo Linux, тем самым увеличить его популярность.</para>
@@ -172,7 +172,7 @@
 			</listitem>
 		</itemizedlist>
 	</section>
-	<section xml:id="overview-appeal"><info><title>Обращение к сообществу Gentoo Linux</title></info>
+	<section xml:id="overview-appeal" xreflabel="Обращение к сообществу Gentoo Linux"><info><title>Обращение к сообществу Gentoo Linux</title></info>
 		
 		<para>Дорогие и уважаемые пользователи Gentoo Linux, вся наша команда по созданию данного сборника желает Вам
 			дальнейшего совершенствования в области Linux. Для дальнейшего улучшения книги, мы предлагаем всем  присылать комментарии, замечания и пожелания

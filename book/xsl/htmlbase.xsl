@@ -34,7 +34,8 @@
 
   <!-- Import the original DocBook stylesheets: -->
   <xsl:import href="../../tools/docbook-xsl/html/docbook.xsl"/>
-
+  <xsl:import href="../../tools/docbook-xsl/html/autoidx-kosek.xsl"/>
+ 
   <!-- ...and include our own overrides/additions
        EXCEPT THOSE THAT CONTROL CHUNKING BEHAVIOUR OR ARE OTHERWISE
        SPECIFIC TO EITHER CHUNKED OR MONOLITH HTML -->

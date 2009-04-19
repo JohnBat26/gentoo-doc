@@ -15,7 +15,8 @@
 
   <!-- Import default DocBook stylesheet for fo generation: -->
   <xsl:import href="../../tools/docbook-xsl/fo/docbook.xsl"/>
-
+  <xsl:import href="../../tools/docbook-xsl/fo/autoidx-kosek.xsl"/>
+  
 
   <xsl:output method="xml"
               indent="no"
@@ -43,7 +44,7 @@
   <xsl:include href="fo/titlepage.xsl"/>
   <xsl:include href="fo/titlepage.templates.xsl"/>
   <xsl:include href="fo/admon.xsl"/>
-  <xsl:include href="fo/index.xsl"/>
+  <!--xsl:include href="fo/index.xsl"/-->
   <!--xsl:include href="fo/xref.xsl"/-->
   <xsl:include href="fo/autotoc.xsl"/>
   <xsl:include href="fo/fop1.xsl"/>

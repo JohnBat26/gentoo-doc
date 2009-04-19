@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+        xml:id="gentoo-install-sheets" xreflabel="Шпаргалка по установке Gentoo">
+    <info>
+        <title>Шпаргалка по установке Gentoo</title>
+    </info>
+    <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/Шпаргалка_по_установке_Gentoo">http://ru.gentoo-wiki.com</link>
+    </para>
+    <para>Автор: Molin </para>
+    <para>С версии: 1.4</para>
+    <para/>
+    <section>
+        <info>
+            <title>Описание </title>
+        </info>
+        <para>Данное руководство является шпаргалкой по настройке Gentoo для тех, кого утомляет
+            чтение <link xlink:href="#">Настольной книги.</link>
+        </para>
+    </section>
+    <section>
+        <info>
+            <title>Подготовка к установке </title>
+        </info>
+        <para>Перед установкой необходимо иметь:</para>
+        <orderedlist>
+            <listitem>
+                <para>не слишком старый компьютер;</para>
+            </listitem>
+            <listitem>
+                <para>широкополосный доступ в интернет;</para>
+            </listitem>
+            <listitem>
+                <para>много времени и терпения.</para>
+            </listitem>
+        </orderedlist>
+        <para>Прежде чем приступить к установке, следует загрузить на компьютер какую-либо
+            готовую систему...</para>
+        <para>...при единственном жёстком дискеВзять любой LiveCD с дистрибутивом Linux,
+            поддерживающий настройку сети:</para>
+        <orderedlist>
+            <listitem>
+                <para>
+                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://distro.ibiblio.org/pub/linux/distributions/gentoo/releases/x86/2007.0/installcd/">Gentoo 2007.0 InstallCD</link>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mandriva.com/en/download/free">Mandriva Linux One
+                        2008</link>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://sourceforge.net/project/showfiles.php?group_id=55396&amp;release_id=123430">Cool Linux CD</link>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://wiki.debian.org/DebianLive/Download">Debian Live</link>
+                </para>
+            </listitem>
+        </orderedlist>
+        <para>Сделать загрузочный CD (DVD, USB-drive), загрузиться, поднять сеть согласно
+            документации к выбранному дистрибутиву. </para>
+        <para>...при установке на второй жёсткий диск с работающей системыВключить компьютер и
+            убедиться в работающем интернете. Условимся, что Gentoo будет устанавливаться на
+            устройство /dev/sda. </para>
+    </section>
+    <section>
+        <info>
+            <title>Порядок основных действий и команд </title>
+        </info>
+        <section>
+            <info>
+                <title>Разбиение диска </title>
+            </info>
+            <para>1. Разметка# fdisk /dev/sda</para>
+            <para>ВАЖНО: Требует дополнительных действий (См. "Логику разметки диска") </para>
+            <para>2. Форматирование разделов# mkfs -t &lt;тип_ФС&gt;
+                /dev/sda&lt;номер_раздела&gt;и т.д. </para>
+        </section>
+        <section>
+            <info>
+                <title>Установка базовой системы </title>
+            </info>
+            <para>3. Монтирование разделов# mount /dev/sda&lt;номер_раздела&gt;
+                /mnt/gentoo/&lt;путь&gt;и т.д. </para>
+            <para>4. Переход в каталог gentoo# cd /mnt/gentoo </para>
+            <para>5. Скачивание архива стадии# wget
+                &lt;сервер&gt;/gentoo/releases/&lt;архитектура&gt;/current/stages/stage3-&lt;архитектура&gt;-2007.0.tar.bz2 </para>
+            <para>6. Скачивание снимка дерева портежей# wget
+                &lt;сервер&gt;/gentoo/snapshots/portage-latest.tar.bz2 </para>
+            <para>7. Распаковка архива стадии# tar xvjpf stage3-i686-2007.0.tar.bz2 </para>
+            <para>8. Распаковка снимка дерева портежей# tar xvjf
+                /mnt/gentoo/portage-latest.tar.bz2 -C /mnt/gentoo/usr </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Файлы настройки </title>
+            </info>
+            <para>9. Правка одного из основных файлов Gentoo</para>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Файл: /mnt/gentoo/etc/make.conf </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># За подробностями см. make.conf.example</para>
+                                <para>CFLAGS="-O&lt;уровень_оптимизации&gt;
+                                    -march=&lt;тип_ЦПУ&gt; -pipe"</para>
+                                <para>CXXFLAGS="${CFLAGS}"</para>
+                                <para/>
+                                <para># Не изменять</para>
+                                <para>CHOST="&lt;архитектура&gt;"</para>
+                                <para/>
+                                <para>MAKEOPTS="-j&lt;кол-во_процессоров+1&gt;"</para>
+                                <para>GENTOO_MIRRORS="http://distro.ibiblio.org/pub/linux/distributions/gentoo/
+                                    "</para>
+                                <para>SYNC="rsync://rsync.gentoo.org/gentoo-portage"</para>
+                                <para/>
+                                <para># Для поддержки мыши и клавиатуры в Xorg</para>
+                                <para>INPUT_DEVICES="keyboard mouse"</para>
+                                <para># Для поддержки видеокарты в Xorg</para>
+                                <para>VIDEO_CARDS="&lt;название_драйвера&gt;"</para>
+                                <para/>
+                                <para># См. /mnt/gentoo/usr/portage/profiles/use.desc</para>
+                                <para># См.
+                                    /mnt/gentoo/usr/portage/profiles/use.local.desc</para>
+                                <para>USE="&lt;флаги&gt;"</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para>10. Настройка DNS</para>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Файл: /mnt/gentoo/etc/resolv.conf </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>nameserver &lt;IP_сервера_DNS&gt;</para>
+                                <para>nameserver &lt;IP_ещё_одного_сервера_DNS&gt;</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para>Или просто скопировать текущую информацию о DNS-серверах# cp -L
+                /etc/resolv.conf /mnt/gentoo/etc/resolv.conf </para>
+            <para>11. Информация о файловых системах</para>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Файл: /mnt/gentoo/etc/fstab </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>/dev/sda1                /        
+                                     &lt;файловая_система&gt;  defaults    0 1</para>
+                                <para>/dev/sda&lt;номер_раздела&gt;  none       swap            
+                                       sw          0 2</para>
+                                <para>/dev/sda&lt;номер_раздела&gt;  &lt;каталог&gt;
+                                     &lt;файловая_система&gt;  defaults    0 2</para>
+                                <para>proc                     /proc      proc              
+                                     defaults    0 0</para>
+                                <para/>
+                                <para># Если /tmp нужен в ОЗУ</para>
+                                <para>none                     /tmp       tmpfs              
+                                    defaults    0 0</para>
+                                <para/>
+                                <para># Если CD/DVD монтируется вручную</para>
+                                <para># Указанное для mod значение снимает флаг исполнения с
+                                    файлов на CD/DVD</para>
+                                <para>/dev/hd&lt;X&gt; /mnt/cdrom   auto
+                                    user,ro,noauto,uid=1000,gid=1000,mode=100644  0 0</para>
+                                <para/>
+                                <para># Если планируется использование DVD-RAM</para>
+                                <para>/dev/hd&lt;X&gt; /mnt/dvdram  auto user,rw,noauto   0
+                                    0</para>
+                                <para/>
+                                <para># Если флоппи кому-то ещё нужен</para>
+                                <para>/dev/fd0   /mnt/floppy  auto
+                                    user,iocharset=cp1251,noauto,rw,noexec,showexec  0 0</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para>12. Имя машины</para>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Файл: /mnt/gentoo/etc/conf.d/hostname </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>HOSTNAME="&lt;название_хоста&gt;"</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para>13. Настройка сетевых параметров</para>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Файл: /mnt/gentoo/etc/conf.d/net </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># Задать параметры вручную...</para>
+                                <para>config_eth0=( " 192.168.0.1 netmask 255.255.255.0
+                                    broadcast 192.168.0.255" )</para>
+                                <para>routes_eth0=( "default gw 192.168.0.1" )</para>
+                                <para/>
+                                <para># ...или получить их автоматически</para>
+                                <para>config_eth0=( "dhcp" )</para>
+                                <para>dhcp_eth0="nodns nontp nonis"</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+        </section>
+        <section>
+            <info>
+                <title>Оживление Gentoo </title>
+            </info>
+            <para>14. Монтирование /proc# mount -t proc none /mnt/gentoo/proc </para>
+            <para>15. Монтирование /dev# mount -o bind /dev /mnt/gentoo/dev </para>
+            <para>16. Смена корневого каталога# chroot /mnt/gentoo /bin/bash </para>
+            <para>ВАЖНО: Дальнейшие команды будут выполняться в среде Gentoo </para>
+            <para>17. Обновление переменных среды# env-update# source /etc/profile </para>
+            <para>18. Смена приглашения командной строки# export PS1="(chroot) $PS1" </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Сборка ядра </title>
+            </info>
+            <para>19. Обновление дерева портежей# emerge --syncили# emerge-webrsync </para>
+            <para>20. Установка исходных кодов ядра Gentoo# USE="-doc symlink" emerge
+                gentoo-sources </para>
+            <para>21. Настройка ядра Gentoo# cd /usr/src/linux# make menuconfig </para>
+            <para>ВАЖНО: Требует дополнительных действий (См. "Логика настройки ядра") </para>
+            <para>22. Компиляция ядра# make &amp;&amp; make modules_install </para>
+            <para>23. Установка ядра# cp arch/i386/boot/bzImage
+                /boot/linux-&lt;архитектура&gt;-gentoo </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Прочие системные установки </title>
+            </info>
+            <para>24. Сетевое подключение при загрузке системы# rc-update add net.eth0 default </para>
+            <para>25. Пароль суперпользователя# passwd </para>
+            <para>26. Система журналирования# emerge syslog-ng# rc-update add syslog-ng default </para>
+            <para>27. Периодические задания (по необходимости)# emerge vixie-cron# rc-update add
+                vixie-cron default </para>
+            <para>28. Установка клиента DHCP (по необходимости)# emerge dhcpcd </para>
+            <para>29. Установка клиента PPPoE (по необходимости)# USE="-X" emerge rp-pppoe </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Настройка загрузчика </title>
+            </info>
+            <para>30. Установка загрузчика LILO# emerge lilo </para>
+            <para>31. Настройка LILO</para>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Файл: /etc/lilo.conf </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>boot=/dev/sda</para>
+                                <para>prompt</para>
+                                <para>timeout=200</para>
+                                <para>default=gentoo</para>
+                                <para/>
+                                <para>image=/boot/linux-&lt;архитектура&gt;-gentoo</para>
+                                <para> label=gentoo</para>
+                                <para> read-only </para>
+                                <para> root=/dev/sda&lt;X&gt;</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para>32. Записать LILO# /sbin/lilo </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Локализация в UNICODE </title>
+            </info>
+            <para>33. Установка шрифтов# emerge terminus-font intlfonts freefonts cronyx-fonts
+                corefonts artwiz-fonts kbd </para>
+            <para>34. Включение нужных локалей</para>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Файл: /etc/locale.gen </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>en_US ISO-8859-1</para>
+                                <para>en_US.UTF-8 UTF-8</para>
+                                <para>ru_RU.CP1251 CP1251</para>
+                                <para>ru_RU.KOI8-R KOI8-R</para>
+                                <para>ru_RU.UTF-8 UTF-8</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para>35. Пересборка glibc# emerge -av glibc </para>
+            <para>36. Сборка локали# locale-gen </para>
+            <para>37. Переменные окружения</para>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Файл: /etc/env.d/02locale </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>LC_ALL=""</para>
+                                <para>LANG="ru_RU.UTF-8"</para>
+                                <para>LC_NUMERIC="C"</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para>38. Файл rc.conf</para>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Файл: /etc/rc.conf </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>UNICODE="yes"</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para>39. Шрифт консоли</para>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Файл: /etc/conf.d/consolefont </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>CONSOLEFONT="Cyr_a8x16"</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para>40. Карта</para>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Файл: /etc/conf.d/keymaps </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>KEYMAP="-u ru4"</para>
+                                <para>SET_WINDOWKEYS="yes"</para>
+                                <para>EXTENDED_KEYMAPS=""</para>
+                                <para>DUMPKEYS_CHARSET="koi8-r"</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Загрузка Gentoo </title>
+            </info>
+            <para>41. Выход из окружения Gentoo# exit </para>
+            <para>42. Размонтирование разделов# cd /# umount /mnt/gentoo/&lt;путь&gt;и т.д. </para>
+            <para>43. Перезагрузка# reboot </para>
+            <para>Базовая установка Gentoo завершена!За более тонкой настройкой системы см.
+                документацию. </para>
+            <para/>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>Вспомогательная информация </title>
+        </info>
+        <section>
+            <info>
+                <title>Логика разметки диска </title>
+            </info>
+            <informaltable frame="all">
+                <tgroup cols="5">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Раздел </para>
+                            </entry>
+                            <entry>
+                                <para>Каталог </para>
+                            </entry>
+                            <entry>
+                                <para>Размер </para>
+                            </entry>
+                            <entry>
+                                <para>Размещение </para>
+                            </entry>
+                            <entry>
+                                <para>Файловая система </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>Загрузчик </para>
+                            </entry>
+                            <entry>
+                                <para>/boot </para>
+                            </entry>
+                            <entry>
+                                <para>~30Мб </para>
+                            </entry>
+                            <entry>
+                                <para>в начале диска </para>
+                            </entry>
+                            <entry>
+                                <para>ext2, ext3, ReiserFS </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>Своп </para>
+                            </entry>
+                            <entry>
+                                <para>нет </para>
+                            </entry>
+                            <entry>
+                                <para>100-200% от объёма ОЗУ </para>
+                            </entry>
+                            <entry>
+                                <para>начало диска, но при достаточном объёме ОЗУ и/или работе с
+                                    не ресурсоёмкими приложениями может не создаваться </para>
+                            </entry>
+                            <entry>
+                                <para>Без ФС (swap-область) </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>Основные системные файлы </para>
+                            </entry>
+                            <entry>
+                                <para>/bin, /etc, /lib, /sbin и /sys </para>
+                            </entry>
+                            <entry>
+                                <para>0,1-0,5Гб </para>
+                            </entry>
+                            <entry>
+                                <para>ближе к началу диска </para>
+                            </entry>
+                            <entry>
+                                <para>ext2, ext3, ReiserFS, XFS </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>Изменяемые данные </para>
+                            </entry>
+                            <entry>
+                                <para>/var </para>
+                            </entry>
+                            <entry>
+                                <para>Обычно от 0,5Гб, но для Gentoo -- 2-4Гб, т.к. сборка из
+                                    portage требует много места под временные файлы на /var/tmp
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>ближе к началу диска </para>
+                            </entry>
+                            <entry>
+                                <para>ext3, ReiserFS, XFS </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>Временные файлы </para>
+                            </entry>
+                            <entry>
+                                <para>/tmp </para>
+                            </entry>
+                            <entry>
+                                <para>0,5-2Гб (некоторые программы требуют много места) </para>
+                            </entry>
+                            <entry>
+                                <para>ближе к началу диска, но раздел может быть создан и в ОЗУ
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>ext2, JFS, XFS tmpfs </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>Прикладное ПО </para>
+                            </entry>
+                            <entry>
+                                <para>/usr </para>
+                            </entry>
+                            <entry>
+                                <para>1-10Гб (зависит от задач) </para>
+                            </entry>
+                            <entry>
+                                <para>середина или конец диска </para>
+                            </entry>
+                            <entry>
+                                <para>ext2, ReiserFS, XFS ,JFS </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>Несвободное ПО </para>
+                            </entry>
+                            <entry>
+                                <para>/opt </para>
+                            </entry>
+                            <entry>
+                                <para>от 0,1Гб (в основном для игр и узкоспециализированного ПО)
+                                </para>
+                            </entry>
+                            <entry>
+                                <para>середина или конец диска </para>
+                            </entry>
+                            <entry>
+                                <para>ext2, ReiserFS, XFS, JFS </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>Данные пользователей </para>
+                            </entry>
+                            <entry>
+                                <para>/home </para>
+                            </entry>
+                            <entry>
+                                <para>зависит от задач </para>
+                            </entry>
+                            <entry>
+                                <para>конец диска </para>
+                            </entry>
+                            <entry>
+                                <para>ext3, ReiserFS, XFS, JFS </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>Данные для чтения из ОС Windows </para>
+                            </entry>
+                            <entry>
+                                <para>/mnt/fat, /mnt/win или т.п. </para>
+                            </entry>
+                            <entry>
+                                <para>зависит от задач </para>
+                            </entry>
+                            <entry>
+                                <para>конец диска </para>
+                            </entry>
+                            <entry>
+                                <para>FAT32 </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>ОС Windows </para>
+                            </entry>
+                            <entry>
+                                <para>нет </para>
+                            </entry>
+                            <entry>
+                                <para>зависит от задач </para>
+                            </entry>
+                            <entry>
+                                <para>зависит от задач </para>
+                            </entry>
+                            <entry>
+                                <para>NTFS </para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Логика настройки ядра </title>
+            </info>
+            <para>По умолчанию многие необходимые опции уже включены. </para>
+            <para>Выбор семейства ЦПУ </para>
+            <para>Processor type and features ---&gt;</para>
+            <para> Processor family (выбрать ЦПУ) ---&gt;</para>
+            <para>Поддержка паравиртуализации </para>
+            <para>Processor type and features ---&gt;</para>
+            <para>  [*] Paravirtualization support (EXPERIMENTAL)</para>
+            <para>Поддержка виртуальной машины ядра (KVM) </para>
+            <para>Device Drivers ---&gt;</para>
+            <para> Virtualization  ---&gt;</para>
+            <para>   &lt;*&gt; Kernel-based Virtual Machine (KVM) support</para>
+            <para>Поддержка дисков SATA </para>
+            <para>Device Drivers ---&gt;</para>
+            <para> &lt;*&gt; Serial ATA (prod) and Parallel ATA (experimental) drivers
+                 ---&gt;</para>
+            <para>   &lt;*&gt;   AHCI SATA support</para>
+            <para>   выбрать нужный SATA драйвер</para>
+            <para>Поддержка PPP </para>
+            <para>Device Drivers ---&gt;</para>
+            <para> Networking device support ---&gt;</para>
+            <para>   &lt;*&gt; PPP (point-to-point protocol) support</para>
+            <para>   &lt;*&gt;   PPP support for async serial ports</para>
+            <para>   &lt;*&gt;   PPP support for sync tty ports</para>
+            <para>Поддержка интерфейса PCI-Express </para>
+            <para>Bus options (PCI, PCMCIA, EISA, MCA, ISA)  ---&gt;
+            </para>
+            <para> [*]   PCI Express support</para>
+            <para>Поддержка DRM </para>
+            <para>Device Drivers ---&gt;</para>
+            <para> Character devices  ---&gt;</para>
+            <para>  &lt;*&gt; Direct Rendering Manager (XFree86 4.1.0 and higher DRI
+                support)</para>
+            <para>Поддержка фреймбуфера </para>
+            <para>Device Drivers ---&gt;</para>
+            <para> Graphics support  ---&gt;</para>
+            <para>  &lt;*&gt; Support for frame buffer devices </para>
+            <para>  выбрать необходимый драйвер</para>
+            <para>Поддержка звука (ALSA) </para>
+            <para>Device Drivers ---&gt;</para>
+            <para> Sound  ---&gt;</para>
+            <para>  Advanced Linux Sound Architecture  ---&gt;</para>
+            <para>   &lt;*&gt; Advanced Linux Sound Architecture</para>
+            <para>   &lt;*&gt;   OSS Mixer API</para>
+            <para>   &lt;*&gt;   OSS PCM (digital audio) API</para>
+            <para>   [*]   Verbose procfs contents</para>
+            <para>Поддержка файловых систем </para>
+            <para>File systems ---&gt;</para>
+            <para>  выбрать необходимое</para>
+        </section>
+    </section>
+</article>
