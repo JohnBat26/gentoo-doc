@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE book[
-    <!ENTITY releasenotes-ru SYSTEM "releasenotes-ru.xml">
-    <!ENTITY overview-ru SYSTEM "overview-ru.xml">
-    <!ENTITY introductory-word-ru SYSTEM "introductory-word-ru.xml">
-    <!ENTITY general-info SYSTEM "general-info.xml">
-    <!ENTITY gentoo_doc-1.5-ru SYSTEM "gentoo_doc-1.5-ru.xml">
-    <!ENTITY linuxndi-ru SYSTEM "linuxndi-ru.xml">    
-    <!ENTITY linux-fs SYSTEM "linux-fs.xml">
-    <!ENTITY windows-counterparts SYSTEM "windows-counterparts.xml">
-    
-    
-    <!ENTITY generatorguide-ru SYSTEM "generatorguide-ru.xml">
-    ]>
-<book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="gentoo-doc" xml:lang="ru">
-
+<book xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	version="5.0" xml:id="gentoo-doc" xml:lang="ru">
+	
 	<info>
-	    <title>Gentoo Linux</title>
+		<title>Gentoo Linux</title>
 		<subtitle>cборник статей</subtitle>
 		<titleabbrev>Сборник статей</titleabbrev>
 		<productname>Сборник статей</productname>
@@ -25,25 +15,25 @@
 			<year>2007-2009</year>
 		</copyright>
 		<author>
-		  <orgname>Gentoo-doc TEAM</orgname>
-	    </author>
+			<orgname>Gentoo-doc TEAM</orgname>
+		</author>
 	</info>
-
+	
 	<!--
 		Preface superseded by docbuilding/writing howtos; also, many links are
 		now broken:
 	-->
-
+	
 	<!-- Intro should be extended first, and some things left out -->
-
-    &releasenotes-ru;
-    &overview-ru;
-    &introductory-word-ru;
-    &general-info;
-    &linuxndi-ru;
-    &linux-fs;
-    &windows-counterparts;
-    
-<!--    &gentoo_doc-1.5-ru;-->
-    <!--&generatorguide-ru; --> <!-- ОСТАВЛЕНО ДЛЯ ОБРАЗЦА ОФОРМЛЕНИЯ !!! НЕ УДАЛЯТЬ!!! -->
+	<xi:include href="releasenotes-ru.xml"/>
+	<xi:include href="overview-ru.xml"/>
+	<xi:include href="introductory-word-ru.xml"/>
+	<xi:include href="general-info.xml"/>
+	<xi:include href="linuxndi-ru.xml"/>
+	<xi:include href="linux-fs.xml"/>
+	<xi:include href="windows-counterparts.xml"/>
+	
+	<xi:include href="gentoo/gentoo-basic.xml"/>
+	
+	<index/>
 </book>

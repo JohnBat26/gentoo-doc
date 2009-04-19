@@ -1,0 +1,944 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+         xml:id="gentoo-install-alt">
+        <info>
+            <title>Описание альтернативных способов установки Gentoo Linux</title>
+        </info>
+        <para>Ссылка на оригинал:  <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/altinstall.xml">http://www.gentoo.org/doc/ru/altinstall.xml</link>
+        </para>
+        <para>С версии: 1.0</para>
+        <para/>
+        <section>
+            <info>
+                <title>Об этом документе</title>
+            </info>
+            <para/>
+            <para>Если у вас не работает стандартный метод установки boot-from-CD (или он вас не
+                устраивает), вам сюда. Этот документ описывает альтернативные приемы установки
+                Gentoo Linux для тех, кто в них нуждается. Или, если хотите, это место сбора всех
+                "оригинальных" способов установки. Если у вас один такой завалялся, или вы откопали
+                новую прикольную методу, не стесняйтесь, написать запрос в Bugzilla. </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Загрузка с установочного диска при помощи Smart BootManager</title>
+            </info>
+            <para/>
+            <para>Скачайте Smart BootManager с http://btmgr.sourceforge.net/download.html. Доступны
+                как исходники, так и бинарники для Linux, не говоря уже про виндовский .exe и
+                множество языковых пакетов. Все-таки, в настоящее время, бинарный формат
+                предпочтительнее, поскольку исходники могут не откомпилироваться современными
+                версиями NASM. </para>
+            <para/>
+            <para>Скомпилируйте пакет или возьмите уже готовый. Ниже я расскажу о некоторых полезных
+                опциях, доступных при создании загрузочной дискеты. </para>
+            <para/>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 2.1: Опции Smart BootManager</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>sbminst [-t theme] [-d drv] [-b backup_file] [-u
+                                    backup_file]</para>
+                                <para/>
+                                <para>   -t тема      выбор используемой темы, где тема должна
+                                    быть:</para>
+                                <para>                   us = English тема       de = German тема </para>
+                                <para>                   hu = Hungarian тема     zh = Chinese тема </para>
+                                <para>                   ru = Russian тема       cz = Czech
+                                    тема</para>
+                                <para>                   es = Spanish тема       fr = French тема </para>
+                                <para>                   pt = Portuguese тема </para>
+                                <para/>
+                                <para>                 </para>
+                                <para>   -d диск      выбор диска, куда вы собираетесь
+                                    инсталлировать Smart BootManager;</para>
+                                <para>                 для Linux:</para>
+                                <para>                   /dev/fd0 первый floppy-диск, </para>
+                                <para>                   /dev/hda первый IDE-диск.</para>
+                                <para>                   /dev/sda первый SCSI-диск.</para>
+                                <para>                 для DOS:</para>
+                                <para>                    0   первый floppy-диск</para>
+                                <para>                    128 первый жесткий диск;</para>
+                                <para/>
+                                <para>   -c           отключить загрузку с CD-ROM;</para>
+                                <para/>
+                                <para>   -b backup_file сохранить (для будущей деинсталляции)
+                                    данные, которые будут</para>
+                                <para>                  перезаписаны;</para>
+                                <para/>
+                                <para>   -u backup_file деинсталлировать Smart BootManager, нельзя
+                                    использовать</para>
+                                <para>                  с другими ключами;</para>
+                                <para/>
+                                <para>   -y             никаких вопросов и предупреждений.</para>
+                                <para/>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para/>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 2.2: Использование sbminst для создания загрузочной
+                                    дискеты</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># sbminst -t us  -d /dev/fd0</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Примечание: Замените fd0 на имя вашего floppy-дисковода (если у вас он называется
+                по-другому). </para>
+            <para/>
+            <para/>
+            <para>Теперь просто вставьте дискету в дисковод компьютера, на котором вы хотите
+                запустить установочный диск, и загрузитесь с нее. </para>
+            <para/>
+            <para>Вас поприветствует Smart BootManager. Выберите CD-ROM и нажмите ENTER для загрузки
+                установочного диска. Если все прошло удачно, следуйте стандартной процедуре
+                установки. </para>
+            <para/>
+            <para>Больше информации по Smart BootManager вы найдете на http://btmgr.sourceforge.net/ </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Установка при помощи Knoppix</title>
+            </info>
+            <para>Примечание: Knoppix доступен только для
+                пользователей x86. </para><para/><para/><para>Загрузившись с Knoppix LiveCD, вы
+                получаете полностью работоспособную систему для компиляции Gentoo. Во время сборки
+                Tux Racer скрасит ваше ожидание, а для работы вы можете пользоваться OpenOffice.
+                </para><para>Предупреждение: Помните, что если вы что-либо сохраните в домашний
+                каталог Knoppix, ожидая установки своей системы Gentoo, вы потеряете это после
+                перезагрузки в Gentoo. Убедитесь, что сохраняете важные файлы на жесткий диск или на
+                другой компьютер! </para><para/><para>Загрузитесь с Knoppix CD. Если у вас Knoppix
+                3.6-3.8.2, потребуется указать knoppix26 в качестве параметра ядра, чтобы загрузить
+                ядро 2.6. Если вы пропустите этот шаг, то при chroot вы получите сообщение об
+                ошибке, что ваше ядро слишком старое. Однако, если у вас Knoppix 3.9+, этот шаг не
+                потребуется, так как ядро 2.6 выбрано по умолчанию. </para><para/><para>По умолчанию
+                вы попадаете на рабочий стол KDE. Откройте консоль и введите su -, чтобы была
+                возможность изменить пароль. Это позволяет задать пароль для root в Knoppix. Теперь,
+                при желании, можете настроить sshd для удаленного входа в систему.
+                </para><para/><informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 3.1: Создание точки монтирования /mnt/gentoo</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># mkdir /mnt/gentoo</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable><para/><para>Далее вы можете придерживаться стандартного руководства по
+                установке, начиная с части 4. Кроме монтирования /proc. Тут вам надо поступить
+                по-другому:</para><para/><informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 3.2: Монтирование с привязкой псевдо-ФС proc</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># mount -o bind /proc /mnt/gentoo/proc</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable><para/><para>Также знайте, что некоторые возможности (FEATURES) портежей
+                не будут работать в knoppix. Будьте особенно осторожны с userpriv и usersandbox.
+                Если вы обнаружили, что начали получать ошибки, будет разумным отключить все или
+                некоторые необязательные возможности. </para><para/></section>
+        <section>
+            <info>
+                <title>Установка со Stage 1 без доступа в сеть</title>
+            </info>
+            <para/>
+            <para>Создайте установочный компакт-диск из iso-образа. </para>
+            <para/>
+            <para>Возьмите последний snapshot портежей из
+                http://distro.ibiblio.org/pub/linux/distributions/gentoo/snapshots/ (или с любимого
+                зеркала). Запишите этот tarball на существующий раздел в компьютере, где будет
+                проходить установка, или прожгите его на CD. </para>
+            <para/>
+            <para>Следуйте инструкции из Gentoo Install Doc вплоть до chroot /mnt/gentoo в главе 6.
+                Если у вас в наличии только один привод CD-ROM, не забудьте при загрузке ввести
+                опцию docache чтобы иметь возможность размонтировать установочный компакт-диск и
+                смонтировать CD со snapshot-ом портежей. </para>
+            <para/>
+            <para>Открыв новую консоль (Alt-F2), а в ней руководство по установке, мы можем
+                следовать ему вплоть до запуска скрипта bootstrap.sh. </para>
+            <para>Предупреждение: В старых выпусках установочного компакт-диска требуется изменить
+                пароль командой passwd прежде чем логиниться с другой консоли. </para>
+            <para/>
+            <para>Возвращаемся к первой консоли (Alt-F1, without chroot) и монтируем второй CD в
+                /mnt/gentoo/mnt/cdrom2. Копируем portage tarball с cdrom2 и распаковываем в
+                /mnt/gentoo/usr. </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 4.1: Монтирование snapshot cd</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># umount /mnt/cdrom</para>
+                                <para># mkdir /mnt/gentoo/mnt/cdrom2</para>
+                                <para># mount /dev/cdroms/cdrom0 /mnt/gentoo/mnt/cdrom2</para>
+                                <para># cp /mnt/gentoo/mnt/cdrom2/portage-$date.tar.bz2
+                                    /mnt/gentoo/usr</para>
+                                <para># cd /mnt/gentoo/usr</para>
+                                <para># tar -xvjpf portage-$date.tar.bz2</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Снова переключаемся на вторую консоль. Если сейчас попытаться запустить
+                bootstrap.sh, ничего не выйдет, так как он не сможет закачать ни одного файла. Мы
+                получим эти файлы из другого места и разместим их в /usr/portage/distfiles (в
+                консоли F2). </para>
+            <para/>
+            <para>Нам необходим список пакетов Stage1: glibc, baselayout, texinfo, gettext, zlib,
+                binutils, gcc, ncurses плюс их зависимости. </para>
+            <para>Примечание: Не забываете, что вам нужны версии пакетов, синхронизированные с вашим
+                деревом портежей. </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 4.2: Получение списка для скачивания</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>(Не забывайте 2 перед &gt;)</para>
+                                <para># emerge -fp glibc baselayout texinfo gettext zlib binutils
+                                    gcc ncurses 2&gt; stage1.list</para>
+                                <para># mount -t vfat /dev/fd0 /mnt/floppy</para>
+                                <para># cp /mnt/gentoo/stage1.list /mnt/floppy</para>
+                                <para># umount /mnt/floppy</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Вставьте дискету в компьютер с хорошим каналом. Если заглянуть в файл stage1.list,
+                можно увидеть, что в нем перечисляются несколько ссылок на каждую загрузку. К
+                сожалению, это не совсем то, что нам надо. Сначала список надо почистить от лишнего: </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 4.3: Stripping URLs</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>(Этот скрипт привязан к формату вывода emerge, который может
+                                    измениться</para>
+                                <para> без предварительного предупреждения - используйте с
+                                    осторожностью!)</para>
+                                <para># cut -f 1 -d ' ' stage1.list &gt; stage1.download</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Теперь используйте wget для загрузки списка исходников: </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 4.4: Загружаем пакеты с помощью wget</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># wget -N -i stage1.download</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Получив все файлы, переносим их в наш компьютер в
+                /mnt/gentoo/usr/portage/distfiles. Вот теперь можно запускать bootstrap.sh.
+                Повторяем ту же операцию с wget для stage2 и 3. </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Бездисковая установка с загрузкой через PXE</title>
+            </info>
+            <para/>
+            <para>Что необходимо</para>
+            <para/>
+            <para>Нужна сетевая карта на бездисковом клиенте, которая способна загружаться по
+                протоколу PXE (многие карточки 3com). BIOS тоже должен поддерживать такой способ
+                загрузки. </para>
+            <para/>
+            <para>Настройки на стороне сервера</para>
+            <para/>
+            <para>Создание папок: Во-первых, следует создать папки, в которых будет размещена ваша
+                бездисковая система. Начнем с /diskless, в ней будет находиться по отдельной папке
+                для каждого бездискового клиента. Дальше мы рассмотрим работу с клиентом 'eta'. </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.1: создание папок</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># mkdir /diskless</para>
+                                <para># mkdir /diskless/eta</para>
+                                <para># mkdir /diskless/eta/boot</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Настройка DHCP и TFTP: Клиент получает загрузочную информацию, используя DHCP,
+                затем загружает необходимые файлы с помощью TFTP. Собираем DHCP командой emerge и
+                настраиваем его для наших нужд. Добавляем следующее в /etc/dhcp/dhcpd.conf: </para>
+            <para>Примечание: Мы получим статический IP для клиента и путь к загрузочному образу
+                PXE, здесь pxegrub. Вам необходимо подставить соответствующий MAC-адрес сетевой
+                карты вашего клиента и определиться с директорией, где будут храниться клиентские
+                файлы. </para>
+            <para/>
+            <para/>
+            <para>Для DHCPd, запустите emerge dhcp (или любой другой сервер DHCP на свое
+                усмотрение). Убедитесь, что в /etc/conf.d/dhcp выбран верный интерфейс. </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.2: dhcp.conf</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>option option-150 code 150 = text ;</para>
+                                <para>ddns-update-style none ;</para>
+                                <para>host eta {</para>
+                                <para>hardware ethernet 00:00:00:00:00:00;</para>
+                                <para>fixed-address ip.add.re.ss;</para>
+                                <para>option option-150 "/eta/boot/grub.lst";</para>
+                                <para>filename "/eta/boot/pxegrub";</para>
+                                <para>}</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Для установки TFTP, соберите app-admin/tftp-hpa. Впишите следующее в
+                /etc/conf.d/in.tftpd: </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.3: in.tftpd</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>INTFTPD_PATH="/diskless"</para>
+                                <para>INTFTPD_USER="nobody"</para>
+                                <para>INTFTPD_OPTS="-u ${INTFTPD_USER} -l -vvvvvv -p -c -s
+                                    ${INTFTPD_PATH}"</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Настройка GRUB: Я использую GRUB для PXE-загрузки. Чтобы можно было использовать
+                PXE, вы должны самостоятельно скомпилировать GRUB ... ведь это просто. Во-первых,
+                скачайте самую свежую версию исходников GRUB (emerge -f grub поместит tarball в
+                /usr/portage/distfiles). Скопируйте tarball в /diskless и скомпилируйте GRUB, чтобы
+                получить доступный для pxe бинарник. Готовый бинарник копируем в boot-папку
+                бездискового клиента. И редактируем файл grub.lst: </para>
+            <para/>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.4: установка grub</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># tar zxvf grub-0.92.tar.gz</para>
+                                <para># cd grub-0.92</para>
+                                <para># ./configure --help</para>
+                                <para>(Среди опций вы увидите список поддерживаемых драйверов
+                                    сетевых интерфейсов.)</para>
+                                <para>(Выберите драйвер, совместимый с вашей картой. Здесь он
+                                    фигурирует как $nic)</para>
+                                <para># ./configure --enable-diskless --enable-$nic</para>
+                                <para># make</para>
+                                <para># cd stage2</para>
+                                <para># cp pxegrub /diskless/eta/boot/pxegrub</para>
+                                <para># nano -w /diskless/eta/boot/grub.lst</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.5: grub.lst</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>default 0</para>
+                                <para>timeout 30</para>
+                                <para/>
+                                <para>title=Diskless Gentoo</para>
+                                <para>root (nd)</para>
+                                <para>kernel /eta/bzImage ip=dhcp root=/dev/nfs
+                                    nfsroot=ip.add.re.ss:/diskless/eta</para>
+                                <para/>
+                                <para>(В опции nfsroot указывается IP адрес сервера и путь к
+                                    директории,)</para>
+                                <para>(в которой на сервере лежат файлы нашего бездискового
+                                    клиента.)</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Настройка NFS: NFS легко сконфигурировать. Все что нам надо - это добавить одну
+                строку в конфигурационный файл /etc/exports: </para>
+            <para/>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.6: /etc/exports</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># nano -w /etc/exports</para>
+                                <para># /etc/exports: NFS file systems being exported.  See
+                                    exports(5).</para>
+                                <para>/diskless/eta eta(rw,sync,no_root_squash)</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Обновление hosts: Еще одно важное дело - изменение файла /etc/hosts. </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.7: /etc/hosts</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>127.0.0.1 localhost</para>
+                                <para/>
+                                <para>192.168.1.10 eta.example.com eta</para>
+                                <para>192.168.1.20 sigma.example.com sigma</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Создание системы на сервере</para>
+            <para/>
+            <para>Вы можете захотеть перезагрузить сервер с установочного диска Gentoo, хотя точно
+                так же можете немедленно продолжить, если знать, как выполнять инструкции по
+                установке Gentoo на установленной системе. Следуйте стандартной процедуре установки,
+                как описано в Gentoo Install Howto, НО с учетом следующих отличий: Для монтирования
+                файловой системы сделайте следующее (здесь hdaX - раздел, в котором создана папка
+                /diskless). Вам не надо монтировать другие разделы, так как все файлы располагаются
+                в /diskless/eta. </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.8: монтирование файловой системы</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># mount /dev/hdaX /mnt/gentoo</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Stage tarballs и chroot: Этот пример использует tarball stage3. Смонтируйте /proc
+                в вашу бездисковую директорию и выполните chroot в нее(директорию) для продолжения
+                установки. Дальше - по инструкции вплоть до конфигурации ядра. </para>
+            <para>Предупреждение: Будьте очень внимательны при разархивировании stage tarball. Не
+                распакуйте его в существующую систему. </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.9: извлечение stage tarball</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># cd /mnt/gentoo/diskless/eta/</para>
+                                <para># tar -xvjpf  /mnt/cdrom/gentoo/stage3-*.tar.bz2</para>
+                                <para># mount -t proc /proc /mnt/gentoo/diskless/eta/proc</para>
+                                <para># cp /etc/resolv.conf
+                                    /mnt/gentoo/diskless/eta/etc/resolv.conf</para>
+                                <para># chroot /mnt/gentoo/diskless/eta/ /bin/bash</para>
+                                <para># env-update</para>
+                                <para># source /etc/profile</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Конфигурация ядра: При выполнении make menuconfig во время конфигурации ядра, не
+                забудьте сделать доступными следующие опции (помимо рекомендуемых в руководстве по
+                установке): </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.10: опции menuconfig</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>- Your network card device support</para>
+                                <para>(в ядре, *не* как модуль!)</para>
+                                <para/>
+                                <para>- Under "Networking options" :</para>
+                                <para/>
+                                <para>[*] TCP/IP networking</para>
+                                <para>[*] IP: kernel level autoconfiguration</para>
+                                <para>[*] IP: DHCP support</para>
+                                <para>[*] IP: BOOTP support</para>
+                                <para/>
+                                <para/>
+                                <para>- Under "File systems --&gt; Network File Systems" :</para>
+                                <para/>
+                                <para>&lt;*&gt; NFS file system support</para>
+                                <para>[*] Provide NFSv3 client support</para>
+                                <para>[*] Root file system on NFS</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Сохраните ядро в / своей изолированной среды (не в /boot), в соответствии с
+                настройкой pxegrub, определенной ранее. Затем настройте /etc/fstab своего
+                бездискового клиента. </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.11: /etc/fstab</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># nano -w /etc/fstab</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>/dev/cdroms/cdrom0 /mnt/cdrom iso9660 noauto,ro 0 0</para>
+            <para>proc /proc proc defaults 0 0</para>
+            <para>tmpfs /dev/shm tmpfs nodev,nosuid,noexec 0 0</para>
+            <para/>
+            <para/>
+            <para>Вам также потребуется предотвратить запуск на клиенте проверки файловой системы: </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.12: Исключение запуска проверки файловой системы на
+                                    клиенте</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># touch /fastboot</para>
+                                <para># echo "touch /fastboot" &gt;&gt;
+                                    /etc/conf.d/local.start</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Установите nfs-utils, так как ваш клиент будет сильно зависеть от них: </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.13: Установка nfs-utils</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># emerge nfs-utils</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Загрузчик. Не устанавливайте других загрузчиков, так как один у нас уже есть -
+                pxegrub. Просто завершаете установку и перезагружаете сервер. Запустите службы,
+                необходимые для загрузки новоиспеченного клиента: DHCP, TFTPD и NFS. </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 5.14: Запуск служб</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># /etc/init.d/dhcp start</para>
+                                <para># /etc/init.d/in.tftpd start</para>
+                                <para># /etc/init.d/nfs start</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Загрузка нового клиента</para>
+            <para/>
+            <para>Чтобы клиент загрузился, надо настроить bios и сетевую карту для использования PXE
+                как первого способа загрузки - до CD-ROM или floppy. Помощником вам будет
+                документация к оборудованию или website производителя. Сетевая карта должна получить
+                IP адрес от DHCP и загрузить PXE-образ GRUB при помощи TFTP. Дальше вы увидите
+                симпатичное черно-белое меню GRUB, в котором можно выбрать ядро для загрузки, а
+                нажав Enter, и загрузить его. Если все в порядке, ядро примонтирует корневую
+                файловую систему, используя NFS, и выведет на терминал приглашение для входа в
+                систему. Вот и все. </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Установка Gentoo из существующей Linux-системы</title>
+            </info>
+            <para/>
+            <para>Что необходимо</para>
+            <para/>
+            <para>Для установки Gentoo из существующей системы Linux вам должна быть доступна
+                команда chroot, а также копия установочного tarball-а Gentoo, либо его ISO-образ. Не
+                помешает доступ в сеть, если вы не хотите ограничиваться тем, что есть в вашем
+                tarball-е. (к слову, tarball - это просто файл, заканчивающийся на .tbz иди
+                .tar.gz). Автор (ориг.текста) использовал RedHat Linux 7.3 как "базовую" ОС, хотя
+                это не так уж важно. Итак, приступим! </para>
+            <para/>
+            <para/>
+            <para>Обзор</para>
+            <para/>
+            <para>Сначала надо отвести раздел для Gentoo, изменив размер существующего раздела
+                Linux, смонтировать его, разархивировать tarball, chroot внутрь нашей
+                псевдо-системы, и начинаем строительство. После настройки загрузчика немного
+                поработаем напильником, просто для того, чтобы система была способна загрузиться
+                самостоятельно, перезагружаемся и пользуемся Gentoo. </para>
+            <para/>
+            <para>Как отвести место для Gentoo?</para>
+            <para/>
+            <para>Корневой раздел - это файловая система, примонтированная к /. Запущенная команда
+                mount показывает, о чем я веду речь. Еще мы можем выполнить df (disk free), чтобы
+                посмотреть, сколько свободного места у нас есть. Прошу заметить - совсем не
+                обязательно кромсать ваш root раздел! Вы можете отрезать в любом другом месте,
+                доступном вашей программе редактирования разделов жесткого диска, но мы поговорим об
+                этом чуть позже. </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 6.1: Информация о файловых системах</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># mount</para>
+                                <para>/dev/hdb2 on / type ext3 (rw) </para>
+                                <para>none on /proc type proc (rw) </para>
+                                <para>none on /dev/pts type devpts (rw,gid=5,mode=620) </para>
+                                <para>none on /dev/shm type tmpfs (rw,nodev,nosuid,noexec)</para>
+                                <para># df -h </para>
+                                <para>Filesystem           Size Used Avail Use% Mounted on </para>
+                                <para>/dev/hdb2            4.0G 1.9G  2.4G  82% /</para>
+                                <para>none                 38M    0   38M   0% /dev/shm </para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Как видите, раздел, смонтированный как /, носит имя /dev/hdb2 и на нем еще
+                свободно 2.4 гигабайта. В моем случае, думаю, 400 МБ свободного пространства хватит
+                с головой, следовательно, под Gentoo отводим 2 ГБ. Совсем неплохо, учитывая, что
+                большинству пользователей хватит и одного гигабайта. Приступим!</para>
+            <para/>
+            <para/>
+            <para/>
+            <para>Сборка parted для переразбивки разделов</para>
+            <para/>
+            <para>Parted - утилита, поддерживаемая GNU foundation, старым, респектабельным,
+                безразмерным проектом, софтом которого мы в данный момент и собираемся
+                воспользоваться. Всего одним инструментом, который вполне нам подходит. Называется
+                он parted, partition editor, загрузить его можно из
+                http://www.gnu.org/software/parted/ </para>
+            <para>Примечание: Конечно, существуют и другие инструменты для работы с разделами, но
+                автор не уверен/не интересуется, сможет ли PartitionMagic(tm) или любая другая
+                программа сделать то, что нам нужно. Проверить - это забота читателя. </para>
+            <para/>
+            <para>Взгляните на ту страницу руководства parted, где речь идет о типе файловой
+                системы, размер которой вы собираетесь изменять, и узнайте, сможет ли parted это
+                сделать. Если нет, что ж, вам не повезло. Придется убить какой-нибудь раздел и
+                создать по-новому, чтобы было место для Gentoo. Вперед, качаем программу,
+                устанавливаем. Возникает проблема. Мы хотим изменить размер корневого раздела,
+                следовательно нам нужно загрузить с дискеты минимальную linux-систему и использовать
+                предварительно скомпилированный parted для редактирования /. Если в вашем случае
+                можно отмонтировать выбранный раздел, оставаясь в Linux, вам везет и нет
+                необходимости делать то, что описано ниже. Просто соберите parted и запустите его на
+                разделе, который хотите урезать. А вот то, что я сделал в своей системе. </para>
+            <para/>
+            <para>Важно: Убедитесь, что действия, которые вы собираетесь проделать с разделом,
+                поддерживаются parted! </para>
+            <para/>
+            <para>Скачайте загрузочный/корневой диск mininux (бесплатный мини-дистрибутив Linux c
+                ядром 2.4 на дискете) с http://mininux.free.fr/uk/, создайте дискету, как описано в
+                прилагающейся документации, вставьте еще одну чистую дискету в дисковод и перейдите
+                к следующему шагу. </para>
+            <para>Примечание: Опять замечу, что Linux - синоним понятия "Этот путь не единственный".
+                Наша цель - запустить parted на отмонтированном разделе жесткого диска и это можно
+                сделать не только описанным способом. Вы можете использовать любой другой набор
+                boot/root дискет, не только mininux. Вы можете вообще не выполнять данный шаг,
+                главное, что нужно - отмонтировать файловую систему, которую вы собираетесь
+                использовать под Gentoo, и перекроить ее, используя parted. </para>
+            <para/>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 6.2: Создание вспомогательной дискеты</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># mkfs.minix /dev/fd0</para>
+                                <para>480 inodes</para>
+                                <para>1440 blocks</para>
+                                <para>Firstdatazone=19 (19)</para>
+                                <para>Zonesize=1024</para>
+                                <para>Maxsize=268966912</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Продолжим со сборкой parted. Если он еще не закачан и не распакован, сделайте это.
+                А затем перейдите в каталог, куда вы его распаковали. И здесь выполните следующий
+                набор команд для сборки утилиты и записи ее на дискету. </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 6.3: Подготовка вспомогательной дискеты</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>#  mkdir /floppy; mount -t minix /dev/fd0 /floppy &amp;&amp; </para>
+                                <para>export CFLAGS="-O3 -pipe -fomit-frame-pointer -static"
+                                    &amp;&amp; ./configure </para>
+                                <para>&amp;&amp; make &amp;&amp; cp parted/parted /floppy &amp;&amp;
+                                    umount /floppy </para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Поздравляю, вы готовы перезагрузиться и изменять выбранный раздел. Только делайте
+                это после хотя бы беглого просмотра документации к parted на GNU website. Наберитесь
+                терпения - изменение размера может занять больше получаса на больших дисках.
+                Загрузитесь с дискеты mininux, а после этого замените загрузочную дискету на
+                вспомогательную, которую мы только что создали. Введите mount /dev/fd0 /floppy и
+                parted будет доступен в папке /floppy. Нам туда. Запускаете parted и перекраиваете
+                нужный раздел жесткого диска. Когда этот бесконечный процесс наконец завершится, все
+                будет готово для того, чтобы получить истинное наслаждение, устанавливая Gentoo.
+                Диск, с которым мы работаем - это тот, на котором находится раздел, размер которого
+                мы меняем. К примеру, если мы хотим изменить /dev/hda3, то диск, соответственно,
+                будет называться /dev/hda. </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 6.4: Команды, которые следует выполнить, загрузившись
+                                    с mininux</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># mount /dev/fd0 /floppy </para>
+                                <para># cd /floppy; ./parted [диск, с которым мы работаем]</para>
+                                <para>(parted)  print </para>
+                                <para>Disk geometry for /dev/hdb: 0.000-9787.148 megabytes</para>
+                                <para>Disk label type: msdos</para>
+                                <para>Minor    Start       End     Type      Filesystem
+                                     Flags</para>
+                                <para>1          0.031   2953.125  primary   ntfs        </para>
+                                <para>3       2953.125   3133.265  primary   linux-swap  </para>
+                                <para>2       3133.266   5633.085  primary   ext3        </para>
+                                <para>4       5633.086   9787.148  extended              </para>
+                                <para>5       5633.117   6633.210  logical               </para>
+                                <para>6       6633.242   9787.148  logical   ext3        </para>
+                                <para>(parted)  help resize </para>
+                                <para>  resize MINOR START END        resize filesystem on partition
+                                    MINOR</para>
+                                <para/>
+                                <para>        MINOR is the partition number used by Linux.  On msdos
+                                    disk labels, the</para>
+                                <para>        primary partitions number from 1-4, and logical
+                                    partitions are 5</para>
+                                <para>        onwards.</para>
+                                <para>        START and END are in megabytes</para>
+                                <para>(parted)  resize 2 3133.266 4000.000 </para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Важно: Наберитесь терпения! Компьютер работает! Посмотрите на индикатор обращения
+                к жесткому диску (находится на корпусе), чтобы убедиться, что это так. Процесс может
+                занять от 2 до 30 минут. </para>
+            <para/>
+            <para/>
+            <para>Когда процесс завершится, перезагрузитесь в вашу старую linux-систему. После этого
+                откройте документ Настольная книга Gentoo: подготовка дисков и следуйте инструкциям.
+                Дойдя до chroot, используйте следующую команду чтобы очистить переменные окружения: </para>
+            <para/>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Листинг 6.5: Обновление среды при chroot</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para># env -i HOME=$HOME TERM=$TERM chroot /mnt/gentoo
+                                    /bin/bash</para>
+                                <para># /usr/sbin/env-update</para>
+                                <para># source /etc/profile</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Удачи!</para>
+        </section>
+</article>
