@@ -13,9 +13,9 @@ goto exit
 
 set cp=..\tools\lib\ant-launcher.jar
 set class=org.apache.tools.ant.launch.Launcher
-set xml_params="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dorg.apache.xerces.xni.parser.XMLParserConfiguration=org.apache.xerces.parsers.XIncludeParserConfiguration"
+set xml_params=-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dorg.apache.xerces.xni.parser.XMLParserConfiguration=org.apache.xerces.parsers.XIncludeParserConfiguration
 
-"%JAVA_HOME%\bin\java.exe" -showversion -Xmx512m %xml_params% -classpath %cp% -Dant.home=..\tools\lib %class% %1 %2 %3 %4 %5 %6 %7 %8 %9
+"%JAVA_HOME%\bin\java.exe" -showversion -Xmx1024m %xml_params% -classpath %cp% -Dant.home=..\tools\lib %class% %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 
 :exit

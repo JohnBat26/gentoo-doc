@@ -1,0 +1,1978 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info><title>Unix Toolbox</title></info>
+<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://cb.vu/unixtoolbox.xhtml">http://cb.vu/unixtoolbox.xhtml</link>
+</para>
+<para>Revision: 11</para>
+<para>C версии: 1.5</para>
+<para>This document is a collection of Unix/Linux/BSD commands and tasks which are useful for IT work or for advanced users. This is a practical guide with concise explanations, however the reader is supposed to know what s/he is doing.</para>
+<para>The latest version of this document can be found at http://cb.vu/unixtoolbox.xhtml.  </para><section><info><title>1. SYSTEM</title></info>
+<para/>
+<para>Running kernel and system information</para>
+<para># uname -a # Get the kernel version (and BSD version)</para>
+<para># cat /etc/SuSE-release # Get SuSE version</para>
+<para># cat /etc/debian_version # Get Debian version</para>
+<para>Use /etc/DISTR-release with DISTR= lsb (Ubuntu), redhat, gentoo, mandrake, sun (Solaris), and so on.</para>
+<para># uptime # Show how long the system has been running + load</para>
+<para># hostname # system's host name</para>
+<para># hostname -i # Display the IP address of the host.</para>
+<para># man hier # Description of the file system hierarchy</para>
+<para># last reboot # Show system reboot history</para><section><info><title>1.1 Hardware Informations</title></info>
+<para>Kernel detected hardware</para>
+<para># dmesg # Detected hardware and boot messages</para>
+<para># lsdev # information about installed hardware</para>
+<para># dd if=/dev/mem bs=1k skip=768 count=256 2&gt;/dev/null | strings -n 8 # Read BIOS</para>
+<para>Linux</para>
+<para># cat /proc/cpuinfo # CPU model</para>
+<para># cat /proc/meminfo # Hardware memory</para>
+<para># grep MemTotal /proc/meminfo # Display the physical memory</para>
+<para># watch -n1 'cat /proc/interrupts' # Watch changeable interrupts continuously</para>
+<para># free -m # Used and free memory (-m for MB)</para>
+<para># cat /proc/devices # Configured devices</para>
+<para># lspci -tv # Show PCI devices</para>
+<para># lsusb -tv # Show USB devices</para>
+<para># lshal # Show a list of all devices with their properties</para>
+<para># dmidecode # Show DMI/SMBIOS: hw info from the BIOS</para>
+<para>FreeBSD</para>
+<para># sysctl hw.model # CPU model</para>
+<para># sysctl hw # Gives a lot of hardware information</para>
+<para># sysctl vm # Memory usage</para>
+<para># dmesg | grep "real mem" # Hardware memory</para>
+<para># sysctl -a | grep mem # Kernel memory settings and info</para>
+<para># sysctl dev # Configured devices</para>
+<para># pciconf -l -cv # Show PCI devices</para>
+<para># usbdevs -v # Show USB devices</para>
+<para># atacontrol list # Show ATA devices</para></section><section><info><title>1.2 Load, statistics and messages</title></info>
+<para>The following commands are useful to find out what is going on on the system.</para>
+<para># top # display and update the top cpu processes</para>
+<para># mpstat 1 # display processors related statistics</para>
+<para># vmstat 2 # display virtual memory statistics</para>
+<para># iostat 2 # display I/O statistics (2 s intervals)</para>
+<para># systat -vmstat 1 # BSD summary of system statistics (1 s intervals)</para>
+<para># systat -tcp 1 # BSD tcp connections (try also -ip)</para>
+<para># systat -netstat 1 # BSD active network connections</para>
+<para># systat -ifstat 1 # BSD network traffic through active interfaces</para>
+<para># systat -iostat 1 # BSD CPU and and disk throughput</para>
+<para># tail -n 500 /var/log/messages # Last 500 kernel/syslog messages</para>
+<para># tail /var/log/warn # System warnings messages see syslog.conf</para></section><section><info><title>1.3 Users</title></info>
+<para># id # Show the active user id with login and group</para>
+<para># last # Show last logins on the system</para>
+<para># who # Show who is logged on the system</para>
+<para># groupadd admin # Add group "admin" and user colin (Linux/Solaris)</para>
+<para># useradd -c "Colin Barschel" -g admin -m colin</para>
+<para># userdel colin # Delete user colin (Linux/Solaris)</para>
+<para># adduser joe # FreeBSD add user joe (interactive)</para>
+<para># rmuser joe # FreeBSD delete user joe (interactive)</para>
+<para># pw groupadd admin # Use pw on FreeBSD</para>
+<para># pw groupmod admin -m newmember # Add a new member to a group</para>
+<para># pw useradd colin -c "Colin Barschel" -g admin -m -s /bin/tcsh</para>
+<para># pw userdel colin; pw groupdel admin</para>
+<para>Encrypted passwords are stored in /etc/shadow for Linux and Solaris and /etc/master.passwd on FreeBSD. If the master.passwd is modified manually (say to delete a password), run #</para>
+<para>pwd_mkdb -p master.passwd to rebuild the database.</para>
+<para>To temporarily prevent logins system wide (for all users but root) use nologin. The message in nologin will be displayed.</para>
+<para># echo "Sorry no login now" &gt; /etc/nologin # (Linux)</para>
+<para># echo "Sorry no login now" &gt; /var/run/nologin # (FreeBSD)</para></section><section><info><title>1.4 Limits</title></info>
+<para>Some application require higher limits on open files and sockets (like a proxy web server,database). The default limits are usually too low.</para>
+<para>Linux</para>
+<para>Per shell/script</para>
+<para>The shell limits are governed by ulimit. The status is checked with ulimit -a. For example to change the open files limit from 1024 to 10240 do:</para>
+<para># ulimit -n 10240 # This is only valid within the shell</para>
+<para>The ulimit command can be used in a script to change the limits for the script only.</para>
+<para>Per user/process</para>
+<para>Login users and applications can be configured in /etc/security/limits.conf. For example:</para>
+<para># cat /etc/security/limits.conf</para>
+<para>* hard nproc 250 # Limit user processes</para>
+<para>asterisk hard nofile 409600 # Limit application open files</para>
+<para>System wide</para>
+<para>Kernel limits are set with sysctl. Permanent limits are set in /etc/sysctl.conf.</para>
+<para># sysctl -a # View all system limits</para>
+<para># sysctl fs.file-max # View max open files limit</para>
+<para>fs.file-max=102400 # Permanent entry in sysctl.conf</para>
+<para># cat /proc/sys/fs/file-nr # How many file descriptors are in use</para>
+<para>FreeBSD</para>
+<para>Per shell/script</para>
+<para>Use the command limits in csh or tcsh or as in Linux, use ulimit in an sh or bash shell.</para>
+<para>Per user/process</para>
+<para>The default limits on login are set in /etc/login.conf. An unlimited value is still limited by the</para>
+<para>system maximal value.</para>
+<para>System wide</para>
+<para>Kernel limits are also set with sysctl. Permanent limits are set in /etc/sysctl.conf or /boot/</para>
+<para>loader.conf. The syntax is the same as Linux but the keys are different.</para>
+<para># sysctl -a # View all system limits</para>
+<para># sysctl kern.maxfiles=XXXX # maximum number of file descriptors</para>
+<para>kern.ipc.nmbclusters=32768 # Permanent entry in /etc/sysctl.conf</para>
+<para>kern.maxfiles=65536 # Typical values for Squid</para>
+<para>kern.maxfilesperproc=32768</para>
+<para>kern.ipc.somaxconn=8192 # TCP queue. Better for apache/sendmail</para>
+<para># sysctl kern.openfiles # How many file descriptors are in use</para>
+<para># sysctl kern.ipc.numopensockets # How many open sockets are in use</para>
+<para>See The FreeBSD handbook Chapter 111 for details.</para>
+<para>Solaris</para>
+<para>The following values in /etc/system will increase the maximum file descriptors per proc:</para>
+<para>set rlim_fd_max = 4096 # Hard limit on file descriptors for a single proc</para>
+<para>set rlim_fd_cur = 1024 # Soft limit on file descriptors for a single proc</para></section><section><info><title>1.5 Runlevels</title></info>
+<para>Linux</para>
+<para>Once booted, the kernel starts init which then starts rc which starts all scripts belonging to a runlevel. The scripts are stored in /etc/init.d and are linked into /etc/rc.d/rcN.d with N the runlevel number.</para>
+<para>The default runlevel is configured in /etc/inittab. It is usually 3 or 5:</para>
+<para># grep default: /etc/inittab</para>
+<para>id:3:initdefault:</para>
+<para>The actual runlevel (the list is shown below) can be changed with init. For example to go from 3 to 5:</para>
+<para># init 5 # Enters runlevel 5</para>
+<para>0 Shutdown and halt</para>
+<para>1 Single-User mode (also S)</para>
+<para>2 Multi-user without network</para>
+<para>3 Multi-user with network</para>
+<para>5 Multi-user with X</para>
+<para>6 Reboot</para>
+<para>Use chkconfig to configure the programs that will be started at boot in a runlevel.</para>
+<para># chkconfig --list # List all init scripts</para>
+<para># chkconfig --list sshd # Report the status of sshd</para>
+<para>1.http://www.freebsd.org/handbook/configtuning-kernel-limits.html</para>
+<para># chkconfig sshd --level 35 on # Configure sshd for levels 3 and 5</para>
+<para># chkconfig sshd off # Disable sshd for all runlevels</para>
+<para>Debian and Debian based distributions like Ubuntu or Knoppix use the command update-rc.d</para>
+<para>to manage the runlevels scripts. Default is to start in 2,3,4 and 5 and shutdown in 0,1 and 6.</para>
+<para># update-rc.d sshd defaults # Activate sshd with the default runlevels</para>
+<para># update-rc.d sshd start 20 2 3 4 5 . stop 20 0 1 6 . # With explicit arguments</para>
+<para># update-rc.d -f sshd remove # Disable sshd for all runlevels</para>
+<para># shutdown -h now (or # poweroff) # Shutdown and halt the system</para>
+<para>FreeBSD</para>
+<para>The BSD boot approach is different from the SysV, there are no runlevels. The final boot state (single user, with or without X) is configured in /etc/ttys. All OS scripts are located in /etc/rc.d/ and in /usr/local/etc/rc.d/ for third-party applications. The activation of the service is configured in /etc/rc.conf and /etc/rc.conf.local. The default behavior is configured in /etc/defaults/rc.conf. The scripts responds at least to start|stop|status.</para>
+<para># /etc/rc.d/sshd status</para>
+<para>sshd is running as pid 552.</para>
+<para># shutdown now # Go into single-user mode</para>
+<para># exit # Go back to multi-user mode</para>
+<para># shutdown -p now # Shutdown and halt the system</para>
+<para># shutdown -r now # Reboot</para>
+<para>The process init can also be used to reach one of the following states level. For example #</para>
+<para>init 6 for reboot.</para>
+<para>0 Halt and turn the power off (signal USR2)</para>
+<para>1 Go to single-user mode (signal TERM)</para>
+<para>6 Reboot the machine (signal INT)</para>
+<para>c Block further logins (signal TSTP)</para>
+<para>q Rescan the ttys(5) file (signal HUP)</para></section><section><info><title>1.6 Reset root password</title></info>
+<para>Linux method 1</para>
+<para>At the boot loader (lilo or grub), enter the following boot option:</para>
+<para>init=/bin/sh</para>
+<para>The kernel will mount the root partition and init will start the bourne shell instead of rc and then a runlevel. Use the command passwd at the prompt to change the password and then reboot. Forget the single user mode as you need the password for that.</para>
+<para>If, after booting, the root partition is mounted read only, remount it rw:</para>
+<para># mount -o remount,rw /</para>
+<para># passwd # or delete the root password (/etc/shadow)</para>
+<para># sync; mount -o remount,ro / # sync before to remount read only</para>
+<para># reboot</para>
+<para>FreeBSD and Linux method 2</para>
+<para>FreeBSD won't let you go away with the simple init trick. The solution is to mount the root partition from an other OS (like a rescue CD) and change the password on the disk.</para>
+<para>• Boot a live CD or installation CD into a rescue mode which will give you a shell.</para>
+<para>• Find the root partition with fdisk e.g. fdisk /dev/sda</para>
+<para>• Mount it and use chroot:</para>
+<para># mount -o rw /dev/ad4s3a /mnt</para>
+<para># chroot /mnt # chroot into /mnt</para>
+<para># passwd</para>
+<para># reboot</para>
+<para>Alternatively on FreeBSD, boot in single user mode, remount / rw and use passwd.</para>
+<para># mount -u /; mount -a # will mount / rw</para>
+<para># passwd</para>
+<para># reboot</para></section><section><info><title>1.7 Kernel modules</title></info>
+<para>Linux</para>
+<para># lsmod # List all modules loaded in the kernel</para>
+<para># modprobe isdn # To load a module (here isdn)</para>
+<para>FreeBSD</para>
+<para># kldstat # List all modules loaded in the kernel</para>
+<para># kldload crypto # To load a module (here crypto)</para></section><section><info><title>1.8 Compile Kernel</title></info>
+<para>Linux</para>
+<para># cd /usr/src/linux</para>
+<para># make mrproper # Clean everything, including config files</para>
+<para># make oldconfig # Create a new config file from the current kernel</para>
+<para># make menuconfig # or xconfig (Qt) or gconfig (GTK)</para>
+<para># make # Create a compressed kernel image</para>
+<para># make modules # Compile the modules</para>
+<para># make modules_install # Install the modules</para>
+<para># make install # Install the kernel</para>
+<para># reboot</para>
+<para>FreeBSD</para>
+<para>To modify and rebuild the kernel, copy the generic configuration file to a new name and edit it as needed. It is however also possible to edit the file GENERIC directly.</para>
+<para># cd /usr/src/sys/i386/conf/</para>
+<para># cp GENERIC MYKERNEL</para>
+<para># cd /usr/src</para>
+<para># make buildkernel KERNCONF=MYKERNEL</para>
+<para># make installkernel KERNCONF=MYKERNEL</para>
+<para>To rebuild the full OS:</para>
+<para># make buildworld # Build the full OS but not the kernel</para>
+<para># make buildkernel # Use KERNCONF as above if appropriate</para>
+<para># make installkernel</para>
+<para># reboot</para>
+<para># mergemaster -p # Compares only files known to be essential</para>
+<para># make installworld</para>
+<para># mergemaster # Update all configuration and other files</para>
+<para># reboot</para>
+<para>For small changes in the source, sometimes the short version is enough:</para>
+<para># make kernel world # Compile and install both kernel and OS</para>
+<para># mergemaster</para>
+<para># reboot</para>
+<para/></section></section><section><info><title>2. PROCESSES</title></info><section><info><title>2.1 Listing and PIDs</title></info>
+<para>Each process has a unique number, the PID. A list of all running process is retrieved with ps.</para>
+<para># ps -auxefw # Extensive list of all running process</para>
+<para>However more typical usage is with a pipe or with pgrep:</para>
+<para># ps axww | grep cron</para>
+<para>586 ?? Is 0:01.48 /usr/sbin/cron -s</para>
+<para># pgrep -l sshd # Find the PIDs of processes by (part of) name</para>
+<para># fuser -va 22/tcp # List processes using port 22</para>
+<para># fuser -va /home # List processes accessing the /home partiton</para>
+<para># strace df # Trace system calls and signals</para>
+<para># truss df # same as above on FreeBSD/Solaris/Unixware</para>
+<para># history | tail -50 # Display the last 50 used commands</para></section><section><info><title>2.2 Priority</title></info>
+<para>Change the priority of a running process with renice. Negative numbers have a higher priority, the lowest is -20 and "nice" have a positive value.</para>
+<para># renice -5 586 # Stronger priority</para>
+<para>586: old priority 0, new priority -5</para>
+<para>Start the process with a defined priority with nice. Positive is "nice" or weak, negative is strong scheduling priority. Make sure you know if /usr/bin/nice or the shell built-in is used (check with # which nice).</para>
+<para># nice -n -5 top # Stronger priority (/usr/bin/nice)</para>
+<para># nice -n 5 top # Weaker priority (/usr/bin/nice)</para>
+<para># nice +5 top # tcsh builtin nice (same as above!)</para></section><section><info><title>2.3 Background/Foreground</title></info>
+<para>When started from a shell, processes can be brought in the background and back to the</para>
+<para>foreground with [Ctrl]-[Z] (^Z), bg and fg. For example start two processes, bring them in the background, list the processes with jobs and bring one in the foreground.</para>
+<para># ping cb.vu &gt; ping.log</para>
+<para>^Z # ping is suspended (stopped) with [Ctrl]-[Z]</para>
+<para># bg # put in background and continues running</para>
+<para># jobs -l # List processes in background</para>
+<para>[1] - 36232 Running ping cb.vu &gt; ping.log</para>
+<para>[2] + 36233 Suspended (tty output) top</para>
+<para># fg %2 # Bring process 2 back in foreground</para>
+<para>Use nohup to start a process which has to keep running when the shell is closed (immune to hangups).</para>
+<para># nohup ping -i 60 &gt; ping.log &amp;</para></section><section><info><title>2.4 Top</title></info>
+<para>The program top displays running information of processes.</para>
+<para># top</para>
+<para>While top is running press the key h for a help overview. Useful keys are:</para>
+<para>• u [user name] To display only the processes belonging to the user. Use + or blank to</para>
+<para>see all users</para>
+<para>• k [pid] Kill the process with pid.</para>
+<para>• 1 To display all processors statistics (Linux only)</para>
+<para>• R Toggle normal/reverse sort.</para></section><section><info><title>2.5 Signals/Kill</title></info>
+<para>Terminate or send a signal with kill or killall.</para>
+<para># ping -i 60 cb.vu &gt; ping.log &amp;</para>
+<para>[1] 4712</para>
+<para># kill -s TERM 4712 # same as kill -15 4712</para>
+<para># killall -1 httpd # Kill HUP processes by exact name</para>
+<para># pkill -9 http # Kill TERM processes by (part of) name</para>
+<para># pkill -TERM -u www # Kill TERM processes owned by www</para>
+<para># fuser -k -TERM -m /home # Kill every process accessing /home (to umount)</para>
+<para>Important signals are:</para>
+<para>1 HUP (hang up)</para>
+<para>2 INT (interrupt)</para>
+<para>3 QUIT (quit)</para>
+<para>9 KILL (non-catchable, non-ignorable kill)</para>
+<para>15 TERM (software termination signal)</para></section></section><section><info><title>3. FILE SYSTEM</title></info>
+<para/><section><info><title>3.1 Permissions</title></info>
+<para>Change permission and ownership with chmod and chown. The default umask can be changed for all users in /etc/profile for Linux or /etc/login.conf for FreeBSD. The default umask is usually 022. The umsak is subtracted from 777, thus umask 022 results in a permission 0f 755.</para>
+<para>1 --x execute # Mode 764 = exec/read/write | read/write | read</para>
+<para>2 -w- write # For: |-- Owner --| |- Group-| |Oth|</para>
+<para>4 r-- read</para>
+<para>ugo=a u=user, g=group, o=others, a=everyone</para>
+<para># chmod [OPTION] MODE[,MODE] FILE # MODE is of the form [ugoa]*([-+=]([rwxXst]))</para>
+<para># chmod 640 /var/log/maillog # Restrict the log -rw-r-----</para>
+<para># chmod u=rw,g=r,o= /var/log/maillog # Same as above</para>
+<para># chmod -R o-r /home/* # Recursive remove other readable for all users</para>
+<para># chmod u+s /path/to/prog # Set SUID bit on executable (know what you do!)</para>
+<para># find / -perm -u+s -print # Find all programs with the SUID bit</para>
+<para># chown user:group /path/to/file # Change the user and group ownership of a file</para>
+<para># chgrp group /path/to/file # Change the group ownership of a file</para></section><section><info><title>3.2 Disk information</title></info>
+<para># diskinfo -v /dev/ad2 # information about disk (sector/size) FreeBSD</para>
+<para># hdparm -I /dev/sda # information about the IDE/ATA disk (Linux)</para>
+<para># fdisk /dev/ad2 # Display and manipulate the partition table</para>
+<para># smartctl -a /dev/ad2 # Display the disk SMART info</para>
+<para/></section><section><info><title>3.3 Boot</title></info>
+<para>FreeBSD</para>
+<para>To boot an old kernel if the new kernel doesn't boot, stop the boot at during the count down.</para>
+<para># unload</para>
+<para># load kernel.old</para>
+<para># boot</para></section><section><info><title>3.4 System mount points/Disk usage</title></info>
+<para># mount | column -t # Show mounted file-systems on the system</para>
+<para># df # display free disk space and mounted devices</para>
+<para># cat /proc/partitions # Show all registered partitions (Linux)</para>
+<para>Disk usage</para>
+<para># du -sh * # Directory sizes as listing</para>
+<para># du -csh # Total directory size of the current directory</para>
+<para># du -ks * | sort -n -r # Sort everything by size in kilobytes</para>
+<para># ls -lSr # Show files, biggest last</para></section><section><info><title>3.5 Who has which files opened</title></info>
+<para>This is useful to find out which file is blocking a partition which has to be unmounted and gives a typical error of:</para>
+<para># umount /home/</para>
+<para>umount: unmount of /home # umount impossible because a file is locking home</para>
+<para>failed: Device busy</para>
+<para>FreeBSD and most Unixes</para>
+<para># fstat -f /home # for a mount point</para>
+<para># fstat -p PID # for an application with PID</para>
+<para># fstat -u user # for a user name</para>
+<para>Find opened log file (or other opened files), say for Xorg:</para>
+<para># ps ax | grep Xorg | awk '{print $1}'</para>
+<para>1252</para>
+<para># fstat -p 1252</para>
+<para>USER CMD PID FD MOUNT INUM MODE SZ|DV R/W</para>
+<para>root Xorg 1252 root / 2 drwxr-xr-x 512 r</para>
+<para>root Xorg 1252 text /usr 216016 -rws--x--x 1679848 r</para>
+<para>root Xorg 1252 0 /var 212042 -rw-r--r-- 56987 w</para>
+<para>The file with inum 212042 is the only file in /var:</para>
+<para># find -x /var -inum 212042</para>
+<para>/var/log/Xorg.0.log</para>
+<para>Linux</para>
+<para>Find opened files on a mount point with fuser or lsof:</para>
+<para># fuser -m /home # List processes accessing /home</para>
+<para># lsof /home</para>
+<para>COMMAND PID USER FD TYPE DEVICE SIZE NODE NAME</para>
+<para>tcsh 29029 eedcoba cwd DIR 0,18 12288 1048587 /home/eedcoba (guam:/home)</para>
+<para>lsof 29140 eedcoba cwd DIR 0,18 12288 1048587 /home/eedcoba (guam:/home)</para>
+<para/>
+<para>About an application:</para>
+<para>ps ax | grep Xorg | awk '{print $1}'</para>
+<para>3324</para>
+<para># lsof -p 3324</para>
+<para>COMMAND PID USER FD TYPE DEVICE SIZE NODE NAME</para>
+<para>Xorg 3324 root 0w REG 8,6 56296 12492 /var/log/Xorg.0.log</para>
+<para>About a single file:</para>
+<para># lsof /var/log/Xorg.0.log</para>
+<para>COMMAND PID USER FD TYPE DEVICE SIZE NODE NAME</para>
+<para>Xorg 3324 root 0w REG 8,6 56296 12492 /var/log/Xorg.0.log</para></section><section><info><title>3.6 Mount/remount a file system</title></info>
+<para>For example the cdrom. If listed in /etc/fstab:</para>
+<para># mount /cdrom</para>
+<para>Or find the device in /dev/ or with dmesg</para>
+<para>FreeBSD</para>
+<para># mount -v -t cd9660 /dev/cd0c /mnt # cdrom</para>
+<para># mount_cd9660 /dev/wcd0c /cdrom # other method</para>
+<para># mount -v -t msdos /dev/fd0c /mnt # floppy</para>
+<para>Entry in /etc/fstab:</para>
+<para># Device Mountpoint FStype Options Dump Pass#</para>
+<para>/dev/acd0 /cdrom cd9660 ro,noauto 0 0</para>
+<para>To let users do it:</para>
+<para># sysctl vfs.usermount=1 # Or insert the line "vfs.usermount=1" in /etc/sysctl.conf</para>
+<para>Linux</para>
+<para># mount -t auto /dev/cdrom /mnt/cdrom # typical cdrom mount command</para>
+<para># mount /dev/hdc -t iso9660 -r /cdrom # typical IDE</para>
+<para># mount /dev/sdc0 -t iso9660 -r /cdrom # typical SCSI</para>
+<para>Entry in /etc/fstab:</para>
+<para>/dev/cdrom /media/cdrom subfs noauto,fs=cdfss,ro,procuid,nosuid,nodev,exec 0 0</para>
+<para>Mount a FreeBSD partition with Linux</para>
+<para>Find the partition number containing with fdisk, this is usually the root partition, but it could be an other BSD slice too. If the FreeBSD has many slices, they are the one not listed in the fdisk table, but visible in /dev/sda* or /dev/hda*.</para>
+<para># fdisk /dev/sda # Find the FreeBSD partition</para>
+<para>/dev/sda3 * 5357 7905 20474842+ a5 FreeBSD</para>
+<para># mount -t ufs -o ufstype=ufs2,ro /dev/sda3 /mnt</para>
+<para>/dev/sda10 = /tmp; /dev/sda11 /usr # The other slices</para>
+<para>Remount</para>
+<para>Remount a device without unmounting it. Necessary for fsck for example</para>
+<para># mount -o remount,ro / # Linux</para>
+<para># mount -o ro / # FreeBSD</para>
+<para>Copy the raw data from a cdrom into an iso image:</para>
+<para># dd if=/dev/cd0c of=file.iso</para>
+<para/></section><section><info><title>3.7 Mount an SMB share</title></info>
+<para>Suppose we want to access the SMB share myshare on the computer smbserver, the address as typed on a Windows PC is \\smbserver\myshare\. We mount on /mnt/smbshare. Warning&gt; cifs wants an IP or DNS name, not a Windows name.</para>
+<para>Linux</para>
+<para># smbclient -U user -I 192.168.16.229 -L //smbshare/ # List the shares</para>
+<para># mount -t smbfs -o username=winuser //smbserver/myshare /mnt/smbshare</para>
+<para># mount -t cifs -o username=winuser,password=winpwd //192.168.16.229/myshare /mnt/share</para>
+<para>Additionally with the package mount.cifs it is possible to store the credentials in a file, for</para>
+<para>example /home/user/.smb:</para>
+<para>username=winuser</para>
+<para>password=winpwd</para>
+<para>And mount as follow:</para>
+<para># mount -t cifs -o credentials=/home/user/.smb //192.168.16.229/myshare /mnt/smbshare</para>
+<para>FreeBSD</para>
+<para>Use -I to give the IP (or DNS name); smbserver is the Windows name.</para>
+<para># smbutil view -I 192.168.16.229 //winuser@smbserver # List the shares</para>
+<para># mount_smbfs -I 192.168.16.229 //winuser@smbserver/myshare /mnt/smbshare</para></section><section><info><title>3.8 Mount an image</title></info>
+<para>Linux loop-back</para>
+<para># mount -t iso9660 -o loop file.iso /mnt # Mount a CD image</para>
+<para># mount -t ext3 -o loop file.img /mnt # Mount an image with ext3 fs</para>
+<para>FreeBSD</para>
+<para>With memory device (do # kldload md.ko if necessary):</para>
+<para># mdconfig -a -t vnode -f file.iso -u 0</para>
+<para># mount -t cd9660 /dev/md0 /mnt</para>
+<para># umount /mnt; mdconfig -d -u 0 # Cleanup the md device</para>
+<para>Or with virtual node:</para>
+<para># vnconfig /dev/vn0c file.iso; mount -t cd9660 /dev/vn0c /mnt</para>
+<para># umount /mnt; vnconfig -u /dev/vn0c # Cleanup the vn device</para>
+<para>Solaris and FreeBSD</para>
+<para>with loop-back file interface or lofi:</para>
+<para># lofiadm -a file.iso</para>
+<para># mount -F hsfs -o ro /dev/lofi/1 /mnt</para>
+<para># umount /mnt; lofiadm -d /dev/lofi/1 # Cleanup the lofi device</para></section><section><info><title>3.9 Create and burn an ISO image</title></info>
+<para>This will copy the cd or DVD sector for sector. Without conv=notrunc, the image will be smaller if there is less content on the cd. See below and the dd examples (page 38).</para>
+<para/>
+<para># dd if=/dev/hdc of=/tmp/mycd.iso bs=2048 conv=notrunc</para>
+<para/>
+<para>Use mkisofs to create a CD/DVD image from files in a directory. To overcome the file names restrictions: -r enables the Rock Ridge extensions common to UNIX systems, -J enables Joliet extensions used by Microsoft systems. -L allows ISO9660 filenames to begin with a period.</para>
+<para># mkisofs -J -L -r -V TITLE -o imagefile.iso /path/to/dir</para>
+<para>On FreeBSD, mkisofs is found in the ports in sysutils/cdrtools.</para>
+<para>Burn a CD/DVD ISO image</para>
+<para>FreeBSD</para>
+<para>FreeBSD does not enable DMA on ATAPI drives by default. DMA is enabled with the sysctl command and the arguments below, or with /boot/loader.conf with the following entries:</para>
+<para>hw.ata.ata_dma="1"</para>
+<para>hw.ata.atapi_dma="1"</para>
+<para>Use burncd with an ATAPI device (burncd is part of the base system) and cdrecord (in sysutils/</para>
+<para>cdrtools) with a SCSI drive.</para>
+<para># burncd -f /dev/acd0 data imagefile.iso fixate # For ATAPI drive</para>
+<para># cdrecord -scanbus # To find the burner device (like 1,0,0)</para>
+<para># cdrecord dev=1,0,0 imagefile.iso</para>
+<para>Linux</para>
+<para>Also use cdrecord with Linux as described above. Additionally it is possible to use the native ATAPI interface which is found with:</para>
+<para># cdrecord dev=ATAPI -scanbus</para>
+<para>And burn the CD/DVD as above.</para>
+<para>Convert a Nero .nrg file to .iso</para>
+<para>Nero simply adds a 300Kb header to a normal iso image. This can be trimmed with dd.</para>
+<para># dd bs=1k if=imagefile.nrg of=imagefile.iso skip=300</para>
+<para>Convert a bin/cue image to .iso</para>
+<para>The little bchunk program2 can do this. It is in the FreeBSD ports in sysutils/bchunk.</para>
+<para># bchunk imagefile.bin imagefile.cue imagefile.iso</para></section><section><info><title>3.10 Create a file based image</title></info>
+<para>For example a partition of 1GB using the file /usr/vdisk.img.</para>
+<para>FreeBSD</para>
+<para># dd if=/dev/random of=/usr/vdisk.img bs=1K count=1M</para>
+<para># mdconfig -a -t vnode -f /usr/vdisk.img -u 1 # Creates device /dev/md1</para>
+<para># bsdlabel -w /dev/md1</para>
+<para># newfs /dev/md1c</para>
+<para># mount /dev/md1c /mnt</para>
+<para># umount /mnt; mdconfig -d -u 1; rm /usr/vdisk.img # Cleanup the md device</para>
+<para>Linux</para>
+<para># dd if=/dev/zero of=/usr/vdisk.img bs=1024k count=1024</para>
+<para># mkfs.ext3 /usr/vdisk.img</para>
+<para>2.http://freshmeat.net/projects/bchunk/</para>
+<para># mount -o loop /usr/vdisk.img /mnt</para>
+<para># umount /mnt; rm /usr/vdisk.img # Cleanup</para>
+<para>Linux with losetup</para>
+<para>/dev/zero is much faster than urandom, but less secure for encryption.</para>
+<para># dd if=/dev/urandom of=/usr/vdisk.img bs=1024k count=1024</para>
+<para># losetup /dev/loop0 /usr/vdisk.img # Creates and associates /dev/loop0</para>
+<para># mkfs.ext3 /dev/loop0</para>
+<para># mount /dev/loop0 /mnt</para>
+<para># losetup -a # Check used loops</para>
+<para># umount /mnt</para>
+<para># losetup -d /dev/loop0 # Detach</para>
+<para># rm /usr/vdisk.img</para></section><section><info><title>3.11 Create a memory file system</title></info>
+<para>A memory based file system is very fast for heavy IO application. How to create a 64 MB partition mounted on /memdisk:</para>
+<para>FreeBSD</para>
+<para># mount_mfs -o rw -s 64M md /memdisk</para>
+<para># umount /memdisk; mdconfig -d -u 0 # Cleanup the md device</para>
+<para>md /memdisk mfs rw,-s64M 0 0 # /etc/fstab entry</para>
+<para>Linux</para>
+<para># mount -t tmpfs -osize=64m tmpfs /memdisk</para></section><section><info><title>3.12 Disk performance</title></info>
+<para>Read and write a 1 GB file on partition ad4s3c (/home)</para>
+<para># time dd if=/dev/ad4s3c of=/dev/null bs=1024k count=1000</para>
+<para># time dd if=/dev/zero bs=1024k count=1000 of=/home/1Gb.file</para>
+<para># hdparm -tT /dev/hda # Linux only</para></section></section><section><info><title>4. NETWORK</title></info>
+<para/><section><info><title>4.1 Debugging (See also Traffic analysis) (page 18)</title></info>
+<para># mii-diag eth0 # Show the link status (Linux)</para>
+<para># ifconfig fxp0 # Check the "media" field on FreeBSD</para>
+<para># arp -a # Check the router (or host) ARP entry (all OS)</para>
+<para># ping cb.vu # The first thing to try...</para>
+<para># traceroute cb.vu # Print the route path to destination</para>
+<para># mii-diag -F 100baseTx-FD eth0 # Force 100Mbit Full duplex (Linux)</para>
+<para># ifconfig fxp0 media 100baseTX mediaopt full-duplex # Same for FreeBSD</para>
+<para># netstat -s # System-wide statistics for each network protocol</para>
+<para/></section><section><info><title>4.2 Routing</title></info>
+<para>Print routing table</para>
+<para># route -n # Linux</para>
+<para># netstat -rn # Linux, BSD and UNIX</para>
+<para># route print # Windows</para>
+<para>Add and delete a route</para>
+<para>FreeBSD</para>
+<para># route add 212.117.0.0/16 192.168.1.1</para>
+<para># route delete 212.117.0.0/16</para>
+<para># route add default 192.168.1.1</para>
+<para>Add the route permanently in /etc/rc.conf</para>
+<para>static_routes="myroute"</para>
+<para>route_myroute="-net 212.117.0.0/16 192.168.1.1"</para>
+<para>Linux</para>
+<para># route add -net 192.168.20.0 netmask 255.255.255.0 gw 192.168.16.254</para>
+<para># ip route add 192.168.20.0/24 via 192.168.16.254 # same as above with ip route</para>
+<para># route add -net 192.168.20.0 netmask 255.255.255.0 dev eth0</para>
+<para># route add default gw 192.168.51.254</para>
+<para># ip route add default via 192.168.51.254 # same as above with ip route</para>
+<para># route delete -net 192.168.20.0 netmask 255.255.255.0</para>
+<para>Windows</para>
+<para># Route add 192.168.50.0 mask 255.255.255.0 192.168.51.253</para>
+<para># Route add 0.0.0.0 mask 0.0.0.0 192.168.51.254</para>
+<para>Use add -p to make the route persistent.</para></section><section><info><title>4.3 Configure additional IP addresses</title></info>
+<para>Linux</para>
+<para># ifconfig eth0 192.168.50.254 netmask 255.255.255.0 # First IP</para>
+<para># ifconfig eth0:0 192.168.51.254 netmask 255.255.255.0 # Second IP</para>
+<para>FreeBSD</para>
+<para># ifconfig fxp0 inet 192.168.50.254/24 # First IP</para>
+<para># ifconfig fxp0 alias 192.168.51.254 netmask 255.255.255.0 # Second IP</para>
+<para>Permanent entries in /etc/rc.conf</para>
+<para>ifconfig_fxp0="inet 192.168.50.254 netmask 255.255.255.0"</para>
+<para>ifconfig_fxp0_alias0="192.168.51.254 netmask 255.255.255.0"</para></section><section><info><title>4.4 Change MAC address</title></info>
+<para># ifconfig eth0 hw ether 00:01:02:03:04:05 # Linux</para>
+<para># ifconfig fxp0 link 00:01:02:03:04:05 # FreeBSD</para></section><section><info><title>4.5 Ports in use</title></info>
+<para>Listening open ports:</para>
+<para># netstat -an | grep LISTEN</para>
+<para># lsof -i # Linux list all Internet connections</para>
+<para># socklist # Linux display list of open sockets</para>
+<para># sockstat -4 # FreeBSD application listing</para>
+<para># netstat -anp --udp --tcp | grep LISTEN # Linux</para>
+<para># netstat -tup # List active connections to/from system (Linux)</para>
+<para># netstat -tupl # List listening ports from system (Linux)</para>
+<para># netstat -ano # Windows</para></section><section><info><title>4.6 Firewall</title></info>
+<para>Check if a firewall is running (typical configuration only):</para>
+<para>Linux</para>
+<para># iptables -L -n -v # For status</para>
+<para>Open the iptables firewall</para>
+<para># iptables -Z # Zero the packet and byte counters in all chains</para>
+<para># iptables -F # Flush all chains</para>
+<para># iptables -X # Delete all chains</para>
+<para># iptables -P INPUT ACCEPT # Open everything</para>
+<para># iptables -P FORWARD ACCEPT</para>
+<para># iptables -P OUTPUT ACCEPT</para>
+<para>FreeBSD</para>
+<para># ipfw show # For status</para>
+<para># ipfw list 65535 # if answer is "65535 deny ip from any to any" the fw is disabled</para>
+<para># sysctl net.inet.ip.fw.enable=0 # Disable</para>
+<para># sysctl net.inet.ip.fw.enable=1 # Enable</para></section><section><info><title>4.7 IP Forward for routing</title></info>
+<para>Linux</para>
+<para>Check and then enable IP forward with:</para>
+<para># cat /proc/sys/net/ipv4/ip_forward # Check IP forward 0=off, 1=on</para>
+<para># echo 1 &gt; /proc/sys/net/ipv4/ip_forward</para>
+<para>or edit /etc/sysctl.conf with:</para>
+<para>net.ipv4.ip_forward = 1</para>
+<para>FreeBSD</para>
+<para>Check and enable with:</para>
+<para># sysctl net.inet.ip.forwarding # Check IP forward 0=off, 1=on</para>
+<para># sysctl net.inet.ip.forwarding=1</para>
+<para># sysctl net.inet.ip.fastforwarding=1 # For dedicated router or firewall</para>
+<para>Permanent with entry in /etc/rc.conf:</para>
+<para>gateway_enable="YES" # Set to YES if this host will be a gateway.</para></section><section><info><title>4.8 NAT Network Address Translation</title></info>
+<para>Linux</para>
+<para># iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE # to activate NAT</para>
+<para># iptables -t nat -A PREROUTING -p tcp -d 78.31.70.238 --dport 20022 -j DNAT \</para>
+<para>--to 192.168.16.44:22 # Port forward 20022 to internal IP port ssh</para>
+<para># iptables -t nat -A PREROUTING -p tcp -d 78.31.70.238 --dport 993:995 -j DNAT \</para>
+<para>--to 192.168.16.254:993:995 # Port forward of range 993-995</para>
+<para># ip route flush cache</para>
+<para># iptables -L -t nat # Check NAT status</para>
+<para>Delete the port forward with -D instead of -A.</para>
+<para>FreeBSD</para>
+<para># natd -s -m -u -dynamic -f /etc/natd.conf -n fxp0</para>
+<para>Or edit /etc/rc.conf with:</para>
+<para>firewall_enable="YES" # Set to YES to enable firewall functionality</para>
+<para>firewall_type="open" # Firewall type (see /etc/rc.firewall)</para>
+<para>natd_enable="YES" # Enable natd (if firewall_enable == YES).</para>
+<para>natd_interface="tun0" # Public interface or IP address to use.</para>
+<para>natd_flags="-s -m -u -dynamic -f /etc/natd.conf"</para>
+<para>Port forward with:</para>
+<para># cat /etc/natd.conf</para>
+<para>same_ports yes</para>
+<para>use_sockets yes</para>
+<para>unregistered_only</para>
+<para># redirect_port tcp insideIP:2300-2399 3300-3399 # port range</para>
+<para>redirect_port udp 192.168.51.103:7777 7777</para></section><section><info><title>4.9 DNS</title></info>
+<para>On Unix the DNS entries are valid for all interfaces and are stored in /etc/resolv.conf. The domain to which the host belongs is also stored in this file. A minimal configuration is:</para>
+<para>nameserver 78.31.70.238</para>
+<para>search sleepyowl.net intern.lab</para>
+<para>domain sleepyowl.net</para>
+<para>Check the system domain name with:</para>
+<para># hostname -d # Same as dnsdomainname</para>
+<para>Windows</para>
+<para>On Windows the DNS are configured per interface. To display the configured DNS and to flush the DNS cache use:</para>
+<para># ipconfig /? # Display help</para>
+<para># ipconfig /all # See all information including DNS</para>
+<para># ipconfig /flushdns # Flush the DNS cache</para>
+<para>Forward queries</para>
+<para>Dig is you friend to test the DNS settings. For example the public DNS server 213.133.105.2</para>
+<para>ns.second-ns.de can be used for testing. See from which server the client receives the answer</para>
+<para>(simplified answer).</para>
+<para># dig sleepyowl.net</para>
+<para>sleepyowl.net. 600 IN A 78.31.70.238</para>
+<para>;; SERVER: 192.168.51.254#53(192.168.51.254)</para>
+<para>The router 192.168.51.254 answered and the response is the A entry. Any entry can be queried and the DNS server can be selected with @:</para>
+<para/>
+<para>The program host is also powerful.</para>
+<para># host -t MX cb.vu # Get the mail MX entry</para>
+<para># host -t NS -T sun.com # Get the NS record over a TCP connection</para>
+<para># host -a sleepyowl.net # Get everything</para>
+<para>Reverse queries</para>
+<para>Find the name belonging to an IP address (in-addr.arpa.). This can be done with dig, host and</para>
+<para>nslookup:</para>
+<para># dig -x 78.31.70.238</para>
+<para># host 78.31.70.238</para>
+<para># nslookup 78.31.70.238</para>
+<para>/etc/hosts</para>
+<para>Single hosts can be configured in the file /etc/hosts instead of running named locally to resolve the hostname queries. The format is simple, for example:</para>
+<para>78.31.70.238 sleepyowl.net sleepyowl</para>
+<para>The priority between hosts and a dns query, that is the name resolution order, can be</para>
+<para>configured in /etc/nsswitch.conf AND /etc/host.conf. The file also exists on Windows, it is</para>
+<para>usually in:</para>
+<para>C:\WINDOWS\SYSTEM32\DRIVERS\ETC</para></section><section><info><title>4.10 DHCP</title></info>
+<para>Linux</para>
+<para>Some distributions (SuSE) use dhcpcd as client. The default interface is eth0.</para>
+<para># dhcpcd -n eth0 # Trigger a renew</para>
+<para># dhcpcd -k eth0 # release and shutdown</para>
+<para>The lease with the full information is stored in:</para>
+<para>/var/lib/dhcpcd/dhcpcd-eth0.info</para>
+<para>FreeBSD</para>
+<para>FreeBSD (and Debian) uses dhclient. To configure an interface (for example bge0) run:</para>
+<para># dhclient bge0</para>
+<para>The lease with the full information is stored in:</para>
+<para>/var/db/dhclient.leases.bge0</para>
+<para>Use</para>
+<para>/etc/dhclient.conf</para>
+<para>to prepend options or force different options:</para>
+<para># cat /etc/dhclient.conf</para>
+<para>interface "rl0" {</para>
+<para>prepend domain-name-servers 127.0.0.1;</para>
+<para>default domain-name "sleepyowl.net";</para>
+<para>supersede domain-name "sleepyowl.net";</para>
+<para>}</para>
+<para>Windows</para>
+<para># ipconfig /renew # renew all adapters</para>
+<para># ipconfig /renew LAN # renew the adapter named "LAN"</para>
+<para># ipconfig /release WLAN # release the adapter named "WLAN"</para>
+<para>Yes it is a good idea to rename you adapter with simple names!</para></section><section><info><title>4.11 Traffic analysis</title></info>
+<para>Bmon3 is a small console bandwidth monitor and can display the flow on different interfaces.</para>
+<para>Sniff with tcpdump</para>
+<para># tcpdump -nl -i bge0 not port ssh and src \(192.168.16.121 or 192.168.16.54\)</para>
+<para># tcpdump -l &gt; dump &amp;&amp; tail -f dump # Buffered output</para>
+<para># tcpdump -i rl0 -w traffic.rl0 # Write traffic in binary file</para>
+<para># tcpdump -r traffic.rl0 # Read from file (also for ethereal</para>
+<para># tcpdump port 80 # The two classic commands</para>
+<para># tcpdump host google.com</para>
+<para># tcpdump -i eth0 -X port \(110 or 143\) # Check if pop or imap is secure</para>
+<para># tcpdump -n -i eth0 icmp # Only catch pings</para>
+<para># tcpdump -i eth0 -s 0 -A port 80 | grep GET # -s 0 for full packet -A for ASCII</para>
+<para>Additional important options:</para>
+<para>-A Print each packets in clear text (without header)</para>
+<para>-X Print packets in hex and ASCII</para>
+<para>-l Make stdout line buffered</para>
+<para>-D Print all interfaces available</para>
+<para>On Windows use windump from www.winpcap.org. Use windump -D to list the interfaces.</para>
+<para>Scan with nmap</para>
+<para>Nmap4 is a port scanner with OS detection, it is usually installed on most distributions and is also available for Windows. If you don't scan your servers, hackers do it for you...</para>
+<para># nmap cb.vu # scans all reserved TCP ports on the host</para>
+<para># nmap -sP 192.168.16.0/24 # Find out which IP are used and by which host on 0/24</para>
+<para># nmap -sS -sV -O cb.vu # Do a stealth SYN scan with version and OS detection</para>
+<para>PORT STATE SERVICE VERSION</para>
+<para>22/tcp open ssh OpenSSH 3.8.1p1 FreeBSD-20060930 (protocol 2.0)</para>
+<para>25/tcp open smtp Sendmail smtpd 8.13.6/8.13.6</para>
+<para>80/tcp open http Apache httpd 2.0.59 ((FreeBSD) DAV/2 PHP/4.</para>
+<para>[...]</para>
+<para>Running: FreeBSD 5.X</para>
+<para>Uptime 33.120 days (since Fri Aug 31 11:41:04 2007)</para></section><section><info><title>4.12 Traffic control (QoS)</title></info>
+<para>Traffic control manages the queuing, policing, scheduling, and other traffic parameters for a network. The following examples are simple practical uses of the Linux and FreeBSD capabilities to better use the available bandwidth.</para>
+<para>Limit upload</para>
+<para>DSL or cable modems have a long queue to improve the upload throughput. However filling the queue with a fast device (e.g. ethernet) will dramatically decrease the interactivity. It is therefore useful to limit the device upload rate to match the physical capacity of the modem, this should greatly improve the interactivity. Set to about 90% of the modem maximal (cable)</para>
+<para>speed.</para>
+<para>3.http://people.suug.ch/~tgr/bmon/</para>
+<para>4.http://insecure.org/nmap/</para>
+<para/>
+<para>Linux</para>
+<para>For a 512 Kbit upload modem.</para>
+<para># tc qdisc add dev eth0 root tbf rate 480kbit latency 50ms burst 1540</para>
+<para># tc -s qdisc ls dev eth0 # Status</para>
+<para># tc qdisc del dev eth0 root # Delete the queue</para>
+<para># tc qdisc change dev eth0 root tbf rate 220kbit latency 50ms burst 1540</para>
+<para>FreeBSD</para>
+<para>FreeBSD uses the dummynet traffic shaper which is configured with ipfw. Pipes are used to set limits the bandwidth in units of [K|M]{bit/s|Byte/s}, 0 means unlimited bandwidth. Using the same pipe number will reconfigure it. For example limit the upload bandwidth to 500 Kbit.</para>
+<para># kldload dummynet # load the module if necessary</para>
+<para># ipfw pipe 1 config bw 500Kbit/s # create a pipe with limited bandwidth</para>
+<para># ipfw add pipe 1 ip from me to any # divert the full upload into the pipe</para>
+<para>Quality of service</para>
+<para>Linux</para>
+<para>Priority queuing with tc to optimize VoIP. See the full example on voip-info.org or</para>
+<para>www.howtoforge.com. Suppose VoIP uses udp on ports 10000:11024 and device eth0 (could also be ppp0 or so). The following commands define the QoS to three queues and force the VoIP traffic to queue 1 with QoS 0x1e (all bits set). The default traffic flows into queue 3 and QoS</para>
+<para>Minimize-Delay flows into queue 2.</para>
+<para># tc qdisc add dev eth0 root handle 1: prio priomap 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 0</para>
+<para># tc qdisc add dev eth0 parent 1:1 handle 10: sfq</para>
+<para># tc qdisc add dev eth0 parent 1:2 handle 20: sfq</para>
+<para># tc qdisc add dev eth0 parent 1:3 handle 30: sfq</para>
+<para># tc filter add dev eth0 protocol ip parent 1: prio 1 u32 \</para>
+<para>match ip dport 10000 0x3C00 flowid 1:1 # use server port range</para>
+<para>match ip dst 123.23.0.1 flowid 1:1 # or/and use server IP</para>
+<para>Status and remove with</para>
+<para># tc -s qdisc ls dev eth0 # queue status</para>
+<para># tc qdisc del dev eth0 root # delete all QoS</para>
+<para>Calculate port range and mask</para>
+<para>The tc filter defines the port range with port and mask which you have to calculate. Find the 2^N ending of the port range, deduce the range and convert to HEX. This is your mask.</para>
+<para>Example for 10000 -&gt; 11024, the range is 1024.</para>
+<para># 2^13 (8192) &lt; 10000 &lt; 2^14 (16384) # ending is 2^14 = 16384</para>
+<para># echo "obase=16;(2^14)-1024" | bc # mask is 0x3C00</para>
+<para>FreeBSD</para>
+<para>The max link bandwidth is 500Kbit/s and we define 3 queues with priority 100:10:1 for</para>
+<para>VoIP:ssh:all the rest.</para>
+<para># ipfw pipe 1 config bw 500Kbit/s</para>
+<para># ipfw queue 1 config pipe 1 weight 100</para>
+<para># ipfw queue 2 config pipe 1 weight 10</para>
+<para># ipfw queue 3 config pipe 1 weight 1</para>
+<para># ipfw add 10 queue 1 proto udp dst-port 10000-11024</para>
+<para># ipfw add 11 queue 1 proto udp dst-ip 123.23.0.1 # or/and use server IP</para>
+<para># ipfw add 20 queue 2 dsp-port ssh</para>
+<para># ipfw add 30 queue 3 from me to any # all the rest</para>
+<para>Status and remove with</para>
+<para># ipfw list # rules status</para>
+<para># ipfw pipe list # pipe status</para>
+<para># ipfw flush # deletes all rules but default</para></section><section><info><title>4.13 NIS Debugging</title></info>
+<para>Some commands which should work on a well configured NIS client:</para>
+<para># ypwhich # get the connected NIS server name</para>
+<para># domainname # The NIS domain name as configured</para>
+<para># ypcat group # should display the group from the NIS server</para>
+<para># cd /var/yp &amp;&amp; make # Rebuild the yp database</para>
+<para>Is ypbind running?</para>
+<para># ps auxww | grep ypbind</para>
+<para>/usr/sbin/ypbind -s -m -S servername1,servername2 # FreeBSD</para>
+<para>/usr/sbin/ypbind # Linux</para>
+<para># yppoll passwd.byname</para>
+<para>Map passwd.byname has order number 1190635041. Mon Sep 24 13:57:21 2007</para>
+<para>The master server is servername.domain.net.</para>
+<para>Linux</para>
+<para># cat /etc/yp.conf</para>
+<para>ypserver servername</para>
+<para>domain domain.net broadcast</para></section></section><section><info><title>5. SSH SCP</title></info>
+<para/><section><info><title>5.1 Public key authentication</title></info>
+<para>Connect to a host without password using public key authentication. The idea is to append your public key to the authorized_keys2 file on the remote host. For this example let's connect host-client to host-server, the key is generated on the client.</para>
+<para>• Use ssh-keygen to generate a key pair. ~/.ssh/id_dsa is the private key, ~/.ssh/</para>
+<para>id_dsa.pub is the public key.</para>
+<para>• Copy only the public key to the server and append it to the file ~/.ssh/</para>
+<para>authorized_keys2 on your home on the server.</para>
+<para># ssh-keygen -t dsa -N ''</para>
+<para># cat ~/.ssh/id_dsa.pub | ssh you@host-server "cat - &gt;&gt; ~/.ssh/authorized_keys2"</para>
+<para>Using the Windows client from ssh.com</para>
+<para>The non commercial version of the ssh.com client can be downloaded the main ftp site:</para>
+<para>ftp.ssh.com/pub/ssh/. Keys generated by the ssh.com client need to be converted for the OpenSSH server. This can be done with the ssh-keygen command.</para>
+<para>• Create a key pair with the ssh.com client: Settings - User Authentication - Generate</para>
+<para>New....</para>
+<para>• I use Key type DSA; key length 2048.</para>
+<para>• Copy the public key generated by the ssh.com client to the server into the ~/.ssh folder.</para>
+<para>• The keys are in C:\Documents and Settings\%USERNAME%\Application</para>
+<para>Data\SSH\UserKeys.</para>
+<para>• Use the ssh-keygen command on the server to convert the key:</para>
+<para># cd ~/.ssh</para>
+<para># ssh-keygen -i -f keyfilename.pub &gt;&gt; authorized_keys2</para>
+<para/>
+<para>Notice: We used a DSA key, RSA is also possible. The key is not protected by a password.</para>
+<para>Using putty for Windows</para>
+<para>Putty5 is a simple and free ssh client for Windows.</para>
+<para>• Create a key pair with the puTTYgen program.</para>
+<para>• Save the public and private keys (for example into C:\Documents and</para>
+<para>Settings\%USERNAME%\.ssh).</para>
+<para>• Copy the public key to the server into the ~/.ssh folder:</para>
+<para># scp .ssh/puttykey.pub root@192.168.51.254:.ssh/</para>
+<para>• Use the ssh-keygen command on the server to convert the key for OpenSSH:</para>
+<para># cd ~/.ssh</para>
+<para># ssh-keygen -i -f puttykey.pub &gt;&gt; authorized_keys2</para>
+<para>• Point the private key location in the putty settings: Connection - SSH - Auth</para></section><section><info><title>5.2 Check fingerprint</title></info>
+<para>At the first login, ssh will ask if the unknown host with the fingerprint has to be stored in the known hosts. To avoid a man-in-the-middle attack the administrator of the server can send you the server fingerprint which is then compared on the first login. Use ssh-keygen -l to get the fingerprint (on the server):</para>
+<para># ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub # For RSA key</para>
+<para>2048 61:33:be:9b:ae:6c:36:31:fd:83:98:b7:99:2d:9f:cd /etc/ssh/ssh_host_rsa_key.pub</para>
+<para># ssh-keygen -l -f /etc/ssh/ssh_host_dsa_key.pub # For DSA key (default)</para>
+<para>2048 14:4a:aa:d9:73:25:46:6d:0a:48:35:c7:f4:16:d4:ee /etc/ssh/ssh_host_dsa_key.pub</para>
+<para>Now the client connecting to this server can verify that he is connecting to the right server:</para>
+<para># ssh linda</para>
+<para>The authenticity of host 'linda (192.168.16.54)' can't be established.</para>
+<para>DSA key fingerprint is 14:4a:aa:d9:73:25:46:6d:0a:48:35:c7:f4:16:d4:ee.</para>
+<para>Are you sure you want to continue connecting (yes/no)? yes</para></section><section><info><title>5.3 Secure file transfer</title></info>
+<para>Some simple commands:</para>
+<para># scp file.txt host-two:/tmp</para>
+<para># scp joe@host-two:/www/*.html /www/tmp</para>
+<para># scp -r joe@host-two:/www /www/tmp</para>
+<para>In Konqueror or Midnight Commander it is possible to access a remote file system with the address fish://user@gate. However the implementation is very slow.</para>
+<para>Furthermore it is possible to mount a remote folder with sshfs a file system client based on SCP. See fuse sshfs6.</para></section><section><info><title>5.4 Tunneling</title></info>
+<para>SSH tunneling allows to forward or reverse forward a port over the SSH connection, thus securing the traffic and accessing ports which would otherwise be blocked. This only works with TCP. The general nomenclature for forward and reverse is (see also ssh and NAT example):</para>
+<para># ssh -L localport:desthost:destport user@gate # desthost as seen from the gate</para>
+<para># ssh -R destport:desthost:localport user@gate # forwards your localport to destination</para>
+<para># ssh -X user@gate # To force X forwarding</para>
+<para>5.http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html</para>
+<para>6.http://fuse.sourceforge.net/sshfs.html</para>
+<para/>
+<para>This will connect to gate and forward the local port to the host desthost:destport. Note desthost is the destination host as seen by the gate, so if the connection is to the gate, then desthost is localhost. More than one port forward is possible.</para>
+<para>Direct forward on the gate</para>
+<para>Let say we want to access the CVS (port 2401) and http (port 80) which are running on the gate. This is the simplest example, desthost is thus localhost, and we use the port 8080 locally instead of 80 so we don't need to be root. Once the ssh session is open, both services are accessible on the local ports.</para>
+<para># ssh -L 2401:localhost:2401 -L 8080:localhost:80 user@gate</para>
+<para>Netbios and remote desktop forward to a second server</para>
+<para>Let say a Windows smb server is behind the gate and is not running ssh. We need access to the smb share and also remote desktop to the server.</para>
+<para># ssh -L 139:smbserver:139 -L 3388:smbserver:3389 user@gate</para>
+<para>The smb share can now be accessed with \\127.0.0.1\, but only if the local share is disabled, because the local share is listening on port 139.</para>
+<para>It is possible to keep the local share enabled, for this we need to create a new virtual device with a new IP address for the tunnel, the smb share will be connected over this address.</para>
+<para>Furthermore the local RDP is already listening on 3389, so we choose 3388. For this example let's use a virtual IP of 10.1.1.1.</para>
+<para>• With putty use Source port=10.1.1.1:139. It is possible to create multiple loop devices</para>
+<para>and tunnel. On Windows 2000, only putty worked for me.</para>
+<para>• With the ssh.com client, disable "Allow local connections only". Since ssh.com will bind</para>
+<para>to all addresses, only a single share can be connected.</para>
+<para>Now create the loopback interface with IP 10.1.1.1:</para>
+<para>• # System-&gt;Control Panel-&gt;Add Hardware # Yes, Hardware is already connected # Add</para>
+<para>a new hardware device (at bottom).</para>
+<para>• # Install the hardware that I manually select # Network adapters # Microsoft , Microsoft</para>
+<para>Loopback Adapter.</para>
+<para>• Configure the IP address of the fake device to 10.1.1.1 mask 255.255.255.0, no</para>
+<para>gateway.</para>
+<para>• advanced-&gt;WINS, Enable LMHosts Lookup; Disable NetBIOS over TCP/IP.</para>
+<para>• # Enable Client for Microsoft Networks. # Disable File and Printer Sharing for Microsoft</para>
+<para>Networks.</para>
+<para>I HAD to reboot for this to work. Now connect to the smb share with \\10.1.1.1 and remote</para>
+<para>desktop to 10.1.1.1:3388.</para>
+<para>Debug</para>
+<para>If it is not working:</para>
+<para>• Are the ports forwarded: netstat -an? Look at 0.0.0.0:139 or 10.1.1.1:139</para>
+<para>• Does telnet 10.1.1.1 139 connect?</para>
+<para>• You need the checkbox "Local ports accept connections from other hosts".</para>
+<para>• Is "File and Printer Sharing for Microsoft Networks" disabled on the loopback interface?</para>
+<para>Connect two clients behind NAT</para>
+<para>Suppose two clients are behind a NAT gateway and client cliadmin has to connect to client</para>
+<para>cliuser (the destination), both can login to the gate with ssh and are running Linux with sshd.</para>
+<para>You don't need root access anywhere as long as the ports on gate are above 1024. We use 2022</para>
+<para>on gate. Also since the gate is used locally, the option GatewayPorts is not necessary.</para>
+<para>On client cliuser (from destination to gate):</para>
+<para># ssh -R 2022:localhost:22 user@gate # forwards client 22 to gate:2022</para>
+<para>On client cliadmin (from host to gate):</para>
+<para/>
+<para># ssh -L 3022:localhost:2022 admin@gate # forwards client 3022 to gate:2022</para>
+<para>Now the admin can connect directly to the client cliuser with:</para>
+<para># ssh -p 3022 admin@localhost # local:3022 -&gt; gate:2022 -&gt; client:22</para>
+<para>Connect to VNC behind NAT</para>
+<para>Suppose a Windows client with VNC listening on port 5900 has to be accessed from behind NAT.</para>
+<para>On client cliwin to gate:</para>
+<para># ssh -R 15900:localhost:5900 user@gate</para>
+<para>On client cliadmin (from host to gate):</para>
+<para># ssh -L 5900:localhost:15900 admin@gate</para>
+<para>Now the admin can connect directly to the client VNC with:</para>
+<para># vncconnect -display :0 localhost</para></section></section><section><info><title>6. VPN WITH SSH</title></info>
+<para>As of version 4.3, OpenSSH can use the tun/tap device to encrypt a tunnel. This is very similar to other TLS based VPN solutions like OpenVPN. One advantage with SSH is that there is no need to install and configure additional software. Additionally the tunnel uses the SSH authentication like pre shared keys. The drawback is that the encapsulation is done over TCP which might result in poor performance on a slow link. Also the tunnel is relying on a single (fragile) TCP connection. This technique is very useful for a quick IP based VPN setup. There is no limitation as with the single TCP port forward, all layer 3/4 protocols like ICMP, TCP/UDP, etc. are forwarded over the VPN. In any case, the following options are needed in the sshd_conf</para>
+<para>file:</para>
+<para>PermitRootLogin yes</para>
+<para>PermitTunnel yes</para><section><info><title>6.1 Single P2P connection</title></info>
+<para>Here we are connecting two hosts, hclient and hserver with a peer to peer tunnel. The</para>
+<para>connection is started from hclient to hserver and is done as root. The tunnel end points are 10.0.1.1 (server) and 10.0.1.2 (client) and we create a device tun5 (this could also be an other number). The procedure is very simple:</para>
+<para>• Connect with SSH using the tunnel option -w</para>
+<para>• Configure the IP addresses of the tunnel. Once on the server and once on the client.</para>
+<para>Connect to the server</para>
+<para>Connection started on the client and commands are executed on the server.</para>
+<para>Server is on Linux</para>
+<para>cli&gt;# ssh -w5:5 root@hserver</para>
+<para>srv&gt;# ifconfig tun5 10.0.1.1 netmask 255.255.255.252 # Executed on the server shell</para>
+<para>Server is on FreeBSD</para>
+<para>cli&gt;# ssh -w5:5 root@hserver</para>
+<para>srv&gt;# ifconfig tun5 10.0.1.1 10.0.1.2 # Executed on the server shell</para>
+<para>Configure the client</para>
+<para>Commands executed on the client:</para>
+<para/>
+<para>cli&gt;# ifconfig tun5 10.0.1.2 netmask 255.255.255.252 # Client is on Linux</para>
+<para>cli&gt;# ifconfig tun5 10.0.1.2 10.0.1.1 # Client is on FreeBSD</para>
+<para>The two hosts are now connected and can transparently communicate with any layer 3/4</para>
+<para>protocol using the tunnel IP addresses.</para></section><section><info><title>6.2 Connect two networks</title></info>
+<para>In addition to the p2p setup above, it is more useful to connect two private networks with an</para>
+<para>SSH VPN using two gates. Suppose for the example, netA is 192.168.51.0/24 and netB</para>
+<para>192.168.16.0/24. The procedure is similar as above, we only need to add the routing. NAT must</para>
+<para>be activated on the private interface only if the gates are not the same as the default gateway</para>
+<para>of their network.</para>
+<para>192.168.51.0/24 (netA)|gateA &lt;-&gt; gateB|192.168.16.0/24 (netB)</para>
+<para>• Connect with SSH using the tunnel option -w.</para>
+<para>• Configure the IP addresses of the tunnel. Once on the server and once on the client.</para>
+<para>• Add the routing for the two networks.</para>
+<para>• If necessary, activate NAT on the private interface of the gate.</para>
+<para>The setup is started from gateA in netA.</para>
+<para>Connect from gateA to gateB</para>
+<para>Connection is started from gateA and commands are executed on gateB.</para>
+<para>gateB is on Linux</para>
+<para>gateA&gt;# ssh -w5:5 root@gateB</para>
+<para>gateB&gt;# ifconfig tun5 10.0.1.1 netmask 255.255.255.252 # Executed on the gateB shell</para>
+<para>gateB&gt;# route add -net 192.168.51.0 netmask 255.255.255.0 dev tun5</para>
+<para>gateB&gt;# echo 1 &gt; /proc/sys/net/ipv4/ip_forward # Only needed if not default gw</para>
+<para>gateB&gt;# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</para>
+<para>gateB is on FreeBSD</para>
+<para>gateA&gt;# ssh -w5:5 root@gateB # Creates the tun5 devices</para>
+<para>gateB&gt;# ifconfig tun5 10.0.1.1 10.0.1.2 # Executed on the gateB shell</para>
+<para>gateB&gt;# route add 192.168.51.0/24 10.0.1.2</para>
+<para>gateB&gt;# sysctl net.inet.ip.forwarding=1 # Only needed if not default gw</para>
+<para>gateB&gt;# natd -s -m -u -dynamic -n fxp0 # see NAT (page 15)</para>
+<para>gateA&gt;# sysctl net.inet.ip.fw.enable=1</para>
+<para>Configure gateA</para>
+<para>Commands executed on gateA:</para>
+<para>gateA is on Linux</para>
+<para>gateA&gt;# ifconfig tun5 10.0.1.2 netmask 255.255.255.252</para>
+<para>gateA&gt;# route add -net 192.168.16.0 netmask 255.255.255.0 dev tun5</para>
+<para>gateA&gt;# echo 1 &gt; /proc/sys/net/ipv4/ip_forward</para>
+<para>gateA&gt;# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</para>
+<para>gateA is on FreeBSD</para>
+<para>gateA&gt;# ifconfig tun5 10.0.1.2 10.0.1.1</para>
+<para>gateA&gt;# route add 192.168.16.0/24 10.0.1.2</para>
+<para>gateA&gt;# sysctl net.inet.ip.forwarding=1</para>
+<para>gateA&gt;# natd -s -m -u -dynamic -n fxp0 # see NAT (page 15)</para>
+<para>gateA&gt;# sysctl net.inet.ip.fw.enable=1</para>
+<para>The two private networks are now transparently connected via the SSH VPN. The IP forward and NAT settings are only necessary if the gates are not the default gateways. In this case the clients would not know where to forward the response, and nat must be activated.</para>
+<para/></section></section><section><info><title>7. RSYNC</title></info>
+<para>Rsync can almost completely replace cp and scp, furthermore interrupted transfers are</para>
+<para>efficiently restarted. A trailing slash (and the absence thereof) has different meanings, the man page is good... Here some examples:</para>
+<para>Copy the directories with full content:</para>
+<para># rsync -a /home/colin/ /backup/colin/</para>
+<para># rsync -a /var/ /var_bak/</para>
+<para># rsync -aR --delete-during /home/user/ /backup/ # use relative (see below)</para>
+<para>Same as before but over the network and with compression. Rsync uses SSH for the transport per default and will use the ssh key if they are set. Use ":" as with SCP. A typical remote copy:</para>
+<para># rsync -axSRzv /home/user/ user@server:/backup/user/</para>
+<para>Exclude any directory tmp within /home/user/ and keep the relative folders hierarchy, that is the remote directory will have the structure /backup/home/user/. This is typically used for backups.</para>
+<para># rsync -azR --exclude /tmp/ /home/user/ user@server:/backup/</para>
+<para>Use port 20022 for the ssh connection:</para>
+<para># rsync -az -e 'ssh -p 20022' /home/colin/ user@server:/backup/colin/</para>
+<para>Using the rsync daemon (used with "::") is much faster, but not encrypted over ssh. The</para>
+<para>location of /backup is defined by the configuration in /etc/rsyncd.conf. The variable</para>
+<para>RSYNC_PASSWORD can be set to avoid the need to enter the password manually.</para>
+<para># rsync -axSRz /home/ ruser@hostname::rmodule/backup/</para>
+<para># rsync -axSRz ruser@hostname::rmodule/backup/ /home/ # To copy back</para>
+<para>Some important options:</para>
+<para>-a, --archive archive mode; same as -rlptgoD (no -H)</para>
+<para>-r, --recursive recurse into directories</para>
+<para>-R, --relative use relative path names</para>
+<para>-H, --hard-links preserve hard links</para>
+<para>-S, --sparse handle sparse files efficiently</para>
+<para>-x, --one-file-system don't cross file system boundaries</para>
+<para>--exclude=PATTERN exclude files matching PATTERN</para>
+<para>--delete-during receiver deletes during xfer, not before</para>
+<para>--delete-after receiver deletes after transfer, not before</para><section><info><title>7.1 Rsync on Windows</title></info>
+<para>Rsync is available for Windows through cygwin or as stand-alone packaged in cwrsync7. This is very convenient for automated backups. Install one of them (not both) and add the path to the Windows system variables: # Control Panel -&gt; System -&gt; tab Advanced, button Environment</para>
+<para>Variables. Edit the "Path" system variable and add the full path to the installed rsync, e.g.</para>
+<para>C:\Program Files\cwRsync\bin or C:\cygwin\bin. This way the commands rsync and ssh are available in a Windows command shell.</para>
+<para>Public key authentication</para>
+<para>Rsync is automatically tunneled over SSH and thus uses the SSH authentication on the server.</para>
+<para>Automatic backups have to avoid a user interaction, for this the SSH public key authentication can be used and the rsync command will run without a password.</para>
+<para>All the following commands are executed within a Windows console. In a console (Start -&gt; Run -&gt; cmd) create and upload the key as described in SSH, change "user" and "server" as appropriate. If the file authorized_keys2 does not exist yet, simply copy id_dsa.pub to authorized_keys2 and upload it.</para>
+<para># ssh-keygen -t dsa -N '' # Creates a public and a private key</para>
+<para># rsync user@server:.ssh/authorized_keys2 . # Copy the file locally from the server</para>
+<para># cat id_dsa.pub &gt;&gt; authorized_keys2 # Or use an editor to add the key</para>
+<para># rsync authorized_keys2 user@server:.ssh/ # Copy the file back to the server</para>
+<para># del authorized_keys2 # Remove the local copy</para>
+<para>Now test it with (in one line):</para>
+<para>rsync -rv "/cygdrive/c/Documents and Settings/%USERNAME%/My Documents/" \</para>
+<para>'user@server:My\ Documents/'</para>
+<para>Automatic backup</para>
+<para>Use a batch file to automate the backup and add the file in the scheduled tasks (Programs -&gt; Accessories -&gt; System Tools -&gt; Scheduled Tasks). For example create the file backup.bat and</para>
+<para>replace user@server.</para>
+<para>@ECHO OFF</para>
+<para>REM rsync the directory My Documents</para>
+<para>SETLOCAL</para>
+<para>SET CWRSYNCHOME=C:\PROGRAM FILES\CWRSYNC</para>
+<para>SET CYGWIN=nontsec</para>
+<para>SET CWOLDPATH=%PATH%</para>
+<para>REM uncomment the next line when using cygwin</para>
+<para>SET PATH=%CWRSYNCHOME%\BIN;%PATH%</para>
+<para>echo Press Control-C to abort</para>
+<para>rsync -av "/cygdrive/c/Documents and Settings/%USERNAME%/My Documents/" \</para>
+<para>'user@server:My\ Documents/'</para>
+<para>pause</para></section></section><section><info><title>8. SUDO</title></info>
+<para>Sudo is a standard way to give users some administrative rights without giving out the root password. Sudo is very useful in a multi user environment with a mix of server and</para>
+<para>workstations. Simply call the command with sudo:</para>
+<para># sudo /etc/init.d/dhcpd restart # Run the rc script as root</para>
+<para># sudo -u sysadmin whoami # Run cmd as an other user</para><section><info><title>8.1 Configuration</title></info>
+<para>Sudo is configured in /etc/sudoers and must only be edited with visudo. The basic syntax is</para>
+<para>(the lists are comma separated):</para>
+<para>user hosts = (runas) commands # In /etc/sudoers</para>
+<para>users one or more users or %group (like %wheel) to gain the rights</para>
+<para>hosts list of hosts (or ALL)</para>
+<para>runas list of users (or ALL) that the command rule can be run as. It is enclosed in ( )!</para>
+<para>commands list of commands (or ALL) that will be run as root or as (runas)</para>
+<para>Additionally those keywords can be defined as alias, they are called User_Alias, Host_Alias, Runas_Alias and Cmnd_Alias. This is useful for larger setups. Here a sudoers example:</para>
+<para># cat /etc/sudoers</para>
+<para># Host aliases are subnets or hostnames.</para>
+<para>Host_Alias DMZ = 212.118.81.40/28</para>
+<para>User_Alias ADMINS = colin, luca, admin</para>
+<para>User_Alias DEVEL = joe, jack, julia</para>
+<para>Runas_Alias DBA = oracle,pgsql</para>
+<para># Command aliases define the full path of a list of commands</para>
+<para>Cmnd_Alias SYSTEM = /sbin/reboot,/usr/bin/kill,/sbin/halt,/sbin/shutdown,/etc/init.d/</para>
+<para>Cmnd_Alias PW = /usr/bin/passwd [A-z]*, !/usr/bin/passwd root # Not root pwd!</para>
+<para>Cmnd_Alias DEBUG = /usr/sbin/tcpdump,/usr/bin/wireshark,/usr/bin/nmap</para>
+<para># The actual rules</para>
+<para>root,ADMINS ALL = (ALL) NOPASSWD: ALL # ADMINS can do anything w/o a password.</para>
+<para>DEVEL DESKTOP = (ALL) NOPASSWD: ALL # Developers have full right on desktops</para>
+<para>DEVEL DMZ = (ALL) NOPASSWD: DEBUG # Developers can debug the DMZ servers.</para>
+<para># User sysadmin can mess around in the DMZ servers with some commands.</para>
+<para>sysadmin DMZ = (ALL) NOPASSWD: SYSTEM,PW,DEBUG</para>
+<para>sysadmin ALL,!DMZ = (ALL) NOPASSWD: ALL # Can do anything outside the DMZ.</para>
+<para>%dba ALL = (DBA) ALL # Group dba can run as database user.</para>
+<para># anyone can mount/unmount a cd-rom on the desktop machines</para>
+<para>ALL DESKTOP = NOPASSWD: /sbin/mount /cdrom,/sbin/umount /cdrom</para></section></section><section><info><title>9. ENCRYPT FILES</title></info><section><info><title>9.1 A single file</title></info>
+<para>Encrypt and decrypt:</para>
+<para># openssl des -salt -in file -out file.des</para>
+<para># openssl des -d -salt -in file.des -out file</para>
+<para>Note that the file can of course be a tar archive.</para></section><section><info><title>9.2 tar and encrypt a whole directory</title></info>
+<para># tar -cf - directory | openssl des -salt -out directory.tar.des # Encrypt</para>
+<para># openssl des -d -salt -in directory.tar.des | tar -x # Decrypt</para></section><section><info><title>9.3 tar zip and encrypt a whole directory</title></info>
+<para># tar -zcf - directory | openssl des -salt -out directory.tar.gz.des # Encrypt</para>
+<para># openssl des -d -salt -in directory.tar.gz.des | tar -xz # Decrypt</para>
+<para>• Use -k mysecretpassword after des to avoid the interactive password request. However note that this is highly insecure.</para>
+<para>• Use des3 instead of des to get even stronger encryption (Triple-DES Cipher). This uses also more CPU.</para></section></section><section><info><title>10. ENCRYPT PARTITIONS</title></info>
+<para>There are (many) other alternative methods to encrypt disks, I only show here the methods I know and use. Keep in mind that the security is only good as long the OS has not been tempered with. An intruder could easily record the password from the keyboard events.</para>
+<para>Furthermore the data is freely accessible when the partition is attached and will not prevent an intruder to have access to it in this state.</para>
+<para/><section><info><title>10.1 Linux</title></info>
+<para>Those instructions use the Linux dm-crypt (device-mapper) facility available on the 2.6 kernel.</para>
+<para>In this example, lets encrypt the partition /dev/sdc1, it could be however any other partition or disk, or USB or a file based partition created with losetup. In this case we would use /dev/loop0. See file image partition. The device mapper uses labels to identify a partition. We use sdc1 in this example, but it could be any string.</para>
+<para>dm-crypt with LUKS</para>
+<para>LUKS with dm-crypt has better encryption and makes it possible to have multiple passphrase for the same partition or to change the password easily. To test if LUKS is available, simply type #</para>
+<para>cryptsetup --help, if nothing about LUKS shows up, use the instructions below Without LUKS.</para>
+<para>First create a partition if necessary: fdisk /dev/sdc.</para>
+<para>Create encrypted partition</para>
+<para># dd if=/dev/urandom of=/dev/sdc1 # Optional. For paranoids only (takes days)</para>
+<para># cryptsetup -y luksFormat /dev/sdc1 # This destroys any data on sdc1</para>
+<para># cryptsetup luksOpen /dev/sdc1 sdc1</para>
+<para># mkfs.ext3 /dev/mapper/sdc1 # create ext3 file system</para>
+<para># mount -t ext3 /dev/mapper/sdc1 /mnt</para>
+<para># umount /mnt</para>
+<para># cryptsetup luksClose sdc1 # Detach the encrypted partition</para>
+<para>Attach</para>
+<para># cryptsetup luksOpen /dev/sdc1 sdc1</para>
+<para># mount -t ext3 /dev/mapper/sdc1 /mnt</para>
+<para>Detach</para>
+<para># umount /mnt</para>
+<para># cryptsetup luksClose sdc1</para>
+<para>dm-crypt without LUKS</para>
+<para># cryptsetup -y create sdc1 /dev/sdc1 # or any other partition like /dev/loop0</para>
+<para># dmsetup ls # check it, will display: sdc1 (254, 0)</para>
+<para># mkfs.ext3 /dev/mapper/sdc1 # This is done only the first time!</para>
+<para># mount -t ext3 /dev/mapper/sdc1 /mnt</para>
+<para># umount /mnt/</para>
+<para># cryptsetup remove sdc1 # Detach the encrypted partition</para>
+<para>Do exactly the same (without the mkfs part!) to re-attach the partition. If the password is not correct, the mount command will fail. In this case simply remove the map sdc1 (cryptsetup remove sdc1) and create it again.</para></section><section><info><title>10.2 FreeBSD</title></info>
+<para>The two popular FreeBSD disk encryption modules are gbde and geli. I now use geli because it is faster and also uses the crypto device for hardware acceleration. See The FreeBSD handbook Chapter 18.68 for all the details. The geli module must be loaded or compiled into the kernel:</para>
+<para>options GEOM_ELI</para>
+<para>device crypto # or as module:</para>
+<para># echo 'geom_eli_load="YES"' &gt;&gt; /boot/loader.conf # or do: kldload geom_eli</para>
+<para>8.http://www.freebsd.org/handbook/disks-encrypting.html</para>
+<para/>
+<para>Use password and key</para>
+<para>I use those settings for a typical disk encryption, it uses a passphrase AND a key to encrypt the master key.  That is you need both the password and the generated key /root/ad1.key to attach the partition. The master key is stored inside the partition and is not visible. See below for typical USB or file based image.</para>
+<para>Create encrypted partition</para>
+<para># dd if=/dev/random of=/root/ad1.key bs=64 count=1 # this key encrypts the mater key</para>
+<para># geli init -s 4096 -K /root/ad1.key /dev/ad1 # -s 8192 is also OK for disks</para>
+<para># geli attach -k /root/ad1.key /dev/ad1 # DO make a backup of /root/ad1.key</para>
+<para># dd if=/dev/random of=/dev/ad1.eli bs=1m # Optional and takes a long time</para>
+<para># newfs /dev/ad1.eli # Create file system</para>
+<para># mount /dev/ad1.eli /mnt</para>
+<para>Attach</para>
+<para># geli attach -k /root/ad1.key /dev/ad1</para>
+<para># fsck -ny -t ffs /dev/ad1.eli # In doubt check the file system</para>
+<para># mount /dev/ad1.eli /mnt</para>
+<para>Detach</para>
+<para>The detach procedure is done automatically on shutdown.</para>
+<para># umount /mnt</para>
+<para># geli detach /dev/ad1.eli</para>
+<para>/etc/fstab</para>
+<para>The encrypted partition can be configured to be mounted with /etc/fstab. The password will be</para>
+<para>prompted when booting. The following settings are required for this example:</para>
+<para># grep geli /etc/rc.conf</para>
+<para>geli_devices="ad1"</para>
+<para>geli_ad1_flags="-k /root/ad1.key"</para>
+<para># grep geli /etc/fstab</para>
+<para>/dev/ad1.eli /home/private ufs rw 0 0</para>
+<para>Use password only</para>
+<para>It is more convenient to encrypt a USB stick or file based image with a passphrase only and no key. In this case it is not necessary to carry the additional key file around. The procedure is very much the same as above, simply without the key file. Let's encrypt a file based image</para>
+<para>/cryptedfile of 1 GB.</para>
+<para># dd if=/dev/zero of=/cryptedfile bs=1M count=1000 # 1 GB file</para>
+<para># mdconfig -at vnode -f /cryptedfile</para>
+<para># geli init /dev/md0 # encrypts with password only</para>
+<para># geli attach /dev/md0</para>
+<para># newfs -U -m 0 /dev/md0.eli</para>
+<para># mount /dev/md0.eli /mnt</para>
+<para># umount /dev/md0.eli</para>
+<para># geli detach md0.eli</para>
+<para>It is now possible to mount this image on an other system with the password only.</para>
+<para># mdconfig -at vnode -f /cryptedfile</para>
+<para># geli attach /dev/md0</para>
+<para># mount /dev/md0.eli /mnt</para>
+<para>— Encrypt Partitions —</para>
+<para>29</para></section></section><section><info><title>11. SSL CERTIFICATES</title></info>
+<para>So called SSL/TLS certificates are cryptographic public key certificates and are composed of a public and a private key. The certificates are used to authenticate the endpoints and encrypt the data. They are used for example on a web server (https) or mail server (imaps).</para><section><info><title>11.1 Procedure</title></info>
+<para>• We need a certificate authority to sign our certificate. This step is usually provided by a vendor like Thawte, Verisign, etc., however we can also create our own.</para>
+<para>• Create a certificate signing request. This request is like an unsigned certificate (the</para>
+<para>public part) and already contains all necessary information. The certificate request is</para>
+<para>normally sent to the authority vendor for signing. This step also creates the private key</para>
+<para>on the local machine.</para>
+<para>• Sign the certificate with the certificate authority.</para>
+<para>• If necessary join the certificate and the key in a single file to be used by the application</para>
+<para>(web server, mail server etc.).</para></section><section><info><title>11.2 Configure OpenSSL</title></info>
+<para>We use /usr/local/certs as directory for this example check or edit /etc/ssl/openssl.cnf</para>
+<para>accordingly to your settings so you know where the files will be created. Here are the relevant part of openssl.cnf:</para>
+<para>[ CA_default ]</para>
+<para>dir = /usr/local/certs/CA # Where everything is kept</para>
+<para>certs = $dir/certs # Where the issued certs are kept</para>
+<para>crl_dir = $dir/crl # Where the issued crl are kept</para>
+<para>database = $dir/index.txt # database index file.</para>
+<para>Make sure the directories exist or create them</para>
+<para># mkdir -p /usr/local/certs/CA</para>
+<para># cd /usr/local/certs/CA</para>
+<para># mkdir certs crl newcerts private</para>
+<para># echo "01" &gt; serial # Only if serial does not exist</para>
+<para># touch index.txt</para></section><section><info><title>11.3 Create a certificate authority</title></info>
+<para>If you do not have a certificate authority from a vendor, you'll have to create your own. This</para>
+<para>step is not necessary if one intend to use a vendor to sign the request. To make a certificate</para>
+<para>authority (CA):</para>
+<para># openssl req -new -x509 -days 730 -config /etc/ssl/openssl.cnf \</para>
+<para>-keyout CA/private/cakey.pem -out CA/cacert.pem</para></section><section><info><title>11.4 Create a certificate signing request</title></info>
+<para>To make a new certificate (for mail server or web server for example), first create a request certificate with its private key. If your application do not support encrypted private key (for example UW-IMAP does not), then disable encryption with -nodes.</para>
+<para># openssl req -new -keyout newkey.pem -out newreq.pem \</para>
+<para>-config /etc/ssl/openssl.cnf</para>
+<para># openssl req -nodes -new -keyout newkey.pem -out newreq.pem \</para>
+<para>-config /etc/ssl/openssl.cnf # No encryption for the key</para>
+<para>— SSL Certificates —</para>
+<para>30</para></section><section><info><title>11.5 Sign the certificate</title></info>
+<para>The certificate request has to be signed by the CA to be valid, this step is usually done by the vendor. Note: replace "servername" with the name of your server in the next commands.</para>
+<para># cat newreq.pem newkey.pem &gt; new.pem</para>
+<para># openssl ca -policy policy_anything -out servernamecert.pem \</para>
+<para>-config /etc/ssl/openssl.cnf -infiles new.pem</para>
+<para># mv newkey.pem servernamekey.pem</para>
+<para>Now servernamekey.pem is the private key and servernamecert.pem is the server certificate.</para></section><section><info><title>11.6 Create united certificate</title></info>
+<para>The IMAP server wants to have both private key and server certificate in the same file. And in general, this is also easier to handle, but the file has to be kept securely!. Apache also can deal with it well. Create a file servername.pem containing both the certificate and key. </para>
+<para>• Open the private key (servernamekey.pem) with a text editor and copy the private key</para>
+<para>into the "servername.pem" file.</para>
+<para>• Do the same with the server certificate (servernamecert.pem).</para>
+<para>The final servername.pem file should look like this:</para>
+<para>-----BEGIN RSA PRIVATE KEY-----</para>
+<para>MIICXQIBAAKBgQDutWy+o/XZ/[...]qK5LqQgT3c9dU6fcR+WuSs6aejdEDDqBRQ</para>
+<para>-----END RSA PRIVATE KEY-----</para>
+<para>-----BEGIN CERTIFICATE-----</para>
+<para>MIIERzCCA7CgAwIBAgIBBDANB[...]iG9w0BAQQFADCBxTELMAkGA1UEBhMCREUx</para>
+<para>-----END CERTIFICATE-----</para>
+<para>What we have now in the directory /usr/local/certs/:</para>
+<para>CA/private/cakey.pem (CA server private key)</para>
+<para>CA/cacert.pem (CA server public key)</para>
+<para>certs/servernamekey.pem (server private key)</para>
+<para>certs/servernamecert.pem (server signed certificate)</para>
+<para>certs/servername.pem (server certificate with private key)</para>
+<para>Keep the private key secure!</para></section><section><info><title>11.7 View certificate information</title></info>
+<para>To view the certificate information simply do:</para>
+<para># openssl x509 -text -in servernamecert.pem # View the certificate info</para>
+<para># openssl req -noout -text -in server.csr # View the request info</para></section></section><section><info><title>12. CVS</title></info>
+<para/><section><info><title>12.1 Server setup</title></info>
+<para>Initiate the CVS</para>
+<para>Decide where the main repository will rest and create a root cvs. For example /usr/local/cvs (as</para>
+<para>root):</para>
+<para># mkdir -p /usr/local/cvs</para>
+<para># setenv CVSROOT /usr/local/cvs # Set CVSROOT to the new location (local)</para>
+<para># cvs init # Creates all internal CVS config files</para>
+<para># cvs checkout CVSROOT # Checkout the config files to modify them</para>
+<para># cd CVSROOT</para>
+<para>edit config ( fine as it is)</para>
+<para># cvs commit config</para>
+<para>cat &gt;&gt; writers # Create a writers file (optionally also readers)</para>
+<para>colin</para>
+<para>^D # Use [Control][D] to quit the edit</para>
+<para># cvs add writers # Add the file writers into the repository</para>
+<para># cvs edit checkoutlist</para>
+<para># cat &gt;&gt; checkoutlist</para>
+<para>writers</para>
+<para>^D # Use [Control][D] to quit the edit</para>
+<para># cvs commit # Commit all the configuration changes</para>
+<para>Add a readers file if you want to differentiate read and write permissions Note: Do not (ever) edit files directly into the main cvs, but rather checkout the file, modify it and check it in. We did this with the file writers to define the write access.</para>
+<para>There are three popular ways to access the CVS at this point. The first two don't need any</para>
+<para>further configuration. See the examples on CVSROOT below for how to use them:</para>
+<para>• Direct local access to the file system. The user(s) need sufficient file permission to</para>
+<para>access the CS directly and there is no further authentication in addition to the OS login.</para>
+<para>However this is only useful if the repository is local.</para>
+<para>• Remote access with ssh with the ext protocol. Any use with an ssh shell account and</para>
+<para>read/write permissions on the CVS server can access the CVS directly with ext over ssh</para>
+<para>without any additional tunnel. There is no server process running on the CVS for this to</para>
+<para>work. The ssh login does the authentication.</para>
+<para>• Remote access with pserver. This is the preferred use for larger user base as the users</para>
+<para>are authenticated by the CVS pserver with a dedicated password database, there is</para>
+<para>therefore no need for local users accounts. This setup is explained below.</para>
+<para>Network setup with inetd</para>
+<para>The CVS can be run locally only if a network access is not needed. For a remote access, the</para>
+<para>daemon inetd can start the pserver with the following line in /etc/inetd.conf (/etc/xinetd.d/cvs</para>
+<para>on SuSE):</para>
+<para>cvspserver stream tcp nowait cvs /usr/bin/cvs cvs \</para>
+<para>--allow-root=/usr/local/cvs pserver</para>
+<para>It is a good idea to block the cvs port from the Internet with the firewall and use an ssh tunnel</para>
+<para>to access the repository remotely.</para>
+<para>Separate authentication</para>
+<para>It is possible to have cvs users which are not part of the OS (no local users). This is actually probably wanted too from the security point of view. Simply add a file named passwd (in the CVSROOT directory) containing the users login and password in the crypt format. This is can be done with the apache htpasswd tool.</para>
+<para>Note: This passwd file is the only file which has to be edited directly in the CVSROOT directory.</para>
+<para>Also it won't be checked out. More info with htpasswd --help</para>
+<para># htpasswd -cb passwd user1 password1 # -c creates the file</para>
+<para># htpasswd -b passwd user2 password2</para>
+<para>Now add :cvs at the end of each line to tell the cvs server to change the user to cvs (or</para>
+<para>whatever your cvs server is running under). It looks like this:</para>
+<para># cat passwd</para>
+<para>user1:xsFjhU22u8Fuo:cvs</para>
+<para/></section><section><info><title>12.2 Test it</title></info>
+<para>Test the login as normal user (for example here me)</para>
+<para># cvs -d :pserver:colin@192.168.50.254:/usr/local/cvs login</para>
+<para>Logging in to :pserver:colin@192.168.50.254:2401/usr/local/cvs</para>
+<para>CVS password:</para>
+<para>CVSROOT variable</para>
+<para>This is an environment variable used to specify the location of the repository we're doing operations on. For local use, it can be just set to the directory of the repository. For use over the network, the transport protocol must be specified. Set the CVSROOT variable with setenv</para>
+<para>CVSROOT string on a csh, tcsh shell, or with export CVSROOT=string on a sh, bash shell.</para>
+<para># setenv CVSROOT :pserver:&lt;username&gt;@&lt;host&gt;:/cvsdirectory</para>
+<para>For example:</para>
+<para># setenv CVSROOT /usr/local/cvs # Used locally only</para>
+<para># setenv CVSROOT :local:/usr/local/cvs # Same as above</para>
+<para># setenv CVSROOT :ext:user@cvsserver:/usr/local/cvs # Direct access with SSH</para>
+<para># setenv CVS_RSH ssh # for the ext access</para>
+<para># setenv CVSROOT :pserver:user@cvsserver.254:/usr/local/cvs # network with pserver</para>
+<para>When the login succeeded one can import a new project into the repository: cd into your</para>
+<para>project root directory</para>
+<para>cvs import &lt;module name&gt; &lt;vendor tag&gt; &lt;initial tag&gt;</para>
+<para>cvs -d :pserver:colin@192.168.50.254:/usr/local/cvs import MyProject MyCompany START</para>
+<para>Where MyProject is the name of the new project in the repository (used later to checkout). Cvs</para>
+<para>will import the current directory content into the new project.</para>
+<para>To checkout:</para>
+<para># cvs -d :pserver:colin@192.168.50.254:/usr/local/cvs checkout MyProject</para>
+<para>or</para>
+<para># setenv CVSROOT :pserver:colin@192.168.50.254:/usr/local/cvs</para>
+<para># cvs checkout MyProject</para></section><section><info><title>12.3 SSH tunneling for CVS</title></info>
+<para>We need 2 shells for this. On the first shell we connect to the cvs server with ssh and</para>
+<para>port-forward the cvs connection. On the second shell we use the cvs normally as if it where</para>
+<para>running locally.</para>
+<para>on shell 1:</para>
+<para># ssh -L2401:localhost:2401 colin@cvs_server # Connect directly to the CVS server. Or:</para>
+<para># ssh -L2401:cvs_server:2401 colin@gateway # Use a gateway to reach the CVS</para>
+<para>on shell 2:</para>
+<para># setenv CVSROOT :pserver:colin@localhost:/usr/local/cvs</para>
+<para># cvs login</para>
+<para>Logging in to :pserver:colin@localhost:2401/usr/local/cvs</para>
+<para>CVS password:</para>
+<para># cvs checkout MyProject/src</para>
+<para/></section><section><info><title>12.4 CVS commands and usage</title></info>
+<para>Import</para>
+<para>The import command is used to add a whole directory, it must be run from within the directory to be imported. Say the directory /devel/ contains all files and subdirectories to be imported.</para>
+<para>The directory name on the CVS (the module) will be called "myapp".</para>
+<para># cvs import [options] directory-name vendor-tag release-tag</para>
+<para># cd /devel # Must be inside the project to import it</para>
+<para># cvs import myapp Company R1_0 # Release tag can be anything in one word</para>
+<para>After a while a new directory "/devel/tools/" was added and it has to be imported too.</para>
+<para># cd /devel/tools</para>
+<para># cvs import myapp/tools Company R1_0</para>
+<para>Checkout update add commit</para>
+<para># cvs co myapp/tools # Will only checkout the directory tools</para>
+<para># cvs co -r R1_1 myapp # Checkout myapp at release R1_1 (is sticky)</para>
+<para># cvs -q -d update -P # A typical CVS update</para>
+<para># cvs update -A # Reset any sticky tag (or date, option)</para>
+<para># cvs add newfile # Add a new file</para>
+<para># cvs add -kb newfile # Add a new binary file</para>
+<para># cvs commit file1 file2 # Commit the two files only</para>
+<para># cvs commit -m "message" # Commit all changes done with a message</para>
+<para>Create a patch</para>
+<para>It is best to create and apply a patch from the working development directory related to the project, or from within the source directory.</para>
+<para># cd /devel/project</para>
+<para># diff -Naur olddir newdir &gt; patchfile # Create a patch from a directory or a file</para>
+<para># diff -Naur oldfile newfile &gt; patchfile</para>
+<para>Apply a patch</para>
+<para>Sometimes it is necessary to strip a directory level from the patch, depending how it was created. In case of difficulties, simply look at the first lines of the patch and try -p0, -p1 or -p2.</para>
+<para># cd /devel/project</para>
+<para># patch --dry-run -p0 &lt; patchfile # Test the path without applying it</para>
+<para># patch -p0 &lt; patchfile</para>
+<para># patch -p1 &lt; patchfile # strip off the 1st level from the path</para></section></section><section><info><title>13. SVN</title></info>
+<para>Subversion (SVN)9 is a version control system designed to be the successor of CVS (Concurrent</para>
+<para>Versions System). The concept is similar to CVS, but many shortcomings where improved. See also the SVN book10.</para><section><info><title>13.1 Server setup</title></info>
+<para>The initiation of the repository is fairly simple (here for example /home/svn/ must exist):</para>
+<para># svnadmin create --fs-type fsfs /home/svn/project1</para>
+<para>9.http://subversion.tigris.org/</para>
+<para>10.http://svnbook.red-bean.com/en/1.4/</para>
+<para/>
+<para>Now the access to the repository is made possible with:</para>
+<para>• file:// Direct file system access with the svn client with. This requires local</para>
+<para>permissions on the file system.</para>
+<para>• svn:// or svn+ssh:// Remote access with the svnserve server (also over SSH). This</para>
+<para>requires local permissions on the file system.</para>
+<para>• http:// Remote access with webdav using apache. No local users are necessary for this</para>
+<para>method.</para>
+<para>Using the local file system, it is now possible to import and then check out an existing project.</para>
+<para>Unlike with CVS it is not necessary to cd into the project directory, simply give the full path:</para>
+<para># svn import /project1/ file:///home/svn/project1/trunk -m 'Initial import'</para>
+<para># svn checkout file:///home/svn/project1</para>
+<para>The new directory "trunk" is only a convention, this is not required.</para>
+<para>Remote access with ssh</para>
+<para>No special setup is required to access the repository via ssh, simply replace file:// with</para>
+<para>svn+ssh/hostname. For example:</para>
+<para># svn checkout svn+ssh://hostname/home/svn/project1</para>
+<para>As with the local file access, every user needs an ssh access to the server (with a local account) and also read/write access. This method might be suitable for a small group. All users could belong to a subversion group which owns the repository, for example:</para>
+<para># groupadd subversion</para>
+<para># groupmod -A user1 subversion</para>
+<para># chown -R root:subversion /home/svn</para>
+<para># chmod -R 770 /home/svn</para>
+<para>Remote access with http (apache)</para>
+<para>Remote access over http (https) is the only good solution for a larger user group. This method</para>
+<para>uses the apache authentication, not the local accounts. This is a typical but small apache</para>
+<para>configuration:</para>
+<para>LoadModule dav_module modules/mod_dav.so</para>
+<para>LoadModule dav_svn_module modules/mod_dav_svn.so</para>
+<para>LoadModule authz_svn_module modules/mod_authz_svn.so # Only for access control</para>
+<para>&lt;Location /svn&gt;</para>
+<para>DAV svn</para>
+<para># any "/svn/foo" URL will map to a repository /home/svn/foo</para>
+<para>SVNParentPath /home/svn</para>
+<para>AuthType Basic</para>
+<para>AuthName "Subversion repository"</para>
+<para>AuthzSVNAccessFile /etc/apache2/svn.acl</para>
+<para>AuthUserFile /etc/apache2/svn-passwd</para>
+<para>Require valid-user</para>
+<para>&lt;/Location&gt;</para>
+<para>The apache server needs full access to the repository:</para>
+<para># chown -R www:www /home/svn</para>
+<para>Create a user with htpasswd2:</para>
+<para># htpasswd -c /etc/svn-passwd user1 # -c creates the file</para>
+<para>Access control svn.acl example</para>
+<para># Default it read access. "* =" would be default no access</para>
+<para>[/]</para>
+<para>* = r</para>
+<para>project1-developers = joe, jack, jane</para>
+<para># Give write access to the developers</para>
+<para>[project1:]</para>
+<para>@project1-developers = rw</para></section><section><info><title>13.2 SVN commands and usage</title></info>
+<para>See also the Subversion Quick Reference Card11. Tortoise SVN12 is a nice Windows interface.</para>
+<para>Import</para>
+<para>A new project, that is a directory with some files, is imported into the repository with the import command. Import is also used to add a directory with its content to an existing project.</para>
+<para># svn help import # Get help for any command</para>
+<para># Add a new directory (with content) into the src dir on project1</para>
+<para># svn import /project1/newdir http://host.url/svn/project1/trunk/src -m 'add newdir'</para>
+<para>Typical SVN commands</para>
+<para># svn co http://host.url/svn/project1/trunk # Checkout the most recent version</para>
+<para># Tags and branches are created by copying</para>
+<para># svn mkdir http://host.url/svn/project1/tags/ # Create the tags directory</para>
+<para># svn copy -m "Tag rc1 rel." http://host.url/svn/project1/trunk \</para>
+<para>http://host.url/svn/project1/tags/1.0rc1</para>
+<para># svn status [--verbose] # Check files status into working dir</para>
+<para># svn add src/file.h src/file.cpp # Add two files</para>
+<para># svn commit -m 'Added new class file' # Commit the changes with a message</para>
+<para># svn ls http://host.url/svn/project1/tags/ # List all tags</para>
+<para># svn move foo.c bar.c # Move (rename) files</para>
+<para># svn delete some_old_file # Delete files</para></section></section><section><info><title>14. USEFUL COMMANDS</title></info>
+<para/><section><info><title>14.1 less</title></info>
+<para>The less command displays a text document on the console. It is present on most installation.</para>
+<para># less unixtoolbox.xhtml</para>
+<para>Some important commands are (^N stands for [control]-[N]):</para>
+<para>h H good help on display</para>
+<para>f ^F ^V SPACE Forward one window (or N lines).</para>
+<para>b ^B ESC-v Backward one window (or N lines).</para>
+<para>F Forward forever; like "tail -f".</para>
+<para>/pattern Search forward for (N-th) matching line.</para>
+<para>?pattern Search backward for (N-th) matching line.</para>
+<para>n Repeat previous search (for N-th occurrence).</para>
+<para>N Repeat previous search in reverse direction.</para>
+<para>q quit</para>
+<para>11.http://www.cs.put.poznan.pl/csobaniec/Papers/svn-refcard.pdf</para>
+<para>12.http://tortoisesvn.tigris.org</para>
+<para/></section><section><info><title>14.2 vi</title></info>
+<para>Vi is present on ANY Linux/Unix installation and it is therefore useful to know some basic commands. There are two modes: command mode and insertion mode. The commands mode is accessed with [ESC], the insertion mode with i.</para>
+<para>Quit</para>
+<para>:w newfilename save the file to newfilename</para>
+<para>:wq or :x save and quit</para>
+<para>:q! quit without saving</para>
+<para>Search and move</para>
+<para>/string Search forward for string</para>
+<para>?string Search back for string</para>
+<para>n Search for next instance of string</para>
+<para>N Search for previous instance of string</para>
+<para>{ Move a paragraph back</para>
+<para>} Move a paragraph forward</para>
+<para>1G Move to the first line of the file</para>
+<para>nG Move to the n th line of the file</para>
+<para>G Move to the last line of the file</para>
+<para>:%s/OLD/NEW/g Search and replace every occurrence</para>
+<para>Delete text</para>
+<para>dd delete current line</para>
+<para>D Delete to the end of the line</para>
+<para>dw Delete word</para>
+<para>x Delete character</para>
+<para>u Undo last</para>
+<para>U Undo all changes to current line</para></section><section><info><title>14.3 mail</title></info>
+<para>The mail command is a basic application to read and send email, it is usually installed. To send</para>
+<para>an email simply type "mail user@domain". The first line is the subject, then the mail content.</para>
+<para>Terminate and send the email with a single dot (.) in a new line. Example:</para>
+<para># mail c@cb.vu</para>
+<para>Subject: Your text is full of typos</para>
+<para>"For a moment, nothing happened. Then, after a second or so,</para>
+<para>nothing continued to happen."</para>
+<para>.</para>
+<para>EOT</para>
+<para>#</para>
+<para>This is also working with a pipe:</para>
+<para># echo "This is the mail body" | mail c@cb.vu</para>
+<para>This is also a simple way to test the mail server.</para></section><section><info><title>14.4 tar</title></info>
+<para>The command tar (tape archive) creates and extracts archives of file and directories. The archive .tar is uncompressed, a compressed archive has the extension .tgz or .tar.gz (zip) or .tbz (bzip2). Do not use absolute path when creating an archive, you probably want to unpack it</para>
+<para/>
+<para>Create</para>
+<para># cd /</para>
+<para># tar -cf home.tar home/ # archive the whole /home directory (c for create)</para>
+<para># tar -czf home.tgz home/ # same with zip compression</para>
+<para># tar -cjf home.tbz home/ # same with bzip2 compression</para>
+<para>Only include one (or two) directories from a tree, but keep the relative structure. For example</para>
+<para>archive /usr/local/etc and /usr/local/www and the first directory in the archive should be local/.</para>
+<para># tar -C /usr -czf local.tgz local/etc local/www</para>
+<para># tar -C /usr -xzf local.tgz # To untar the local dir into /usr</para>
+<para># cd /usr; tar -xzf local.tgz # Is the same as above</para>
+<para>Extract</para>
+<para># tar -tzf home.tgz # look inside the archive without extracting (list)</para>
+<para># tar -xf home.tar # extract the archive here (x for extract)</para>
+<para># tar -xzf home.tgz # same with zip compression</para>
+<para># tar -xjf home.tgz # same with bzip2 compression</para>
+<para># tar -xjf home.tgz home/colin/file.txt # Restore a single file</para>
+<para>More advanced</para>
+<para># tar c dir/ | gzip | ssh user@remote 'dd of=dir.tgz' # arch dir/ and store remotely.</para>
+<para># tar cvf - `find . -print` &gt; backup.tar # arch the current directory.</para>
+<para># tar -cf - -C /etc . | tar xpf - -C /backup/etc # Copy directories</para>
+<para># tar -cf - -C /etc . | ssh user@remote tar xpf - -C /backup/etc # Remote copy.</para>
+<para># tar -czf home.tgz --exclude '*.o' --exclude 'tmp/' home/</para></section><section><info><title>14.5 dd</title></info>
+<para>The program dd (disk dump) is used to copy partitions and disks and for other copy tricks.</para>
+<para>Typical usage:</para>
+<para># dd if=&lt;source&gt; of=&lt;target&gt; bs=&lt;byte size&gt; conv=&lt;conversion&gt;</para>
+<para>Important conv options:</para>
+<para>notrunc do not truncate the output file, all zeros will be written as zeros.</para>
+<para>noerror continue after read errors (e.g. bad blocks)</para>
+<para>sync pad every input block with Nulls to ibs-size</para>
+<para>The default byte size is 512 (one block). The MBR, where the partiton table is located, is on the first block, the first 63 blocks of a disk are empty. Larger byte sizes are faster to copy but require also more memory.</para>
+<para>Backup and restore</para>
+<para># dd if=/dev/hda of=/dev/hdc bs=16065b # Copy disk to disk (same size)</para>
+<para># dd if=/dev/sda7 of /home/root.img bs=4096 conv=notrunc,noerror # Backup /</para>
+<para># dd if /home/root.img of=/dev/sda7 bs=4096 conv=notrunc,noerror # Restore /</para>
+<para># dd bs=1M if=/dev/ad4s3e | gzip -c &gt; ad4s3e.gz # Zip the backup</para>
+<para># gunzip -dc ad4s3e.gz | dd of=/dev/ad0s3e bs=1M # Restore the zip</para>
+<para># dd bs=1M if=/dev/ad4s3e | gzip | ssh eedcoba@fry 'dd of=ad4s3e.gz' # also remote</para>
+<para># gunzip -dc ad4s3e.gz | ssh eedcoba@host 'dd of=/dev/ad0s3e bs=1M'</para>
+<para># dd if=/dev/ad0 of=/dev/ad2 skip=1 seek=1 bs=4k conv=noerror # Skip MBR</para>
+<para># This is necessary if the destination (ad2) is smaller.</para>
+<para>Recover</para>
+<para>The command dd will read every single block of the partiton, even the blocks. In case of problems it is better to use the option conv=sync,noerror so dd will skip the bad block and write zeros at the destination. Accordingly it is important to set the block size equal or smaller than the disk block size. A 1k size seems safe, set it with bs=1k. If a disk has bad sectors and the data should be recovered from a partiton, create an image file with dd, mount the image and copy the content to a new disk. With the option noerror, dd will skip the bad sectors and write zeros instead, thus only the data contained in the bad sectors will be lost.</para>
+<para># dd if=/dev/hda of=/dev/null bs=1m # Check for bad blocks</para>
+<para># dd bs=1k if=/dev/hda1 conv=sync,noerror,notrunc | gzip | ssh \ # Send to remote</para>
+<para>root@fry 'dd of=hda1.gz bs=1k'</para>
+<para># dd bs=1k if=/dev/hda1 conv=sync,noerror,notrunc of=hda1.img # Store into an image</para>
+<para># mount -o loop /hda1.img /mnt # Mount the image (page 12)</para>
+<para># rsync -ax /mnt/ /newdisk/ # Copy on a new disk</para>
+<para># dd if=/dev/hda of=/dev/hda # Refresh the magnetic state</para>
+<para># The above is useful to refresh a disk. It is perfectly safe, but must be unmounted.</para>
+<para>Delete</para>
+<para># dd if=/dev/zero of=/dev/hdc count=1 # Delete MBR and partiton table</para>
+<para># dd if=/dev/zero of=/dev/hdc # Delete full disk</para>
+<para># dd if=/dev/urandom of=/dev/hdc # Delete full disk better</para>
+<para># kill -USR1 PID # View dd progress (Linux only!)</para></section><section><info><title>14.6 screen</title></info>
+<para>Screen has two main functionalities:</para>
+<para>• Run multiple terminal session within a single terminal.</para>
+<para>• A started program is decoupled from the real terminal and can thus run in the</para>
+<para>background. The real terminal can be closed and reattached later.</para>
+<para>Short start example</para>
+<para>start screen with:</para>
+<para># screen</para>
+<para>Within the screen session we can start a long lasting program (like top). Detach the terminal</para>
+<para>and reattach the same terminal from an other machine (over ssh for example).</para>
+<para># top</para>
+<para>Now detach with Ctrl-a Ctrl-d. Reattach the terminal with</para>
+<para># screen -r</para>
+<para>or better:</para>
+<para># screen -R -D</para>
+<para>Attach here and now. In detail this means: If a session is running, then reattach. If necessary detach and logout remotely first. If it was not running create it and notify the user.</para>
+<para>Screen commands (within screen)</para>
+<para>All screen commands start with Ctrl-a.</para>
+<para>• Ctrl-a ? help and summary of functions</para>
+<para>• Ctrl-a c create an new window (terminal)</para>
+<para>• Ctrl-a Ctrl-n and Ctrl-a Ctrl-p to switch to the next or previous window in the list, by</para>
+<para>number.</para>
+<para>• Ctrl-a Ctrl-N where N is a number from 0 to 9, to switch to the corresponding window.</para>
+<para>• Ctrl-a " to get a navigable list of running windows</para>
+<para>• Ctrl-a a to clear a missed Ctrl-a</para>
+<para>• Ctrl-a Ctrl-d to disconnect and leave the session running in the background</para>
+<para>• Ctrl-a x lock the screen terminal with a password</para>
+<para>— Useful Commands —</para>
+<para>39</para>
+<para>The screen session is terminated when the program within the running terminal is closed and you logout from the terminal.</para></section><section><info><title>14.7 Find</title></info>
+<para>Some important options:</para>
+<para>-x (on BSD) -xdev (on Linux) Stay on the same file system (dev in fstab).</para>
+<para>-exec cmd {} \; Execute the command and replace {} with the full path</para>
+<para>-iname Like -name but is case insensitive</para>
+<para>-ls Display information about the file (like ls -la)</para>
+<para>-size n n is +-n (k M G T P)</para>
+<para>-cmin n File's status was last changed n minutes ago.</para>
+<para># find . -type f ! -perm -444 # Find files not readable by all</para>
+<para># find . -type d ! -perm -111 # Find dirs not accessible by all</para>
+<para># find /home/user/ -cmin 10 -print # Files created or modified in the last 10 min.</para>
+<para># find . -name '*.[ch]' | xargs grep -E 'expr' # Search 'expr' in this dir and below.</para>
+<para># find / -name "*.core" | xargs rm # Find core dumps and delete them</para>
+<para># find / -name "*.core" -print -exec rm {} \; # Other syntax</para>
+<para># find . \( -name "*.png" -o -name "*.jpg" \) -print</para>
+<para># iname is not case sensitive</para>
+<para># find . \( -iname "*.png" -o -iname "*.jpg" \) -print -exec tar -rf images.tar {} \;</para>
+<para># find . -type f -name "*.txt" ! -name README.txt -print # Exclude README.txt files</para>
+<para># find /var/ -size +1M -exec ls -lh {} \;</para>
+<para># find /var/ -size +1M -ls # This is simpler</para>
+<para># find . -size +10M -size -50M -print</para>
+<para># find /usr/ports/ -name work -type d -print -exec rm -rf {} \; # Clean the ports</para>
+<para>Find files with SUID; those file have to be kept secure</para>
+<para># find / -type f -user root -perm -4000 -exec ls -l {} \;</para></section><section><info><title>14.8 Miscellaneous</title></info>
+<para># which command # Show full path name of command</para>
+<para># time command # See how long a command takes to execute</para>
+<para># time cat # Use time as stopwatch. Ctrl-c to stop</para>
+<para># set | grep $USER # List the current environment</para>
+<para># cal -3 # Display a three month calendar</para>
+<para># date [-u|--utc|--universal] [MMDDhhmm[[CC]YY][.ss]]</para>
+<para># date 10022155 # Set date and time</para>
+<para># whatis grep # Display a short info on the command or word</para>
+<para># whereis java # Search path and standard directories for word</para>
+<para># setenv varname value # Set env. variable varname to value (csh/tcsh)</para>
+<para># export varname="value" # set env. variable varname to value (sh/ksh/bash)</para>
+<para># pwd # Print working directory</para>
+<para># mkdir -p /path/to/dir # no error if existing, make parent dirs as needed</para>
+<para># rmdir /path/to/dir # Remove directory</para>
+<para># rm -rf /path/to/dir # Remove directory and its content (force)</para>
+<para># cp -la /dir1 /dir2 # Archive and hard link files instead of copy</para>
+<para># cp -lpR /dir1 /dir2 # Same for FreeBSD</para>
+<para># mv /dir1 /dir2 # Rename a directory</para></section></section><section><info><title>15. INSTALL SOFTWARE</title></info><section><info><title>15.1 List installed packages</title></info>
+<para># rpm -qa # List installed packages (RH, SuSE, RPM based)</para>
+<para># dpkg -l # Debian, Ubuntu</para>
+<para># pkg_info -W smbd # FreeBSD show which package smbd belongs to</para>
+<para># pkginfo # Solaris</para></section><section><info><title>15.2 Add/remove software</title></info>
+<para>Front ends: yast2/yast for SuSE, redhat-config-packages for Red Hat.</para>
+<para># rpm -i pkgname.rpm # install the package (RH, SuSE, RPM based)</para>
+<para># rpm -e pkgname # Remove package</para>
+<para>Debian</para>
+<para># apt-get update # First update the package lists</para>
+<para># apt-get install emacs # Install the package emacs</para>
+<para># dpkg --remove emacs # Remove the package emacs</para>
+<para>FreeBSD</para>
+<para># pkg_add -r rsync # Fetch and install rsync.</para>
+<para># pkg_delete /var/db/pkg/rsync-xx # Delete the rsync package</para>
+<para>Set where the packages are fetched from with the PACKAGESITE variable. For example:</para>
+<para># export PACKAGESITE=ftp://ftp.freebsd.org/pub/FreeBSD/ports/i386/packages/Latest/</para>
+<para># or ftp://ftp.freebsd.org/pub/FreeBSD/ports/i386/packages-6-stable/Latest/</para>
+<para>FreeBSD ports. The port tree /usr/ports/ is a collection of software ready to compile and install. The ports are updated with the program portsnap.</para>
+<para># portsnap fetch extract # Create the tree when running the first time</para>
+<para># portsnap fetch update # Update the port tree</para>
+<para># cd /usr/ports/net/rsync/ # Select the package to install</para>
+<para># make install distclean # Install and cleanup (also see man ports)</para>
+<para># make package # Make a binary package for the port</para></section><section><info><title>15.3 Library path</title></info>
+<para>Due to complex dependencies and runtime linking, programs are difficult to copy to an other system or distribution. However for small programs with little dependencies, the missing libraries can be copied over. The runtime libraries (and the missing one) are checked with ldd and managed with ldconfig.</para>
+<para># ldd /usr/bin/rsync # List all needed runtime libraries</para>
+<para># ldconfig -n /path/to/libs/ # Add a path to the shared libraries directories</para>
+<para># ldconfig -m /path/to/libs/ # FreeBSD</para>
+<para># LD_LIBRARY_PATH # The variable set the link library path</para></section></section><section><info><title>16. CONVERT MEDIA</title></info>
+<para>Sometimes one simply need to convert a video, audio file or document to another format.</para><section><info><title>16.1 Text encoding</title></info>
+<para>Text encoding can get totally wrong, specially when the language requires special characters like адз. The command iconv can convert from one encoding to an other.</para>
+<para/>
+<para># iconv -f &lt;from_encoding&gt; -t &lt;to_encoding&gt; &lt;input_file&gt;</para>
+<para># iconv -f ISO8859-1 -t UTF-8 -o file.input &gt; file_utf8</para>
+<para># iconv -l # List known coded character sets</para>
+<para>Without the -f option, iconv will use the local char-set, which is usually fine if the document displays well.</para></section><section><info><title>16.2 Unix - DOS newlines</title></info>
+<para>Convert DOS (CR/LF) to Unix (LF) newlines within a Unix shell. See also dos2unix and unix2dos</para>
+<para>if you have them.</para>
+<para># sed 's/.$//' dosfile.txt &gt; unixfile.txt</para>
+<para>Convert Unix to DOS newlines within a Windows environment. Use sed from mingw or cygwin.</para>
+<para># sed -n p unixfile.txt &gt; dosfile.txt</para></section><section><info><title>16.3 PDF to Jpeg and concatenate PDF files</title></info>
+<para>Convert a PDF document with gs (GhostScript) to jpeg (or png) images for each page. Also</para>
+<para>much shorter with convert (from ImageMagick or GraphicsMagick).</para>
+<para># gs -dBATCH -dNOPAUSE -sDEVICE=jpeg -r150 -dTextAlphaBits=4 -dGraphicsAlphaBits=4 \</para>
+<para>-dMaxStripSize=8192 -sOutputFile=unixtoolbox_%d.jpg unixtoolbox.pdf</para>
+<para># convert unixtoolbox.pdf unixtoolbox-%03d.png</para>
+<para># convert *.jpeg images.pdf # Create a simple PDF with all pictures</para>
+<para>Ghostscript can also concatenate multiple pdf files into a single one.</para>
+<para># gs -q -sPAPERSIZE=a4 -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=all.pdf \</para>
+<para>file1.pdf file2.pdf ... # On Windows use '#' instead of '='</para></section><section><info><title>16.4 Convert video</title></info>
+<para>Compress the Canon digicam video with an mpeg4 codec and repair the crappy sound.</para>
+<para># mencoder -o videoout.avi -oac mp3lame -ovc lavc -srate 11025 \</para>
+<para>-channels 1 -af-adv force=1 -lameopts preset=medium -lavcopts \</para>
+<para>vcodec=msmpeg4v2:vbitrate=600 -mc 0 vidoein.AVI</para></section><section><info><title>16.5 Copy an audio cd</title></info>
+<para>The program cdparanoia13 can save the audio tracks (FreeBSD port in  audio/cdparanoia/),</para>
+<para>oggenc can encode in Ogg Vorbis format, lame converts to mp3.</para>
+<para># cdparanoia -B # Copy the tracks to wav files in current dir</para>
+<para># lame -b 256 in.wav out.mp3 # Encode in mp3 256 kb/s</para>
+<para># for i in *.wav; do lame -b 256 $i `basename $i .wav`.mp3; done</para>
+<para># oggenc in.wav -b 256 out.ogg # Encode in Ogg Vorbis 256 kb/s</para>
+<para>13.http://xiph.org/paranoia/</para>
+<para/></section></section><section><info><title>17. PRINTING</title></info><section><info><title>17.1 Print with lpr</title></info>
+<para># lpr unixtoolbox.ps # Print on default printer</para>
+<para># export PRINTER=hp4600 # Change the default printer</para>
+<para># lpr -Php4500 #2 unixtoolbox.ps # Use printer hp4500 and print 2 copies</para>
+<para># lpr -o Duplex=DuplexNoTumble ... # Print duplex along the long side</para>
+<para># lpr -o PageSize=A4,Duplex=DuplexNoTumble ...</para>
+<para># lpq # Check the queue on default printer</para>
+<para># lpq -l -Php4500 # Queue on printer hp4500 with verbose</para>
+<para># lprm - # Remove all users jobs on default printer</para>
+<para># lprm -Php4500 3186 # Remove job 3186. Find job nbr with lpq</para>
+<para># lpc status # List all available printers</para>
+<para># lpc status hp4500 # Check if printer is online and queue length</para></section></section><section><info><title>18. DATABASES</title></info><section><info><title>18.1 PostgreSQL</title></info>
+<para>Change root or a username password</para>
+<para># psql -d template1 -U pgsql</para>
+<para>&gt; alter user pgsql with password 'pgsql_password'; # Use username instead of "pgsql"</para>
+<para>Create user and database</para>
+<para>The commands createuser, dropuser, createdb and dropdb are convenient shortcuts</para>
+<para>equivalent to the SQL commands. The new user is bob with database bobdb ; use as root with</para>
+<para>pgsql the database super user:</para>
+<para># createuser -U pgsql -P bob # -P will ask for password</para>
+<para># createdb -U pgsql -O bob bobdb # new bobdb is owned by bob</para>
+<para># dropdb bobdb # Delete database bobdb</para>
+<para># dropuser bob # Delete user bob</para>
+<para>The general database authentication mechanism is configured in pg_hba.conf</para>
+<para>Grant remote access</para>
+<para>The file $PGSQL_DATA_D/postgresql.conf specifies the address to bind to. Typically</para>
+<para>listen_addresses = '*' for Postgres 8.x.</para>
+<para>The file $PGSQL_DATA_D/pg_hba.conf defines the access control. Examples:</para>
+<para># TYPE DATABASE USER IP-ADDRESS IP-MASK METHOD</para>
+<para>host bobdb bob 212.117.81.42 255.255.255.255 password</para>
+<para>host all all 0.0.0.0/0 password</para>
+<para>Backup and restore</para>
+<para>The backups and restore are done with the user pgsql or postgres. Backup and restore a single</para>
+<para>database:</para>
+<para># pg_dump --clean dbname &gt; dbname_sql.dump</para>
+<para># psql dbname &lt; dbname_sql.dump</para>
+<para>Backup and restore all databases (including users):</para>
+<para># pg_dumpall --clean &gt; full.dump</para>
+<para># psql -f full.dump postgres</para>
+<para>In this case the restore is started with the database postgres which is better when reloading an empty cluster.</para></section><section><info><title>18.2 MySQL</title></info>
+<para>Change mysql root or username password</para>
+<para>Method 1</para>
+<para># /etc/init.d/mysql stop</para>
+<para>or</para>
+<para># killall mysqld</para>
+<para># mysqld --skip-grant-tables</para>
+<para># mysqladmin -u root password 'newpasswd'</para>
+<para># /etc/init.d/mysql start</para>
+<para>Method 2</para>
+<para># mysql -u root mysql</para>
+<para>mysql&gt; UPDATE USER SET PASSWORD=PASSWORD("newpassword") where user='root';</para>
+<para>mysql&gt; FLUSH PRIVILEGES; # Use username instead of "root"</para>
+<para>mysql&gt; quit</para>
+<para>Create user and database</para>
+<para># mysql -u root mysql</para>
+<para>mysql&gt; CREATE DATABASE bobdb;</para>
+<para>mysql&gt; GRANT ALL ON *.* TO 'bob'@'%' IDENTIFIED BY 'pwd'; # Use localhost instead of %</para>
+<para># to restrict the network access</para>
+<para>mysql&gt; DROP DATABASE bobdb; # Delete database</para>
+<para>mysql&gt; DROP USER bob; # Delete user</para>
+<para>mysql&gt; DELETE FROM mysql.user WHERE user='bob and host='hostname'; # Alt. command</para>
+<para>mysql&gt; FLUSH PRIVILEGES;</para>
+<para>Grant remote access</para>
+<para>Remote access is typically permitted for a database, and not all databases. The file /etc/my.cnf</para>
+<para>contains the IP address to bind to. Typically comment the line bind-address = out.</para>
+<para># mysql -u root mysql</para>
+<para>mysql&gt; GRANT ALL ON bobdb.* TO bob@'xxx.xxx.xxx.xxx' IDENTIFIED BY 'PASSWORD';</para>
+<para>mysql&gt; REVOKE GRANT OPTION ON foo.* FROM bar@'xxx.xxx.xxx.xxx';</para>
+<para>mysql&gt; FLUSH PRIVILEGES; # Use 'hostname' or also '%' for full access</para>
+<para>Backup and restore</para>
+<para>Backup and restore a single database:</para>
+<para># mysqldump -u root -psecret --add-drop-database dbname &gt; dbname_sql.dump</para>
+<para># mysql -u root -psecret -D dbname &lt; dbname_sql.dump</para>
+<para>Backup and restore all databases:</para>
+<para># mysqldump -u root -psecret --add-drop-database --all-databases &gt; full.dump</para>
+<para># mysql -u root -psecret &lt; full.dump</para>
+<para>Here is "secret" the mysql root password, there is no space after -p. When the -p option is used</para>
+<para>alone (w/o password), the password is asked at the command prompt.</para></section><section><info><title>18.1 SQLite</title></info>
+<para>SQLite14 is a small powerfull self-contined, serverless, zero-configuration SQL database.</para>
+<para>14.http://www.sqlite.org</para>
+<para>— Databases —</para>
+<para>44</para>
+<para>Dump and restore</para>
+<para>It can be useful to dump and restore an SQLite database. For example you can edit the dump</para>
+<para>file to change a column attribute or type and then restore the database. This is easier than</para>
+<para>messing with SQL commands. Use the command sqlite3 for a 3.x database.</para>
+<para># sqlite database.db .dump &gt; dump.sql # dump</para>
+<para># sqlite database.db &lt; dump.sql # restore</para>
+<para>Convert 2.x to 3.x database</para>
+<para>sqlite database_v2.db .dump | sqlite3 database_v3.db</para></section></section><section><info><title>19. DISK QUOTA</title></info>
+<para>A disk quota allows to limit the amount of disk space and/or the number of files a user or (or member of group) can use. The quotas are allocated on a per-file system basis and are enforced by the kernel.</para><section><info><title>19.1 Linux setup</title></info>
+<para>The quota tools package usually needs to be installed, it contains the command line tools. Activate the user quota in the fstab and remount the partition. If the partition is busy, either all locked files must be closed, or the system must be rebooted. Add usrquota to the fstab mount options, for example:</para>
+<para>/dev/sda2 /home reiserfs rw,acl,user_xattr,usrquota 1 1</para>
+<para># mount -o remount /home</para>
+<para># mount # Check if usrquota is active, otherwise reboot</para>
+<para>Initialize the quota.user file with quotacheck.</para>
+<para># quotacheck -vum /home</para>
+<para># chmod 644 /home/aquota.user # To let the users check their own quota</para>
+<para>Activate the quota either with the provided script (e.g. /etc/init.d/quotad on SuSE) or with</para>
+<para>quotaon:</para>
+<para>quotaon -vu /home</para>
+<para>Check that the quota is active with:</para>
+<para>quota -v</para></section><section><info><title>19.2 FreeBSD setup</title></info>
+<para>The quota tools are part of the base system, however the kernel needs the option quota. If it is</para>
+<para>not there, add it and recompile the kernel.</para>
+<para>options QUOTA</para>
+<para>As with Linux, add the quota to the fstab options (userquota, not usrquota):</para>
+<para>/dev/ad0s1d /home ufs rw,noatime,userquota 2 2</para>
+<para># mount /home # To remount the partition</para>
+<para>Enable disk quotas in /etc/rc.conf and start the quota.</para>
+<para># grep quotas /etc/rc.conf</para>
+<para>enable_quotas="YES" # turn on quotas on startup (or NO).</para>
+<para>check_quotas="YES" # Check quotas on startup (or NO).</para>
+<para># /etc/rc.d/quota start</para>
+<para/></section><section><info><title>19.3 Assign quota limits</title></info>
+<para>The quotas are not limited per default (set to 0). The limits are set with edquota for single</para>
+<para>users. A quota can be also duplicated to many users. The file structure is different between the</para>
+<para>quota implementations, but the principle is the same: the values of blocks and inodes can be</para>
+<para>limited. Only change the values of soft and hard. If not specified, the blocks are 1k. The grace</para>
+<para>period is set with edquota -t. For example:</para>
+<para># edquota -u colin</para>
+<para>Linux</para>
+<para>Disk quotas for user colin (uid 1007):</para>
+<para>Filesystem blocks soft hard inodes soft hard</para>
+<para>/dev/sda8 108 1000 2000 1 0 0</para>
+<para>FreeBSD</para>
+<para>Quotas for user colin:</para>
+<para>/home: kbytes in use: 504184, limits (soft = 700000, hard = 800000)</para>
+<para>inodes in use: 1792, limits (soft = 0, hard = 0)</para>
+<para>For many users</para>
+<para>The command edquota -p is used to duplicate a quota to other users. For example to duplicate</para>
+<para>a reference quota to all users:</para>
+<para># edquota -p refuser `awk -F: '$3 &gt; 499 {print $1}' /etc/passwd`</para>
+<para># edquota -p refuser user1 user2 # Duplicate to 2 users</para>
+<para>Checks</para>
+<para>Users can check their quota by simply typing quota (the file quota.user must be readable). Root</para>
+<para>can check all quotas.</para>
+<para># quota -u colin # Check quota for a user</para>
+<para># repquota /home # Full report for the partition for all users</para></section></section><section><info><title>20. SHELLS</title></info>
+<para>Most Linux distributions use the bash shell while the BSDs use tcsh, the bourne shell is only</para>
+<para>used for scripts. Filters are very useful and can be piped:</para>
+<para>grep Pattern matching</para>
+<para>sed Search and Replace strings or characters</para>
+<para>cut Print specific columns from a marker</para>
+<para>sort Sort alphabetically or numerically</para>
+<para>uniq Remove duplicate lines from a file</para>
+<para>For example used all at once:</para>
+<para># ifconfig | sed 's/ / /g' | cut -d" " -f1 | uniq | grep -E "[a-z0-9]+" | sort -r</para>
+<para># ifconfig | sed '/.*inet addr:/!d;s///;s/ .*//'|sort -t. -k1,1n -k2,2n -k3,3n -k4,4n</para>
+<para>The first character in the sed pattern is a tab. To write a tab on the console, use ctrl-v ctrl-tab.</para><section><info><title>20.1 bash</title></info>
+<para>Redirects and pipes for bash and sh:</para>
+<para># cmd 1&gt; file # Redirect stdout to file.</para>
+<para># cmd 2&gt; file # Redirect stderr to file.</para>
+<para># cmd 1&gt;&gt; file # Redirect and append stdout to file.</para>
+<para># cmd &amp;&gt; file # Redirect both stdout and stderr to file.</para>
+<para># cmd &gt;file 2&gt;&amp;1 # Redirects stderr to stdout and then to file.</para>
+<para># cmd1 | cmd2 # pipe stdout to cmd2</para>
+<para># cmd1 2&gt;&amp;1 | cmd2 # pipe stdout and stderr to cmd2</para>
+<para>Modify your configuration in ~/.bashrc (it can also be ~/.bash_profile). The following entries are useful, reload with ". .bashrc".</para>
+<para># in .bashrc</para>
+<para>bind '"\e[A"':history-search-backward # Use up and down arrow to search</para>
+<para>bind '"\e[B"':history-search-forward # the history. Invaluable!</para>
+<para>set -o emacs # Set emacs mode in bash (see below)</para>
+<para>set bell-style visible # Do not beep, inverse colors</para>
+<para># Set a nice prompt like [user@host]/path/todir&gt;</para>
+<para>PS1="\[\033[1;30m\][\[\033[1;34m\]\u\[\033[1;30m\]"</para>
+<para>PS1="$PS1@\[\033[0;33m\]\h\[\033[1;30m\]]\[\033[0;37m\]"</para>
+<para>PS1="$PS1\w\[\033[1;30m\]&gt;\[\033[0m\]"</para>
+<para># To check the currently active aliases, simply type alias</para>
+<para>alias ls='ls -aF' # Append indicator (one of */=&gt;@|)</para>
+<para>alias ll='ls -aFls' # Listing</para>
+<para>alias la='ls -all'</para>
+<para>alias ..='cd ..'</para>
+<para>alias ...='cd ../..'</para>
+<para>export HISTFILESIZE=5000 # Larger history</para>
+<para>export CLICOLOR=1 # Use colors (if possible)</para>
+<para>export LSCOLORS=ExGxFxdxCxDxDxBxBxExEx</para></section><section><info><title>20.2 tcsh</title></info>
+<para>Redirects and pipes for tcsh and csh (simple &gt; and &gt;&gt; are the same as sh):</para>
+<para># cmd &gt;&amp; file # Redirect both stdout and stderr to file.</para>
+<para># cmd &gt;&gt;&amp; file # Append both stdout and stderr to file.</para>
+<para># cmd1 | cmd2 # pipe stdout to cmd2</para>
+<para># cmd1 |&amp; cmd2 # pipe stdout and stderr to cmd2</para>
+<para>The settings for csh/tcsh are set in ~/.cshrc, reload with "source .cshrc". Examples:</para>
+<para># in .cshrc</para>
+<para>alias ls 'ls -aF'</para>
+<para>alias ll 'ls -aFls'</para>
+<para>alias la 'ls -all'</para>
+<para>alias .. 'cd ..'</para>
+<para>alias ... 'cd ../..'</para>
+<para>set prompt = "%B%n%b@%B%m%b%/&gt; " # like user@host/path/todir&gt;</para>
+<para>set history = 5000</para>
+<para>set savehist = ( 6000 merge )</para>
+<para>set autolist # Report possible completions with tab</para>
+<para>set visiblebell # Do not beep, inverse colors</para>
+<para># Bindkey and colors</para>
+<para>bindkey -e Select Emacs bindings # Use emacs keys to edit the command prompt</para>
+<para>bindkey -k up history-search-backward # Use up and down arrow to search</para>
+<para>bindkey -k down history-search-forward</para>
+<para>setenv CLICOLOR 1 # Use colors (if possible)</para>
+<para>setenv LSCOLORS ExGxFxdxCxDxDxBxBxExEx</para>
+<para>The emacs mode enables to use the emacs keys shortcuts to modify the command prompt line.</para>
+<para>This is extremely useful (not only for emacs users). The most used commands are:</para>
+<para>C-a Move cursor to beginning of line</para>
+<para>C-e Move cursor to end of line</para>
+<para>— Shells —</para>
+<para>47</para>
+<para>M-b Move cursor back one word</para>
+<para>M-f Move cursor forward one word</para>
+<para>M-d Cut the next word</para>
+<para>C-w Cut the last word</para>
+<para>C-u Cut everything before the cursor</para>
+<para>C-k Cut everything after the cursor (rest of the line)</para>
+<para>C-y Paste the last thing to be cut (simply paste)</para>
+<para>C-_ Undo</para>
+<para>Note: C- = hold control, M- = hold meta (which is usually the alt or escape key).</para></section></section><section><info><title>21. SCRIPTING</title></info>
+<para/>
+<para>The Bourne shell (/bin/sh) is present on all Unix installations and scripts written in this language</para>
+<para>are (quite) portable; man 1 sh is a good reference.</para><section><info><title>21.1 Basics</title></info>
+<para>Variables and arguments</para>
+<para>Assign with variable=value and get content with $variable</para>
+<para>MESSAGE="Hello World" # Assign a string</para>
+<para>PI=3.1415 # Assign a decimal number</para>
+<para>N=8</para>
+<para>TWON=`expr $N * 2` # Arithmetic expression (only integers)</para>
+<para>TWON=$(($N * 2)) # Other syntax</para>
+<para>TWOPI=`echo "$PI * 2" | bc -l` # Use bc for floating point operations</para>
+<para>ZERO=`echo "c($PI/4)-sqrt(2)/2" | bc -l`</para>
+<para>The command line arguments are</para>
+<para>$0, $1, $2, ... # $0 is the command itself</para>
+<para>$# # The number of arguments</para>
+<para>$* # All arguments (also $@)</para>
+<para>Special Variables</para>
+<para>$$ # The current process ID</para>
+<para>$? # exit status of last command</para>
+<para>command</para>
+<para>if [ $? != 0 ]; then</para>
+<para>echo "command failed"</para>
+<para>fi</para>
+<para>mypath=`pwd`</para>
+<para>mypath=${mypath}/file.txt</para>
+<para>echo ${mypath##*/} # Display the filename only</para>
+<para>echo ${mypath%%.*} # Full path without extention</para>
+<para>var2=${var:=string} # Use var if set, otherwise use string</para>
+<para># assign string to var and then to var2.</para>
+<para>Constructs</para>
+<para>for file in `ls`</para>
+<para>do</para>
+<para>echo $file</para>
+<para>done</para>
+<para>count=0</para>
+<para>while [ $count -lt 5 ]; do</para>
+<para>echo $count</para>
+<para>sleep 1</para>
+<para>count=$(($count + 1))</para>
+<para>done</para>
+<para>myfunction() {</para>
+<para>find . -type f -name "*.$1" -print # $1 is first argument of the function</para>
+<para>}</para>
+<para>myfunction "txt"</para>
+<para>Generate a file</para>
+<para>MYHOME=/home/colin</para>
+<para>cat &gt; testhome.sh &lt;&lt; _EOF</para>
+<para># All of this goes into the file testhome.sh</para>
+<para>if [ -d "$MYHOME" ] ; then</para>
+<para>echo $MYHOME exists</para>
+<para>else</para>
+<para>echo $MYHOME does not exist</para>
+<para>fi</para>
+<para>_EOF</para>
+<para>sh testhome.sh</para></section><section><info><title>21.2 Bourne script example</title></info>
+<para>As a small example, the script used to create a PDF booklet from this xhtml document:</para>
+<para>#!/bin/sh</para>
+<para># This script creates a book in pdf format ready to print on a duplex printer</para>
+<para>if [ $# -ne 1 ]; then # Check the argument</para>
+<para>echo 1&gt;&amp;2 "Usage: $0 HtmlFile"</para>
+<para>exit 1 # non zero exit if error</para>
+<para>fi</para>
+<para>file=$1 # Assign the filename</para>
+<para>fname=${file%.*} # Get the name of the file only</para>
+<para>fext=${file#*.} # Get the extension of the file</para>
+<para>prince $file -o $fname.pdf # from www.princexml.com</para>
+<para>pdftops -paper A4 -noshrink $fname.pdf $fname.ps # create postscript booklet</para>
+<para>cat $fname.ps |psbook|psnup -Pa4 -2 |pstops -b "2:0,1U(21cm,29.7cm)" &gt; $fname.book.ps</para>
+<para>ps2pdf13 -sPAPERSIZE=a4 -sAutoRotatePages=None $fname.book.ps $fname.book.pdf</para>
+<para># use #a4 and #None on Windows!</para>
+<para>exit 0 # exit 0 means successful</para></section><section><info><title>21.3 Some sed commands</title></info>
+<para>sed 's/string1/string2/g' # Replace string1 with string2</para>
+<para>sed -i 's/wroong/wrong/g' *.txt # Replace a recurring word with g</para>
+<para>sed 's/\(.*\)1/\12/g' # Modify anystring1 to anystring2</para>
+<para>sed '/&lt;p&gt;/,/&lt;\/p&gt;/d' t.xhtml # Delete lines that start with &lt;p&gt;</para>
+<para># and end with &lt;/p&gt;</para>
+<para>sed '/ *#/d; /^ *$/d' # Remove comments and blank lines</para>
+<para>sed 's/[ \t]*$//' # Remove trailing spaces (use tab as \t)</para>
+<para>sed 's/^[ \t]*//;s/[ \t]*$//' # Remove leading and trailing spaces</para>
+<para>sed 's/[^*]/[&amp;]/' # Enclose first char with [] top-&gt;[t]op</para>
+<para/></section><section><info><title>21.4 Some useful commands</title></info>
+<para>sort -t. -k1,1n -k2,2n -k3,3n -k4,4n # Sort IPv4 ip addresses</para>
+<para>echo 'Test' | tr '[:lower:]' '[:upper:]' # Case conversion</para>
+<para>echo foo.bar | cut -d . -f 1 # Returns foo</para>
+<para>PID=$(ps | grep script.sh | grep bin | awk '{print $1}') # PID of a running script</para>
+<para>PID=$(ps axww | grep [p]ing | awk '{print $1}') # PID of ping (w/o grep pid)</para>
+<para>IP=$(ifconfig $INTERFACE | sed '/.*inet addr:/!d;s///;s/ .*//') # Linux</para>
+<para>IP=$(ifconfig $INTERFACE | sed '/.*inet /!d;s///;s/ .*//') # FreeBSD</para>
+<para>if [ `diff file1 file2 | wc -l` != 0 ]; then [...] fi # File changed?</para>
+<para>cat /etc/master.passwd | grep -v root | grep -v \*: | awk -F":" \ # Create http passwd</para>
+<para>'{ printf("%s:%s\n", $1, $2) }' &gt; /usr/local/etc/apache2/passwd</para>
+<para>testuser=$(cat /usr/local/etc/apache2/passwd | grep -v \ # Check user in passwd</para>
+<para>root | grep -v \*: | awk -F":" '{ printf("%s\n", $1) }' | grep ^user$)</para></section></section><section><info><title>22. PROGRAMMING</title></info><section><info><title>22.1 C basics</title></info>
+<para>strcpy(newstr,str) /* copy str to newstr */</para>
+<para>expr1 ? expr2 : expr3 /* if (expr1) expr2 else expr3 */</para>
+<para>x = (y &gt; z) ? y : z; /* if (y &gt; z) x = y; else x = z; */</para>
+<para>int a[]={0,1,2}; /* Initialized array (or a[3]={0,1,2}; */</para>
+<para>int a[2][3]={{1,2,3},{4,5,6}}; /* Array of array of ints */</para>
+<para>int i = 12345; /* Convert in i to char str */</para>
+<para>char str[10];</para>
+<para>sprintf(str, "%d", i);</para></section><section><info><title>22.2 C example</title></info>
+<para>A minimal c program simple.c:</para>
+<para>#include &lt;stdio.h&gt;</para>
+<para>main() {</para>
+<para>int number=42;</para>
+<para>printf("The answer is %i\n", number);</para>
+<para>}</para>
+<para>Compile with:</para>
+<para># gcc simple.c -o simple</para>
+<para># ./simple</para>
+<para>The answer is 42</para></section><section><info><title>22.3 C++ basics</title></info>
+<para>*pointer // Object pointed to by pointer</para>
+<para>&amp;obj // Address of object obj</para>
+<para>obj.x // Member x of class obj (object obj)</para>
+<para>pobj-&gt;x // Member x of class pointed to by pobj</para>
+<para>// (*pobj).x and pobj-&gt;x are the same</para></section><section><info><title>22.4 C++ example</title></info>
+<para>As a slightly more realistic program in C++, let's create a class in its own header (IPv4.h) and</para>
+<para>implementation (IPv4.cpp) and create a program which uses the class functionality. The class has a member to convert an IP address in integer format to the known quad format. This is a minimal c++ program with a class and multi-source compile.</para>
+<para>IPv4 class</para>
+<para>IPv4.h:</para>
+<para>#ifndef IPV4_H</para>
+<para>#define IPV4_H</para>
+<para>#include &lt;string&gt;</para>
+<para>namespace GenericUtils { // create a namespace</para>
+<para>class IPv4 { // class definition</para>
+<para>public:</para>
+<para>IPv4();</para>
+<para>~IPv4();</para>
+<para>std::string IPint_to_IPquad(unsigned long ip);// member interface</para>
+<para>};</para>
+<para>} //namespace GenericUtils</para>
+<para>#endif // IPV4_H</para>
+<para>IPv4.cpp:</para>
+<para>#include "IPv4.h"</para>
+<para>#include &lt;string&gt;</para>
+<para>#include &lt;sstream&gt;</para>
+<para>using namespace std; // use the namespaces</para>
+<para>using namespace GenericUtils;</para>
+<para>IPv4::IPv4() {} // default constructor/destructor</para>
+<para>IPv4::~IPv4() {}</para>
+<para>string IPv4::IPint_to_IPquad(unsigned long ip) { // member implementation</para>
+<para>ostringstream ipstr; // use a stringstream</para>
+<para>ipstr &lt;&lt; ((ip &amp;0xff000000) &gt;&gt; 24) // Bitwise right shift</para>
+<para>&lt;&lt; "." &lt;&lt; ((ip &amp;0x00ff0000) &gt;&gt; 16)</para>
+<para>&lt;&lt; "." &lt;&lt; ((ip &amp;0x0000ff00) &gt;&gt; 8)</para>
+<para>&lt;&lt; "." &lt;&lt; ((ip &amp;0x000000ff));</para>
+<para>return ipstr.str();</para>
+<para>}</para>
+<para>The program simplecpp.cpp</para>
+<para>#include "IPv4.h"</para>
+<para>#include &lt;iostream&gt;</para>
+<para>#include &lt;string&gt;</para>
+<para>using namespace std;</para>
+<para>int main (int argc, char* argv[]) {</para>
+<para>string ipstr; // define variables</para>
+<para>unsigned long ipint = 1347861486; // The IP in integer form</para>
+<para>GenericUtils::IPv4 iputils; // create an object of the class</para>
+<para>ipstr = iputils.IPint_to_IPquad(ipint); // call the class member</para>
+<para>cout &lt;&lt; ipint &lt;&lt; " = " &lt;&lt; ipstr &lt;&lt; endl; // print the result</para>
+<para>return 0;</para>
+<para>}</para>
+<para>Compile and execute with:</para>
+<para># g++ -c IPv4.cpp simplecpp.cpp # Compile in objects</para>
+<para># g++ IPv4.o simplecpp.o -o simplecpp.exe # Link the objects to final executable</para>
+<para># ./simplecpp.exe</para>
+<para>1347861486 = 80.86.187.238</para>
+<para>Use ldd to check which libraries are used by the executable and where they are located. This command is also used to check if a shared library is missing or if the executable is static.</para>
+<para># ldd /sbin/ifconfig</para></section><section><info><title>22.5 Simple Makefile</title></info>
+<para>The corresponding minimal Makefile for the multi-source program is shown below. The lines with</para>
+<para>instructions must begin with a tab! The back slash "\" can be used to cut long lines.</para>
+<para>CC = g++</para>
+<para>CFLAGS = -O</para>
+<para>OBJS = IPv4.o simplecpp.o</para>
+<para>simplecpp: ${OBJS}</para>
+<para>${CC} -o simplecpp ${CFLAGS} ${OBJS}</para>
+<para>clean:</para>
+<para>rm -f ${TARGET} ${OBJS}</para></section></section><section><info><title>23. ONLINE HELP</title></info><section><info><title>23.1 Documentation</title></info>
+<para>Linux Documentation en.tldp.org</para>
+<para>Linux Man Pages www.linuxmanpages.com</para>
+<para>Linux commands directory www.oreillynet.com/linux/cmd</para>
+<para>Linux doc man howtos linux.die.net</para>
+<para>FreeBSD Handbook www.freebsd.org/handbook</para>
+<para>FreeBSD Man Pages www.freebsd.org/cgi/man.cgi</para>
+<para>FreeBSD user wiki www.freebsdwiki.net</para>
+<para>Solaris Man Pages docs.sun.com/app/docs/coll/40.10</para></section><section><info><title>23.2 Other Unix/Linux references</title></info>
+<para>Rosetta Stone for Unix bhami.com/rosetta.html (a Unix command translator)</para>
+<para>Unix guide cross reference unixguide.net/unixguide.shtml</para>
+<para>Linux commands line list www.linuxguide.it/commands_list.php</para>
+<para>Short Linux reference www.pixelbeat.org/cmdline.html</para>
+<para>That's all folks!</para>
+<para>This document: "Unix Toolbox revision 11" is licensed under a Creative Commons Licence</para>
+<para/>
+<para/>
+<para/></section></section>
+</article>

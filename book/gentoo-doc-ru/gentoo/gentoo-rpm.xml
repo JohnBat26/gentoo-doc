@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info><title>Использование rpm-пакетов в Gentoo</title></info>
+        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/java.xml">http://ylsoftware.com/?action=news&amp;na=viewfull&amp;news=402</link>            </para>
+        <para>Автор: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:bulvinkl@gmail.com?subject=По%20поводу%20Вашей%20статьи%20об%20использовании%20rpm-пакетов%20в%20Gentoo">Калинников В.В. a.k.a. MooSe</link>
+        </para>
+        <para>С версии: 1.5.</para>
+        <para>Дата оригинала:  15.02.2008</para>
+        <para/>
+        <para>Эта статья написана для <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://code.google.com/p/gentoo-doc/">сборника статей о Gentoo</link> по просьбе одного из его авторов - Евгения Батогова a.k.a JohnBat26. Здесь я постараюсь описать возможные способы установки rpm-пакетов в Gentoo. Сразу хочу отметить, что в любом случае лучше всего ставить программы из исходных текстов, используя команду emerge. Использовать же rpm нужно только в самом крайнем случае, когда архив с исходными текстами не доступен (например для коммерческих программ).</para>
+        <para>Итак. Есть два способа установить rpm-пакет:</para>
+        <orderedlist>
+            <listitem>
+                <para>Установить в систему менеджер пакетов rpm и пользоваться им. </para>
+            </listitem>
+            <listitem>
+                <para>Написать ebuild для распаковки и установки rpm-пакета. </para>
+            </listitem>
+        </orderedlist>
+        <para>Первый способ проще, но пакет придётся устанавливать с ключом --nodeps и есть большой риск сломать систему или просто получить не рабочий пакет. Второй способ сложнее. Он тоже не решает всех проблем первого, но по крайней даёт возможность избежать поломки системы.</para>
+        <para>Будем полагать что мы хотим установить в систему пакет prog-0.1.i386.rpm. Независимо от того, какой способ выбран понадобиться утилита rpm:</para>
+        <para/>
+        <para>emerge rpm</para>
+        <para/>
+        <para>Теперь рассмотрим первый способ установки. Для начала полезно просмотреть зависимости пакета:</para>
+        <para/>
+        <para>rpm -qp --qf "[%{REQUIRENAME} %{REQUIREFLAGS:depflags} %{REQUIREVERSION}\n]" prog-0.1.i386.rpm</para>
+        <para/>
+        <para>Получаем примерно вот такой список:</para>
+        <para>/bin/bash</para>
+        <para>/bin/sh</para>
+        <para>/bin/sh</para>
+        <para>/bin/sh</para>
+        <para>/bin/sh</para>
+        <para>libX11.so.6</para>
+        <para>libXext.so.6</para>
+        <para>libXt.so.6</para>
+        <para>libc.so.6</para>
+        <para>libc.so.6(GCC_3.0)</para>
+        <para>libc.so.6(GLIBC_2.0)</para>
+        <para>libc.so.6(GLIBC_2.1)</para>
+        <para>libc.so.6(GLIBC_2.1.2)</para>
+        <para>libc.so.6(GLIBC_2.1.3)</para>
+        <para>libc.so.6(GLIBC_2.2)</para>
+        <para>libc.so.6(GLIBC_2.3)</para>
+        <para>libdl.so.2</para>
+        <para>libdl.so.2(GLIBC_2.0)</para>
+        <para>libdl.so.2(GLIBC_2.1)</para>
+        <para>libfontconfig.so.1</para>
+        <para>libfreetype.so.6</para>
+        <para>libglib-2.0.so.0</para>
+        <para>libgobject-2.0.so.0</para>
+        <para>libgtk-x11-2.0.so.0</para>
+        <para>libm.so.6</para>
+        <para>libm.so.6(GLIBC_2.0)</para>
+        <para>libpthread.so.0</para>
+        <para>libpthread.so.0(GLIBC_2.0)</para>
+        <para>libpthread.so.0(GLIBC_2.1)</para>
+        <para>libpthread.so.0(GLIBC_2.2)</para>
+        <para>libpthread.so.0(GLIBC_2.2.3)</para>
+        <para>libpthread.so.0(GLIBC_2.3.2)</para>
+        <para>rpmlib(CompressedFileNames) &lt;= 3.0.4-1</para>
+        <para>rpmlib(PayloadFilesHavePrefix) &lt;= 4.0-1</para>
+        <para/>
+        <para>Убеждаемся что всё это у нас есть. Если чего-то не хватает - прикидываем в каком пакете оно может быть и ставим этот пакет. Наконец, когда всё что нужно у нас установлено, устанавливаем сам rpm-пакет:</para>
+        <para/>
+        <para>rpm -Uvh --nodeps prog-0.1.i386.rpm</para>
+        <para>Всё. Пакет установлен. Однако всё-таки лучше было бы написать для него ebuild. Для работы с rpm-пакетами в portage есть класс rpm. Самый простой способ ознакомиться с ним это прочитать его исходный код, которые расположен в файле /usr/portage/eclass/rpm.eclass. Приведу простой пример ebuild'а для установки rpm:</para>
+        <para># Подключаем класс rpm</para>
+        <para>inherit rpm</para>
+        <para/>
+        <para># Описываем программу</para>
+        <para>DESCRIPTION="Cool prog"</para>
+        <para>HOMEPAGE="http://example.com"</para>
+        <para>SLOT="0"</para>
+        <para>KEYWORDS="~x86"</para>
+        <para>IUSE=""</para>
+        <para>RESTRICT="nomirror"</para>
+        <para/>
+        <para># Описываем зависимости</para>
+        <para>DEPENDS="x11-libs/qt"</para>
+        <para/>
+        <para># Указываем откуда брать пакет</para>
+        <para>SRC_URI="http://example.com/files/prog-0.1.i386.rpm"</para>
+        <para/>
+        <para># Дальше всё будет сделано само. Кроме собственно установки.</para>
+        <para/>
+        <para># Устанавливаем пакет:</para>
+        <para>src_install() {</para>
+        <para>        cp -vR ${S}/* ${D}/</para>
+        <para>}</para>
+        <para/>
+        <para>Дальше нужно сохранить этот ebuild в нужном месте (обратитесь к документации portage) и выполнить:</para>
+        <para>ebuild /path/to/file.ebuild digest</para>
+        <para>ebuild /path/to/file.ebuild merge</para>
+        <para>Всё. Пакет установлен. Причём штатными средствами Gentoo (что немало важно).</para>
+        <para>Огромное спасибо пользователю <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ylsoftware.com/?action=viewprofile&amp;user=Alex">Alex</link> за помощь в написании статьи.</para>
+        <para/>
+        <para/>
+</article>

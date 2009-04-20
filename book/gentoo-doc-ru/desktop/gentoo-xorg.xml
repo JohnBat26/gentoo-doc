@@ -1,0 +1,1859 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Gentoo и  X.Org</title>
+    </info>
+    <para/>
+    <section>
+        <info>
+            <title>Описание настройки МОНОЛИТНОГО X-сервера версий 6.X</title>
+        </info>
+        <para/>
+        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/xorg-config.xml">http://www.gentoo.org/doc/ru/xorg-config.xml</link>
+        </para>
+        <para>Дата: 13.06.07</para>
+        <para>С версии: 1.0</para>
+        <para/>
+        <section>
+            <info>
+                <title>1. Что такое X Window Server?</title>
+            </info>
+            <para/>
+            <para>Графический интерфейс против командной строки</para>
+            <para/>
+            <para>Обычного пользователя могут испугать мысли о необходимости печатать в командной строке. Почему бы ему не прокладывать свой путь на территории свободы выбора Gentoo (и Linux вообще), просто «водя мышкой»? Ну, *большая улыбка*, конечно, вы сможете это сделать :-). В Linux предлагается широкое разнообразие пользовательских интерфейсов и сред, которые можно установить поверх установленной у вас системы. </para>
+            <para/>
+            <para>Это один из самых больших сюрпризов, с которым сталкиваются новички: графический интерфейс пользователя — это всего лишь прикладная программа, выполняемая в системе. Он не является частью ядра Linux или каких-либо других компонентов системы. Это — мощный инструмент, позволяющий полностью задействовать графические возможности вашего компьютера. </para>
+            <para/>
+            <para>Так как стандартизация очень важна, для организации прорисовки и перемещения окон по экрану, взаимодействия пользователя с мышью и клавиатурой, а также других важных базовых аспектов, был создан стандарт под названием X Window System, сокращённо X11 или просто X. Он используется в Unix, Linux и других Unix-подобных операционных системах во всем мире. </para>
+            <para/>
+            <para>Приложение, которое дает пользователям Linux возможность запускать графические интерфейсы пользователя и использует стандарт X11, называется Xorg-X11, ответвление проекта XFree86. Проектом XFree86 было решено использовать лицензию, возможно, несовместимую с лицензией GPL, поэтому рекомендуется использовать Xorg. Пакет XFree86 больше не поддерживается в официальном дереве портежей. </para>
+            <para/>
+            <para>Проект X.org</para>
+            <para/>
+            <para>Проектом X.org создана и поддерживается бесплатно распространяемая реализация системы X11 с открытым исходным кодом. Это открытая инфраструктура рабочей станции, основанная на X11. </para>
+            <para/>
+            <para>Xorg обеспечивает интерфейс между устройствами вашего компьютера и нужными вам графическими программами. Кроме того, Xorg является полностью сетевым, то есть вы можете запускать программу на одной системе, а отображать ее — на другой. </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>2. Установка Xorg</title>
+            </info>
+            <para/>
+            <para>Использование emerge</para>
+            <para/>
+            <para>Хватит болтовни, не перейти ли нам к делу? Чтобы установить Xorg, вам просто нужно запустить emerge xorg-x11. Установка Xorg займёт достаточно времени, так что вы можете перекусить, дожидаясь ее завершения. </para>
+            <para/>
+            <para>Перед тем, как установить Xorg, в файле /etc/make.conf вам понадобится настроить две очень важные переменные. </para>
+            <para/>
+            <para>Первая из них — VIDEO_CARDS, которая используется для выбора драйвера для используемой вами видеокарты, и связана с ее типом и маркой. Одним из распространенных значений является nvidia для карт nVidia или fglrx для карт ATI Radeon. Это — закрытые драйверы, предоставленные nVidia и ATI. Если вы хотите использовать версии с отрытым исходным кодом, используйте nv вместо nvidia, но помните, эта версия не обеспечивает 3D-ускорение. Аналогично, используйте radeon для видеокарт от ATI. В VIDEO_CARDS можно указывать несколько драйверов, разделенных пробелами. </para>
+            <para/>
+            <para>Вторая переменная, INPUT_DEVICES, используется для указания драйверов устройств ввода. В большинстве случаев связки keyboard mouse достаточно. </para>
+            <para/>
+            <para>Теперь нужно решить, какие драйверы использовать, и добавить нужные параметры в файл /etc/make.conf: </para>
+            <para/>
+            <para>Листинг 2.1: Пример строк в make.conf</para>
+            <para>(для поддержки мыши и клавиатуры)</para>
+            <para>INPUT_DEVICES="keyboard mouse"</para>
+            <para>(для видеокарт nVidia)</para>
+            <para>VIDEO_CARDS="nvidia"</para>
+            <para>(ИЛИ для видеокарт ATI Radeon)</para>
+            <para>VIDEO_CARDS="fglrx"</para>
+            <para/>
+            <para/>
+            <para>Дополнительные сведения по настройке карт nVidia и ATI находятся в руководстве по видеокартам nVidia в Gentoo Linux и Gentoo Linux ATI FAQ. Если вы не знаете, какие драйверы выбрать, ознакомьтесь с этими руководствами. </para>
+            <para>Примечание: Если у вас рекомендуемые настройки не работают, следует запустить emerge -pv xorg-x11, проверить все доступные параметры и указать соответствующие вашей системе. Для различных версий Xorg на различных архитектурах эти переменные могут выводиться командой emerge -pv xorg-server вместо приведенной выше. Например, для архитектуры x86 и xorg-x11-7.0: </para>
+            <para/>
+            <para/>
+            <para>Листинг 2.2: Просмотр всех доступных параметров драйверов</para>
+            <para># emerge -pv xorg-x11</para>
+            <para/>
+            <para>These are the packages that would be merged, in order:</para>
+            <para/>
+            <para>Calculating dependencies... done!</para>
+            <para>[ebuild   R   ] x11-base/xorg-x11-7.0-r1  USE="-3dfx" INPUT_DEVICES="keyboard</para>
+            <para>mouse -acecad -aiptek -calcomp -citron -digitaledge -dmc -dynapro -elo2300</para>
+            <para>-elographics -evdev -fpit -hyperpen -jamstudio -joystick -magellan -magictouch</para>
+            <para>-microtouch -mutouch -palmax -penmount -spaceorb -summa -synaptics -tek4957</para>
+            <para>-ur98 -vmmouse -void -wacom" VIDEO_CARDS="nvidia -apm -ark -chips -cirrus -cyrix</para>
+            <para>-dummy -fbdev -fglrx -glint -i128 -i740 -i810 -imstt -mach64 -mga -neomagic -nsc</para>
+            <para>-nv -r128 -radeon -rendition -s3 -s3virge -savage -siliconmotion -sis -sisusb</para>
+            <para>-tdfx -tga -trident -tseng -v4l -vesa -vga -via -vmware -voodoo" 0 kB</para>
+            <para/>
+            <para/>
+            <para>После установки всех необходимых переменных можно перейти к установке пакета Xorg. </para>
+            <para/>
+            <para>Листинг 2.3: Установка Xorg</para>
+            <para># emerge xorg-x11</para>
+            <para/>
+            <para/>
+            <para>После завершения установки, чтобы продолжить, вам наверняка придётся обновить некоторые переменные среды. Для установки значений просто запустите env-update, а затем — source /etc/profile. </para>
+            <para/>
+            <para/>
+            <para/>
+            <para>Листинг 2.4: Обновление переменных среды</para>
+            <para># env-update</para>
+            <para># source /etc/profile</para>
+            <para/>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>3. Настройка Xorg</title>
+            </info>
+            <para/>
+            <para>Файл xorg.conf</para>
+            <para/>
+            <para>Конфигурационный файл Xorg называется xorg.conf и находится в папке /etc/X11. В пакет Xorg-X11 входит его пример под названием /etc/X11/xorg.conf.example, который можно использовать при создании своей собственной конфигурации. Он подробно прокомментирован, но если вы нуждаетесь в подробном описании синтаксиса, не стесняйтесь обратиться к страницам справки: </para>
+            <para/>
+            <para>Листинг 3.1: Чтение страницы справки xorg.conf</para>
+            <para># man 5 xorg.conf</para>
+            <para/>
+            <para/>
+            <para>Счастливого чтения всем желающим. Мы, конечно же, не из их числа, поэтому перейдем к выяснению, как можно создать файл автоматически. </para>
+            <para/>
+            <para>По умолчанию: автоматическая генерация xorg.conf</para>
+            <para/>
+            <para>Xorg способен самостоятельно подобрать большинство параметров за вас. Скорее всего, вам потребуется всего лишь изменить несколько строк, чтобы установить желаемое разрешение экрана. Если вы заинтересованы в более глубокой настройке, обязательно просмотрите ресурсы, указанные в конце этой главы. Но сначала давайте создадим (надеемся, работающий) конфигурационный файл Xorg. </para>
+            <para/>
+            <para>Листинг 3.2: Генерация файла xorg.conf</para>
+            <para># Xorg -configure</para>
+            <para/>
+            <para/>
+            <para>Обязательно прочтите последние строки, выводимые после завершения опроса оборудования Xorg. Если вы увидите, что где-то Xorg не удалось правильно опознать устройства, то вам придётся править файл xorg.conf вручную. Если же всё прошло гладко, Xorg должен сообщить вам, что создан файл и готов для тестирования файл /root/xorg.conf.new. Давайте его испытаем :) </para>
+            <para/>
+            <para>Листинг 3.3: Тестирование файла xorg.conf.new</para>
+            <para># X -config /root/xorg.conf.new</para>
+            <para/>
+            <para/>
+            <para>Если всё в порядке, вы увидите чёрно-белый узор. Проверьте, работает ли мышь, и подходит ли разрешение экрана. Вы вряд ли точно угадаете разрешение, но всё же заметите слишком низкое. Выйти можно в любой момент, нажав комбинацию клавиш Ctrl+Alt+Backspace. </para>
+            <para/>
+            <para>Альтернатива: полуавтоматическая генерация xorg.conf</para>
+            <para/>
+            <para>В Xorg есть утилита xorgconfig, задающая различные вопросы о вашей системе (о графическом адаптере, клавиатуре и т.п.). Основываясь на ваших ответах, она создаст файл xorg.conf. </para>
+            <para/>
+            <para>Листинг 3.4: Полуавтоматическая генерация xorg.conf</para>
+            <para># xorgconfig</para>
+            <para/>
+            <para/>
+            <para>Другая утилита, также входящая в пакет Xorg — xorgcfg, которая сначала пытается выполнить Xorg -configure, а затем запускает X-сервер для более тонкой настройки. </para>
+            <para/>
+            <para>Листинг 3.5: Использование xorgcfg</para>
+            <para># xorgcfg</para>
+            <para>(если X даст сбой, или настройка завершится неудачей, попробуйте:)</para>
+            <para># xorgcfg -textmode</para>
+            <para/>
+            <para/>
+            <para>Копирование в xorg.conf</para>
+            <para/>
+            <para>Теперь давайте скопируем xorg.conf.new в /etc/X11/xorg.conf, чтобы не приходилось постоянно запускать Xorg -config: набирать просто X или startx гораздо легче :) </para>
+            <para/>
+            <para>Листинг 3.6: Копирование поверх xorg.conf</para>
+            <para># cp /root/xorg.conf.new /etc/X11/xorg.conf</para>
+            <para/>
+            <para/>
+            <para>Использование startx</para>
+            <para/>
+            <para>Теперь попробуйте ввести startx, чтобы запустить свой X-сервер. startx — это сценарий, запускающий сеанс X, то есть серверы X, а поверх них — некоторые графические приложения. Он решает, какие приложения запустить, исходя из следующей логики: </para>
+            <para>если в домашнем каталоге есть файл с именем .xinitrc, то выполняются команды, перечисленные в нём </para>
+            <para>в противном случае считывается значение переменной XSESSION и запускается один из указанных в /etc/X11/Sessions/ сеансов (указать значение XSESSION по умолчанию, для всех пользователей системы, можно в файле /etc/rc.conf) </para>
+            <para>если вышеуказанное завершилось неудачей, производится откат к простейшему диспетчеру окон, обычно twm. </para>
+            <para/>
+            <para>Листинг 3.7: Запуск X</para>
+            <para># startx</para>
+            <para/>
+            <para>Если вы увидели уродливый, отвратительный, омерзительный, безобразный диспетчер окон, то это — twm. Чтобы завершить сеанс twm, наберите exit или нажмите Ctrl-D в одном из терминалов xterm. «убить» сеанс X также можно, нажав комбинацию клавиш Ctrl+Alt+Backspace, чтобы «выгнать его с позором» — наверно, такой вариант годится не всегда. Хотя это не причинит тяжёлого вреда :) </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>4. Настройка xorg.conf</title>
+            </info>
+            <para/>
+            <para>Установка разрешения экрана</para>
+            <para/>
+            <para>Если вы чувствуете, что разрешение экрана неподходящее, вам потребуется проверить два раздела конфигурации. Прежде всего, разделе Screen, где перечисляются варианты разрешения экрана, с которыми может запускаться X-сервер. По умолчанию в этом разделе может вообще не быть никаких строк о разрешении экрана. В таком случае Xorg оценивает допустимое разрешение на основе данных из другого раздела: Monitor. </para>
+            <para/>
+            <para>При этом Xorg для вычисления правильных вариантов разрешения использует значения HorizSync (частота строк) и VertRefresh (частота кадров) из раздела Monitor. Пока что оставьте эти параметры как есть. Лишь в том случае, когда изменения в разделе Screen (которые мы опишем чуть ниже) не помогают, вам придется заглянуть в технические характеристики своего монитора и указать правильные значения. Также можно воспользоваться программой, определяющей технические характеристики вашего монитора, например, sys-apps/ddcxinfo-knoppix. </para>
+            <para/>
+            <para>Предупреждение: Не меняйте «просто так» значения этих двух относящихся к монитору переменных, не сверившись с техническими характеристиками своего монитора. Неправильные значения могут привести в лучшем случае к срыву синхронизации, а в худшем случае — к сгоревшему монитору. </para>
+            <para/>
+            <para>Теперь давайте поменяем значения разрешения. В следующем примере, взятом из /etc/X11/xorg.conf, мы добавим строчки Modes (режимы) и DefaultDepth (цветность), чтобы X-сервер по умолчанию запускался в режиме 24 бит при 1024x768 разрешении экрана. Особо не обращайте внимания на значения — это просто пример и, скорее всего, они будут отличаться от настроек вашей системы. </para>
+            <para/>
+            <para>Листинг 4.1: Изменение раздела Screen /etc/X11/xorg.conf</para>
+            <para>Section "Screen"</para>
+            <para>  Identifier  "Default Screen"</para>
+            <para>  Device    "S3 Inc. ProSavage KN133 [Twister K]"</para>
+            <para>  Monitor   "Generic Monitor"</para>
+            <para>  DefaultDepth  24</para>
+            <para>  # несколько строк пропущены для наглядности</para>
+            <para>  SubSection "Display"</para>
+            <para>    Depth   24</para>
+            <para>    Modes   "1024x768"</para>
+            <para>  EndSubSection</para>
+            <para>EndSection</para>
+            <para/>
+            <para/>
+            <para>Запустите X (startx), чтобы обнаружить, что сервер использует желаемое разрешение :) </para>
+            <para/>
+            <para>Настройка клавиатуры</para>
+            <para/>
+            <para>Чтобы настроить X на использование национальных раскладок, найдите раздел InputDevice (устройство ввода), определяющий настройки клавиатуры, и добавьте параметр XkbLayout с указанием необходимой раскладки. Для примера, покажем, как добавить бельгийскую раскладку. Просто измените код страны на свой: </para>
+            <para/>
+            <para>Листинг 4.2: Changing the keyboard layout</para>
+            <para>Section "InputDevice"</para>
+            <para>  Identifier  "Generic Keyboard"</para>
+            <para>  Driver    "keyboard"</para>
+            <para>  Option    "CoreKeyboard"</para>
+            <para>  Option    "XkbRules"  "xorg"</para>
+            <para>  Option    "XkbModel"  "pc105"</para>
+            <para>  Option    "XkbLayout" "be"</para>
+            <para>EndSection</para>
+            <para/>
+            <para/>
+            <para>Настройка мыши</para>
+            <para/>
+            <para>Если ваша мышь не работает, сначала придётся выяснить, обнаружена ли она вообще ядром. Мыши (в качестве устройств) выглядят как /dev/input/mouse0 (или /dev/input/mice, если вы хотите использовать несколько мышек). В некоторых случаях используется название /dev/psaux. В любом случае, вы можете убедиться, что устройство соответствует вашей мыши, просмотрев вывод соответствующего файла устройства, одновременно передвигая мышь. В большинстве случаев на экране должна появиться бессмыслица. Для остановки вывода нажимайте Ctrl-C. </para>
+            <para/>
+            <para>Листинг 4.3: Проверка файла устройства</para>
+            <para># cat /dev/input/mouse0</para>
+            <para>(не забудьте нажать Ctrl-C для завершения)</para>
+            <para/>
+            <para>Если ваша мышь не обнаружена, проверьте, все ли необходимые модули загружены. </para>
+            <para/>
+            <para>Если же ваша мышь найдена, впишите устройства в соответствующий раздел InputDevice. В следующем примере видно, как мы устанавливаем еще два параметра: Protocol (определяет протокол, используемый мышью; у большинства пользователей — PS/2 или IMPS/2) и ZAxisMapping (позволяющий задействовать колесико, если есть). </para>
+            <para/>
+            <para>Листинг 4.4: Изменение настройки мыши в Xorg</para>
+            <para>Section "InputDevice"</para>
+            <para>  Identifier  "TouchPad Mouse"</para>
+            <para>  Driver    "mouse"</para>
+            <para>  Option    "CorePointer"</para>
+            <para>  Option    "Device"    "/dev/input/mouse0"</para>
+            <para>  Option    "Protocol"    "IMPS/2"</para>
+            <para>  Option    "ZAxisMapping"    "4 5"</para>
+            <para>EndSection</para>
+            <para/>
+            <para/>
+            <para/>
+            <para/>
+            <para>Запустите startx и порадуйтесь результату :). Поздравляем, теперь (надеемся) у вас есть работающий Xorg. Следующий шаг — удалить этот ужасный облегченный диспетчер окон, и использовать «нафаршированный» возможностями диспетчер окон (или даже рабочую среду), такой как KDE или GNOME, но это не входит в рамки данного руководства :) </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>5. Ресурсы</title>
+            </info>
+            <para/>
+            <para>Создание и детальная настройка xorg.conf</para>
+            <para/>
+            <para>Прежде всего, в man 5 xorg.conf дается краткое, но полное описание синтаксиса конфигурационного файла. Обязательно держите эту страницу открытой в соседнем терминале при редактировании своего конфигурационного файла! </para>
+            <para/>
+            <para>Второй источник информации на вашей системе — каталог /usr/X11R6/lib/X11/doc, где находятся различные описания README для конкретных графических чипсетов. </para>
+            <para/>
+            <para>В сети также есть много сведений о настройке xorg.conf. Мы перечислим лишь некоторые из них; обязательно погуглите, чтобы найти другие :). Так как в большинстве параметров xorg.conf и XF86Config (конфигурационного файла для XFree86) используется одинаковый синтаксис, а информации о XFree86 больше, мы ссылаемся и на такие ресурсы. </para>
+            <para>The XFree Local Multi-User HOWTO </para>
+            <para>An Introduction to XFree 4.x Криса Хаузера (Chris Houser) </para>
+            <para/>
+            <para>Другие источники</para>
+            <para/>
+            <para>Если вы хотите обновить свою систему со старым монолитным Xorg на новый модульный Xorg 7, прочтите руководство по переходу на модульный X (англ.) </para>
+            <para/>
+            <para>Дальнейшая информация по настройке различных пакетов, для работы в среде X находится в разделе графическая среда Gentoo нашей документации.</para>
+            <para/>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>Описание настройки МОДУЛЬНОГО X-сервера версий 7.X (Англ.)</title>
+        </info>
+        <para/>
+        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-wiki.com/HOWTO_Modular_Xorg">http://gentoo-wiki.com/HOWTO_Modular_Xorg</link>
+        </para>
+        <para>С версии: 1.0</para>
+        <section>
+            <info>
+                <title>Introduction</title>
+            </info>
+            <para/>
+            <para>This is a guide to Modular Xorg, mainly dealing with special circumstances and troubleshooting. </para>
+            <para>This article is currently being maintained by AllenJB. If you have suggestions for additions or fixes, please post them to the discussion and bugs page. </para>
+            <para>Please see also the official Modular Xorg Upgrade Guide. </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Preparation </title>
+            </info>
+            <para/>
+            <para>Firstly it'll be useful to know what version of Xorg you're going to be emerging. If you don't know, run emerge -p xorg-x11 to find out. </para>
+            <para/>
+            <section>
+                <info>
+                    <title>Nvidia Drivers </title>
+                </info>
+                <para/>
+                <para>The old nvidia-glx and nvidia-kernel packages have been replaced by a single nvidia-drivers package. If you're still using the old packages, you'll want to upgrade to the new package first, as the old ones will not work with modular Xorg, by running: </para>
+                <para/>
+                <para> # emerge -Ca nvidia-glx nvidia-kernel</para>
+                <para> # emerge nvidia-drivers</para>
+                <para> # eselect opengl set nvidia</para>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Masking Xorg 7.1 (optional)</title>
+                </info>
+                <para/>
+                <para>If your system is going to install xorg-x11-7.1 and you wish to use xorg-x11-7.0 instead you'll need to add the following to /etc/portage/package.mask (create it if it doesn't exist):</para>
+                <para> </para>
+                <para># Mask xorg 7.1</para>
+                <para>&gt;=x11-base/xorg-x11-7.1</para>
+                <para>&gt;=x11-base/xorg-server-1.1.0</para>
+                <para>&gt;=x11-drivers/xf86-input-evdev-1.1.2-r1</para>
+                <para>&gt;=x11-drivers/xf86-video-vesa-1.2.0</para>
+                <para>&gt;=x11-drivers/xf86-input-mouse-1.1.1</para>
+                <para>&gt;=x11-drivers/xf86-input-keyboard-1.1.0</para>
+                <para>&gt;=x11-drivers/xf86-video-tdfx-1.2.0</para>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Backup </title>
+                </info>
+                <para/>
+                <para>Because Xorg is such a key part of a desktop system, you'll want to backup your current install before continuing. To do this we're going to use the quickpkg command from the gentoolkit package: </para>
+                <para/>
+                <para> emerge -a gentoolkit</para>
+                <para> quickpkg xorg-x11</para>
+                <para/>
+                <para>If you want to find out more about the quickpkg tool, run: man quickpkg </para>
+                <para/>
+                <para>Additionally, create a list of packages that have files in the Xorg specific directories by running: </para>
+                <para/>
+                <para>  if [[ ! -L /usr/X11R6 ]]; \</para>
+                <para>  then equery belongs /usr/X11R6 &gt; ~/usr-x11r6-packages \</para>
+                <para>  &amp;&amp; rm -rf /usr/X11R6; fi</para>
+                <para/>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Restoring the backup </title>
+                </info>
+                <para/>
+                <para>To restore your backed-up package run: emerge --usepkgonly -a xorg-x11-6.8.2-r8 </para>
+                <para>If you can't remember the exact version you can find it out by running: ls /usr/portage/packages/All/xorg-x11* </para>
+                <para>You then want to re-emerge all the packages listed in ~/usr-x11r6-packages. </para>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Uninstall old X.org </title>
+                </info>
+                <para/>
+                <para>Warning: If you are reading this from the same machine you will be upgrading X on, keep in mind two things: </para>
+                <para/>
+                <para>After cleaning out the old X, and before the new X is installed, you will not be able to start any X applications as X is not technically installed. The applications depending on X currently running are just running off the memory of X. Closing them will not enable you to re-open them until the new X is installed. </para>
+                <para>Programs currently running in X may become unstable during the install. For example, firefox may unexpectedly crash due to not being able to find fonts which are no longer there, or other similar reasons. </para>
+                <para>It is hence highly recommended that you print out a copy of this guide (or save a tree and open this guide on a console (not in X)) before you begin. Your programs should go back to behaving normally once the install is complete, however you may want to restart X as soon as possible afterwards.</para>
+                <para/>
+                <para>Uninstall your current xorg install by running: emerge -Ca xorg-x11 </para>
+                <para/>
+                <para>/usr/X11R6 symlink </para>
+                <para/>
+                <para>Run ls -l /usr/X11* and check that /usr/X11R6 is a symlink to /usr. It should look something like this</para>
+                <para>: </para>
+                <para>lrwxrwxrwx 1 root root 6 Mar 27  2005 /usr/X11R6 -&gt; ../usr</para>
+                <para/>
+                <para>If it doesn't, delete it and recreate it by running: cd /usr &amp;&amp; ln -s ../usr X11R6 </para>
+                <para/>
+                <para>Remove /usr/lib/X11/xkb </para>
+                <para/>
+                <para>The following is a requirement of the xkeyboard-config package. </para>
+                <para/>
+                <para>32-bit Users: Run ls -l /usr/lib/X11/xkb and if it exists, delete it with rm -r /usr/lib/X11/xkb </para>
+                <para/>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Emerge Modular X.org </title>
+            </info>
+            <para/>
+            <section>
+                <info>
+                    <title>Device Drivers </title>
+                </info>
+                <para/>
+                <para>Modular Xorg introduces a new system for managing the driver packages for your devices. You need to set the appropriate VIDEO_CARDS and INPUT_DEVICES flags in /etc/make.conf. To see what flags are available, run emerge -upv xorg-x11. On a typical machine with an Nvidia video card, it might look like this: </para>
+                <para>File: /etc/make.conf:</para>
+                <para/>
+                <para>INPUT_DEVICES="keyboard mouse"</para>
+                <para>VIDEO_CARDS="nv nvidia vesa"</para>
+                <para/>
+                <para/>
+                <para>The nv driver is the open source unofficial driver that lacks 3D acceleration. The nvidia driver is the official nvidia-drivers package. </para>
+                <para/>
+                <para>On an ATI System, the VIDEO_CARDS line should be like this (unless you don't wish to use proprietary drivers fglrx):</para>
+                <para/>
+                <para>File: /etc/make.conf </para>
+                <para>VIDEO_CARDS="radeon fglrx vesa"</para>
+                <para/>
+                <para/>
+                <para>Add the dri USE flag to /etc/make.conf to enable Direct Rendering support, which most graphics drivers use. </para>
+                <para/>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Installation </title>
+            </info>
+            <para/>
+            <para>Now run emerge -Dvat xorg-x11 to install modular Xorg. </para>
+            <para/>
+            <para>A few useful X11 tools that used to be included in the 6.8 build are now their own packages, you can emerge all of them now by running: emerge -DuNav xev xdpyinfo xvinfo xset xdriinfo xprop </para>
+            <para/>
+            <para>If you would like some extra fonts, you can emerge them now also: </para>
+            <para/>
+            <para/>
+            <para>emerge -DuNav font-adobe-100dpi font-adobe-75dpi font-adobe-utopia-100dpi \</para>
+            <para>font-adobe-utopia-75dpi font-bh-100dpi font-bh-75dpi font-bh-type1 \</para>
+            <para>font-bh-lucidatypewriter-100dpi font-bh-lucidatypewriter-75dpi \</para>
+            <para>font-bitstream-100dpi font-bitstream-75dpi ttf-bitstream-vera \</para>
+            <para>corefonts sharefonts freefonts font-ibm-type1</para>
+            <para/>
+            <para/>
+            <para>Keyboard Mappings</para>
+            <para/>
+            <para>There may be people who will search for the ca_enhanced keyboard mapping in Xorg 7.0. It has not disappeared, it just changed names to ca(fr), as with this keyboard configuration:</para>
+            <para/>
+            <para>File: /etc/X11/xorg.conf: </para>
+            <para>Section "InputDevice"</para>
+            <para>    Identifier  "Keyboard1"</para>
+            <para>    Driver      "kbd"</para>
+            <para>    Option "AutoRepeat" "500 30"</para>
+            <para>    Option "XkbRules"   "xorg"</para>
+            <para>    Option "XkbModel"   "pc105"</para>
+            <para>    Option "XkbLayout"  "ca(fr)"</para>
+            <para>EndSection</para>
+            <para/>
+            <para/>
+            <para>Notice that Option "XkbRules" "xfree86" won't work for modular xorg-x11. You have to change it to "xorg", or many keys will not produce the desired effect. </para>
+            <para/>
+            <para>In case you defined a custom xkb model (e.g. if you added a diNovo keyboard), check if you modified /usr/share/X11/xkb and not /usr/lib/X11/xkb. </para>
+            <para/>
+            <para>If your X server is restarting each time you pressed a non dead key, add the following link: </para>
+            <para># ln -s /usr/share/X11/XKeysymDB /usr/lib/X11/XKeysymDB</para>
+            <para/>
+            <para/>
+            <para>OpenMotif fails to emerge</para>
+            <para/>
+            <para>If building of openmotif fails run: emerge -DuNav --oneshot printproto xbitmaps libXp </para>
+            <para/>
+            <para>Then restart the emerge using: emerge --resume </para>
+            <para/>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>GL Issues</title>
+            </info>
+            <para/>
+            <para>Problems building xorg-server, glx, and other GL-related packages in modular X may be due to a multilib issue. </para>
+            <para/>
+            <para>The first thing to try is to update eselect-opengl to at least 1.0.3. </para>
+            <para/>
+            <para>Next check your opengl implementation with eselect opengl list. If xorg-x11 isn't the only option, you probably want the alternate option, so change it with: eselect opengl set &lt;implementation&gt; </para>
+            <para/>
+            <para/>
+            <para/>
+            <para>xorg-server tries to build every single input driver</para>
+            <para/>
+            <para>Solution: You need to specify which drivers you want by modifying /etc/make.conf to reflect your hardware. If nothing is specified, it will build them all! </para>
+            <para/>
+            <para>Example: File: /etc/make.conf </para>
+            <para>INPUT_DEVICES="keyboard mouse synaptics evdev"</para>
+            <para/>
+            <para/>
+            <para>Mouse Speed Uncontrollable with evdev Driver </para>
+            <para/>
+            <para>Please see TIP Setting Mouse Speed Through Command Line for more information. </para>
+            <para/>
+            <para>Mouse Wheel No Longer Works </para>
+            <para/>
+            <para>Please see the Modular XOrg section of HOWTO Advanced Mouse for more extensive information. </para>
+            <para/>
+            <para/>
+            <para>Xorg won't start due to fglrx or nvidia module missing</para>
+            <para/>
+            <para>Re-emerge the appropriate drivers (ati-drivers or nvidia-drivers) to get X running again after the install. Make sure you recompile the the drivers with same compiler you used for the kernel, otherwise you'll get message about the module format being incompatible when you try to load the fglrx kernel module. </para>
+            <para/>
+            <para/>
+            <para>Matrox G550, Xinerama and mga driver </para>
+            <para/>
+            <para>The install script of the binary drivers available from Matrox (v4.4 at the time of writing) copies the driver files to </para>
+            <para>/usr/lib/modules/drivers</para>
+            <para/>
+            <para>instead of </para>
+            <para>/usr/lib/xorg/modules/drivers</para>
+            <para/>
+            <para>Copy the correct files (mga_drv.so/mga_hal_drv.so) manually to get Xinerama working again. </para>
+            <para/>
+            <para/>
+            <para>Problems with the keyboard </para>
+            <para/>
+            <para>The AltGr key and/or other national special keys may stop working after an update to modular X. To fix this, unmerge the new xkeyboard-config and re-emerge the xkbdata package which contains correct translations for that key. </para>
+            <para/>
+            <para>If the above fix doesn't work, you can also try running: xmodmap -e "keycode 113 = Mode_switch" </para>
+            <para/>
+            <para/>
+            <para>Sometimes it can happen that GNOME / KDE keyboard layout switching doesn't work. To correct this, create xkb as a symbolic link in the /usr/lib64/X11 lib directory with: </para>
+            <para> cd /usr/lib64/X11</para>
+            <para> ln -s /usr/share/X11/xkb/ xkb</para>
+            <para/>
+            <para>Missing fonts </para>
+            <para/>
+            <para>There are X11 fonts that may be in use but not available. See the Xorg and fonts HOWTO and install the listed fonts. </para>
+            <para/>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Configuration file locations have changed </title>
+            </info>
+            <para/>
+            <para>All of the configuration files and scripts in Xorg-6.8 were stored in /etc/X11, which was not standard. In modular Xorg, all of the configuration files are in the same place but configuration scripts and default files have moved to /usr/lib/X11/ and /usr/share/X11. </para>
+            <para>When upgrading, since /etc is config-protected, your old configuration files would not have been removed -- this means you'll have some extra files in there that look right but don't do anything. </para>
+            <para>Also, these new locations are NOT config-protected, so when making changes to say, app-defaults/XTerm-color, be sure to add CONFIG_PROTECT="/usr/share/X11/app-defaults" to /etc/make.conf. Or when updating the init for xdm, it would be a good idea to copy that file from /usr/lib/X11/xdm/Xsetup_0 to /etc/X11/xdm/ and update /etc/X11/xdm/xdm-config accordingly. </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Other problems and solutions </title>
+            </info>
+            <para>Please see Gentoo's bug tracker and the official modular X howto. </para>
+            <para/>
+            <para>If none of the above helps generating a new xorg.conf may solve your problems. </para>
+            <para>X -configure</para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>XkbOptions</title>
+        </info>
+        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/XkbOptions">http://ru.gentoo-wiki.com/XkbOptions</link>
+        </para>
+        <para>С версии: 1.0</para>
+        <para>Обновлено: 1.4</para>
+        <section>
+            <info>
+                <title>Параметры "XkbOptions" </title>
+            </info>
+            <para>Варианты переключателей между языками в файле /etc/X11/xorg.conf </para>
+            <orderedlist>
+                <listitem>
+                    <para>grp:toggle - переключение правым Alt; </para>
+                </listitem>
+                <listitem>
+                    <para>grp:shift_toggle - двумя клавишами shift; </para>
+                </listitem>
+                <listitem>
+                    <para>grp:ctrl_shift_toggle - ctrl+shift; </para>
+                </listitem>
+                <listitem>
+                    <para>grp:alt_shift_toggle - alt+shift; </para>
+                </listitem>
+                <listitem>
+                    <para>grp:ctrl_alt_toggle - ctrl+alt; </para>
+                </listitem>
+                <listitem>
+                    <para>grp:caps_toggle - переключение по CapsLock; </para>
+                </listitem>
+                <listitem>
+                    <para>grp:lwin_toggle - переключение по левой "Win" клавише на Windows клавиатуре (для X Window старше 4.2); </para>
+                </listitem>
+                <listitem>
+                    <para>grp:rwin_toggle - переключение по правой "Win" клавише на Windows клавиатуре (для X Window старше 4.2); </para>
+                </listitem>
+                <listitem>
+                    <para>grp:menu_toggle - переключение по клавише "Контекстное меню" на Windows клавиатуре (для X Window старше 4.2); </para>
+                </listitem>
+                <listitem>
+                    <para>grp:lctrl_toggle переключение по левой клавише Control </para>
+                </listitem>
+                <listitem>
+                    <para>grp:rctrl_toggle переключение по правой клавише Control </para>
+                </listitem>
+                <listitem>
+                    <para>grp:switch - переключение по правому Alt только на момент нажатия </para>
+                </listitem>
+                <listitem>
+                    <para>grp:lwin_switch - переключение по левой клавише Windows только на момент нажатия </para>
+                </listitem>
+                <listitem>
+                    <para>grp:rwin_switch - переключение по правой клавише Windows только на момент нажатия </para>
+                </listitem>
+                <listitem>
+                    <para>grp:win_switch - переключение по любой клавише Windows только на момент нажатия </para>
+                </listitem>
+            </orderedlist>
+            <para>Возможные значения grp_led: </para>
+            <orderedlist>
+                <listitem>
+                    <para>grp_led - использовать индикаторы на клавиатуре для показания изменения группы </para>
+                </listitem>
+                <listitem>
+                    <para>grp_led:num - индикатор Num_Lock показывает изменения группы </para>
+                </listitem>
+                <listitem>
+                    <para>grp_led:caps - индикатор Caps_Lock показывает изменение группы </para>
+                </listitem>
+                <listitem>
+                    <para>grp_led:scroll - индикатор Scroll_Lock показывает изменение группы </para>
+                </listitem>
+            </orderedlist>
+        </section>
+        <section>
+            <info>
+                <title>Пример </title>
+            </info>
+            <informaltable frame="all">
+                <tgroup cols="1">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>Файл: /etc/X11/xorg.conf </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>...</para>
+                                <para>Section "InputDevice"</para>
+                                <para>  ...</para>
+                                <para>  Option "XkbOptions" "grp:switch,grp:caps_toggle,grp_led:scroll"</para>
+                                <para>  ...</para>
+                                <para>EndSection</para>
+                                <para>...</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para/>
+            <para>Дополнительная информация: </para>
+            <para>/etc/X11/xkb/rules/xorg.lst</para>
+            <para/>
+            <para>ВАЖНО (от JohnBat26): При использовании библиотек HAL версии &gt;= 0.5.10,  evdev версии &gt;= 1.2.0  и kkbswitch, возникают проблемы с переключением раскладок. <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://bugs.gentoo.org/show_bug.cgi?id=200061">Ссылка на bug в bugs.gentoo.org.</link> Это происходит из-за того, что теперь X.org запрашивает эти параметры у HAL!! Следовательно вся конфигурация переключения раскладок перемещается в каталог /etc/hal/fdi/policy.  Таким образом, Вам необходимо создать файл такого содержания:</para>
+            <para>Листинг 1: Конфигурация раскладок через HAL</para>
+            <para>&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt; &lt;!-- -*- SGML -*- --&gt;</para>
+            <para>&lt;match key="info.capabilities" contains="input.keyboard"&gt;</para>
+            <para>        &lt;merge key="input.x11_driver" type="string"&gt;keyboard&lt;/merge&gt;</para>
+            <para>        &lt;merge key="input.xkb.layout" type="string"&gt;us,ru&lt;/merge&gt;</para>
+            <para>        &lt;merge key="input.xkb.model" type="string"&gt;pc101&lt;/merge&gt;</para>
+            <para>        &lt;merge key="input.xkb.rules" type="string"&gt;xorg&lt;/merge&gt;</para>
+            <para>        &lt;merge key="input.xkb.variant" type="string"&gt;,winkeys&lt;/merge&gt;</para>
+            <para>        &lt;merge key="input.xkb.options" type="string"&gt;grp:shift_toggle,grp_led:scroll&lt;/merge&gt;</para>
+            <para>&lt;/match&gt;</para>
+            <para/>
+            <para>назвать его как-нибудь, например keyboard_layout, и положить в указанную выше папку. После этого, раскладка клавиатуры должна переключаться нормально. ;)</para>
+            <para>Также смотрите: <link xlink:href="#">HOWTO hal и устройства ввода</link>
+            </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>HOWTO Xorg and Fonts (Рус.)</title>
+        </info>
+        <para/>
+        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-wiki.com/HOWTO_Xorg_and_Fonts">http://gentoo-wiki.com/HOWTO_Xorg_and_Fonts</link>
+        </para>
+        <para>Перевод: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:johnbat26@gmail.com?subject=По%20поводу%20Вашего%20перевода%20статьи:%20HOWTO%20Xorg%20and%20Fonts">Батогов Е.В. a.k.a. JohnBat26</link>
+        </para>
+        <para>С версии: 1.3</para>
+        <para>Дата окончания перевода: 27.10.2007</para>
+        <para/>
+        <section>
+            <info>
+                <title> Назначение этого HOWTO</title>
+            </info>
+            <para/>
+            <para>После изменения названия X сервера с Xfree на X.org, многие люди (включая меня) столкнулись с проблемами, связанными с отрисовкой и сглаживанием шрифтов, особенно это касается тех, кто использует LCD или TFT мониторы. Этот HOWTO делает шрифты значительно более интересными. В дополнение  к этому, этот HOWTO объясняет как надо устанавливать шрифты.</para>
+            <para/>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title> Общие сведения</title>
+            </info>
+            <para/>
+            <para>Компьютерные шрифты в целом, и в Linux (X11) в частности, это довольно запутанное дело. Существует много различных форматов шрифтов, в диапазоне от старых растровых шрифтов до шрифтов Truetype. Помимо этого, много шрифтов имеют проблемы лицензирования и внутренние проблемы (на которые компания  Apple, к счастью, пока не обращает внимания). А если Вы захотите включить сглаживание, то это только добавит путаницы.</para>
+            <para/>
+            <para>Многие программы, особенно ghostscript, mozilla, openoffice, и tex,  имеют свои собственные представления о шрифтах и их настройке. Это значит, что информация в этом how-to может быть не эффективна для того, чтобы Ваши шрифты заработали.</para>
+            <para/>
+            <para>Смотрите: X11 имеет не одну подсистему шрифтов, а две! Старая "core X font subsystem" использует наименования типа: -misc-fixed-medium-r-normal--10-100-75-75-c-60-iso8859-1. Новая система шрифтов, также известная как  "fontconfig",  работает с библиотекой Xft  и, как обещается, полностью заменит старую систему. К тому же, существует ещё и сервер шрифтов, называющийся "xfs".</para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Замечание по поводу DPI</title>
+            </info>
+            <para>До настройки любого программного обеспечения, лучшее из того, что Вы можете сделать для получения хорошо выглядящих шрифтов на Linux, это использование LCD/CRT монитора по крайней мере не меньше, чем с 96 dpi (точек на дюйм). Для расчёта этого значения, возьмите горизонтальное разрешение и разделите его на ширину TFT/LCD экрана в дюймах.  Любое значение меньше, чем 96 dpi приведет к значительным проблемам которые нельзя будет устранить. CRT мониторы будут почти всегда отрисовывать шрифты  лучше, чем LCD мониторы потому, что они имеют внутреннее сглаживание от сканирования электронного луча и экрана покрытого люминофором.</para>
+        </section>
+        <section>
+            <info>
+                <title>Замечание по поводу сравнения шрифтов на Windows/Mac и Linux</title>
+            </info>
+            <para/>
+            <para>Шрифты в  Windows (clear type) и в Mac OS  всегда будут выглядеть лучше, чем шрифты в Linux, когда LCD монитор имеет dpi меньше, чем 96. Когда dpi равняется 96 и более, тогда шрифты в Linux будут выглядеть также или лучше, чем в Windows или Mac OS. Конечно, все это верно, если вы установите  пропатченный libXft, доступный в 'xeffects' overlay.</para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Получение необходимых пакетов</title>
+            </info>
+            <para/>
+            <para>Я предполагаю, что Вы уже правильно установили X.org (X.org версии 6.8.0-r4 и выше должен быть установлен с включенными USE флагами: truetype и type1). Я также полагаю, что Вы не запускаете X-сервер для множества клиентов и, следовательно, USE флаг: font-server выключен, хотя он может по-прежнему применяться в других случаях.</para>
+            <para/>
+            <para>Необходимые пакеты:</para>
+            <para>    * x11-base/xorg-x11</para>
+            <para>    * media-libs/freetype</para>
+            <para>    * media-fonts/corefonts</para>
+            <para>    * media-fonts/freefonts </para>
+            <para/>
+            <para>Тем не менее я советую Вам также установить следующие полезные шрифты</para>
+            <para>(замечание: media-fonts/unifont блокируют dev-util/eclipse-sdk):</para>
+            <para/>
+            <para>    * media-fonts/ttf-bitstream-vera</para>
+            <para>    * media-fonts/artwiz-fonts</para>
+            <para>    * media-fonts/sharefonts</para>
+            <para>    * media-fonts/terminus-font</para>
+            <para>    * media-fonts/unifont</para>
+            <para>    * media-fonts/dejavu </para>
+            <para/>
+            <para>Замечание: f28: Более красивые шрифты: media-fonts/liberation-fonts-ttf, "A GPL-2 Helvetica/Times/Courier заменяют TrueType font set, с уважением к Red Hat"</para>
+            <para/>
+            <para>Активизируйте USE флаги и установите следующие пакеты:</para>
+            <para/>
+            <para># euse --enable truetype type1</para>
+            <para># emerge --newuse --noreplace freetype corefonts freefonts artwiz-fonts sharefonts \</para>
+            <para>        terminus-font ttf-bitstream-vera unifont dejavu xorg-x11</para>
+            <para/>
+            <para>Для тех, кто уже установил Xorg и желает обновить все остальные пакеты, которые уже установлены, я рекомендую изменить файл /etc/make.conf добавив следующие USE флаги:</para>
+            <para/>
+            <para>USE="truetype type1"</para>
+            <para/>
+            <para>Затем необходимо заново собрать все пакеты которые могут использовать эти флаги:</para>
+            <para/>
+            <para># emerge -avuDN world</para>
+            <para/>
+            <para>Замечание для Xorg 7.0: Кажется Вам необходимо установить ещё и  пакет</para>
+            <para> "intlfonts".</para>
+            <para/>
+            <para># emerge intlfonts</para>
+            <para/>
+            <para>Вы можете также увидеть это в обсуждении:</para>
+            <para>
+                <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?p=3643250#3643250%20">http://forums.gentoo.org/viewtopic.php?p=3643250#3643250 </link>
+            </para>
+            <para/>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Информация о хинтинге (Hinting)</title>
+            </info>
+            <para/>
+            <para>Хинтинг является частью процесса отрисовки шрифта, в общем, хинтинг руководит растеризатором так, что он производит шрифт, гораздо лучше выглядящий на экране (особенно при малых размерах шрифта).</para>
+            <para/>
+            <para>Отдавая должное возможным проблемам с патентами, FreeType имеет выбор — собираться с  TrueType's Byte Code Interpreter (или BCI) или нет.</para>
+            <para/>
+            <para>Без BCI (по умолчанию), FreeType использует свой собственный автоматический хинтер для улучшения качества отображения шрифтов малых размеров. Этот автохинтер ещё находится в стадии совершенствования и улучшается с каждой версией FreeType. Автохинтер обычно дает великолепные результаты. Однако, многие считают, что родное TrueType BCI производит лучшие результаты, чем автохинтер, т.к. в этом случае используется информация о хинтинге, содержащаяся в шрифте.</para>
+            <para/>
+            <para>Если Вы живете в стране, где патенты на программное обеспечение не являются проблемой, Вы можете включить использование BCI, выключая USE флаг: bindist. Дополнительую информацию о freetype и патентах смотрите на: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://freetype.sourceforge.net/patents.html">http://freetype.sourceforge.net/patents.html</link>.</para>
+            <para/>
+            <para>#echo "media-libs/freetype -bindist" &gt;&gt; /etc/portage/package.use</para>
+            <para>#emerge -av freetype</para>
+            <para/>
+            <para>Если Вы считаете, что шрифты слишком размытые на Вашем LCD мониторе, попытайтесь включить флаг bindist и посмотреть разницу, может быть это будет лучше в Вашем случае.</para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Изменение конфигурационных файлов</title>
+            </info>
+            <para/>
+            <para>После установки шрифтов, Вам необходимо изменить конфигурационные файлы в порядке распознавания их системой. Вот эти файлы:</para>
+            <para/>
+            <orderedlist>
+                <listitem>
+                    <para>/etc/fonts/local.conf;</para>
+                </listitem>
+                <listitem>
+                    <para>/etc/X11/xorg.conf;</para>
+                </listitem>
+                <listitem>
+                    <para>~/.fonts.conf .</para>
+                </listitem>
+            </orderedlist>
+            <para/>
+            <para>Для проверки того, какие шрифты установлены, Вы можете использовать fc-list и xlsfonts. Для просмотра шрифтов, Вы можете использовать gfontview.</para>
+            <para/>
+            <para>Что делать, если Ваши шрифты не показываются утилитой fc-list, что делать если Ваши шрифты не отображаются в xlsfonts, что делать если Ваши шрифты не появляются в OpenOffice. Что, наконец,  делать, если шрифты не показываются в ghostscript и/или в tex:</para>
+            <para/>
+            <para>Смотрите файлы: /etc/fonts/local.conf и ~/.fonts.conf</para>
+            <para/>
+            <para>Редактируйте конфигурационные файлы для системы шрифтов: Xft. Изменения в файле /etc/fonts/local.conf касаются всей системы; выборочные изменения в пользовательском конфигурационном файле ~/.fonts.conf имеют приоритет над  системными установками в большинстве случаев. Единственная опция, которая не может быть перекрыта в пользовательском файле — это настройка сглаживания (anti-aliasing setting).</para>
+            <para/>
+            <para>В файле /etc/fonts/local.conf  нет необходимости устанавливать все директории со шрифтами, кроме тех случаев, когда шрифты устанавливаются в нестандартный каталог. Файл /etc/fonts/fonts.conf включает /usr/share/fonts и некоторые другие директории. Другими словами, Вы не должны изменять этот файл, т.к. Xorg будет просматривать Ваш файл ~/.fonts.conf,  если он имеется.</para>
+            <para/>
+            <para>Заметьте то, что файлы /etc/fonts/local.conf и ~/.fonts.conf, являются XML-файлами. И их легко изменять в редакторах, которые поддерживают синтаксис XML . </para>
+            <para>Следующий пример содержит множество опций, которые Вы можете захотеть использовать:</para>
+            <para/>
+            <para>Файл: /etc/fonts/local.conf или ~/.fonts.conf:</para>
+            <para/>
+            <para>&lt;?xml version="1.0"?&gt;</para>
+            <para>&lt;!DOCTYPE fontconfig SYSTEM "fonts.dtd"&gt;</para>
+            <para>&lt;!-- /etc/fonts/local.conf file to configure system font access --&gt;</para>
+            <para/>
+            <para>&lt;fontconfig&gt;</para>
+            <para/>
+            <para>&lt;!-- Enable sub-pixel rendering --&gt;</para>
+            <para/>
+            <para>&lt;!--</para>
+            <para>        &lt;match target="font"&gt;</para>
+            <para>                &lt;test qual="all" name="rgba"&gt;</para>
+            <para>                        &lt;const&gt;unknown&lt;/const&gt;</para>
+            <para>                &lt;/test&gt;</para>
+            <para>                &lt;edit name="rgba" mode="assign"&gt;&lt;const&gt;rgb&lt;/const&gt;&lt;/edit&gt;</para>
+            <para>        &lt;/match&gt;</para>
+            <para>--&gt;</para>
+            <para/>
+            <para> </para>
+            <para>&lt;!-- Use the Autohinter --&gt;</para>
+            <para/>
+            <para>        &lt;match target="font"&gt;</para>
+            <para>               &lt;edit name="autohint" mode="assign"&gt;&lt;bool&gt;true&lt;/bool&gt;&lt;/edit&gt;</para>
+            <para>       &lt;/match&gt;</para>
+            <para/>
+            <para>&lt;!-- Disable Autohinting for bold fonts --&gt;</para>
+            <para/>
+            <para>        &lt;match target="font"&gt;</para>
+            <para>                   &lt;test name="weight" compare="more"&gt;</para>
+            <para>                        &lt;const&gt;medium&lt;/const&gt;</para>
+            <para>                &lt;/test&gt;</para>
+            <para>                   &lt;edit name="autohint" mode="assign"&gt;&lt;bool&gt;false&lt;/bool&gt;&lt;/edit&gt;</para>
+            <para>        &lt;/match&gt;</para>
+            <para> </para>
+            <para>&lt;!-- Exclude/Include a range of fonts for Anti Aliasing --&gt;</para>
+            <para/>
+            <para>&lt;!--</para>
+            <para/>
+            <para>&lt;match target="font"&gt;</para>
+            <para>        &lt;test qual="any" name="size" compare="more"&gt;</para>
+            <para>                &lt;double&gt;9&lt;/double&gt;</para>
+            <para>        &lt;/test&gt;</para>
+            <para>        &lt;test qual="any" name="size" compare="less"&gt;</para>
+            <para>                &lt;double&gt;14&lt;/double&gt;</para>
+            <para>        &lt;/test&gt;</para>
+            <para>        &lt;edit name="antialias" mode="assign"&gt;</para>
+            <para>                &lt;bool&gt;true&lt;/bool&gt;</para>
+            <para>        &lt;/edit&gt;</para>
+            <para>&lt;/match&gt;</para>
+            <para/>
+            <para>--&gt;</para>
+            <para/>
+            <para/>
+            <para>&lt;!-- And/Or disable Anti Aliasing for a range on pixel-based size.</para>
+            <para>     Disabling this using both methods seems to fix Firefox. --&gt;</para>
+            <para/>
+            <para>&lt;!--</para>
+            <para/>
+            <para>&lt;match target="font"&gt;</para>
+            <para>        &lt;test compare="less" name="pixelsize" qual="any"&gt;</para>
+            <para>                &lt;double&gt;20&lt;/double&gt;</para>
+            <para>        &lt;/test&gt;</para>
+            <para>        &lt;edit mode="assign" name="antialias"&gt;</para>
+            <para>                &lt;bool&gt;false&lt;/bool&gt;</para>
+            <para>        &lt;/edit&gt;</para>
+            <para>&lt;/match&gt;</para>
+            <para/>
+            <para>--&gt;</para>
+            <para/>
+            <para/>
+            <para>        &lt;dir&gt;/home/johnbat26/extrafonts&lt;/dir&gt;</para>
+            <para/>
+            <para>&lt;/fontconfig&gt;</para>
+            <para/>
+            <para/>
+            <para/>
+            <para>В представленном выше файле опция: "sub-pixel rendering" закомментирована потому, что она используется только на LCD мониторах. Если её включить на CRT мониторе, то это заставит Xorg производить много дополнительной работы по отрисовке. Возможные значения: "none", "rgb", "bgr", "vrgb" и "vbgr". Для большинства LCD мониторов наиболее подходящим значением будет:"rgb", которое и использует приведенный выше пример.</para>
+            <para/>
+            <para>Вы конечно захотите использовать какую-нибудь форму хинтинга. Gentoo поддерживает 2 формы хинтинга:</para>
+            <para/>
+            <orderedlist>
+                <listitem>
+                    <para>AutoHinter</para>
+                    <para>         По умолчанию используется auto hinter из пакета FreeType, и это также является установкой по умолчанию в приведенном выше примере конфигурационного файла. Тем не менее, когда используется автохинтинг, тогда Вы можете захотеть выключить его использование на жирных шрифтах, иначе они могут стать слишком широкими. Пример выше как раз и делает это.</para>
+                    <para/>
+                </listitem>
+                <listitem>
+                    <para>TrueType Byte Code Interpreter (BCI)</para>
+                    <para>  Если Вы собрали FreeType с активацией интерпретатора байт-кода (TrueType Byte Code Interpreter) (см. выше), и желаете использовать BCI, тогда выключите auto hinter полностью. (Убедитесь, что &lt;edit name="autohint" mode="assign"&gt;&lt;bool&gt;true&lt;/bool&gt;&lt;/edit&gt; использует "false" вместо "true". Существуют патентные проблемы на использование TrueType BCI; если Вы желаете избежать их полностью, тогда не используйте BCI.</para>
+                </listitem>
+            </orderedlist>
+            <para/>
+            <para>И KDE и GNOME имеют прекрасный графический интерфейс, в котором пользователь может выбрать уровень хинтинга: "легкий", "средний", "сильный" ('light,' 'medium,' and 'strong'). Это позволяет обратиться к FreeType 'auto hinter', а не к BCI.    Другими словами 'легкий,' 'средний,' и 'сильный' хинтинг, позволяют всем шрифтам выглядеть одинаково, когда BCI используется вместо автохинтера (auto hinter). </para>
+            <para/>
+            <para>Вторая опция с окончания файла, также закомментирована, так как некоторые люди    предпочитают исключать или включать набор размеров шрифтов для применения сглаживания к ним. Это общий способ, чтобы сделать Ваши шрифты выглядящими очень похоже на шрифты по умолчанию в Windows(R). Когда Вы отключаете сглаживание, убедитесь также, что выключена опция "sub-pixel rendering", - для достижения наилучших шрифтов без сглаживания.</para>
+            <para/>
+            <para>Наконец, последняя опция, связанный с пикселом, размер шрифта (pixel-based font sizes)... Пожалуйста, читайте комментарии к это опции!</para>
+            <para/>
+            <para>Последняя строка в примере пользовательских шрифтов, это изменение директории по умолчанию (/usr/share/fonts/) для местоположения шрифтов. Скорее всего Вам не нужна данная строка, если так, то можете просто удалить её.</para>
+            <para/>
+            <para>Помните, что все изменения в этом файле распространяются на всю систему и будут перекрыты ~/.fonts.conf, исключая только установку  anti-aliasing setting, которая не может быть перекрыта ,если установлена в этом файле. Также заметьте, что синтаксис файла: /etc/fonts/local.conf одинаков с локальным пользовательским конфигурационным файлом: ~/.fonts.conf, и, следовательно, Вы можете копировать глобальный файл, и просто переименовать его.</para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>/etc/X11/xorg.conf</title>
+            </info>
+            <para>Когда Вы настраиваете X ("иксы"), важно убедиться, что они правильно понимают размер Вашего экрана, и так же важно, что Вы запускаете LCD монитор на его родном разрешении, которое используется для вычисления горизонтального и вертикального DPI экрана — шрифты в GTK+ приложениях кажутся особенно безобразными на основе неправильной информации о экране. </para>
+            <para/>
+            <para>Это может также привести к неправильному определению размера шрифтов в различных приложениях. Некоторые шрифты будут корректного размера в зависимости от используемого метода, а другие будут иметь неправильные размеры. Я заметил большие различия, когда просматривал страницы в Firefox. Если на странице использовался CSS, то она отображалась хорошо, иначе если использовался чистый HTML, то шрифты получаются либо огромные либо небольшие зависимости от направления неправильной установки DPI. Я также обнаружил, что DPI 96 является хорошим размером.</para>
+            <para/>
+            <para>Установка ширины и высоты экрана (в миллиметрах) используя следующую инструкцию:</para>
+            <para/>
+            <para>DisplaySize &lt;width&gt; &lt;height&gt;</para>
+            <para/>
+            <para>в секции Monitor файла:  /etc/X11/xorg.conf, решает эту проблему.</para>
+            <para/>
+            <para>File: /etc/X11/xorg.conf </para>
+            <para/>
+            <para>Section "Monitor"</para>
+            <para>    Identifier          "Monitor0"</para>
+            <para>    :</para>
+            <para>    DisplaySize         340 270</para>
+            <para>    :</para>
+            <para>EndSection</para>
+            <para/>
+            <para/>
+            <para>Простейший путь для измерения ширины и высоты— это воспользоваться линейкой</para>
+            <para>Например, монитор в 15 дюймов имеет размеры приблизительно 340мм x 270 мм, а 19 дюймов — 380мм x 305 мм.</para>
+            <para/>
+            <para>Значения  DisplaySize могут быть вычислены по формуле  25.4 × width / dpi или,  соответственно, 25.4 × height / dpi, 25,4 мм  на дюйм. Например, если использовать </para>
+            <para>DPI равным 75 на разрешении 1600x1200, то расчет будет следующий: 25.4 × 1600 / 75 = 542 и 25.4 × 1200 / 75 = 406, и в результате устанавливаем DisplaySize 542 406. </para>
+            <para/>
+            <para>Другой способ для подсчёта этих значений, это попросить X сервер вычислить их для Вас. Запустите его используя команду startx -- -dpi 96, где  96  это требуемое значение для DPI, и проверьте размер:</para>
+            <para/>
+            <para> #xdpyinfo | grep dimension</para>
+            <para> dimensions:    1400x1050 pixels (XXXxYYY millimeters)</para>
+            <para/>
+            <para>Используйте эти значения: XXX и YYY для параметра DisplaySize.</para>
+            <para/>
+            <para>Ещё один способ обнаружить размерность экрана, если Ваше аппаратное обеспечение предоставляет эту информацию (Вам может потребоваться установить emerge -tav xrandr сначала) это использовать: </para>
+            <para/>
+            <para># xrandr --query</para>
+            <para> SZ:    Pixels          Physical       Refresh</para>
+            <para>*0   1680 x 1050   ( 431mm x 272mm )  *60  </para>
+            <para>Current rotation - normal</para>
+            <para>Current reflection - none</para>
+            <para>Rotations possible - normal </para>
+            <para>Reflections possible - none</para>
+            <para/>
+            <para>Я достиг лучших результатов, используя измерения, полученные с помощью этого калькулятора: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.raydreams.com/prog/dpi.aspx">http://www.raydreams.com/prog/dpi.aspx</link>
+            </para>
+            <para/>
+            <para>Если вы используете драйверы nVidia, то наилучшим способом следовало бы добавить эти опции в секцию device. Это также намного лучше работает с двумя мониторами: </para>
+            <para>Файл: /etc/X11/xorg.conf </para>
+            <para>   ....</para>
+            <para>   Option   "UseEdidDpi"   "FALSE"</para>
+            <para>   Option   "DPI"   "96 x 96"</para>
+            <para>   ....</para>
+            <para/>
+            <para>Далее, у нас есть список наших каталогов со шрифтами в файле  /etc/X11/xorg.conf.   </para>
+            <para>Пути к шрифтам ищутся в том порядке, в котором они расположены в списке, поэтому мы должны сделать небольшие изменения.</para>
+            <para/>
+            <para>Достаточно много современных приложений и окружений рабочего стола, таких как Gnome и KDE используют утилиту fontconfig,  так что только шрифты, которые действительно требуются X сервером (или сервером шрифтов) это  fixed и  cursor.</para>
+            <para/>
+            <para>/usr/share/fonts/misc:unscaled</para>
+            <para/>
+            <para>Первым путем, который мы хотим видеть в нашем списке, является: /usr/share/fonts/misc.  Там находятся все важные fixed и cursor шрифты. Они являются критичными для правильной работы Xorg. Там же находится курсор по умолчанию, и помещение его первым в списке сохраняет Х от использования других </para>
+            <para>курсоров, которые устанавливают некоторые пакеты шрифтов (artwiz)</para>
+            <para/>
+            <para>Опция: :unscaled говорит X использовать  unscaled версии этих шрифтов всякий раз, когда возможно предотвратить pixelation. Эта опция может применяться для любого bitmap  шрифта</para>
+            <para/>
+            <para>/usr/share/fonts/75dpi:unscaled</para>
+            <para>/usr/share/fonts/100dpi:unscaled</para>
+            <para/>
+            <para>Это основные bitmap шрифты. Мы обычно хотим загружать шрифты для 75dpi перед 100dpi, так как большинство тем ожидают этого. Тем не менее, большинство современных мониторов имеют более высокое значение dpi, так что если Вы обнаружите у себя косоглазие читая меню, Вы скорее всего захотите поэкспериментировать с переключением порядка в списке шрифтов</para>
+            <para/>
+            <para>/usr/share/fonts/Type1</para>
+            <para>/usr/share/fonts/TTF</para>
+            <para/>
+            <para>Type1 и TrueType шрифты.  Порядок не имеет большого значения, но заметьте что оба пакета содержат Luxi Sans/Serif/Mono шрифты. </para>
+            <para/>
+            <para>/usr/share/fonts/corefonts</para>
+            <para>/usr/share/fonts/freefonts</para>
+            <para>/usr/share/fonts/sharefonts</para>
+            <para/>
+            <para>это Microsoft's TrueType core fonts, и набор TrueType  шрифтов и коллекция свободных Type1 Fonts, соответственно. </para>
+            <para/>
+            <para>/usr/share/fonts/artwiz</para>
+            <para>/usr/share/fonts/terminus</para>
+            <para>/usr/share/fonts/ttf-bitstream-vera</para>
+            <para>/usr/share/fonts/unifont</para>
+            <para/>
+            <para>Если Вы установили пакеты упомянутые выше, то Вам следовало бы добавить эти пути в список шрифтов.</para>
+            <para/>
+            <para>/usr/share/fonts/local</para>
+            <para>/usr/share/fonts/cyrillic</para>
+            <para/>
+            <para>эти шрифты обычно не нужны и вероятно пустые или не существуют. Для гарантии, проверьте файл font.dir внутри каждой директории. Если этот файл пуст, тогда этот каталог нет необходимости добавлять в список  путей к шрифтам.</para>
+            <para/>
+            <para>/usr/share/fonts/*everythingelse*  </para>
+            <para/>
+            <para>все директории новых шрифтов, которые Вы установили. Большинство из них уникальны. Если Вы обеспокоены о каком-нибудь отдельном шрифте, поместите его наверх списка. Вы можете проверить список из доступных шрифтов, посмотрев файл fonts.dir, находящийся в директории шрифта.</para>
+            <para/>
+            <para>Теперь сделаем несколько финальных изменений в плане порядка следования путей в списке. Возьмём основные bitmap шрифты и поместим их последними. Это делается потому, что у нас есть намного лучшие TTF или Type1 версии некоторых из этих шрифтов которые мы чаще используем. Также пакет media-fonts/corefonts  содержит большое количество core fonts и его следовало бы поместить повыше в списке.</para>
+            <para>В результате список должен выглядеть подобно:</para>
+        </section>
+        <section>
+            <info>
+                <title>Файл: /etc/X11/xorg.conf (Список путей к шрифтам)</title>
+            </info>
+            <para>...</para>
+            <para>Section "Files"</para>
+            <para>    FontPath     "/usr/share/fonts/misc:unscaled"</para>
+            <para>    FontPath     "/usr/share/fonts/Type1/" </para>
+            <para>    FontPath     "/usr/share/fonts/TTF/"</para>
+            <para>    FontPath     "/usr/share/fonts/corefonts"</para>
+            <para>    FontPath     "/usr/share/fonts/freefonts"</para>
+            <para>    FontPath     "/usr/share/fonts/sharefonts"        </para>
+            <para>    FontPath     "/usr/share/fonts/terminus"</para>
+            <para>    FontPath     "/usr/share/fonts/ttf-bitstream-vera"</para>
+            <para>    FontPath     "/usr/share/fonts/unifont"</para>
+            <para>    FontPath     "/usr/share/fonts/75dpi:unscaled" </para>
+            <para>    FontPath     "/usr/share/fonts/100dpi:unscaled"</para>
+            <para>    FontPath     "/usr/share/fonts/artwiz"</para>
+            <para>    FontPath     "/usr/share/fonts/cyrillic"</para>
+            <para>EndSection</para>
+            <para>...</para>
+            <para>Также проверьте в том же файле, что загружается модуль freetype </para>
+            <para/>
+            <para>Файл: /etc/X11/xorg.conf </para>
+            <para/>
+            <para>Load "freetype"</para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Перезагрузка служб</title>
+            </info>
+            <para/>
+            <para>После изменения конфигурационных файлов, Вам необходимо перезагрузить Xorg.  Если Вы используете X display manager, такой как GDM, KDM, XDM и т.д. тогда  просто выйдите из Вашей сессии и перезагрузите X, нажав "Ctrl+Alt+Backspace", находясь на экране входа в систему. Если это не работает, то рестарт Xorg возможен с помощью перезагрузки службы xdm.</para>
+            <para/>
+            <para>Кто-то могут заметить подвисание системы, запуская следующие команды в Xorg, так что я советую запускать их в другом терминале, нажав  "CTRL + ALT + F1" и войти в систему. (Нажатие ALT + F7 вернет Вас обратно в X из консоли.)</para>
+            <para/>
+            <para># /etc/init.d/xdm restart</para>
+            <para/>
+            <para>После выполнения этой команды, Ваш X display manager будет перезагружен. Вновь войдя в систему, Вы должны получить шрифты со сглаживанием (anti-aliased).</para>
+            <para/>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Mozilla Firefox and Thunderbird</title>
+            </info>
+            <section>
+                <info>
+                    <title>Mozilla Firefox 1.0+</title>
+                </info>
+                <para/>
+                <para>Для активизации шрифтов со сглаживанием в Firefox 1.0. убедитесь, что Вы собрали Firefox c выключенным USE флагом: moznoxft.  Запустите утилиту ufed для этого (не забудьте установить её: emerge ufed).</para>
+                <para/>
+                <para>Итак:</para>
+                <para/>
+                <para>#emerge mozilla-firefox</para>
+                <para/>
+                <para>Необходимо хотя бы один раз запустить Firefox, чтобы он создал профиль в : ~/.mozilla/firefox/default.xxx/.</para>
+                <para/>
+                <para>Направляйтесь в about:config  в Вашем браузере, или альтернативно, измените файл user.js в ~/.mozilla/firefox/default.xxx/, где xxx являются буквами или цифрами.</para>
+                <para/>
+                <para>Firefox 1.0.4 сохраняет файл:  prefs.js в ~/.mozilla/firefox/xxx.default/, где xxx это строка из цифр и букв.</para>
+                <para/>
+                <para>Либо через  диалог  about:config, либо в файле user.js Вы должны вставить следующие строки, как показано ниже:</para>
+                <para/>
+                <para/>
+                <para>Внимание: Установка "font.FreeType2.printing" в true, может вызвать внезапное падение Firefox при попытке печати через.</para>
+                <para/>
+                <para/>
+                <para/>
+                <para/>
+                <para>Файл: ~/.mozilla/firefox/___.default/prefs.js</para>
+                <para/>
+                <para>// TrueType</para>
+                <para>user_pref ("font.FreeType2.enable", true);</para>
+                <para>user_pref ("font.freetype2.shared-library", "libfreetype.so.6");</para>
+                <para>// if libfreetype was built without hinting compiled in</para>
+                <para>// it is best to leave hinting off</para>
+                <para>user_pref ("font.FreeType2.autohinted", true);</para>
+                <para>user_pref ("font.FreeType2.unhinted", true);</para>
+                <para>// below a certain pixel size anti-aliased fonts produce poor results</para>
+                <para>user_pref ("font.antialias.min",        0);</para>
+                <para>user_pref ("font.embedded_bitmaps.max", 1000000);</para>
+                <para>// sample user_pref s for TrueType font dirs</para>
+                <para>user_pref ("font.directory.truetype.1", "/usr/share/fonts/ttf-bitstream-vera");</para>
+                <para>user_pref ("font.directory.truetype.2", "/usr/share/fonts/TTF");</para>
+                <para>user_pref ("font.directory.truetype.3", "/usr/share/fonts/corefonts");</para>
+                <para>user_pref ("font.directory.truetype.4", "/usr/share/fonts/freefont");</para>
+                <para>user_pref ("font.FreeType2.printing", true);</para>
+                <para/>
+                <para>Если Вы следуете этому HOWTO, тогда Вы не будете иметь проблем с перечисленными каталогами, иначе Вы можете изменить их.</para>
+                <para/>
+                <para>В Firefox 1.0, следуйте в Edit » Preferences » General » Fonts &amp; Colors.</para>
+                <para/>
+                <para>В Firefox 1.5, следуйте в Edit » Preferences » Content » Fonts &amp; Colors » Advanced.</para>
+                <para/>
+                <para>Затем, установите эти параметры:</para>
+                <para/>
+                <para>    * Proportional: Serif (Size: 16)</para>
+                <para>    * Serif: Bitstream vera serif</para>
+                <para>    * Sans-serif: Bitstream vera sans</para>
+                <para>    * Monospace: Bitstream vera sans mono (Size: 12)</para>
+                <para>    * Display Resolution: System setting </para>
+                <para/>
+                <para>Также проверьте, что опция: "Всегда использовать мои: Шрифты" не выбрана. </para>
+                <para/>
+                <para>Затем перезагрузите Firefox и направляйтесь на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/">www.gentoo.org</link> со сглаженными шрифтами!</para>
+                <para/>
+                <para>Если Вы, используя KDE и Firefox, не получили сглаженных шрифтов после этого, тогда идите в Центр управления KDE /  Внешний вид и темы / Шрифты, выключите сглаживание, нажмите применить, затем включите сглаживание и вновь нажмите применить.</para>
+            </section>
+            <section>
+                <info>
+                    <title>Mozilla Thunderbird 0.7, 1.0.2  и выше</title>
+                </info>
+                <para>Существует очень мало опций в Thunderbird, которые связаны со шрифтами, таким образом все опции должны быть применены в user.js. Создайте этот файл в  ~/.thunderbird/default/xxxxxxxx.slt/ (или, в новых версиях, ~/.thunderbird/xxxxxxxx.default/). В файле user.js Вы можете вставить те же строки, которые вставляли для Mozilla Firefox: заметьте только, что Вы вставляли в  файл prefs.js ?</para>
+                <para/>
+                <para>Файл: ~/.thunderbird/default/xxxxxxxx.slt/user.js</para>
+                <para/>
+                <para>// TrueType</para>
+                <para>user_pref ("font.FreeType2.enable", true);</para>
+                <para>user_pref ("font.freetype2.shared-library", "libfreetype.so.6");</para>
+                <para>// if libfreetype was built without hinting compiled in</para>
+                <para>// it is best to leave hinting off</para>
+                <para>user_pref ("font.FreeType2.autohinted", true);</para>
+                <para>user_pref ("font.FreeType2.unhinted", true);</para>
+                <para>// below a certain pixel size anti-aliased fonts produce poor results</para>
+                <para>user_pref ("font.antialias.min",        0);</para>
+                <para>user_pref ("font.embedded_bitmaps.max", 1000000);</para>
+                <para>user_pref ("font.scale.tt_bitmap.dark_text.min", 0);</para>
+                <para>user_pref ("font.scale.tt_bitmap.dark_text.gain", "0.0");</para>
+                <para>// sample user_pref s for TrueType font dirs</para>
+                <para>user_pref ("font.directory.truetype.1", "/usr/share/fonts/ttf-bitstream-vera");</para>
+                <para>user_pref ("font.directory.truetype.2", "/usr/share/fonts/TTF");</para>
+                <para>user_pref ("font.directory.truetype.3", "/usr/share/fonts/corefonts");</para>
+                <para>user_pref ("font.directory.truetype.4", "/usr/share/fonts/freetype");</para>
+                <para>user_pref ("font.FreeType2.printing", true);</para>
+                <para/>
+                <para>Затем, когда откроете Thunderbird 1.0.2, следуйте в : Edit » Preferences » Fonts Or (on 0.7) Tools » Options » Fonts и установите эти параметры:</para>
+                <para/>
+                <para>Proportional: Serif (Size: 16)</para>
+                <para>Serif: Bits-bitstream vera serif</para>
+                <para>Sans-serif: Bits-bitstream vera sans</para>
+                <para>Monospace: Bits-bitstream vera sans mono (Size: 12)</para>
+                <para>Minimum font size: 9</para>
+                <para/>
+                <para>Также проверьте, что выбрана опция: "Позволять сообщениям использовать другие шрифты".</para>
+                <para/>
+                <para>Затем перезагрузите Thunderbird и читайте Вашу почту с новыми шрифтами!</para>
+                <para/>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Проблемы с размерами шрифтов</title>
+            </info>
+            <para/>
+            <para>Если в Ваших приложениях из KDE шрифты имеют неправильный размер, и кроме этого, KDE не было установлено (т.е. Центр управления KDE недоступен :( ), тогда Вам  следует изменить Ваш файл ~/.kde/share/config/kdeglobals следующим образом:</para>
+            <para/>
+            <para>Файл: ~/.kde/share/config/kdeglobals</para>
+            <para/>
+            <para>[General]</para>
+            <para> StandardFont=Bitstream Vera Sans,7,-1,5,50,0,0,0,0,0</para>
+            <para> activeFont=Bitstream Vera Sans,7,-1,5,75,0,0,0,0,0</para>
+            <para> fixed=Bitstream Vera Sans Mono,7,-1,5,50,0,0,0,0,0</para>
+            <para> font=Bitstream Vera Sans,7,-1,5,50,0,0,0,0,0</para>
+            <para> menuFont=Bitstream Vera Sans,7,-1,5,50,0,0,0,0,0</para>
+            <para> taskbarFont=Bitstream Vera Sans,7,-1,5,50,1,0,0,0,0</para>
+            <para> toolBarFont=Bitstream Vera Sans,7,-1,5,50,0,0,0,0,0</para>
+            <para/>
+            <para>Число после имени шрифта это его размер (Я не знаю, что означают другие числа)</para>
+            <para/>
+            <para>Так получилось, что шрифты в меню Firefox получились огромными. Чтобы решить эту проблему просто добавьте следующее в файл:</para>
+            <para/>
+            <para/>
+            <para>Файл: ~/.mozilla/firefox/&lt;yourprofile&gt;/chrome/userChrome.css</para>
+            <para/>
+            <para>* {</para>
+            <para>    font-family: Sans-Serif !important;</para>
+            <para>    font-size: 8pt !important;</para>
+            <para>}</para>
+            <para/>
+            <para>и сделайте тоже самое для Thunderbird (~/.thunderbird/&lt;profile&gt;/chrome/userChrome.css)</para>
+            <para/>
+            <para>В моем случае, после применения всех этих изменений, шрифты для полей ввода  с(кнопок, текстовых полей или выпадающих меню) на некоторых страницах подобным Google или Amazon были слишком большими и использовался один из ужасных шрифтов. Чтобы изменить это, следуйте в userContent.css (он отличается от  файла userChrome.css, который мы только что изменяли), и добавьте следующее:</para>
+            <para/>
+            <para>Файл: ~/.mozilla/firefox/&lt;yourprofile&gt;/chrome/userContent.css</para>
+            <para/>
+            <para>input, textarea, select, button,</para>
+            <para>input[type="button"], input[type="reset"], input[type="submit"] {</para>
+            <para>   font-size: 8pt !important;</para>
+            <para>   font-family: Verdana !important;</para>
+            <para>}</para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Что делать, если Linux шрифт  в Konsole не работает.</title>
+            </info>
+            <para>Пользователи KDE вероятно знакомы с Konsole — эмулятором терминала KDE. Но некоторые пользователи получают следующую ошибку когда они пытаются использовать Linux шрифты: Font `-misc-console-medium-r-normal--16-160-72-72-c-80-iso10646-1' not found</para>
+            <para>Вы можете решить эту проблему следующими действиями:</para>
+            <para/>
+            <orderedlist>
+                <listitem>
+                    <para>   Запустите kdesu kcmshell kcmfontinst, когда Вы находитесь в KDE.</para>
+                </listitem>
+                <listitem>
+                    <para>   Введите пароль root.</para>
+                </listitem>
+                <listitem>
+                    <para>   Нажмите на  иконку "add fonts icon" (an @-sign with a +-sign on it)</para>
+                </listitem>
+                <listitem>
+                    <para>  Направляйтесь в каталог /usr/kde/3.2/share/fonts/ и добавьте доступные шрифты (files ending in .pcf.gz). </para>
+                    <para/>
+                </listitem>
+            </orderedlist>
+        </section>
+        <section>
+            <info>
+                <title>Что, если Ваши шрифты стали размытыми и не читаемыми</title>
+            </info>
+            <para>У меня  шрифты временами становились не читаемыми в Gnome 2.12</para>
+            <para/>
+            <para>Полное выключение сглаживания (AntiAliasing) (Убирание комментариев со следующих секций в файлах: /etc/fonts/local.conf и ~/.fonts.conf, как они объявлены в примерах выше)  решит эту проблему.</para>
+            <para>Если это не помогло и Вы используете драйвер  media-video/nvidia-kernel-1.0.8178-r3,</para>
+            <para>попытайтесь убрать комментарий на опции render acceleration в секции Device  файла  xorg.conf:</para>
+            <para/>
+            <para>Option "RenderAccel"</para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Ошибка при запуске startx</title>
+            </info>
+            <para/>
+            <para>Если Вы получаете ошибку: "Fontconfig error" когда запускаете startx:</para>
+            <para/>
+            <para>"Fontconfig warning: no &lt;cachedir&gt; elements found. Check configuration." </para>
+            <para>"Fontconfig warning: adding &lt;cachedir&gt;/var/cache/fontconfig&lt;/cachedir&gt;" </para>
+            <para>"Fontconfig warning: adding &lt;cachedir&gt;~/.fontconfig&lt;/cachedir&gt;</para>
+            <para/>
+            <para>Просто исправить её можно запустив:</para>
+            <para/>
+            <para>emerge --noconfmem --oneshot fontconfig &amp;&amp; dispatch-conf</para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>XEmacs</title>
+            </info>
+            <para/>
+            <para>Если после всей проделанной работы, Вы обнаружили, что не  имеете хорошего шрифта для XEmacs (который не поддерживает сглаживание),тогда дополнительно установите следующее:</para>
+            <para/>
+            <para>    * x11fonts-jmk </para>
+            <para/>
+            <para> emerge x11fonts-jmk</para>
+            <para/>
+            <para>Затем добавьте  ещё одну строку FontPath в Ваш файл: xorg.conf:</para>
+            <para/>
+            <para> FontPath    "/usr/share/fonts/jmk"</para>
+            <para/>
+            <para>Перезагрузите подсистему шрифтов (просто выйдя из X). Затем попытайтесь установить Ваш Xemacs шрифт в  "Neep Alt".  Вы вероятно хотите альтернативный вариант, вместо обычного, для отображения символа амперсанда.</para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Полезные ресурсы</title>
+            </info>
+            <para>Это ресурсы из которых я брал информацию, когда писал этот HOWTO:</para>
+            <para/>
+            <para>    * <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?t=23575">How to enable AA in Fluxbox,GKrellM,Abiword,Phoenix etc...</link>
+            </para>
+            <para>    * <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?t=164507">X.Org &amp; Fonts</link>
+            </para>
+            <para>    * <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?t=101970">[xfree] caratteri sfocati</link>
+            </para>
+            <para>    * <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?t=183733">Moz Firefox 0.9 (all versions) general discussion thread. </link>
+            </para>
+        </section>
+        <section>
+            <info>
+                <title>Смотрите также</title>
+            </info>
+            <para>    * <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://process-of-elimination.net/wiki/Control_Font_DPI_in_X">Control Font DPI in X</link>
+            </para>
+            <para>    * <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?t=187389">Forum Post</link>
+            </para>
+            <para>    * <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.tldp.org/HOWTO/archived/FDU/">XFree86 Font De-uglification HOWTO</link>
+            </para>
+            <para>    * <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.tldp.org/HOWTO/Font-HOWTO/index.html">Optimal Use of Fonts on Linux</link>
+            </para>
+            <para>    * <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://convexhull.com/mandrake_fonts.html">Mini HOWTO: Getting Perfect Fonts on Mandrake 10.1 </link>
+            </para>
+            <para/>
+            <para/>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>Примечание (от JohnBat26), мой файл: ~/.fonts.conf:</title>
+            </info>
+            <para/>
+            <para>&lt;?xml version="1.0"?&gt;</para>
+            <para>&lt;!DOCTYPE fontconfig SYSTEM "fonts.dtd"&gt;</para>
+            <para>&lt;fontconfig&gt;</para>
+            <para>&lt;!-- Info at http://gentoo-wiki.com/HOWTO_Xorg_and_Fonts --&gt;&lt;!-- Replace Courier with a better-looking font --&gt; </para>
+            <para>  &lt;match target="pattern" name="family" &gt;</para>
+            <para>  &lt;test name="family" qual="any" &gt;</para>
+            <para>   &lt;string&gt;Verdana&lt;/string&gt;</para>
+            <para>  &lt;/test&gt;</para>
+            <para>  &lt;edit mode="assign" name="family" &gt;</para>
+            <para>&lt;!-- Other choices - Courier New, Luxi Mono   &lt;string&gt;Bitstream Vera Sans Mono&lt;/string&gt; --&gt;&lt;!-- Other choices - Courier New, Luxi Mono --&gt; </para>
+            <para>  &lt;string&gt;Verdana&lt;/string&gt;</para>
+            <para>  &lt;/edit&gt;</para>
+            <para> &lt;/match&gt;</para>
+            <para> &lt;match target="font" &gt;</para>
+            <para>  &lt;edit mode="assign" name="rgba" &gt;</para>
+            <para>   &lt;const&gt;rgb&lt;/const&gt;</para>
+            <para>  &lt;/edit&gt;</para>
+            <para>  &lt;edit mode="assign" name="autohint" &gt;</para>
+            <para>   &lt;bool&gt;true&lt;/bool&gt;</para>
+            <para>  &lt;/edit&gt;</para>
+            <para>  &lt;edit mode="assign" name="antialias" &gt;</para>
+            <para>   &lt;bool&gt;true&lt;/bool&gt;</para>
+            <para>  &lt;/edit&gt;</para>
+            <para>  &lt;edit mode="assign" name="hinting" &gt;</para>
+            <para>   &lt;bool&gt;true&lt;/bool&gt;</para>
+            <para>  &lt;/edit&gt;</para>
+            <para>  &lt;edit mode="assign" name="hintstyle" &gt;</para>
+            <para>   &lt;const&gt;hintmedium&lt;/const&gt;</para>
+            <para>  &lt;/edit&gt;</para>
+            <para> &lt;/match&gt;</para>
+            <para>&lt;!-- Disable autohint for bold fonts, otherwise they look *too* bold --&gt; &lt;match target="font" &gt;</para>
+            <para>  &lt;test compare="more" name="weight" &gt;</para>
+            <para>   &lt;const&gt;medium&lt;/const&gt;</para>
+            <para>  &lt;/test&gt;</para>
+            <para>  &lt;edit mode="assign" name="autohint" &gt;</para>
+            <para>   &lt;bool&gt;false&lt;/bool&gt;</para>
+            <para>  &lt;/edit&gt;</para>
+            <para> &lt;/match&gt;</para>
+            <para>&lt;!-- Reject bitmap fonts in favour of Truetype, Postscript, etc. --&gt; &lt;selectfont&gt;</para>
+            <para>  &lt;rejectfont&gt;</para>
+            <para>   &lt;pattern&gt;</para>
+            <para>    &lt;patelt name="scalable" &gt;</para>
+            <para>     &lt;bool&gt;false&lt;/bool&gt;</para>
+            <para>    &lt;/patelt&gt;</para>
+            <para>   &lt;/pattern&gt;</para>
+            <para>  &lt;/rejectfont&gt;</para>
+            <para> &lt;/selectfont&gt;</para>
+            <para> &lt;match target="font" &gt;</para>
+            <para>  &lt;edit mode="assign" name="rgba" &gt;</para>
+            <para>   &lt;const&gt;rgb&lt;/const&gt;</para>
+            <para>  &lt;/edit&gt;</para>
+            <para> &lt;/match&gt;</para>
+            <para> &lt;match target="font" &gt;</para>
+            <para>  &lt;edit mode="assign" name="hinting" &gt;</para>
+            <para>   &lt;bool&gt;true&lt;/bool&gt;</para>
+            <para>  &lt;/edit&gt;</para>
+            <para> &lt;/match&gt;</para>
+            <para> &lt;match target="font" &gt;</para>
+            <para>  &lt;edit mode="assign" name="hintstyle" &gt;</para>
+            <para>   &lt;const&gt;hintmedium&lt;/const&gt;</para>
+            <para>  &lt;/edit&gt;</para>
+            <para> &lt;/match&gt;</para>
+            <para> &lt;match target="font" &gt;</para>
+            <para>  &lt;edit mode="assign" name="antialias" &gt;</para>
+            <para>   &lt;bool&gt;true&lt;/bool&gt;</para>
+            <para>  &lt;/edit&gt;</para>
+            <para> &lt;/match&gt;</para>
+            <para>&lt;/fontconfig&gt;</para>
+            <para/>
+            <para> </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>Руководство по видеокартам nVidia в Gentoo Linux</title>
+        </info>
+        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/xorg-config.xml">http://www.gentoo.org/doc/ru/nvidia-guide.xml</link>
+        </para>
+        <para>С версии: 1.0</para>
+        <para/>
+        <section>
+            <info>
+                <title>1. Введение</title>
+            </info>
+            <para/>
+            <para>Компания nVidia выпускает свои собственные драйверы для Linux, отличающиеся хорошей производительностью и поддержкой трехмерного ускорения. В дереве Portage присутствуют два драйвера — nvidia-drivers для новых видеокарт nVidia и nvidia-legacy-drivers для старых.  </para>
+            <para/>
+            <para/>
+            <para/>
+            <para>Примечание: Раньше в Gentoo было два отдельных пакета — для модуля ядра nVidia(nvidia-kernel) и для библиотек GLX X11 (nvidia-glx). Эти пакеты были удалены из дерева Portage для замены на nvidia-drivers и nvidia-legacy-drivers. Если вы до сих пор используете nvidia-kernel и nvidia-glx, то вы должны перейти на использование новых пакетов. </para>
+            <para/>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>2. Настройка карты</title>
+            </info>
+            <para/>
+            <section>
+                <info>
+                    <title>Конфигурирование ядра</title>
+                </info>
+                <para/>
+                <para>Как уже было сказано, драйвер nVidia настраивается и запускается для текущего ядра. Он собирается в качестве модуля, поэтому ядро должно поддерживать загрузку модулей. Если вы использовали genkernel для конфигурации ядра, тогда все уже сделано. Если же нет, тогда дважды проверьте конфигурацию вашего ядра на наличие поддержки загружаемых модулей: </para>
+                <para/>
+                <para>Листинг 2.1: Включение загрузки модулей ядра</para>
+                <para>Loadable module support ---&gt;</para>
+                <para>  [*] Enable loadable module support</para>
+                <para/>
+                <para/>
+                <para>Также вам потребуется включить в ядре Memory Type Range Register: </para>
+                <para/>
+                <para>Листинг 2.2: Включение MTRR</para>
+                <para>Processor and Features ---&gt;</para>
+                <para>  [*] MTRR (Memory Type Range Register) support</para>
+                <para/>
+                <para/>
+                <para>Также, если у вас AGP-видеокарта, вы можете включить поддержку agpgart в ядре или в виде модуля. Если вы не используете встроенный agpgart, то драйверы будут использовать собственную реализацию agpgart под названием NvAGP. На одних системах эта реализация работает лучше, чем встроенная, на других — хуже. Вам понадобится проверить это на своей собственной системе, чтобы сделать выбор в пользу лучшей производительности. Если вы не хотите экспериментировать, просто используйте встроенный в ядро agpgart: </para>
+                <para/>
+                <para>Листинг 2.3: Включение agpgart</para>
+                <para>Device Drivers ---&gt;</para>
+                <para>Character devices ---&gt;</para>
+                <para>&lt;*&gt; /dev/agpgart (AGP Support)</para>
+                <para/>
+                <para/>
+                <para>Замечания к архитектурам</para>
+                <para>Важно: Что касается процессоров x86 и AMD64, встроенный в ядро драйвер конфликтует с двоичным драйвером, выпускаемым nVidia. Если вы собираете ядро для этих процессоров, следует полностью убрать поддержку встроенного драйвера, как показано ниже: </para>
+                <para/>
+                <para/>
+                <para>Листинг 2.4: Удаление встроенного драйвера</para>
+                <para>Device Drivers ---&gt;</para>
+                <para>Graphics Support ---&gt;</para>
+                <para>&lt; &gt;   nVidia Framebuffer Support</para>
+                <para>&lt; &gt;   nVidia Riva support</para>
+                <para/>
+                <para/>
+                <para>Хорошей альтернативой кадрового буфера будет VESA: </para>
+                <para/>
+                <para>Листинг 2.5: Включение поддержки VESA</para>
+                <para>Device Drivers ---&gt;</para>
+                <para>Graphics Support ---&gt;</para>
+                <para>&lt;*&gt;   VESA VGA graphics support</para>
+                <para/>
+                <para/>
+                <para>Затем в разделе «VESA driver type» выберите либо vesafb, либо vesafb-tng. Если у вас процессор AMD64, вы должны выбрать vesafb, а не vesafb-tng: </para>
+                <para/>
+                <para>Листинг 2.6: Выбор типа кадрового буфера</para>
+                <para>(X) vesafb</para>
+                <para>( ) vesafb-tng</para>
+                <para/>
+                <para/>
+                <para>Если вы используете vesafb, то дополнительную информацию можно посмотреть в файле /usr/src/linux/Documentation/fb/vesafb.txt, или же найдите нужную документацию по кадровому буферу в каталоге /usr/src/linux/Documentation/fb/. </para>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Последующая настройка ядра</title>
+                </info>
+                <para/>
+                <para>The nvidia-drivers and nvidia-legacy-drivers ebuilds автоматически определят версию ядра на основании символической ссылки /usr/src/linux. Пожалуйста проверьте правильность конфигурации ядра и что эта ссылка правильно указывает на исходные коды. Обратитесь к разделу «Конфигурирование ядра» из Настольной книги за подробностями конфигурирования ядра. </para>
+                <para/>
+                <para>Если вы используете gentoo-sources-2.6.11-r6, каталог /usr/src может выглядеть примерно так: </para>
+                <para/>
+                <para>Листинг 2.7: Проверка символической ссылки /usr/src/linux</para>
+                <para># cd /usr/src</para>
+                <para># ls -l</para>
+                <para>(Проверьте, что ссылка linux указывает на нужный каталог)</para>
+                <para>lrwxrwxrwx   1 root root   22 Apr 23 18:33 linux -&gt; linux-2.6.11-gentoo-r6</para>
+                <para>drwxr-xr-x   4 root root  120 Apr  8 18:56 linux-2.4.26-gentoo-r4</para>
+                <para>drwxr-xr-x  18 root root  664 Dec 31 16:09 linux-2.6.10</para>
+                <para>drwxr-xr-x  18 root root  632 Mar  3 12:27 linux-2.6.11</para>
+                <para>drwxr-xr-x  19 root root 4096 Mar 16 22:00 linux-2.6.11-gentoo-r6</para>
+                <para/>
+                <para/>
+                <para>В приведенном выводе можно увидеть, что символическая ссылка linux указывает на ядро linux-2.6.11-gentoo-r6. </para>
+                <para/>
+                <para>Если ссылка не указывает на правильные исходники, вы должны обновить ее: </para>
+                <para/>
+                <para/>
+                <para/>
+                <para>Листинг 2.8: Создание или обновление символической ссылки /usr/src/linux</para>
+                <para># cd /usr/src</para>
+                <para># ln -snf linux-2.6.11-gentoo-r6 linux</para>
+                <para/>
+                <para/>
+                <para>Необязательный шаг: уточнение поддержки устаревших видеокарт</para>
+                <para>Примечание: К несчастью, некоторые устаревшие видеокарты не поддерживаются более новыми версиями пакетов nvidia-drivers. У nVidia есть список поддерживаемых видеокарт. Посмотрите этот список, прежде чем будете устанавливать драйверы. </para>
+                <para/>
+                <para/>
+                <para>В следующем списке указаны неподдерживаемые ныне видеокарты: </para>
+                <para/>
+                <para>Листинг 2.9: Неподдерживаемые видеокарты</para>
+                <para>TNT2</para>
+                <para>TNT2 Pro</para>
+                <para>TNT2 Ultra</para>
+                <para>TNT2 Model 64 (M64)</para>
+                <para>TNT2 Model 64 (M64) Pro</para>
+                <para>Vanta</para>
+                <para>Vanta LT</para>
+                <para>GeForce 256</para>
+                <para>GeForce DDR</para>
+                <para>GeForce2 GTS</para>
+                <para>GeForce2 Pro</para>
+                <para>GeForce2 Ti</para>
+                <para>GeForce2 Ultra</para>
+                <para>GeForce2 MX Integrated graphics</para>
+                <para>Quadro</para>
+                <para>Quadro2 Pro</para>
+                <para>Quadro2 EX</para>
+                <para/>
+                <para/>
+                <para>Если ваша карта присутствует в списке устаревших карт, то для поддержки 3D вам потребуется установить nvidia-legacy-drivers. </para>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Установка подходящих драйверов</title>
+                </info>
+                <para/>
+                <para>Теперь пора установить драйверы. </para>
+                <para/>
+                <para>Листинг 2.10: Установка драйверов nVidia</para>
+                <para>(если вашей карты нет в списке устаревших карт)</para>
+                <para># emerge nvidia-drivers</para>
+                <para>(если ваша карта присутствует в списке устаревших карт)</para>
+                <para># emerge nvidia-legacy-drivers</para>
+                <para/>
+                <para>Важно: Каждый раз, когда вы собираете новое ядро или пересобираете текущее, вам понадобится запускать emerge nvidia-drivers или emerge nvidia-legacy-drivers для переустановки модулей ядра nVidia. </para>
+                <para/>
+                <para/>
+                <para>После завершения установки запустите modprobe nvidia для загрузки модуля в память. </para>
+                <para/>
+                <para>Листинг 2.11: Загрузка модуля</para>
+                <para># lsmod | grep nvidia &amp;&amp; rmmod nvidia</para>
+                <para># modprobe nvidia</para>
+                <para/>
+                <para/>
+                <para>Чтобы не приходилось вручную загружать модуль после каждой загрузки, вероятно, вам потребуется, чтобы это делалось автоматически при загрузке, поэтому откройте /etc/modules.autoload.d/kernel-2.6 (или kernel-2.4 в зависимости от используемой версии ядра) и добавьте строку nvidia в файл. После этого не забудьте запустить modules-update. </para>
+                <para>Важно: Если вы собрали agpgart в качестве модуля, то вам понадобиться указать его в /etc/modules.autoload.d/kernel-2.6 (или kernel-2.4, в зависимости от версии ядра). </para>
+                <para/>
+                <para/>
+                <para>Листинг 2.12: Запуск modules-update</para>
+                <para># modules-update</para>
+                <para/>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Настройка X-сервера</title>
+                </info>
+                <para/>
+                <para>Как только необходимые драйверы установлены, вам потребуется настроить X-сервер, чтобы задействовать драйвер nvidia вместо используемого по умолчанию nv. </para>
+                <para/>
+                <para>Откройте файл /etc/X11/xorg.conf своим любимым текстовым редактором (как nano или vim) и найдите раздел Device. В этом разделе измените строку Driver: </para>
+                <para/>
+                <para>Листинг 2.13: Замена nv на nvidia в файле настроек X-сервера</para>
+                <para>Section "Device"</para>
+                <para>  Identifier "nVidia Inc. GeForce2"</para>
+                <para>  Driver     "nvidia"</para>
+                <para>  VideoRam   65536</para>
+                <para>EndSection</para>
+                <para/>
+                <para/>
+                <para>Теперь перейдите в раздел Module и проверьте, что будет загружаться модуль glx, а dri — не будет: </para>
+                <para/>
+                <para>Листинг 2.14: Изменение раздела Module</para>
+                <para>Section "Module"</para>
+                <para>  (...)</para>
+                <para>  # Load  "dri"</para>
+                <para>  Load  "glx"</para>
+                <para>  (...)</para>
+                <para>EndSection</para>
+                <para/>
+                <para/>
+                <para>Далее, в разделе Screen проверьте, что каждая из инструкций DefaultDepth установлена в 16 или 24, или что у вас есть только подразделы Display с установленной Depth в 16 или 24. Без этого расширение nVidia GLX не будет запускаться. </para>
+                <para/>
+                <para>Листинг 2.15: Обновление раздела Screen</para>
+                <para>Section "Screen"</para>
+                <para>  (...)</para>
+                <para>  DefaultDepth 16</para>
+                <para>  Subsection "Display"</para>
+                <para>  (...)</para>
+                <para>EndSection</para>
+                <para/>
+                <para/>
+                <para>Запустите eselect, чтобы X-сервер использовал GLX-библиотеки nVidia: </para>
+                <para/>
+                <para>Листинг 2.16: Запуск eselect</para>
+                <para># eselect opengl set nvidia</para>
+                <para/>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Добавление пользователей в группу video</title>
+                </info>
+                <para/>
+                <para>Добавьте ваших пользователей в группу video, чтобы у них был доступ к файлам устройств nvidia: </para>
+                <para/>
+                <para>Листинг 2.17: Добавление пользователя в группу video</para>
+                <para># gpasswd -a youruser video</para>
+                <para/>
+                <para/>
+                <para>Если вы не используете файловую систему udev, то, в целом, нет необходимости делать шаги, описываемые в следующем разделе, но они ничего не испортят и сделают систему стойкой к переменам. </para>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Тестирование карты</title>
+                </info>
+                <para/>
+                <para>Для тестирования карты nVidia запустите X и наберите glxinfo | grep direct. Вы должны увидеть, что прямая прорисовка (direct rendering) включена: </para>
+                <para/>
+                <para>Листинг 2.18: Проверка статуса прямой прорисовки</para>
+                <para>$ glxinfo | grep direct</para>
+                <para>direct rendering: Yes</para>
+                <para/>
+                <para/>
+                <para>Чтобы узнать скорость прорисовки FPS (кадров в секунду), используйте программу glxgears. </para>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Включение поддержки nvidia</title>
+                </info>
+                <para/>
+                <para>Некоторые пакеты, например, mplayer и xine-lib, используют локальный USE-флаг «nvidia», который разрешает поддержку аппаратного ускорения потока Mpeg (XvMCNVIDIA), полезного при просмотре широкоформатных фильмов. Добавьте «nvidia» к переменной USE в файле /etc/make.conf или добавьте его в качестве USE-флага для media-video/mplayer и/или media-libs/xine-lib в /etc/portage/package.use. </para>
+                <para/>
+                <para>Затем запустите emerge -uD --newuse world, чтобы пересобрать приложения, которых коснулось изменение USE-флагов. </para>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Использование инструмента nVidia Settings</title>
+                </info>
+                <para/>
+                <para>Начиная с версии 1.0.6106, компания nVidia поставляет программу настройки. Эта программа может изменять настройки графики без перезапуска X-сервера и находится в дереве Portage под названием media-video/nvidia-settings. </para>
+                <para/>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>3. Проблемы</title>
+            </info>
+            <para/>
+            <section>
+                <info>
+                    <title>Работа 2D на компьютерах с ОЗУ 4 ГБ и более</title>
+                </info>
+                <para/>
+                <para>Если вы сталкиваетесь с проблемами при 2D-ускорении nVidia, скорее всего, вы не можете установить диапазон совмещения записи (write-combining range) для MTRR. Чтобы проверить это, просмотрите содержимое /proc/mtrr: </para>
+                <para/>
+                <para>Листинг 3.1: Включена ли поддержка write-combining</para>
+                <para># cat /proc/mtrr</para>
+                <para/>
+                <para/>
+                <para>Каждая строка должна содержать «write-back» или «write-combining». Если вы видите строку, содержащую «uncachable», то вам понадобится изменить настройки BIOS, чтобы исправить это. </para>
+                <para/>
+                <para>Перезагрузитесь и войдите в BIOS, затем найдите настройки MTRR (возможно в «CPU Settings»). Измените установки с «continuous» на «discrete» и загрузитесь назад в Linux. Теперь вы не нигде не должны увидеть значения «uncachable», и 2D-ускорение должно работать без какого-либо замедления. </para>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Пытаясь загрузить модуль ядра, я в ответ получаю «no such device» </title>
+                </info>
+                <para/>
+                <para>Обычно это происходит, когда у вас нет подходящей видеокарты. Убедитесь, что ваша видеокарта основана на чипе nVidia (это можно проверить командой lspci). </para>
+                <para/>
+                <para>Если вы уверены, что у вас карта nVidia, проверьте BIOS и проверьте, включен ли параметр Assign IRQ to VGA. </para>
+                <para/>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>4. Настройка для опытных</title>
+            </info>
+            <section>
+                <info>
+                    <title>Документация</title>
+                </info>
+                <para/>
+                <para>Пакет драйверов nVidia поставляется с исчерпывающей документацией. Она устанавливается в /usr/share/doc, ее можно посмотреть следующей командой: </para>
+                <para/>
+                <para>Листинг 4.1: Просмотр документации NVIDIA</para>
+                <para>(для nvidia-drivers)</para>
+                <para>$ less /usr/share/doc/nvidia-drivers-*/README.gz</para>
+                <para>(для nvidia-legacy-drivers)</para>
+                <para>$ less /usr/share/doc/nvidia-legacy-drivers-*/README.gz</para>
+                <para/>
+                <para/>
+            </section>
+            <section>
+                <info>
+                    <title>Параметры модуля ядра</title>
+                </info>
+                <para/>
+                <para>Модуль ядра nvidia способен принимать некоторые параметры, с помощью которых вы можете изменять поведение драйвера. Большинство из них описано в документации. Чтобы добавить или изменить эти параметры, отредактируйте файл /etc/modules.d/nvidia. Не забудьте запустить modules-update после изменения этого файла и держите в голове, что вам понадобиться перезагрузить модуль nvidia, чтобы новые настройки подействовали. </para>
+                <para/>
+                <para>Листинг 4.2: Изменение параметров nvidia</para>
+                <para>(Отредактируйте /etc/modules.d/nvidia вашим любимым редактором)</para>
+                <para># nano -w /etc/modules.d/nvidia</para>
+                <para>(Обновление информации о модулях)</para>
+                <para># modules-update</para>
+                <para>(Выгрузка модуля nvidia...)</para>
+                <para># modprobe -r nvidia</para>
+                <para>(...и его загрузка снова)</para>
+                <para># modprobe nvidia</para>
+            </section>
+            <section>
+                <info>
+                    <title>Расширенная настройка X-сервера</title>
+                </info>
+                <para/>
+                <para>GLX-интерфейс также имеет множество настраиваемых параметров. Они управляют настройками TV-вывода, двойных мониторов, определением частоты монитора и т.д. И снова, все доступные параметры подробно описаны в документации. </para>
+                <para/>
+                <para>Если вы хотите задействовать любой из этих параметров, то вам нужно перечислить их в соответствующем разделе Device конфигурационного файла X-сервера (обычно /etc/X11/xorg.conf). Например, я хочу отключить всплывающий логотип nVidia при загрузке X-сервера: </para>
+                <para/>
+                <para>Листинг 4.3: Расширенная конфигурация nvidia в настройках X-сервера</para>
+                <para>Section "Device"</para>
+                <para>  Identifier "nVidia Inc. GeForce2"</para>
+                <para>  Driver     "nvidia"</para>
+                <para>  Option     "NoLogo" "true"</para>
+                <para>  VideoRam   65536</para>
+                <para>EndSection</para>
+                <para/>
+            </section>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>Распространенные вопросы об ATI в Gentoo Linux</title>
+        </info>
+        <para/>
+        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/xorg-config.xml">http://www.gentoo.org/doc/ru/ati-faq.xml</link>
+        </para>
+        <para>С версии: 1.0</para>
+        <para/>
+        <section>
+            <info>
+                <title>1. Поддержка устройств</title>
+            </info>
+            <para/>
+            <para>Поддерживается ли моя видеоплата ATI?</para>
+            <para/>
+            <para>В xorg-x11 поддерживаются многие (но не все) видеоплаты ATI, по крайней мере, поддерживаются их функции ускорения двумерной графики. Поддержка трехмерного ускорения обеспечивается либо проектом DRI, входящим в состав xorg-x11, либо драйверами с закрытым исходным кодом, поставляемыми фирмой ATI. </para>
+            <para>Графический процессор Распространенное название        Поддержка</para>
+            <para>Rage128                              Rage128                                                   xorg DRI</para>
+            <para>R100        Radeon 7xxx,            Radeon 64                                                   xorg DRI</para>
+            <para>R200, R250, R280        Radeon 8500, Radeon 9000, Radeon 9200        xorg DRI, ATI DRI</para>
+            <para>R300, R400, R500        Radeon 9500—x800        xorg 2D, ATI DRI</para>
+            <para/>
+            <para/>
+            <para>У меня есть видеоплата All-In-Wonder/Vivo. Поддерживаются ли ее мультимедийные возможности? </para>
+            <para/>
+            <para>Мультимедийные возможности этой платы поддерживаются проектом GATOS. Эти драйверы будут в скором времени включены в дерево разработки xorg. </para>
+            <para/>
+            <para>Я использую не архитектуру x86. Какие у меня варианты?</para>
+            <para/>
+            <para>Поддержка X11 на платформах PPC и Alpha сходна с поддержкой X11 на x86. Однако, драйверы производства ATI с закрытым исходным кодом не поддерживаются на PPC или Alpha, поэтому вы не сможете использовать трехмерные возможности графического процессора (ГП) R300. Если у вас именно такая видеоплата, и вы хотите, чтобы она поддерживалась в X11, свяжитесь с ATI и потребуйте, чтобы они выпустили описание вашего ГП. Для AMD64 уже выпущены закрытые драйверы, поэтому теперь пользователи AMD64 могут наслаждаться теми же возможностями видеоплат, что и пользователи x86. </para>
+            <para>Важно: Для включения поддержки agpgart на некоторых материнских платах AMD64 вам потребуется отключить поддержку K8 IOMMU. </para>
+            <para/>
+            <para/>
+            <para>У меня есть ноутбук. Поддерживается ли моя модель ATI Mobility?</para>
+            <para/>
+            <para>Должна, но у вас может возникнуть проблема с настройкой из-за идентификатора OEM PCI ID, присвоенного изготовителем. В большинстве случаев, вам может потребоваться самостоятельно составить файл конфигурации или использовать утилиту xorgconfig. </para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>2. Установка</title>
+            </info>
+            <para/>
+            <para>Пакеты</para>
+            <para>В пакете xorg-x11 представлена реализация X11</para>
+            <para>В ядрах 2.6.x модули DRI могут собираться вместе с ядром или устанавливаться пакетом x11-drm </para>
+            <para>В ядрах 2.4.x необходимо использовать пакет x11-drm </para>
+            <para>В пакете ati-drivers представлены закрытые драйверы ATI для X и модули ядра для ядер как серии 2.4, так и 2.6 </para>
+            <para/>
+            <para>Если вы хотите использовать внутреннюю поддержку agpgart производства ATI вместо предоставляемой в ядре Linux, то драйвер agpgart и драйвер материнской платы (в конфигурации вашего ядра) должны быть собраны как модули или вообще не собираться. </para>
+            <para/>
+            <para>Листинг 2.1: Установка драйверов</para>
+            <para>(если нужно установить с X11 только драйверы и модули Rage128)</para>
+            <para># VIDEO_CARDS="r128" emerge x11-drm</para>
+            <para/>
+            <para>(чтобы получить только поддержку Radeon)</para>
+            <para>(R100, R200, R250, R280, пока без R300)</para>
+            <para># VIDEO_CARDS="radeon" emerge x11-drm</para>
+            <para/>
+            <para>(чтобы установить драйверы фирмы ATI с закрытым исходным кодом)</para>
+            <para>(R200, R250, R280 и R300)</para>
+            <para># emerge ati-drivers</para>
+            <para/>
+            <para>(чтобы установить X11 без каких-либо модулей ядра)</para>
+            <para># emerge xorg-x11</para>
+            <para/>
+            <para/>
+            <para>Настройка</para>
+            <para/>
+            <para>Для создания конфигурационного файла xorg.conf рекомендуется использовать xorgcfg или xorgconfig. В качестве альтернативы вы можете использовать параметр автоконфигурации Xorg: </para>
+            <para/>
+            <para>Листинг 2.2: Автоматическая настройка X</para>
+            <para># X -configure</para>
+            <para/>
+            <para/>
+            <para>За дополнительной информацией о том, как создать базовый файл конфигурации xorg.conf, пожалуйста обратитесь к описанию настройки X-сервера в Gentoo. </para>
+            <para/>
+            <para>Примечание: Если вы установили пакет ati-drivers, вы также сможете использовать fglrxconfig. </para>
+            <para/>
+            <para>Важно: У пользователей PPC есть возможность использовать отдельный конфигуратор Xorgautoconfig, установив пакет Xorgautoconfig, но это необязательно. </para>
+            <para/>
+            <para/>
+            <para/>
+            <para/>
+            <para/>
+            <para>Переключение на OpenGL</para>
+            <para/>
+            <para>Как только X установлен, настроен и заработал, он способен использовать библиотеки ATI OpenGL: </para>
+            <para/>
+            <para>Листинг 2.3: Запуск eselect</para>
+            <para># eselect opengl set ati</para>
+            <para/>
+        </section>
+        <section>
+            <info>
+                <title>3. Дополнительные источники</title>
+            </info>
+            <para/>
+            <para>Прочтите Hardware Acceleration Guide для получения дополнительных сведений по настройке своей графической карты ATI. </para>
+            <para/>
+            <para>Дополнительные сведения о Gentoo Linux и двоичных драйверах ATI можно прочитать в Wedge Unofficial Gentoo ATI Radeon FAQ.</para>
+            <para/>
+            <para/>
+        </section>
+    </section>
+</article>

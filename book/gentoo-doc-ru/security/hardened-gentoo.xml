@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="hardened-gentoo">
+    <info>
+        <title>Hardened Gentoo</title>
+    </info>
+    <para>Ссылка на оригинал:  <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.habrahabr.ru/blog/linux/22815.html">http://www.habrahabr.ru/blog/linux/22815.html</link></para>
+    <para>Автор: powerman.</para>
+    <para>С версии: 1.5.</para>
+    <section>
+        <info>
+            <title>Описание</title>
+        </info>
+        <para>Для начала расскажу, зачем я публикую эту статью. Дело в том, что большинство пользователей Gentoo Linux до сих пор не использует <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/hardened/">Hardened Gentoo</link>. И вызвано это обычно тем, что они либо не знают, что это такое, либо считают что это слишком сложно, либо считают что от этого пострадает стабильность, функциональность или производительность системы. Вот эти опасения я и хочу попытаться развеять.</para>
+        <para>Hardened Gentoo - это несколько изменений в компиляторе и ядре, которые увеличивают общую защищенность системы от взлома. Например, hardened-ядро умеет блокировать массу потенциально опасных операций, а hardened-gcc позволяет защитить компилируемые им программы от взлома типовыми методами а-ля переполнение буфера. Грубо говоря, если у вас стоит "дырявая" версия программы X, и её пытается взломать хакер, то в обычной системе у него это получится, а в hardened - не получится, да ещё и в лог запись пойдёт.</para>
+        <para>Для установки Hardened на обычный Gentoo нужно будет полностью перекомпилировать всю систему - иначе защиты предоставляемые hardened-gcc не будут использоваться. Hardened - это ещё одна система, которую нужно аккуратно настраивать - переборщишь с защищённостью - ничего работать не будет вообще, недоборщишь - зачем тогда вообще Hardened ставить? Некоторые проги с hardened не уживаются (обычно это бинарные пакеты: дрова nVidia/ATI, Java плюс почему-то такой софт как mplayer/xmms) - это не смертельно, просто приходится для этих прог индивидуально отключать часть защит (для этого есть утилитки)... что огорчает. Ядро используется из пакета hardened-sources, и оно обычно на пару версий отстаёт от gentoo-sources.</para>
+        <para>Итак, Hardened Gentoo это просто объединение нескольких разных, часто независимых друг от друга, проектов:</para>
+        <orderedlist>
+            <listitem>
+                <para>Hardened toolchain - специальные патчи на gcc/glibc/binutils:</para>
+                <para>PIE и SSP не зависят друг от друга, и их можно использовать вместе и по отдельности (после компиляции hardened toolchain можно будет через gcc-config переключаться между всеми вариантами - PIE+SSP, только PIE, только SSP, ничего (т.е. обычный gcc) - например, если какая-то прога не будет компилироваться.</para>
+            </listitem>
+            <listitem>
+                <para>Патчи на ядро. Их бывает много, и разных, :) но в Gentoo есть поддержка только четырёх из них - <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/PaX">PaX</link>, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Security-Enhanced_Linux">SeLinux</link>, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://en.wikipedia.org/wiki/Grsecurity">GrSecurity</link> и <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://en.wikipedia.org/wiki/RSBAC">RSBAC</link>. Функциональность они добавляют трех типов:</para>
+                <para>
+                    <orderedlist>
+                        <listitem>
+                            <para>Защита от переполнения буфера (а-ля SSP но со стороны ядра и другими методами, так что они друг друга дополняют): PaX. Например, PaX позволяет запретить выполнение кода в страницах памяти с данными (софтварная реализация NX-бита, которые появился только в 64-битных процах Intel) - PaX просто кильнёт процесс если он попытается нарушить эту защиту; при загрузке программы в память грузит все её функции по случайным адресам, чтобы эксплойту было очень сложно узнать на какой адрес передавать управление (это становится возможным благодаря компиляции с PIE).</para>
+                        </listitem>
+                        <listitem>
+                            <para>Отключение потенциально опасных "фич" ядра: GrSecurity, RSBAC. Пример: запрет выполнять mount внутри chroot - чтобы хакер взломавший chroot-нутый демон и получивший root-а не смог выйти из chroot.</para>
+                        </listitem>
+                        <listitem>
+                            <para>Ограничение прав процессов и юзеров, в т.ч. (я бы даже сказал - в основном) юзера root: SeLinux, GrSecurity/RBAC, RSBAC. Здесь идея в том, что админу (вам :)) нужно подготовить список с указанием какие проги/юзеры что имеют право делать. Пример: можно ограничить root-овый процесс apache из всех прав root-а только возможностью садиться на 80-й порт и читать файлы в /etc/apache2/. В этом случае даже если его и взломают, и хакер получит "root", то ЭТОТ "root" сможет делать только вышеперечисленные операции... хакер будет крайне разочарован. :)</para>
+                        </listitem>
+                    </orderedlist>
+                </para>
+                <para>Эти три "фичи" тоже не зависят одна от другой. Но сами патчи - SeLinux, GrSecurity и RSBAC обычно между собой не совместимы и нужно использовать только один из них. Впрочем, в Gentoo сумели объединить SeLinux и GrSecurity вместе. Часть GrSecurity, которая занимается третьей фичей (ограничением прав) называется RBAC, и её использовать вместе с SeLinux нельзя - или-или.Итого, варианты есть, например, следующие:</para>
+                <para>Я выбрал первый (PaX+GrSecurity) т.к. во-первых настройка SeLinux обещает быть кошмаром, в отличие от GrSecurity/RBAC; во-вторых на мой взгляд поддержка RSBAC в Gentoo ещё сыровата; и в-третьих ну понравился мне GrSecurity, понравился. :))</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <info>
+            <title>Установка</title>
+        </info>
+        <para>Процесс установки Hardened Gentoo (точнее, апгрейда текущей Gentoo системы в Hardened) выглядит примерно так:</para>
+        <orderedlist>
+            <listitem>
+                <para>переключаемся на hardened toolchain и пересобираем им всю систему, чтобы все бинарники использовали PIE и SSP (после этого система становится защищена SSP)</para>
+            </listitem>
+            <listitem>
+                <para>устанавливаем hardened-sources (они содержат патчи PaX + GrSecurity + SeLinux + дополнительные от Gentoo) и компилируем их с поддержкой PaX, GrSecurity и GrSecurity/RBAC</para>
+            </listitem>
+            <listitem>
+                <para>перегружаемся с новым ядром (после этого система становится защищена ещё и PaX+PIE и GrSecurity)</para>
+            </listitem>
+            <listitem>
+                <para>некоторое время настраиваем и отлаживаем ограничения доступа (после чего система становится защищена ещё и GrSecurity/RBAC)</para>
+            </listitem>
+        </orderedlist>
+        <para>Ожидаемые проблемы:</para>
+        <orderedlist>
+            <listitem>
+                <para>не всё может скомпилироваться с PIE+SSP - возможно отдельные пакеты нужно будет патчить или компилировать без одной или обоих из них (мне пока потребовалось через gcc-config переключаться на vanilla gcc только для компиляции X-ов чтобы они работали с ATI-дровами)</para>
+            </listitem>
+            <listitem>
+                <para>не всё может нормально работать, т.к. некоторые программы (обычно упоминают X-ы и java) используют выполнение динамически сгенерированного кода для вполне легальных целей, а теперь при попытке это делать они будут киляться либо SSP либо PIE+PaX - для этих программ нужно будет индивидуально отключать часть защит PaX (для этого есть специальные утилиты, например paxctl) и/или компилировать их без SSP</para>
+            </listitem>
+            <listitem>
+                <para>не всё может работать из-за ограничений "фич" ядра GrSecurity - в этом случае нужно будет часть защит GrSecurity отключать (глобально, в make menuconfig)</para>
+            </listitem>
+            <listitem>
+                <para>настроить ограничения прав доступа может оказаться не просто, и в любой момент когда какая-нить прога сделает что-то, что мы при настройке её прав не учли - она будет прибита ядром... и придётся эти правила в срочном порядке фиксить</para>
+            </listitem>
+        </orderedlist>
+        <para>Ну что, поехали... :)</para>
+        <para>Слишком сильная оптимизация (-O3) вместе с hardened toolchain может приводить к разным глюкам и сбоям компиляции, поэтому нужно в /etc/make.conf заменить -O3 на -O2, и убрать все прочие -f* оптимизаторские флаги.</para>
+        <para>Переходим на hardened-профайл. (Теоретически вместо этого можно было просто добавить в USE-флаги: "hardened pie ssp".)</para>
+        <para>ln -snf ../usr/portage/profiles/hardened/x86/2.6/ /etc/make.profile</para>
+        <para>После переключения профайла на hardened/x86/2.6/ выключилось несколько нужных мне USE-флагов, которые в обычных профайлах включены автоматически - я их дописал в make.conf (у вас флаги могут быть другие, просто не забудьте этот момент проследить):</para>
+        <para>avi encode gtk2 jpeg mpeg oss quicktime spell truetype xv bitmap-fonts truetype-fonts type1-fonts</para>
+        <para>Компиляция hardened-toolchain и пересборка им всех остальных пакетов:</para>
+        <para>emerge binutils gcc glibc emerge -e world</para>
+        <para>dispatch-conf</para>
+        <para>Далее, нужно поставить ещё несколько пакетов:</para>
+        <para>emerge paxtest paxctl gradm</para>
+        <para>paxtest можно было поставить и раньше, до перехода на hardened toolchain. Эта утилитка пытается делать разные опасные операции (типа переполнения стека с выполнением кода), которые обычно выполняют эксплойты. Если система защищена, то все её попытки будут пресечены, о чём она и сообщит. В общем, можно её погонять до установки hardened toolchain, после а так-же после перезагрузки с ядром где включён PaX, по приколу. :)</para>
+        <para>paxtest как свою зависимость так-же установит прогу chpax - это старый способ управлять PaX, вместо которого лучше использовать paxctl. Но некоторые проги, распространяемые без исходников, скомпилированы так, что paxctl с ними работать не может, и приходится юзать chpax.</para>
+        <para>Ну а gradm нужен для настройки RBAC в GrSecurity - тех самых ограничений прав для процессов и юзеров.</para>
+        <para>Что касается настроек ядра. Я для начала настроил всё так, как описано в доке Gentoo и GrSecurity - при этом не все защиты включены, но большинство софта при таких настройках будет работать. В процессе разбора с настройками возникло несколько теоретических предположений:</para>
+        <orderedlist>
+            <listitem>
+                <para>Если загрузить hardened ядро ДО перекомпилирования системы, то могут возникнуть проблемы если включена эта опция:</para>
+                <para>PaX -&gt; Non-executable pages -&gt; Disallow ELF text relocations</para>
+            </listitem>
+            <listitem>
+                <para>На сервере, где нет X-ов, можно дополнительно включить: (не забыть перед этим проверить, что от этого не перестало работать что-то кроме X-ов, в частности hwclock):</para>
+                <para>Grsecurity -&gt; Address Space Protection -&gt; Disable privileged I/O</para>
+            </listitem>
+            <listitem>
+                <para>Кроме того, ещё есть предположение, что некоторые ограничения chroot могут помешать операциям типа инсталляции Gentoo (которая идёт внутри chroot) или попытке починки системы (если, например, для этого загрузиться с CD с таким hardened ядром):</para>
+                <para>Grsecurity -&gt; Filesystem Protections -&gt; Deny mounts</para>
+                <para>Grsecurity -&gt; Filesystem Protections -&gt; Deny double-chroots</para>
+                <para>Grsecurity -&gt; Filesystem Protections -&gt; Deny (f)chmod +s</para>
+                <para>Grsecurity -&gt; Filesystem Protections -&gt; Deny mknod</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <info>
+            <title>Настройка</title>
+        </info>
+        <para>Настройка Hardened состоит из двух частей: настройка ядра, и настройка ролей (RBAC или SELinux). Пример настройки ядра 2.6.20 я сейчас покажу. А RBAC/SELinux я пока не настраивал.</para>
+        <para>Думаю, будет нагляднее всего привести настройки так, как они выглядят в make menuconfig - это за одно позволит оценить "на глаз" возможности PaX и GrSecurity тем, кто с ними до сих пор не сталкивался.</para>
+        <para>Между разными версиями ядра они немного меняются, но не значительно.</para>
+        <screen>
+PaX --->
+. [*] Enable various PaX features
+....... PaX Control --->
+......... [ ] Support soft mode
+......... [*] Use legacy ELF header marking
+......... [*] Use ELF program header marking
+............. MAC system integration (none) --->
+....... Non-executable pages --->
+......... [*] Enforce non-executable pages
+......... [*] . Segmentation based non-executable pages
+......... [ ] Emulate trampolines
+......... [*] Restrict mprotect()
+......... [ ] . Disallow ELF text relocations
+......... [ ] Enforce non-executable kernel pages
+....... Address Space Layout Randomization --->
+......... [*] Address Space Layout Randomization
+......... [*] . Randomize kernel stack base
+......... [*] . Randomize user stack base
+......... [*] . Randomize mmap() base
+..... Miscellaneous hardening features --->
+....... [ ] Sanitize all freed memory
+....... [*] Prevent invalid userland pointer dereference
+Grsecurity --->
+. Security Level (Custom) --->
+. Address Space Protection --->
+... [*] Deny writing to /dev/kmem, /dev/mem, and /dev/port
+... [ ] Disable privileged I/O
+... [*] Remove addresses from /proc//[smaps|maps|stat]
+... [*] Deter exploit bruteforcing
+... [*] Runtime module disabling
+... [*] Hide kernel symbols
+. Role Based Access Control Options --->
+... [*] Hide kernel processes
+... (3) Maximum tries before password lockout
+... (30) Time to wait after max password tries, in seconds
+. Filesystem Protections --->
+... [*] Proc restrictions
+... [*] . Restrict /proc to user only
+... [*] Additional restrictions
+... [*] Linking restrictions
+... [*] FIFO restrictions
+... [*] Chroot jail restrictions
+... [*] . Deny mounts
+... [*] . Deny double-chroots
+... [*] . Deny pivot_root in chroot
+... [*] . Enforce chdir("/") on all chroots
+... [*] . Deny (f)chmod +s
+... [*] . Deny fchdir out of chroot
+... [*] . Deny mknod
+... [*] . Deny shmat() out of chroot
+... [*] . Deny access to abstract AF_UNIX sockets out of chroot
+... [*] . Protect outside processes... [*] . Restrict priority changes
+... [*] . Deny sysctl writes
+... [*] . Capability restrictions
+. Kernel Auditing --->
+... [ ] Single group for auditing
+... [ ] Exec logging
+... [*] Resource logging
+... [ ] Log execs within chroot
+... [ ] Chdir logging
+... [*] (Un)Mount logging
+... [ ] IPC logging
+... [*] Signal logging
+... [*] Fork failure logging
+... [ ] Time change logging
+... [*] /proc//ipaddr support
+... [ ] ELF text relocations logging (READ HELP)
+. Executable Protections --->
+... [*] Enforce RLIMIT_NPROC on execs
+... [*] Destroy unused shared memory
+... [*] Dmesg(8) restriction
+... [ ] Trusted Path Execution (TPE)
+. Network Protections --->
+... [*] Larger entropy pools
+... [ ] Socket restrictions
+. Sysctl support --->
+... [*] Sysctl support
+... [*] . Turn on features by default
+. Logging Options --->
+... (10) Seconds in between log messages (minimum)
+... (4) Number of messages in a burst (maximum)
+[ ] Enable access key retention support
+[ ] Enable different security models            
+        </screen>
+        <para>Абсолютное большинство этих фич работает прозрачно для пользователя. Но есть пара, которые вы можете заметить: во-первых обычные пользователи перестанут видеть процессы других пользователей, а во-вторых они потеряют доступ к некоторым файлам в /proc/, из-за чего вывод команд ifconfig, route, etc. запущенных обычными пользователями станет значительно скромнее.</para>
+        <para>Надо отметить, что большая часть этих фич может управляться через sysctl. Что, как правило, плохо. А что хорошего в том, что хакер ломает систему наполовину, получает возможность отключить эти защиты через sysctl, после чего доламывает её уже окончательно? К счастью, есть возможность заблокировать изменение настроек GrSecurity через sysctl. Для этого нужно добавить в /etc/sysctl.conf:</para>
+        <para>kernel.grsecurity.disable_modules = 1</para>
+        <para>kernel.grsecurity.grsec_lock = 1</para>
+        <para>Где первая команда запрещает подгрузку модулей ядра (лучше всего на серверах поддержку модулей даже не включать в ядре, но если это не возможно, то теперь есть выход: подгрузить нужные модули при загрузке системы, а потом с помощью kernel.grsecurity.disable_modules запретить подгрузку модулей - чтобы никто случайно руткит не подгрузил :)), а вторая запрещает изменение любых настроек GrSecurity.</para>
+        <para>Недостаток этого в том, что если вам нужно будет таки подгрузить модуль или отключить часть фич GrSecurity (например, защиту chroot для сборки нового Gentoo), то придётся редактировать /etc/sysctl.conf и перегружаться.</para>
+        <para>Собственно, настройка на этом окончена.</para>
+        <para>В качестве резюме, приведу полный набор команд, которые отконвертируют ваш Gentoo в Hardened:</para>
+        <para>emerge hardened-sources6# Теперь настройте это ядро (пока не включая фичи# hardened), скомпилируйте и перегрузитесь в него.ln -snf ../usr/portage/profiles/hardened/x86/2.6/ /etc/make.profile# Уберите все флаги оптимизации из CFLAGS в /etc/make.conf# и установите -O2.# Пример: CFLAGS="-march=pentium-m -O2 -pipe"# Очистите ваш $PKGDIR (обычно /usr/portage/packages/) для# ускорения времени пересборки системы используя# опции -b и -k команды emerge.emerge -C linux-headersemerge linux-headers glibc binutils gcc-config gcc# Проделайте все дополнительные операции, которые могут# требоваться при обновлении gcc (см. GCC Upgrade Guide).emerge -b glibc binutils gcc portageemerge -bke systememerge -ke worldglsa-check -l | grep '\[N\]'# Ручками обновите пакеты, которые мог выдать glsa-check.emerge -a --depcleanemerge -uDNa worldemerge paxtest paxctl gradmrevdep-rebuilddispatch-conf# Теперь включите в ядре все фичи Hardened,# соберите его и перегрузитесь.</para>
+    </section>
+    <section>
+        <info>
+            <title>Впечатления</title>
+        </info>
+        <para>Я начал с того, что выразил желание развеять распространённые опасения в том, что Hardened - это слишком сложно, либо от этого cтрадает стабильность, функциональность или производительность системы. Я уже продемонстрировал, что такое Hardened Gentoo в общих чертах, а теперь пройдёмся детальнее по этим опасениям.</para>
+        <section>
+            <info>
+                <title>Сложность</title>
+            </info>
+            <para>Я пока не занимался настройкой системы ролей (RBAC/SELinux) как раз из-за сложности. Возможно, конечно, только кажущейся, и на самом деле там тоже всё просто, не знаю... :) Я, всё-таки, в основном программист, и на администрирование времени вечно не хватает. В общем, если в Hardened и есть что-то сложное и требующее кучу времени и внимания - это настройка ролей.</para>
+            <para>А вот всё, что я описал до этого, настраивается очень просто, быстро, один раз, и даёт достаточно сильный эффект в виде усиления безопасности системы!</para>
+        </section>
+        <section>
+            <info>
+                <title>Стабильность</title>
+            </info>
+            <para>Я уже много лет использую Hardened в описанном виде и дома на workstation, и на всех серверах. Никаких проблем со стабильностью их работы из-за Hardened за это время не возникало, и я не видел жалоб в maillist на эту тему.</para>
+            <para>Что касается стабильности сборки Gentoo, ведь пакеты постоянно обновляются и компилируются. Пару лет назад была необходимость использовать некоторые workaround-ы - например, чтобы XWindow работали с дровами ATI приходилось их собирать не-hardened gcc (для автоматического переключения gcc в процессе компиляции пакетов был написан простейший скрипт). Ну и ещё по мелочи проблем возникало, но ни одной критичной. Сейчас проблем такого рода нет в принципе. Т.е. вы систему на Hardened перевели, и забыли - можете продолжать всё делать так, как будто ничего не произошло. Только хакать ваш сервер стало сложнее гораздо. :)</para>
+        </section>
+        <section>
+            <info>
+                <title>Функциональность</title>
+            </info>
+            <para>Да, для того, чтобы работали некоторые пакеты, до сих пор необходимо использовать утилиты chpax/paxctl, для отключения части hardened-защит для конкретных приложений. Но в Gentoo эта операция давно автоматизирована: для этих приложений chpax/paxctl выполняется на этапе установки пакета. Так что вам об этом беспокоиться уже не нужно. А за исключением этого нюанса (что для некоторых приложений часть защит выключена), все приложения работают в Hardened Gentoo без проблем (по крайней мере с теми настройками ядра, которые я привёл в предыдущей части).</para>
+        </section>
+        <section>
+            <info>
+                <title>Производительность</title>
+            </info>
+            <para>Честно скажу - сам я не мерял. Да и что и как мерять - не совсем понятно. Насколько я понял из инета - можно ожидать до 3-4% потери производительности в худшем случае, а обычно это будет меньше процента. Но, опять-же, смотря какие "фичи" включать. Если врубить SeLinux или RBAC - тогда можно эти 3-4% потерять, но до их настройки я пока не добрался. :( Визуально - после перехода на Hardened разницы никакой, ни на домашней машине, ни на серверах. Конечно, сколько-то производительности, вероятно, было потеряно из-за перехода на -O2. Ещё я сталкивался с тем, что при выборе "неправильной" опции при настройке ядра из этих двух:</para>
+            <para>[ ] Paging based non-executable pages[*] Segmentation based non-executable pagesвозникали заметные тормоза. Сейчас я в ядре вообще не вижу первого варианта (который любил потормозить на некоторых типах процессоров).</para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>Выводы</title>
+        </info>
+        <para>В общем, у вас есть реальная возможность значительно увеличить безопасность своих машин, потратив один раз пару часов вашего времени на переход на Hardened и сутки машинного времени (пока будет полностью пересобираться система).</para>
+        <para>"Думайте сами, решайте сами - иметь, или не иметь." :)</para>
+    </section>
+</article>

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info><title>Руководство по электронной почте с использованием Mutt</title></info>
+<para/>
+<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/guide-to-mutt.xml">http://www.gentoo.org/doc/ru/guide-to-mutt.xml</link>
+</para>
+<para>C версии: 1.0</para><section><info><title>1. Введение в E-Mail</title></info>
+<para/>
+<para>Если вы не любитель e-mail клиентов с замысловатым графическим интерфейсом, или если вы просто хотите поэкспериментировать с другими клиентами, чтобы выбрать подходящий для себя, самым простым способом в вашем случае будет использование связки консольных приложений: </para>
+<para/>
+<para>fetchmail-&gt;procmail-&gt;mutt-&gt;smtp </para>
+<para/>
+<para>Программы эти не просто мощны и гибко настраиваемы, они также легковесны и эффективны. Потому, однажды настроив и запустив всю эту e-mail систему, вы будете просто ошеломлены тем, что сможете делать с её помощью. </para>
+<para/>
+<para>Поскольку это краткое руководство, мы не будем рассматривать службы отправки почты (Mail Transfer Agent), такие как sendmail, postfix или exim. Мы также не будем использовать 25 порт для почтовых служб. </para>
+<para/>
+<para>Мы можем себе это позволить, так как fetchmail способен передавать принятую почту непосредственно службе доставки почты (MDA) вместо того чтобы перенаправлять её на 25 порт. И мы можем не использовать службу отправки почты (MTA) для простой передачи почты. </para>
+<para/>
+<para>Для запуска своей e-mail системы вам понадобится установить следующее программное обеспечение. </para>
+<para/>
+<para>Листинг 1.1: Установка нужных программ</para>
+<para># emerge fetchmail procmail mutt nbsmtp</para>
+<para/>
+<para/>
+<para>Теперь от полностью рабочей e-mail системы нас отделяют четыре маленьких шажка в направлении конфигурации файлов. </para>
+<para>Важно: После каждого шага необходимо тестировать настройку на корректность. Это конечно же подразумевают, что всё необходимое программное обеспечение у вас уже установлено. </para>
+<para/>
+<para/></section><section><info><title>2. Fetchmail</title></info>
+<para/>
+<para>Fetchmail забирает почту с удаленного сервера на вашу локальную машину. Для этого вам необходимо настроить файл .fetchmailrc в вашей домашней директории, подобно примеру:</para>
+<para/>
+<para/>
+<para/>
+<para>Листинг 2.1: Пример .fetchmailrc</para>
+<para>poll mail.myisp.net  protocol pop3 user "myname" password "mypassword" </para>
+<para/>
+<para/>
+<para>Сразу после создания файла, необходимо выставить права доступа к нему (он должен быть читаем только его владельцем). Сделать это можно следующей командой: </para>
+<para/>
+<para>Листинг 2.2: Изменение прав доступа</para>
+<para># chmod 710 .fetchmailrc</para>
+<para/>
+<para/>
+<para>Чтобы увидеть процесс в действии, используйте ключ -v. Чтоб получить все сообщения, используйте -a. И ещё вы должны использовать ключ -m для того, чтобы передать принятую почту procmail.</para>
+<para/>
+<para>Предупреждение: Будет также хорошей идеей использовать ключ -k, в этом случае если что-то пойдет не так, ваша почта не будет удалена с сервера и вы сможете её повторно забрать. </para>
+<para/>
+<para/>
+<para>Пришло время проверить fetchmail в действии! </para>
+<para/>
+<para>Листинг 2.3: Тест Fetchmail #1</para>
+<para># fetchmail -akv -m "/usr/bin/procmail -d %T" </para>
+<para/>
+<para/>
+<para>Как только вы добьётесь работающей системы, вы можете добавить процесс в cron или какой-нибудь монитор навроде gkrellm. Fetchmail также может быть запущен как демон с указанием секундного интервала. </para>
+<para/></section><section><info><title>3. Procmail</title></info>
+<para/>
+<para>Procmail - это программа фильтрующая почту получаемую от fetchmail. А далее, также как и MDA, она поставляет отфильтрованную почту в ваши почтовые ящики, откуда её уже можно прочитать программой mutt (это почтовый клиент, который мы будем использовать). </para>
+<para/>
+<para>Для использования procmail, также необходимо создать файл .procmailrc в своём домашнем каталоге. Для наших целей "быстрой настройки" мы будем использовать простой .procmailrc, который фильтрует почту от трех списков рассылки gentoo в три почтовых ящика: gentoo-dev, gentoo-user и gentoo-announce. </para>
+<para>Примечание: Правила фильтра называются условиями. Я также добавил условия для того, чтобы отфильтровать некоторый спам. </para>
+<para/>
+<para/>
+<para>Листинг 3.1: Пример .procmailrc</para>
+<para>MAILDIR=$HOME/MuttMail                ##проверьте правильность пути</para>
+<para>5LOGFILE=$HOME/.procmaillog</para>
+<para>LOGABSTRACT=no</para>
+<para>#VERBOSE=on... используется только для отладки</para>
+<para>VERBOSE=off</para>
+<para>FORMAIL=/usr/bin/formail</para>
+<para>NL="</para>
+<para>"</para>
+<para>##условные строки начинаются с :0</para>
+<para>##не записывайте комментарии в строки условия</para>
+<para>##отредактируйте ненужные условия!</para>
+<para>##строки условий начинаются с *, а регулярные выражения ваши лучшие друзья</para>
+<para>##условия добавленные после * попадают прямо в egrep</para>
+<para>##строка следущая за условиями, в следующем регистре является именем почтового ящика</para>
+<para/>
+<para>#отлавливание копий, используя formail</para>
+<para>:0 Whc: .msgid.lock</para>
+<para>| $FORMAIL -D 16384 .msgid.cache</para>
+<para/>
+<para>:0 a</para>
+<para>$MAILDIR/duplicates</para>
+<para/>
+<para>#люди которые всегда пишут с одного почтового адреса</para>
+<para>:0 </para>
+<para>* ^From:.*(craig\@hotmail|renee\@local.com)</para>
+<para>$MAILDIR/friends </para>
+<para/>
+<para>#выборка некоторого спама</para>
+<para>:0  </para>
+<para>* ^Subject:.*(credit|cash|money|debt|sex|sale|loan)</para>
+<para>$MAILDIR/spam</para>
+<para/>
+<para>#никаких html писем</para>
+<para>:0</para>
+<para>* ^Content-Type:.*html</para>
+<para>$MAILDIR/junk</para>
+<para/>
+<para>#складировать письма из списков рассылки в мои почтовые ящики</para>
+<para>:0 </para>
+<para>* ^List-Id:.*gentoo-user</para>
+<para>gentoo-user</para>
+<para/>
+<para>:0 </para>
+<para>* ^List-Id:.*gentoo-dev</para>
+<para>gentoo-dev</para>
+<para/>
+<para>:0 </para>
+<para>* ^List-Id:.*gentoo-announce</para>
+<para>gentoo-announce</para>
+<para/>
+<para>#получать любую другую почту с gentoo</para>
+<para>:0 </para>
+<para>* ^From:.*gentoo.org</para>
+<para>gentoo</para>
+<para/>
+<para>:0 </para>
+<para>* ^From:.*@freshmeat\.net</para>
+<para>freshmeat</para>
+<para/>
+<para>###########################################</para>
+<para># последние условие: складирует остальную #</para>
+<para># почту в почтовый ящик по умолчанию      # </para>
+<para>###########################################</para>
+<para>:0 </para>
+<para>* .*</para>
+<para>default</para>
+<para/>
+<para># конец файла</para>
+<para/>
+<para>Примечание: В данном случае вам только потребуется создать почтовую директорию в $HOME/MuttMail, после чего Procmail создаст все необходимые файлы почтового ящика в этом каталоге, используя названия из строк условий. Для дополнительной информации посетите http://www.procmail.org/</para>
+<para/>
+<para/>
+<para>Для проверки нашего .procmailrc, повторно запустите fetchmail (который мы уже настроили). Помните также, что опция -k оставляет почту на удаленном сервере, потому её можно использовать для нашего теста. </para>
+<para/>
+<para>Листинг 3.2: Тест Procmail #1</para>
+<para># fetchmail -akv -m "/usr/bin/procmail -d %T" </para>
+<para/>
+<para/>
+<para>Ну всё, теперь когда fetchmail и procmail работают, мы можем зайдя в $HOME/MuttMail прочитать нашу почту программой less или вашим любимым файловым менеджером. </para>
+<para/></section><section><info><title>4. Почтовый клиент Mutt</title></info>
+<para/>
+<para>Mutt используется для чтения и написания писем. Это очень мощное, сложно-настраиваемое, легковесное и эффективное приложение. </para>
+<para/>
+<para>Mutt поддерживает чтение и запись в различных форматах почтового ящика: mbox, MMDF, MH и Maildir. Тип почтового ящика распознается автоматически. В нашем случае мы используем формат mbox, где все сообщения почтового ящика сохраняются в отдельных файлах. </para>
+<para/>
+<para>Mutt также имеет способность работать с папками, расположенными на удаленном IMAP сервере. См. Поддержку IMAP в разделе 4.11 руководства по Mutt и сайт Mutt http://www.mutt.org/. </para>
+<para/>
+<para>При установке mutt создаётся основной файл конфигурации /etc/mutt/Muttrc. Вам также необходимо создать файл .muttrc в своём домашнем каталоге. </para>
+<para/>
+<para>Листинг 4.1: Пример .muttrc</para>
+<para/>
+<para>(Конечно, неплохо бы прочитать документацию Mutt из /usr/share/doc/mutt*)</para>
+<para>(Любые настройки здесь отменяют параметры общей конфигурации из /etc/mutt/Muttrc)</para>
+<para/>
+<para># cp /etc/mutt/Muttrc ~/.muttrc</para>
+<para># nano -w .muttrc</para>
+<para>set pager_context=1</para>
+<para>set pager_index_lines=6                 #показывать оглавления в окне программы</para>
+<para>set menu_scroll</para>
+<para>set pgp_verify_sig=no                   #не показывать pgp на странице</para>
+<para>set status_on_top                       #разместить статусную строку вверху</para>
+<para>set sort=threads                        #сортировать сообщения по заголовкам</para>
+<para/>
+<para>set status_format=" %r %b %f %n      Del %d      Msgs %m %l %&gt; (%P)"</para>
+<para>set pager_format="%-10.10i %[!%a %b %d %R]"</para>
+<para>set date_format="!%H:%M %a %d %b     "</para>
+<para>set index_format="%4C %Z %[%b%d] %-15.15F %s"</para>
+<para>set folder_format="%2C %t %8s %d %N %f"</para>
+<para/>
+<para>#set sendmail="/usr/bin/nbsmtp -d isp.net -h smtp.isp.net -f yourname@isp.net"</para>
+<para/>
+<para>#set from="default-mailaddress"         #задаёт ваш адрес в строке "from"</para>
+<para>#set realname="myname"</para>
+<para/>
+<para>set record="$HOME/MuttMail/sent"        #сохранять отправленную почту здесь</para>
+<para>set delete=yes                          #удалить без подтверждения</para>
+<para>set include=yes                                #выделять сообщение в ответе</para>
+<para>set fast_reply=yes                        #не подтверждать ответ</para>
+<para>set beep=no                                #не пищать</para>
+<para>set markers=no                                #не помечать + сложенные строки</para>
+<para>set confirmappend=no                        #не подтверждать сохранение в =keep</para>
+<para>set to_chars=" +TCF"                    #нет L для mail_list</para>
+<para/>
+<para>set folder = $HOME/MuttMail</para>
+<para>mailboxes =gentoo-user</para>
+<para>mailboxes =gentoo-dev</para>
+<para>mailboxes =gentoo-announce</para>
+<para>mailboxes =gentoo</para>
+<para>mailboxes =freshmeat</para>
+<para>mailboxes =duplicates</para>
+<para>mailboxes =default</para>
+<para>mailboxes =sent</para>
+<para>mailboxes =friends</para>
+<para>mailboxes =junk</para>
+<para>mailboxes =spam</para>
+<para>mailboxes =keep</para>
+<para/>
+<para>save-hook .* =keep                      #mbox по умолчанию сохраняет (s) почту в =keep</para>
+<para>subscribe gentoo-user gentoo-dev        #подписанные списки</para>
+<para/>
+<para>bind pager h display-toggle-weed        #переключать заголовки кнопкой h</para>
+<para/>
+<para># симулировать старое url меню</para>
+<para>macro index \cb |urlview\n 'call urlview to extract URLs out of a message'</para>
+<para>macro pager \cb |urlview\n 'call urlview to extract URLs out of a message'</para>
+<para/>
+<para>#запуск fetchmail нажатием кнопки G</para>
+<para>macro index G "!fetchmail -a -m 'procmail -d %T'\r"</para>
+<para>macro pager G "!fetchmail -a -m 'procmail -d %T'\r"</para>
+<para/>
+<para>#редактирование .muttrc... не требует перезапуска</para>
+<para/>
+<para>macro generic ,sm ":source $HOME/.muttrc\r"</para>
+<para>macro generic \cj "!rxvt -bg wheat -e joe $HOME/.muttrc\r"</para>
+<para/>
+<para>#по умолчанию список заголовков в полях удаляется перед показом почты</para>
+<para>#игнорирует всё, кроме того, что вам нужно</para>
+<para>ignore *</para>
+<para>unignore  Date To From: Subject X-Mailer Organization User-Agent</para>
+<para>hdr_order Date From To Subject X-Mailer User-Agent Organization</para>
+<para/>
+<para>##ваш Mutt должен поддерживать несколько цветов</para>
+<para>##для обозначения четырех уровней выделенного текста</para>
+<para>##данные настройки отменяют параметры общей конфигурации в /etc/mutt/Muttrc</para>
+<para/>
+<para>#color quoted green  default</para>
+<para>color quoted1 magenta blue</para>
+<para>#color quoted2 yellow default</para>
+<para>#color quoted3 red default</para>
+<para>#color signature cyan cyan</para>
+<para/>
+<para/>
+<para>#эта цветовая схема взята из /etc/mutt/Muttrc.color</para>
+<para>#закомментируйте её, если вам нужна цветовая схема по умолчанию из /etc/mutt/Muttrc</para>
+<para># Je vois la vie en rose :-)</para>
+<para>color        hdrdefault        brightcyan        blue</para>
+<para>color        header                brightwhite        blue "^from:"</para>
+<para>color   header          brightwhite            blue   "^subject:"</para>
+<para/>
+<para>color   quoted          brightgreen     blue</para>
+<para>color   signature       brightwhite        blue</para>
+<para/>
+<para>color   indicator       blue                green</para>
+<para/>
+<para>color   error           red             black</para>
+<para>mono    error           bold</para>
+<para>color   status          black cyan</para>
+<para>mono        status                bold</para>
+<para>color   tree            yellow           blue</para>
+<para/>
+<para>color   tilde           brightmagenta   blue</para>
+<para>color        body        brightwhite                blue        "[-a-z_0-9.]+@[-a-z_0-9.]+"</para>
+<para>mono    body    bold                    "[-a-z_0-9.]+@[-a-z_0-9.]+"</para>
+<para>color   body            brightyellow    black   "^Good signature"</para>
+<para>mono    body            bold                    "^Good signature"</para>
+<para>color   body            brightwhite     red     "^Bad signature from.*"</para>
+<para>mono    body            bold                    "^Bad signature from.*"</para>
+<para>color   normal          white                blue</para>
+<para>color        message                green        black</para>
+<para>color        attachment        brightgreen        blue</para>
+<para/>
+<para># конец файла... но вы можете его дописывать и дописывать... :)</para>
+<para/>
+<para/>
+<para>Это только маленький пример файла .muttrc. На самом же деле гораздо больше опций поддаются конфигурации, например, те же настройки gpg. Для примеров и помощи посмотрите http://mutt.netliberte.org/. </para>
+<para/>
+<para>Теперь вы можете протестировать наш .muttrc </para>
+<para/>
+<para>Листинг 4.2: Тест .muttrc</para>
+<para># mutt -y</para>
+<para/>
+<para/>
+<para>После чего должно появиться окно Mutt с почтовыми ящиками, которые мы создали, когда настраивали fetchmail. </para>
+<para/>
+<para>Нажмите ? для получения помощи в навигации по почтовым ящикам в Mutt. </para>
+<para/></section><section><info><title>5. SMTP</title></info>
+<para/>
+<para>Последний шаг, это настройка nbsmtp ('No-Brainer SMTP'), используемого для отправки почты на ваш сервер SMTP. Данная настройка самая простая и требует лишь добавления нескольких строк в конфигурационный файл .muttrc </para>
+<para/>
+<para>domain: домен, сообщаемый nbsmtp. Будет почти всегда похож на окончаниее вашего адреса электронной почты. </para>
+<para/>
+<para>from@addr: Это тот адрес, который будет сообщаться nbsmtp в строке "from". Обратите внимание, что данный адрес может отличаться от того, что записан в поле "From:" вашего почтового клиента (MUA). </para>
+<para/>
+<para>host: Сервер smtp, куда, собственно, и будет отправляться почта.</para>
+<para/>
+<para/>
+<para/>
+<para>Листинг 5.1: Добавление поддержки smtp</para>
+<para># nano -w .muttrc</para>
+<para>set sendmail="/usr/bin/nbsmtp -d isp.net -h smtp.isp.net -f urname@isp.net"</para>
+<para/>
+<para/>
+<para>Теперь всё готово для создания письма. В окне Mutt нажмите m, для того чтобы написать текстовое сообщение на ваш же почтовый ящик. Mutt использует значение EDITOR или VISUAL, указываемое с помощью опций editor= в .muttrc. После того, как сообщение будет написано, нажмите y для его отправки. Если всё прошло удачно, мы увидим сообщение 'sending mail', следующее за 'New mail in =sent'. </para>
+<para/>
+<para>Помните, в .muttrc у нас задано сохранять всю отправленную почту при помощи строки :set record="$HOME/MuttMail/sent" </para>
+<para/>
+<para>Теперь, чтобы завершить испытание, снова запустите fetchmail для получения всей почты и вашего тестового письма, которое вы себе отправили. Как только это тестовое письмо будет найдено, нажмите h для того, чтобы посмотреть все его заголовки и полный путь прохождения почты (mail transfer path). </para>
+<para>Примечание: Есть ещё одна программа, которая, возможно, вам пригодится, под названием urlview. Она извлекает ссылки из текстовых сообщений и перенаправляет их в ваш браузер. </para>
+<para/>
+<para/>
+<para>Листинг 5.2: Установка urlview</para>
+<para># emerge urlview </para>
+<para/>
+<para/>
+<para>После чего создайте ~/.urlview копируя конфигурационный файл из /usr/share/doc/urlview*/, и подправьте необходимые настройки под свой браузер. </para>
+<para/>
+<para>Что ж, теперь у нас есть мощная почтовая система. Читайте различную документацию и руководства, а также ищите примеры конфигурационных файлов в 'google' по ключевым словам muttrc и procmailrc.</para>
+</section>
+</article>

@@ -1,0 +1,642 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info><title>Руководство по настройке Samba в режиме PDC с использованием LDAP</title></info>
+<para/>
+<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/handbook/handbook-x86.xml">http://ru.gentoo-wiki.com/Samba_PDC_LDAP</link>
+</para>
+<para>С версии: 1.2</para>
+<para/>
+<para>смотрите также:</para>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.netup.ru/articles.php?n=11">Настройка и использование централизованного управления сервисами с использованием сервера LDAP</link>.</para>
+<para/>
+<para/><section><info><title>Устанавливаемые пакеты </title></info>
+<para>Установим нужные пакеты: </para>
+<para># USE="ldap acl ldapsam pam gdbm samba ssl tcpd winbind" emerge samba openldap acl nss_ldap pam_ldap </para>
+<para/>
+<para>ВАЖНО: Версия nss_ldap должна быть не ниже 250-r1 (&gt;=sys-auth/nss_ldap-250-r1) </para></section><section><info><title>OpenLDAP</title></info><section><info><title>Конфигурирование OpenLDAP</title></info>
+<para>Для примера используется домен amber.global.com который является дочерним доменом домена global.com, который работает под управлением Win2003 Server. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Не решенной задачей осталось создание доверительных отношений между доменами и включение домена amber в лес global.com </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Файл: /etc/openldap/slapd.conf </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>include /etc/openldap/schema/core.schema</para>
+<para> include /etc/openldap/schema/cosine.schema</para>
+<para> include /etc/openldap/schema/inetorgperson.schema</para>
+<para> include /etc/openldap/schema/misc.schema</para>
+<para> include /etc/openldap/schema/nis.schema</para>
+<para> include /etc/openldap/schema/openldap.schema</para>
+<para> include /etc/openldap/schema/samba.schema</para>
+<para> pidfile                        /var/run/openldap/slapd.pid</para>
+<para> argsfile               /var/run/openldap/slapd.args</para>
+<para/>
+<para> access to dn.base=""</para>
+<para>                by self write</para>
+<para>                by * auth</para>
+<para> access to attr=userPassword</para>
+<para>                by self write</para>
+<para>                by * auth</para>
+<para> access to attr=shadowLastChange</para>
+<para>                by self write</para>
+<para>                by * read</para>
+<para> access to *</para>
+<para>                by * read</para>
+<para>                by anonymous auth</para>
+<para> #loglevel 1</para>
+<para> database        ldbm</para>
+<para> suffix          "dc=amber,dc=global,dc=com"</para>
+<para> rootdn          "cn=Manager,dc=amber,dc=global,dc=com"</para>
+<para> # Пароль rootpw лучше всего указывать в зашифрованном виде.</para>
+<para> # Для генерации шифрованного пароля используйте утилиту slappasswd</para>
+<para> # Например: slappasswd -h {MD5}</para>
+<para> # rootpw = secret</para>
+<para> rootpw         {MD5}Xr4ilOzQ4PCOq3aQ0qbuaQ==</para>
+<para> directory      /var/lib/openldap-ldbm</para>
+<para/>
+<para> index objectClass           eq</para>
+<para> index cn                    eq,subinitial</para>
+<para> index sn                    eq,subinitial</para>
+<para> index uid                   eq,subinitial</para>
+<para> index displayName           eq,subinitial</para>
+<para> index uidNumber             eq</para>
+<para> index gidNumber             eq</para>
+<para> index memberUID             eq</para>
+<para> index sambaSID              eq</para>
+<para> index sambaPrimaryGroupSID  eq</para>
+<para> index sambaDomainName       eq</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Файл: /etc/openldap/ldap.conf </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>HOST 127.0.0.1</para>
+<para>BASE dc=sanaa,dc=global,dc=com</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Проверяем разрешения на каталоги /var/lib/openldap-*ls -la /var/lib/ </para>
+<para>ВАЖНО: </para>
+<para>drwx------   2 ldap     ldap      104 Июн  8 18:31 openldap-data</para>
+<para>drwx------   2 ldap     ldap       72 Июн  8 18:31 openldap-ldbm</para>
+<para>drwx------   2 ldap     ldap       72 Июн  8 18:31 openldap-slurp</para></section><section><info><title> Запуск сервера OpenLDAP</title></info>
+<para>Пока работаем без шифрования трафика, так как сервер LDAP и SAMBA работают на одном сервере, подправляем конфиг чтобы LDAP слушал 389 порт только на localhost. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Файл: /etc/conf.d/slapd </para>
+</entry>
+</row>
+<row>
+<entry>
+<para># conf.d file for the openldap-2.1 series</para>
+<para>#</para>
+<para># To enable both the standard unciphered server and the ssl encrypted</para>
+<para># one uncomment this line or set any other server starting options</para>
+<para># you may desire.</para>
+<para>#</para>
+<para># OPTS="-h 'ldaps:// ldap:// ldapi://%2fvar%2frun%2fopenldap%2fslapd.sock'"</para>
+<para>OPTS="-h 'ldap://127.0.0.1'"</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>и запускаем OpenLDAP </para>
+<para>/etc/init.d/slapd start </para></section></section><section><info><title>SAMBA</title></info><section><info><title>Миграция OpenLDAP</title></info>
+<para>Существует 2 пути создания учетных записей пользователей: домен уже существует и создание нового домена. В первом случае самбу нужно настроить в режиме BDC, перенести все учетные записи, и потом изолировав PDC, перезапустить самбу в режиме PDC. Во втором случае все еще проще, самбу сразу запускаем в режиме PDC и создаем стандарные учетные записи при помощи замечательного пакета smbldap-tools. </para>
+<para/>
+<para>emerge smbldap-tools/etc/init.d/samba start</para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: configure.pl </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</para>
+<para>       smbldap-tools script configuration</para>
+<para>       -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=</para>
+<para>Before starting, check</para>
+<para> . if your samba controller is up and running.</para>
+<para> . if the domain SID is defined (you can get it with the 'net getlocalsid')</para>
+<para/>
+<para> . you can leave the configuration using the Crtl-c key combination</para>
+<para> . empty value can be set with the "." character</para>
+<para>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</para>
+<para>Looking for configuration files...</para>
+<para/>
+<para>Samba Configuration File Path [/etc/samba/smb.conf] &gt; </para>
+<para>The default directory in which the smbldap configuration files are stored is shown.</para>
+<para>If you need to change this, enter the full directory path, then press enter to continue.</para>
+<para>Smbldap-tools Configuration Directory Path [/etc/smbldap-tools/] &gt; </para>
+<para>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=</para>
+<para>Let's start configuring the smbldap-tools scripts ...</para>
+<para/>
+<para>. workgroup name: name of the domain Samba act as a PDC</para>
+<para>  workgroup name [amber] &gt; </para>
+<para>. netbios name: netbios name of the samba controler</para>
+<para>  netbios name [neptun] &gt; </para>
+<para>. logon drive: local path to which the home directory will be connected </para>
+<para> (for NT Workstations). Ex: 'H:'</para>
+<para>  logon drive [U:] &gt; </para>
+<para>. logon home: home directory location (for Win95/98 or NT Workstation).</para>
+<para>  (use %U as username) Ex:'\\neptun\%U'</para>
+<para>  logon home (press the "." character if you don't want homeDirectory) [\\%L\users\%U] &gt; </para>
+<para>. logon path: directory where roaming profiles are stored. Ex:'\\neptun\profiles\%U'</para>
+<para>  logon path (press the "." character if you don't </para>
+<para>  want roaming profile) [\\%L\Profiles\%a\%U] &gt; </para>
+<para>. home directory prefix (use %U as username) [/home/%U] &gt; </para>
+<para>. default users' homeDirectory mode [700] &gt; </para>
+<para>. default user netlogon script (use %U as username) [] &gt;</para>
+<para>   default password validation time (time in days) [45] &gt; 900</para>
+<para>. ldap suffix [dc=amber,dc=global,dc=com] &gt; </para>
+<para>. ldap group suffix [ou=Groups] &gt; </para>
+<para>. ldap user suffix [ou=Users] &gt; </para>
+<para>. ldap machine suffix [ou=Users] &gt; </para>
+<para>. Idmap suffix [ou=Idmap] &gt; </para>
+<para>. sambaUnixIdPooldn: object where you want to store the next uidNumber</para>
+<para>  and gidNumber available for new users and groups</para>
+<para>  sambaUnixIdPooldn object (relative to ${suffix}) [sambaDomainName=amber] &gt; </para>
+<para>. ldap master server: IP adress or DNS name of the master (writable) ldap server</para>
+<para>  ldap master server [127.0.0.1] &gt; </para>
+<para>. ldap master port [389] &gt; </para>
+<para>. ldap master bind dn [cn=Manager,dc=amber,dc=global,dc=com] &gt; </para>
+<para>. ldap master bind password [] &gt;  </para>
+<para>. ldap slave server: IP adress or DNS name of the slave ldap server: can also </para>
+<para>  be the master one</para>
+<para>  ldap slave server [127.0.0.1] &gt; </para>
+<para>. ldap slave port [389] &gt; </para>
+<para>. ldap slave bind dn [cn=Manager,dc=amber,dc=global,dc=com] &gt; </para>
+<para>. ldap slave bind password [] &gt;  </para>
+<para>. ldap tls support (1/0) [0] &gt; </para>
+<para>. SID for domain amber: SID of the domain (can be obtained with 'net getlocalsid neptun')</para>
+<para>  SID for domain amber [S-1-5-21-1918777035-593721947-2697221154] &gt; </para>
+<para>. unix password encryption: encryption used for unix passwords</para>
+<para>  unix password encryption (CRYPT, MD5, SMD5, SSHA, SHA) [SSHA] &gt; MD5</para>
+<para>. default user gidNumber [513] &gt; </para>
+<para>. default computer gidNumber [515] &gt; </para>
+<para>. default login shell [/bin/bash] &gt; </para>
+<para>. default skeleton directory [/etc/skel] &gt; </para>
+<para>. default domain name to append to mail adress [] &gt; </para>
+<para>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=</para>
+<para>backup old configuration files:</para>
+<para>  /etc/smbldap-tools/smbldap.conf-&gt;/etc/smbldap-tools/smbldap.conf.old</para>
+<para>  /etc/smbldap-tools/smbldap_bind.conf-&gt;/etc/smbldap-tools/smbldap_bind.conf.old</para>
+<para>writing new configuration file:</para>
+<para>  /etc/smbldap-tools/smbldap.conf done.</para>
+<para>  /etc/smbldap-tools/smbldap_bind.conf done.</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Если мы не хотим, что бы у всех пользователей профили были перемещаемыми, то в файле /etc/smbldap-tools/smbldap.conf установим следующее значение: </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Файл: /etc/smbldap-tools/smbldap.conf </para>
+</entry>
+</row>
+<row>
+<entry>
+<para> ...</para>
+<para> userProfile=""</para>
+<para> ...</para>
+<para> </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Инициализируем каталоги самбы в LDAP: </para>
+<para>smbldap-populate -a Administrator -k 0 -m 0</para></section><section><info><title>Конфигурация SAMBA</title></info>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Файл: /etc/samba/smb.conf </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>[global]</para>
+<para>        workgroup = amber</para>
+<para>        netbios name = neptun</para>
+<para>        realm = amber.global.com</para>
+<para>        nt acl support = yes</para>
+<para>        acl compatibility = win2k</para>
+<para>        map acl inherit = yes</para>
+<para>        server string = Samba Server %v</para>
+<para>        interfaces = eth0</para>
+<para>        bind interfaces only = yes</para>
+<para>        hosts allow = 192.168.7. 127.</para>
+<para>        log file = /var/log/samba/log.%m</para>
+<para>        debug level = 9</para>
+<para>        max log size = 500</para>
+<para>        socket options = TCP_NODELAY SO_SNDBUF=8192 SO_RCVBUF=8192</para>
+<para>        security = user</para>
+<para>        os level = 250</para>
+<para>        passdb backend = ldapsam:"ldap://127.0.0.1/"</para>
+<para>        enable privileges = yes</para>
+<para>        </para>
+<para>        passwd program = /usr/sbin/smbldap-passwd "%u"</para>
+<para>        passwd chat = *new*password* %n\n *new*password* %n\n *successfully*</para>
+<para>        passdb expand explicit = no</para>
+<para>        unix password sync = no</para>
+<para>        ldap passwd sync = no</para>
+<para>        </para>
+<para>        ldap suffix = dc=amber,dc=global,dc=com</para>
+<para>        ldap admin dn = cn=Manager,dc=amber,dc=global,dc=com</para>
+<para>        ldap user suffix = ou=Users</para>
+<para>        ldap group suffix = ou=Groups</para>
+<para># Т.к. для самбы компьютеры и пользователи - одно и то же,</para>
+<para># и искать она в дальнейшем записи компьютеров будет в пользователях,</para>
+<para># то для избежания дальнейших проблем при добавлении рабочих станций</para>
+<para># к домену мы вместо следующей строки</para>
+<para>#</para>
+<para>#       ldap machine suffix = ou=Computers</para>
+<para>#</para>
+<para># напишем другую:</para>
+<para>        ldap machine suffix = ou=Users</para>
+<para>        ldap idmap suffix = ou=Idmap</para>
+<para>        idmap backend = ldapsam:ldap://127.0.0.1/</para>
+<para>        idmap uid = 10000-20000</para>
+<para>        idmap gid = 10000-20000</para>
+<para>        </para>
+<para>        ldap delete dn = Yes</para>
+<para>        ldap ssl = no</para>
+<para>        </para>
+<para>        </para>
+<para>        add user script = /usr/sbin/smbldap-useradd -n -a "%u"</para>
+<para>        delete user script = /usr/sbin/smbldap-userdel "%u"</para>
+<para>        </para>
+<para>        add group script = /usr/sbin/smbldap-groupadd -p "%g"</para>
+<para>        delete group script = /usr/sbin/smbldap-userdel "%g"</para>
+<para>        </para>
+<para>        add user to group script = /usr/sbin/smbldap-groupmod -m "%u" "%g"</para>
+<para>        delete user from group script = /usr/sbin/smbldap-groupmod -x "%u" "%g"</para>
+<para>        set primary group script = /usr/sbin/smbldap-usermod -g "%g" "%u"</para>
+<para>        </para>
+<para>        </para>
+<para>        add machine script = /usr/sbin/smbldap-useradd -w "%u"</para>
+<para>        </para>
+<para>        #PDC</para>
+<para>        domain master = yes</para>
+<para>        preferred master = yes</para>
+<para>        #BDC</para>
+<para>#       domain master = no</para>
+<para>#       preferred master = no</para>
+<para>        domain logons = Yes</para>
+<para>        </para>
+<para/>
+<para>        logon script = </para>
+<para># Если хотите, что бы профили всех пользователей были перемещаемыми</para>
+<para># и хранились на сервере (со всеми гигабайтами фильмов и личных фотографий)</para>
+<para># то укажите такое значение следующего параметра:</para>
+<para>#</para>
+<para>#       logon path = \\%L\Profiles\%a\%U</para>
+<para>#</para>
+<para># Если вы не хотите гонять профили по сети, оставьте значение пустым, </para>
+<para># (но ни в коем случае не комментируйте эту строку, она просто получит </para>
+<para># значение по умолчанию), вот так:</para>
+<para>        logon path =</para>
+<para>        logon drive = U: </para>
+<para>        logon home = \\%L\users\%U</para>
+<para>        </para>
+<para>        </para>
+<para>#============================ Share Definitions ==============================</para>
+<para>[netlogon]</para>
+<para>    comment = Network Logon Service</para>
+<para>    path = /var/lib/samba/netlogon</para>
+<para>    browseable = yes</para>
+<para>    guest ok = yes</para>
+<para>    writable = no</para>
+<para>    share modes = no</para>
+<para/>
+<para>[Profiles]</para>
+<para>    admin users = admin</para>
+<para>    create mode = 600</para>
+<para>    directory mode = 700</para>
+<para>    path = /var/lib/samba/profiles</para>
+<para>    browseable = yes</para>
+<para>    guest ok = yes</para>
+<para>    writable = yes</para>
+<para/>
+<para>[homes]</para>
+<para>  comment = Home Directories</para>
+<para>  browseable = no</para>
+<para>  read only = no</para>
+<para/>
+<para>[public]</para>
+<para>  path = /pub</para>
+<para>  guest ok = yes</para>
+<para>  read only = no</para>
+<para/>
+<para>[users]</para>
+<para>  path = /home/users</para>
+<para>  writable = yes</para>
+<para>  printable = no</para>
+<para> </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Добавим запуск winbind с самбой (если нужно): </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Файл: /etc/conf.d/samba </para>
+</entry>
+</row>
+<row>
+<entry>
+<para> ...</para>
+<para> daemon_list="smbd nmbd winbind"</para>
+<para> ...</para>
+<para> </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Введём пароль рабочей станции: </para>
+<para>smbpasswd -w secret </para>
+<para>Введём контроллёр домена, собственно в домен </para>
+<para>net rpc join -S neptun -U Administrator </para></section></section><section><info><title>Настройка системы на авторизацию в LDAP</title></info>
+<para>--ladserg 14:05, 28 июля 2006 (UTC) У меня честно говоря не получилось сделать авторизацию пользователей samba через LDAP без настройки поддержки авторизации системных пользователей в LDAP, пришлось настраивать и это. </para>
+<para>Сначала поправим файл /etc/ldap.conf, приведя его примерно к следующему виду: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Файл: /etc/ldap.conf </para>
+</entry>
+</row>
+<row>
+<entry>
+<para> host 127.0.0.1</para>
+<para> base dc=amber,dc=global,dc=com</para>
+<para> ldap_version 3</para>
+<para> rootbinddn cn=Manager,dc=amber,dc=global,dc=com</para>
+<para> bind_timelimit 10</para>
+<para> bind_policy soft</para>
+<para> pam_filter objectClass=posixAccount</para>
+<para> pam_password exop</para>
+<para> nss_base_passwd         ou=Users,dc=tty,dc=perm,dc=ru?one</para>
+<para> nss_base_shadow         ou=Users,dc=tty,dc=perm,dc=ru?one</para>
+<para> nss_base_group          ou=Groups,dc=tty,dc=perm,dc=ru?one</para>
+<para> nss_base_hosts          ou=Hosts,dc=tty,dc=perm,dc=ru?one</para>
+<para> nss_base_services       ou=Services,dc=tty,dc=perm,dc=ru?one</para>
+<para> nss_base_networks       ou=Networks,dc=tty,dc=perm,dc=ru?one</para>
+<para> nss_base_protocols      ou=Protocols,dc=tty,dc=perm,dc=ru?one</para>
+<para> nss_base_rpc            ou=Rpc,dc=tty,dc=perm,dc=ru?one</para>
+<para> nss_base_ethers         ou=Ethers,dc=tty,dc=perm,dc=ru?one</para>
+<para> nss_base_netmasks       ou=Networks,dc=tty,dc=perm,dc=ru?one</para>
+<para> nss_base_bootparams     ou=Ethers,dc=tty,dc=perm,dc=ru?one</para>
+<para> nss_base_aliases        ou=Aliases,dc=tty,dc=perm,dc=ru?one</para>
+<para> nss_base_netgroup       ou=Netgroup,dc=tty,dc=perm,dc=ru?one</para>
+<para> ssl off</para>
+<para> nss_reconnect_tries 4</para>
+<para> nss_reconnect_sleeptime 1</para>
+<para> nss_reconnect_maxsleeptime 16</para>
+<para> nss_reconnect_maxconntries 2</para>
+<para> </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Сим мы скажем nss_ldap где и как искать записи пользователей и групп. </para>
+<para>Теперь создадим файл /etc/ldap.secret и при помощи любого текстого редактора в plain/text виде занесём туда пароль пользователя, который выше у нас указан в опции rootbinddn, например пароль secret: </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Файл: /etc/ldap.secret </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>secret </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Затем непременно установим на него нужные права: </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: Установка прав на файл /etc/ldap.secret </para>
+</entry>
+</row>
+<row>
+<entry>
+<para> #chmod 600 /etc/ldap.secret</para>
+<para> #chown root:wheel /etc/ldap.secret</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Далее приведём файл /etc/pam.d/system-auth к следующему виду: </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Файл: /etc/pam.d/system-auth </para>
+</entry>
+</row>
+<row>
+<entry>
+<para> auth       required     pam_env.so</para>
+<para> auth       sufficient   pam_unix.so likeauth nullok</para>
+<para> auth       sufficient   pam_ldap.so use_first_pass</para>
+<para> auth       required     pam_deny.so</para>
+<para/>
+<para> account    sufficient   pam_ldap.so</para>
+<para> account    required     pam_unix.so</para>
+<para/>
+<para> password   required     pam_cracklib.so difok=2 minlen=8 dcredit=2 ocredit=2 retry=3</para>
+<para> password   sufficient   pam_unix.so nullok md5 shadow use_authtok</para>
+<para> password   sufficient   pam_ldap.so use_authtok</para>
+<para> password   required     pam_deny.so</para>
+<para/>
+<para> session    required     pam_limits.so</para>
+<para> session    required     pam_unix.so</para>
+<para> session    required     pam_mkhomedir.so skel=/etc/skel/ umask=077</para>
+<para> session    optional     pam_ldap.so</para>
+<para> </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Обратите внимание на строку: </para>
+<para>session required pam_mkhomedir.so skel=/etc/skel/ umask=077 </para>
+<para>Она заставляет систему создавать домашние каталоги для тех пользоватей у которых они ещё не созданы, при этом в новый каталог помещается содержимое директории /etc/skel/ и задаётся маска каталога 0x700 </para>
+<para>После чего правим файл /etc/nsswitch.conf, приводя его к следующему виду: </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Файл: /etc/nsswitch.conf </para>
+</entry>
+</row>
+<row>
+<entry>
+<para> passwd:      files ldap</para>
+<para> shadow:      files ldap</para>
+<para> group:       files ldap</para>
+<para/>
+<para> hosts:       files dns</para>
+<para> networks:    files dns</para>
+<para/>
+<para> services:    db files</para>
+<para> protocols:   db files</para>
+<para> rpc:         ldap [NOTFOUND=return] db files</para>
+<para> ethers:      ldap [NOTFOUND=return] db files</para>
+<para> netmasks:    files</para>
+<para> netgroup:    ldap [NOTFOUND=return] files</para>
+<para> bootparams:  files</para>
+<para/>
+<para> automount:   files</para>
+<para> aliases:     files </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Предупреждение: Ни в коем случае не добавляйте значение ldap к следующим базам: hosts, networks, protocols, services. Иначе вы рискуете не дождаться следующей загрузки системы. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Всё, теперь мы указали системе брать пользователей как из системных файлов, так и из LDAP. </para>
+<para>Перезагрузим наш компьютер, дабы убедиться что система грузится нормально. Если система останавливается на загрузке udev, то смотрите ошибки в файле /etc/nsswitch.conf, может вы указали использовать ldap не в той базе. </para></section><section><info><title>Управление пользователями</title></info>
+<para>Ранее мы установили пакет smbldap-tools, теперь рассмотрим возможность управления пользователями с его помощью. </para><section><info><title>Создание пользователя</title></info>
+<para>smbldap-useradd [-o] [-a] [-b] [-w] [-i] [-u uid] [-g gid ] [-G groups,,,] </para>
+<para> [-n] [-d home] [-s shell] [-c gecos] [-m [-k]] [-t] [-P] [-A 0|1] [-B 0|1] </para>
+<para> [-C sambaHomePath] [-D sambaHomeDrive] [-E sambaLogonScript] [-F sambaProfilePath] </para>
+<para> [-H sambaAcctFlags] [-N surname] [-S family name] [-M local mailAddress,,,] </para>
+<para> [-T mailToAddress] [-?] user</para>
+<para>Где: </para>
+<para> user - системное имя создаваемого пользователя</para>
+<para> -o   - add the user in the organizational unit (relative to the user suffix)</para>
+<para> -a   - is a Windows User (otherwise, Posix stuff only)</para>
+<para> -b   - is a AIX User</para>
+<para> -w   - is a Windows Workstation (otherwise, Posix stuff only)</para>
+<para> -i   - is a trust account (Windows Workstation)</para>
+<para> -u   - uid</para>
+<para> -g   - gid</para>
+<para> -G   - список групп пользователя, разделённых запятой.</para>
+<para> -n   - do not create a group</para>
+<para> -d   - домашний каталог пользователя (по умолчанию /home/имя_пользователя)</para>
+<para> -s   - оболочка пользователя (по умолчанию /bin/false)</para>
+<para> -c   - отображаемое в Windows имя пользователя</para>
+<para> -m   - создать домашний каталог и скопировать в него файлы из /etc/skel</para>
+<para> -k   - указать иной каталог, из которого будут копироваться файлы при </para>
+<para>        создании домашнего каталога пользователя (используется с ключём -m)</para>
+<para> -t   - time. Wait 'time' seconds before exiting (when adding Windows Workstation)</para>
+<para> -P   - ends by invoking smbldap-passwd</para>
+<para> -A   - возможность менять пароль пользователем, значение 0 если нет, 1 если да</para>
+<para> -B   - пользователь должен поменять пароль, значение 0 если нет, 1 если да</para>
+<para> -C   - домашний каталог samba (например '\\PDC-SRV\homes')</para>
+<para> -D   - буква диска для монтирования домашнего каталога samba (например 'H:')</para>
+<para> -E   - скрипт, выполняемый при входе в систему</para>
+<para> -F   - каталог профиля пользователя (например '\\PDC-SRV\profiles\foo')</para>
+<para> -H   - sambaAcctFlags (samba account control bits like '[NDHTUMWSLKI]')</para>
+<para> -N   - настоящее имя пользователя (для русских ещё и отчество)</para>
+<para> -S   - фамилия пользователя</para>
+<para> -M   - local mailAddress (comma seperated)</para>
+<para> -T   - mailToAddress (forward address) (comma seperated)</para>
+<para> -?   - отобразить помощь</para>
+<para>Например создание пользователя ladserg: </para>
+<para>smbldap-useradd -a -c 'Serg Alex Lad' -N 'Serg Alex' -S 'Lad' -s /bin/bash ladserg </para>
+<para>К сожалению подружить smbldap-tools с русским мне не удалось, даже при использовании кодировки UTF-8. </para>
+<para>Итак, в приведённом выше примере будет создан пользователь с системным именем ladserg, фамилией Lad, именем Serg Alex, оболочкой /bin/bash, домашним каталогом /home/ladserg. Флаг -a укажет, что пользователь также будет являться пользователем домена. </para></section><section><info><title> Изменение пароля</title></info>
+<para>smbldap-passwd [-s] [-u] [-h] username</para>
+<para>Где: </para>
+<para> username       - имя пользователя</para>
+<para> -h, -?, --help - показать помощь</para>
+<para> -s             - обновить только samba пароль</para>
+<para> -u             - обновить только UNIX пароль</para>
+<para>Например: </para>
+<para>smbldap-passwd ladserg </para>
+<para>После чего дважды будет запрошен пароль. </para>
+<para>Теперь можно попробовать зайти в систему под учётной записью только что созданного пользователя. </para></section><section><info><title>Модификация пользователя</title></info>
+<para>smbldap-usermod [-a] [-c comment] [-d home_dir] [-e expiration_date] </para>
+<para> [-g initial_group] [-r new_login_name] [-p passwd] [-s shell] [-u uid [ -o]] [-x] </para>
+<para> [-A canchange] [-B mustchange] [-C smbhome] [-D homedrive] [-E scriptpath] </para>
+<para> [-F profilepath] [-G group[,...]] [-H acct‐flags] [-N canonical_name] </para>
+<para> [-S surname] [-P] login</para>
+<para>Где: </para>
+<para> -c    - Полное имя</para>
+<para> -d    - Домашний каталог</para>
+<para> -r    - новое имя пользователя (cn, sn и dn будут обновлены)</para>
+<para> -u    - uid</para>
+<para> -o    - uid может быть не уникальным</para>
+<para> -g    - gid</para>
+<para> -G    - список групп пользователя, разделённых запятой.</para>
+<para> -s    - оболочка</para>
+<para> -N    - настоящее имя пользователя (для русских ещё и отчество)</para>
+<para> -S    - фамилия пользователя</para>
+<para> -P    - ends by invoking smbldap-passwd</para>
+<para>For samba users:</para>
+<para> -a    - add sambaSAMAccount objectclass</para>
+<para> -e    - expire date ("YYYY-MM-DD HH:MM:SS")</para>
+<para> -A    - возможность менять пароль пользователем, значение 0 если нет, 1 если да</para>
+<para> -B    - пользователь должен поменять пароль, значение 0 если нет, 1 если да</para>
+<para> -C    - домашний каталог samba (например '\\PDC-SRV\homes')</para>
+<para> -D    - буква диска для монтирования домашнего каталога samba (например 'H:')</para>
+<para> -E    - скрипт, выполняемый при входе в систему</para>
+<para> -F    - каталог профиля пользователя (например '\\PDC-SRV\profiles\foo')</para>
+<para> -H    - sambaAcctFlags (samba account control bits like '[NDHTUMWSLKI]')</para>
+<para> -I    - disable an user. Can't be used with -H or -J</para>
+<para> -J    - enable an user. Can't be used with -H or -I</para>
+<para> -M    - mailAddresses (comma seperated)</para>
+<para> -T    - mailToAddress (forward address) (comma seperated)</para>
+<para> -?|-h - отобразить помощь</para>
+<para>Например комманда: </para>
+<para>smbldap-usermod -A 1 ladserg</para>
+<para>Позволит пользователю ladserg менять пароль. А комманда: </para>
+<para>smbldap-usermod -a slad-adm</para>
+<para>Добавит к учётной записи пользователя slad-adm класс sambaSAMAccount, что сделает его пользователем samba. </para></section><section><info><title>Удаление пользователя</title></info>
+<para>smbldap-userdel [-r|-R|-?] username</para>
+<para>Где: </para>
+<para> -r    удалить домашний каталог</para>
+<para> -R    удалить домашний каталог с запросом на удаление каждого файла</para>
+<para> -?    отобразить помощь</para>
+<para>Например команда: </para>
+<para>smbldap-userdel -r slad-adm </para>
+<para>удалит пользователя slad-adm, и его домашний каталог. </para></section></section><section><info><title>Управление пользователями в оффтопике</title></info>
+<para>Если вы вводите в домен компьютеры под управлением Windows, то вам пригодятся пара утилит, архив которых можно скачать отсюда: </para>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ftp://ftp.microsoft.com/Softlib/MSLFILES/SRVTOOLS.EXE">ftp://ftp.microsoft.com/Softlib/MSLFILES/SRVTOOLS.EXE</link> </para></section><section><info><title>Источники</title></info>
+<orderedlist>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://us4.samba.org/samba/docs/man/Samba-Guide/happy.html">http://us4.samba.org/samba/docs/man/Samba-Guide/happy.html</link> </para>
+</listitem>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.opennet.ru/base/net/ldap_spama_pdc.txt.html">http://www.opennet.ru/base/net/ldap_spama_pdc.txt.html</link> </para>
+</listitem>
+</orderedlist>
+<para/></section>
+</article>
