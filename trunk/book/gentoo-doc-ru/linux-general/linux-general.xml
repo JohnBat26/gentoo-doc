@@ -5,6 +5,5 @@
         xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
     <title>Общая информация о Linux</title>
     <xi:include href="general-info.xml"/>
-    <xi:include href="linux-beginer-faq.xml"/>
     <xi:include href="windows-counterparts.xml"/>
 </part>

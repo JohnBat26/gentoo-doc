@@ -5,12 +5,13 @@
     <title>Gentoo: инсталляция и основы работы</title>
     
     <xi:include href="gentoo-about.xml"/>
-    <xi:include href="gentoo-faq.xml"/>
     <xi:include href="gentoo-install.xml"/>
     <xi:include href="gentoo-x86-install.xml"/>
     <xi:include href="gentoo-install-alt.xml"/>
     <xi:include href="gentoo-install-advices.xml"/>
     <xi:include href="gentoo-install-sheets.xml"/>
+    <xi:include href="gentoo-faq.xml"/>
+    <xi:include href="gentoo-beginer-faq.xml"/>
     <xi:include href="gentoo-handbook.xml"/>    
     <xi:include href="gentoo-advices.xml"/>
     <xi:include href="portage-basic.xml"/>
