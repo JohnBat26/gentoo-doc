@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info><title>Gentoo и GPRS</title></info><section><info><title>GPRS через USB (Руководство)</title></info>
+        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://linuxforum.ru/index.php?s=79d5938b878e18abfae087fa54a21809&amp;showtopic=52062">http://linuxforum.ru/</link>
+        </para>
+        <para>Автор: Nikoli (Linuxforum.ru)</para>
+        <para>С версии: 1.3</para>
+        <para/>
+        <para>Появилась необходимость в GPRS соединение в качестве страховочного. Телефоны подключал по USB. Потратил пару часов на настройку, но в итоге получилось довольно простое решение. Здесь для Gentoo такого руководства не выкладывали, надеюсь моё будет полезно. Если считаете необходимым, добавьте его в FAQ.</para>
+        <para/>
+        <para>1) Ядро должно быть собрано с:</para>
+        <para/>
+        <para>Device Drivers  ---&gt;        USB support  ---&gt;          &lt;M&gt;   USB Modem (CDC ACM) support</para>
+        <para/>
+        <para>2) Должен быть установлен ppp3) В /etc/conf.d/net нужно добавить:</para>
+        <para/>
+        <para>#**********/-------Nokia with Megafonconfig_ppp1=( "ppp" )link_ppp1="ttyACM0"pppd_ppp1=("debug" # Comment this off, if you don't need more info#460800 # Serial port line speed"crtscts" # hardware flow control for cable"local" # Ignore carrier detect signal from the modem:"lcp-echo-failure 0""lcp-echo-interval 0"# IP addresses:":0.0.0.0"# - accept peers idea of our local address and set address peer as 10.6.6.6# (any address would do, since IPCP gives 0.0.0.0 to it)# - if you use the 10. network at home or something and pppd rejects it,# change the address "noipdefault" # pppd must not propose any IP address to the peer!"ipcp-accept-local" # Accept peers idea of our local address"defaultroute" # Add the ppp interface as default route to the IP routing table#replacedefaultroute # New route should be our default route to Internet"usepeerdns" # User DNS returned by server"noauth" # The phone is not required to authenticate# Most phone do not support compression, so turn it off.#noipv6#novj#nobsdcomp#novjccomp#nopcomp#noaccomp# Username and password:# If username and password are required by the APN, put here the username# and put the username-password combination to the secrets file:# /etc/ppp/pap-secrets for PAP and /etc/ppp/chap-secrets for CHAP# authentication. See pppd man pages for details.'user "internet"' # Change this"persist" # Persistent connection"maxfail 99999" # Retry and retry and retry if failed...)chat_ppp1=('TIMEOUT' '45''ABORT' 'BUSY''ABORT' 'NO CARRIER''ABORT' 'ERROR''' 'ATE1''OK' 'AT+CGDCONT=1,"IP","internet"''OK' 'ATD*99***1#''CONNECT' 'c')#**********/-------Motorola with Beelineconfig_ppp2=( "ppp" )link_ppp2="ttyACM0"pppd_ppp2=("debug" # Comment this off, if you don't need more info#460800 # Serial port line speed"crtscts" # hardware flow control for cable"local" # Ignore carrier detect signal from the modem:"lcp-echo-failure 0""lcp-echo-interval 0"# IP addresses:":0.0.0.0"# - accept peers idea of our local address and set address peer as 10.6.6.6# (any address would do, since IPCP gives 0.0.0.0 to it)# - if you use the 10. network at home or something and pppd rejects it,# change the address "noipdefault" # pppd must not propose any IP address to the peer!"ipcp-accept-local" # Accept peers idea of our local address"defaultroute" # Add the ppp interface as default route to the IP routing table#replacedefaultroute # New route should be our default route to Internet"usepeerdns" # User DNS returned by server"noauth" # The phone is not required to authenticate# Most phone do not support compression, so turn it off.#noipv6#novj#nobsdcomp#novjccomp#nopcomp#noaccomp# Username and password:# If username and password are required by the APN, put here the username# and put the username-password combination to the secrets file:# /etc/ppp/pap-secrets for PAP and /etc/ppp/chap-secrets for CHAP# authentication. See pppd man pages for details.'user "internet.beeline.ru"' # Change this"persist" # Persistent connection"maxfail 99999" # Retry and retry and retry if failed...)chat_ppp2=('TIMEOUT' '45''ABORT' 'BUSY''ABORT' 'NO CARRIER''ABORT' 'ERROR''' 'ATE1''OK' 'AT+CGDCONT=1,"IP","INTERNET.MSK"''OK' 'ATD*99***1#''CONNECT' 'c')</para>
+        <para/>
+        <para/>
+        <para>4) Сделайте ссылки на net.lo</para>
+        <para/>
+        <para>ln -s /etc/init.d/net.lo /etc/init.d/net.ppp1ln -s /etc/init.d/net.lo /etc/init.d/net.ppp2</para>
+        <para/>
+        <para/>
+        <para>5) Подключите телефон с помощью USB, появится /dev/ttyACM0</para>
+        <para>6) Выполните</para>
+        <para/>
+        <para>/etc/init.d/net.ppp1 start</para>
+        <para/>
+        <para>Возможно у вас появится соединение с интернетом.Полезно почитать вывод tail -f /var/log/messages :</para>
+        <para/>
+        <para>Oct 27 01:18:03 kompyc pppd[9874]: pppd 2.4.4 started by root, uid 0Oct 27 01:18:03 kompyc chat[9877]: timeout set to 45 secondsOct 27 01:18:03 kompyc chat[9877]: abort on (BUSY)Oct 27 01:18:03 kompyc chat[9877]: abort on (NO CARRIER)Oct 27 01:18:03 kompyc chat[9877]: abort on (ERROR)Oct 27 01:18:03 kompyc chat[9877]: send (ATE1^M)Oct 27 01:18:03 kompyc chat[9877]: expect (OK)Oct 27 01:18:03 kompyc chat[9877]: ATE1^M^MOct 27 01:18:03 kompyc chat[9877]: OKOct 27 01:18:03 kompyc chat[9877]: -- got itOct 27 01:18:03 kompyc chat[9877]: send (AT+CGDCONT=1,"IP","internet"^M)Oct 27 01:18:04 kompyc chat[9877]: expect (OK)Oct 27 01:18:04 kompyc chat[9877]: ^MOct 27 01:18:04 kompyc chat[9877]: AT+CGDCONT=1,"IP","internet"^M^MOct 27 01:18:04 kompyc chat[9877]: OKOct 27 01:18:04 kompyc chat[9877]: -- got itOct 27 01:18:04 kompyc chat[9877]: send (ATD*99***1#^M)Oct 27 01:18:04 kompyc chat[9877]: expect (CONNECT)Oct 27 01:18:04 kompyc chat[9877]: ^MOct 27 01:18:05 kompyc chat[9877]: ATD*99***1#^M^MOct 27 01:18:05 kompyc chat[9877]: CONNECTOct 27 01:18:05 kompyc chat[9877]: -- got itOct 27 01:18:05 kompyc chat[9877]: send (c^M)Oct 27 01:18:05 kompyc pppd[9874]: Serial connection established.Oct 27 01:18:05 kompyc pppd[9874]: Using interface ppp1Oct 27 01:18:05 kompyc pppd[9874]: Connect: ppp1 &lt;--&gt; /dev/ttyACM0Oct 27 01:18:06 kompyc pppd[9874]: local IP address 10.205.145.43Oct 27 01:18:06 kompyc pppd[9874]: remote IP address 10.6.6.6Oct 27 01:18:06 kompyc pppd[9874]: primary DNS address 10.77.48.2Oct 27 01:18:06 kompyc pppd[9874]: secondary DNS address 10.77.48.3</para>
+        <para/>
+        <para/>
+        <para>Проверял на том, что было. С отключённым сжатием у меня заработало, у вас его возможно нужно выключить. Если у вас есть замечания по улучшению, буду рад.По мотивам:</para>
+        <para>
+            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-wiki.com/Nokia_S60_and_N_series">http://gentoo-wiki.com/Nokia_S60_and_N_series</link>
+            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-wiki.com/HOWTO_Phone_sync">http://gentoo-wiki.com/HOWTO_Phone_sync</link>
+            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.opennet.ru/base/modem/gprs_linux.txt.html">http://www.opennet.ru/base/modem/gprs_linux.txt.html</link>
+        </para>
+        <para/><section><info><title>Настройка GPRS в Linux</title></info>
+            <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/Настройка_GPRS_в_Linux">http://ru.gentoo-wiki.com</link>
+            </para>
+            <para>С версии: 1.3</para>
+            <para/></section><section><info><title>Введение</title></info>
+                <para/>
+                <para>Это руководство поможет настроить мобильный телефон для связи с провайдером через GPRS (на примере beeline). Для того, чтобы настроить мобильный телефон для связи через GPRS, вам понадобится подключить на вашем телефоне услугу GPRS. Обзавестись Mini-USB кабелем. Поправить ручками кое-что в ядре и собрать дополнительные пакеты из набора portage. </para></section><section><info><title>Подготовка</title></info>
+                    <para/>
+                    <para>Для наших задач нам понадобится изменить несколько файлов настроек.</para>
+                    <para>Я использовал ядро gentoo-sources-2.4.28-gentoo-r5 из portage, </para>
+                    <para>дозвонщик wvdial оттуда же</para>
+                    <para>и ppp-2.4.3-r1 тоже соответсвенно из portage. </para>
+                    <para/>
+                    <para>Изменяем файлы: </para>
+                    <para>Открываем /etc/make.conf для редактирования nano -w /etc/make.conf </para>
+                    <para/>
+                    <para>Добавляем mppe-mppc (Нужно для подключения с шифрованием Microsoft MS-CHAPv2)к вашим USE Файл: /etc/make.conf </para>
+                    <para/>
+                    <para>USE="mppe-mppc" </para>
+                    <para/></section><section><info><title>Сборка пакетов</title></info>
+                        <para/>
+                        <para>Собираем pppd: </para>
+                        <para>emerge /usr/portage/net-dialup/ppp/ppp-2.4.3-r1.ebuild </para>
+                        <para/>
+                        <para>собираем wvdial: </para>
+                        <para>emerge wvdial </para>
+                        <para/>
+                        <para>редактируем ядро </para>
+                        <para/>
+                        <para>cd /usr/src/linux &amp;&amp; make menuconfig </para>
+                        <para/>
+                        <para>(подразумевается что linux это символичесская ссылка на исходники ядра) </para>
+                        <para/>
+                        <para>изменяем: </para>
+                        <para/>
+                        <para>Network Device Support ---&gt; </para>
+                        <para>&lt;M&gt;   (PPP point-to-point protocol) support</para>
+                        <para>[ ]   PPP multilink support (EXPEREMRNTAL) (Вы же не хотите объеденять несколько телефонов в один канал)</para>
+                        <para>[M]   PPP filtering</para>
+                        <para>&lt;M&gt;   PPP support for async serial ports</para>
+                        <para>&lt;M&gt;   PPP support for sync tty ports</para>
+                        <para>&lt;M&gt;   PPP Deflate compression</para>
+                        <para>&lt;M&gt;   PPP BSD-Compress compression</para>
+                        <para>&lt;M&gt;   PPP over Ethernet (EXPEREMENTAL)</para>
+                        <para/>
+                        <para>Примечание - т.к. у меня ядро 2.6.12-gentoo-r6, то выше названные модули я просто включил в ядро, и не возился в дальнейшем с их загрузкой. Пока проблем не было. </para>
+                        <para/>
+                        <para>ISDN Subsystem ---&gt; </para>
+                        <para>&lt;*&gt;   ISDN Support</para>
+                        <para>[*]   Support asynchronus PPP</para>
+                        <para>[*]   PPP filtering for ISDN</para>
+                        <para>[*]   Use VJ-compression with asynchronus PPP</para>
+                        <para/>
+                        <para>USB supprot ---&gt; </para>
+                        <para>[*]   Support for USB</para>
+                        <para>--- USB Host Controller Driver</para>
+                        <para>&lt;*&gt;   ECHI HCD (USB2.0) support (EXPEREMENTAL)</para>
+                        <para/>
+                        <para>(так как у меня чип материнской платы Intel то) </para>
+                        <para>&lt;*&gt;   UHCI (Intel PIIX4, VIA, ...) support</para>
+                        <para>--- USB Device Class drivers</para>
+                        <para>&lt;M&gt;   USB Modem (CDC ACM) support</para>
+                        <para/>
+                        <para>Примечание - для ядра 2.6.12-gentoo-r6 нужно установить: </para>
+                        <para/>
+                        <para>Device Drivers ---&gt; ISDN subsystem ---&gt; </para>
+                        <para>ISDN subsystem  ---&gt;</para>
+                        <para>[*]     CAPI2.0 Middleware support (Может и не нужно, но с ним работает)</para>
+                        <para/>
+                        <para>Для C380 в данном разделе остальное у меня отключено. </para>
+                        <para>И по меньшей мере для C380 дополнительно требуется установить: </para>
+                        <para>Device Drivers ---&gt; USB support ---&gt; USB Serial Converter support ---&gt; </para>
+                        <para>&lt;*&gt; USB Serial Converter support</para>
+                        <para>[*]   USB Serial Console device support</para>
+                        <para/>
+                        <para/>
+                        <para/>
+                        <para>Сохраняем конфигурацию ядра и выполняем сборку. После сборки устанавливаем новое ядро</para>
+                        <para>(Процесс установки ядра описан во многих источниках так что не буду повторяться) </para>
+                        <para>и перезагружаем машину. </para></section><section><info><title>Настройка</title></info>
+                            <para/>
+                            <para>После перезагрузки пытаемся загрузить модули </para>
+                            <para>перед всеми манипуляциями проверить есть ли в /dev устройство ttyACM0, иначе скрипт и терминалка не увидят модема (телефона) по крайней мере в Fedore Core 2.0 если с ttyUSB0(1,2,3,4,5) ничего не вышло наберите находясь в /dev "mknod ttyACM0 c 160 0" (спасибо Pooh) и все должно заработать, естественно что модемом после этого будет устройство ttyACM0 (Yuri г. Barnaul) </para>
+                            <orderedlist>
+                                <listitem>
+                                    <para>стандартный модуль PPP modprobe ppp_generic </para>
+                                </listitem>
+                                <listitem>
+                                    <para>Модуль для асинхронной передачи modprobe ppp_async </para>
+                                </listitem>
+                                <listitem>
+                                    <para>Модуль для нашего телефона modprobe acm </para>
+                                </listitem>
+                            </orderedlist>
+                            <para/>
+                            <para>Проверяем загрузились модули lsmod </para>
+                            <para/>
+                            <para>Вывод должен выглядеть примерно так ---&gt; </para>
+                            <para>ppp_async               6848   0  (unused)</para>
+                            <para>ppp_generic            22628   0  [ppp_async]</para>
+                            <para>slhc                    4624   0  [ppp_generic]</para>
+                            <para>acm                    45353   0  [xxxxxxxxxxx] (не помню точно что должно быть)</para>
+                            <para/>
+                            <para>Производим первичную конфигурацию wvdial </para>
+                            <para>cd /etc &amp;&amp; wvdialconf wvdial.conf </para>
+                            <para/>
+                            <para>открываем для редактирования /etc/wvdial.conf </para>
+                            <para>nano -w wvdial.conf Файл: /etc/wvdial.conf </para>
+                            <para>и изменяем сделующие строки </para>
+                            <para/>
+                            <para>Init2 = AT+CGDCONT=1,"IP","internet.beeline.ru"</para>
+                            <para>Phone = *99***1#</para>
+                            <para>Username = beeline</para>
+                            <para>Password = beeline</para>
+                            <para/>
+                            <para/>
+                            <para>сохраняем полученный файл. Если значение Init2 уже занато (для C380 в нем дополнительные комманды инициализации), то используйте значение Init3 (Init3 = AT+CGDCONT=1,"IP","internet.beeline.ru"). </para>
+                            <para/>
+                            <para>На некоторых тарифах имя пользователя и пароль пустые, тогда файл для C380 и ядра 2.6.12-r6 будет выглядеть примерно так: Файл: /etc/wvdial.conf </para>
+                            <para/>
+                            <para>Modem = /dev/ttyACM0</para>
+                            <para>Baud = 460800</para>
+                            <para>Init1 = ATZ</para>
+                            <para>Init2 = ATQ0 V1 E1 S0=0 &amp;C1 &amp;D2 +FCLASS=0</para>
+                            <para>Init3 = AT+CGDCONT=1,"IP","internet.usi.ru"</para>
+                            <para>ISDN = 0</para>
+                            <para>Modem Type = Analog Modem</para>
+                            <para>Phone = *99***1#</para>
+                            <para>Username = ""</para>
+                            <para>Password = ""</para></section><section><info><title>Установка соединения</title></info>
+                                <para/>
+                                <para>запускаем wvdial </para>
+                                <para/>
+                                <para>wvdial </para>
+                                <para/>
+                                <para>Потираем ручки и юзаем GPRS на Linux </para>
+                                <para/></section><section><info><title>Автоматическая установка соединения</title></info>
+                                    <para/>
+                                    <para>Если вы используете udev, можно настроить автоматическое подключение GPRS при подключении телефона к USB. </para>
+                                    <para>Для этого создайте такой вот файл: Файл: /etc/udev/rules.d/90-gprs-autodial.rules </para>
+                                    <para/>
+                                    <para>KERNEL=="ttyACM0", RUN="/usr/bin/wvdial" </para>
+                                    <para/>
+                                    <para>(немного некрасиво, но работает на ура) </para>
+                                    <para>..а при отключении телефона соединение оборвётся и без наших скриптов.. </para>
+                                    <para/>
+                                    <para/>
+                                    <para>Примечание: А вообще, на домашних компьютерах можно использовать и графическую звонилку kppp, там и в командной строке набирать ничего не надо, да и удобнее она чем wvdial. </para>
+                                    <para/></section><section><info><title>Заключение</title></info>
+                                        <para/>
+                                        <para>Данная статья ни в коем случае не претендует на то что это является правильным и единственным способом подключения GPRS. Вся ответсвенность за действия ложится на ваши плечи. Я описал то что у меня работает. Допускаю что мог в чем то ошибиться так как писал это все на память так что милости прошу ваши коментарии и исправления можно отправлять по email <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:darkman@rusgate.org">darkman@rusgate.org</link>
+                                        </para>
+                                        <para/></section></section><section><info><title>Экономим трафик, с помощью Toonel. (Linux)</title></info>
+                                            <para/>
+                                            <para>Ссылка на оригинал:<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://doc.3dn.ru/publ/9-1-0-12"> </link>
+                                                <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://doc.3dn.ru/publ/9-1-0-12">http://doc.3dn.ru/publ/9-1-0-12</link>
+                                            </para>
+                                            <para>Автор: Дмитрий a.k.a. doc (<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://doc.3dn.ru/">http://doc.3dn.ru</link>)</para>
+                                            <para>С версии: 1.3</para>
+                                            <para/>
+                                            <para>Бесплатный сервис toonel.net. Клиент написан на java, поэтому необходима виртуальная машина java.</para>
+                                            <para>Оф.сайт: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.toonel.net/">www.toonel.net</link>
+                                            </para>
+                                            <para/>
+                                            <para>Убедитесь, что у вас установлена виртуальная машина JAVA. Посмотрите в /usr/lib/jre-ххххх (х – номер версии), если нестоит то установите с диска дистрибутива (практический во всех дистрибутивах JAVA клиент есть), обычно называется j2re-xxxxx (х – номер версии), если Java стоит, то можно приступать к установке toonel.</para>
+                                            <para>Прежде чем запускать файл toonel, поменяйте у него права на чтение и запись.</para>
+                                            <para>Теперь выполняем простую команду:</para>
+                                            <para/>
+                                            <para>$ java -jar /указываем путь/toonel.jar</para>
+                                            <para>Появляется окно программы.</para>
+                                            <para>
+                                                <!--<inlinegraphic fileref="embedded:Графический объект5" width="2.317cm" depth="3.301cm"/>
+                                                    <inlinegraphic fileref="embedded:Графический объект4" width="2.306cm" depth="3.303cm"/>
+                                                    <inlinegraphic fileref="embedded:Графический объект1" width="2.255cm" depth="3.299cm"/>--> </para>
+                                            <para>Вкладка Stats – показывает статистику, </para>
+                                            <para>вкладка Mapping – настройка программы, </para>
+                                            <para>вкладка About – о программе.</para>
+                                            <para>Теперь переходим к настройки, вкладка Mapping.</para>
+                                            <para>Чтобы настроить сжатие в браузере жмем на 127.0.0.1</para>
+                                            <para>Здесь стоит hostname: 127.0.0.1</para>
+                                            <para>localport: 8080</para>
+                                            <para>web interface port: 7999</para>
+                                            <para>Устанавливаем нужный процент сжатия JPEG.</para>
+                                            <para>Теперь переходим в браузер, входим в Настройки, Параметры соединения.</para>
+                                            <para>Выбираем: Настройка прокси в ручную:</para>
+                                            <para>HTPP-прокси: 127.0.0.1 Порт:8080</para>
+                                            <para>SSL-прокси: 127.0.0.1 Порт:8080</para>
+                                            <para>FTP-прокси: 127.0.0.1 Порт:8080</para>
+                                            <para>
+                                                <!--<inlinegraphic fileref="embedded:Графический объект6" width="10.29cm" depth="6.476cm"/>Gopher-прокси:127.0.0.1 Порт:8080 --></para>
+                                            <para/>
+                                            <para>Все теперь сжатие трафика с проводника установлено.</para>
+                                            <section>
+                                                <info><title>Сжимаем трафик электронной почты.</title>
+                                            </info>
+                                                <para>В Toonel на вкладке Mapping жмем на – new port mapping – в hostname пишем pop3 вашего почтового сервера, например pop3.yandex.ru , в local port указываем порт для прокси сервера, например 8111 и в remote port указываем порт для входящей почты обычно 110, и жмем кнопку Apply.</para>
+                                                <para>Для исходящей почты тоже самое только меняем порты, ну и конечножи сервер на smtp.</para>
+                                                
+                                                <!--<inlinegraphic fileref="embedded:Графический объект8" width="2.599cm" depth="3.908cm"/>
+                                                    <inlinegraphic fileref="embedded:Графический объект7" width="2.744cm" depth="3.919cm"/> </para>-->
+                                                <para/>
+                                                <para>Все toonel для сжатия почты готов, теперь переходим в почтовый клиент.</para>
+                                                <para>Входим в Настройки, Параметры соединения, выбираем Настройка прокси вручную:</para>
+                                                <para>HTTP-прокси: 127.0.0.1 Порт:8080</para>
+                                                <para>SSL-прокси: 127.0.0.1 Порт:8080</para>
+                                                <para> </para>
+                                                <para>После настройки прокси, входим в Параметры учетной записи и меняем Имя сервера: на 127.0.0.1 а порт 110, на порт который указали в toonel 8111.</para>
+                                                <para> </para>
+                                                <para>Теперь и сжатие трафика входящей почты установлено.</para>
+                                                <para>Для исходящей почты Имя сервера: на 127.0.0.1 а порт 25, на порт который указали в toonel 8026.</para>
+                                                <para>
+                                                    <!--<inlinegraphic fileref="embedded:Графический объект9" width="9.791cm" depth="7.111cm"/> --></para>
+                                                <para> </para>
+                                                <para>Таким образом можно настроить сжатие любой программы которой вы пользуетесь выходя во всемирную паутину.</para>
+                                                <para/>
+                                                <para/></section></section><section><info><title>GPRS через KPPP</title></info>
+                                                    <para/>
+                                                    <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.linuxcenter.ru/lib/articles/networking/kppp_gprs_hints.phtml">http://www.linuxcenter.ru/lib/articles/networking/kppp_gprs_hints.phtml</link>
+                                                    </para>
+                                                    <para>Автор: Валентин Синицин</para>
+                                                    <para>С версии: 1.3</para>
+                                                    <para/>
+                                                    <para>Телефон с поддержкой GPRS сегодня есть практически у каждого. Руководств по настройке GPRS-соединения в Linux тоже предостаточно, но большая часть из них ориентирована на конкретных операторов сотовой связи или не выходит за рамки mini-HOWTO. В этой статье мы постарались дать общее представление о том, что представляет собой "GPRS в Linux" и привели примерную схему действий для настройки подключения "стандартными средствами" — через KPPP</para>
+                                                    <para>С точки зрения повседневного использования сотовый телефон с поддержкой GPRS не слишком отличается от старого доброго модема на 14400 (да, и по скорости временами тоже). Значит, для подключения к "мобильному Интернету" можно использовать все привычные PPP-утилиты — ничего нового не потребуется. Впрочем, необходимо учесть кое-какие тонкости — о них мы и собираемся поговорить.</para>
+                                                    <para>Как и всякое приличное "железо", GPRS-модем идентифицируется в системе файлом устройства в /dev. Его конкретное имя может отличаться в зависимости от дистрибутива и способа подключения: для дата-кабеля оно может называться /dev/ttyUSB0 (необходимо подгрузить драйвер используемого конвертера USB-to-Serial, чем, по сути, и является дата-кабель. Весьма распространенный вариант — pl2303, если в вашем дата-кабеле используется другая микросхема — ознакомьтесь с соответствующей секцией конфигуратора ядра Linux или поищите на форумах. В современных дистрибутивах с udev, как правило, необходим только скомпилированный модуль — все остальное, в том числе, создание файла устройства происходит автоматически), для IrDA — /dev/ircomm0, для Bluetooth — /dev/rfcomm0. В двух последних случаях потребуется некоторая предварительная настройка, выходящая за рамки данной статьи — все подробности можно найти в соответствующих HOWTO.</para>
+                                                    <para>Настройку GPRS-подключения, как уже упоминалось выше, можно произвести стандартными утилитами. Конкретные параметры можно найти на сайте вашего оператора сотовой связи, здесь же мы опишем стандартную схему действий на примере KPPP. </para>
+                                                    <orderedlist>
+                                                        <listitem>
+                                                            <para>Запустите KPPP и создайте новый модем (Confugure-&gt;Modems-&gt;New). Укажите используемое имя устройства (если нужного вам имени в списке нет, создайте соответствующую символическую ссылку. Лучше делать это прямо из правил udev) </para>
+                                                        </listitem>
+                                                        <listitem>
+                                                            <para>Перейдите на вкладку "Modem" и нажмите кнопку "Modem commands". Введите дополнительную строку инициализации вида AT+CGDCONT=1,"IP","APN_NAME". Точный вид этой строки должен быть приведен на сайте вашего оператора. </para>
+                                                        </listitem>
+                                                        <listitem>
+                                                            <para>Проверьте модем, нажав на кнопку Query Modem. Если вы не увидите сообщения об ошибке, значит, все прошло, как надо. </para>
+                                                        </listitem>
+                                                        <listitem>
+                                                            <para>Создайте новое подключение. В качестве телефона введите *99***1# — точный вариант, опять же, ищите на сайте оператора. </para>
+                                                        </listitem>
+                                                        <listitem>
+                                                            <para>Теперь можно задать дополнительные аргументы pppd. Рекомендуем добавить "debug" — будете хорошо видеть, если что-то пойдет не так. Если оператор требует отключить сжатие данных — введите "связку" nodeflate + nobsdcomp; если необходимо избавиться от сжатия заголовков TCP/IP — добавьте nojv + novjccomp. </para>
+                                                        </listitem>
+                                                        <listitem>
+                                                            <para>Отдельного упоминания заслуживает фраза: "имя пользователи и пароль не используются". Дело в том, что KPPP не позволяет оставить имя пользователя и пароль пустыми, если используется PAP-авторизация, а некоторые операторы не принимают никакие реквизиты, кроме пустой строки. Проблема решается следующим образом: откройте файл /etc/ppp/options (от имени root) и добавьте в него опцию privgroup &lt;ваша_группа&gt;. Это позволит вам передавать в командной строке привилегированные опции pppd, в частности, noauth. Ею и следует воспользоваться. </para>
+                                                        </listitem>
+                                                        <listitem>
+                                                            <para>Закройте окно настроек. Введите имя пользователя и пароль (в случае, если они "не используются", ими может быть любой набор символов) и нажмите кнопку "Connect". Если все пройдет гладко, то через некоторое время KPPP свернется в трей — это значит, что подключение удалось. В противном случае проверьте файл журнала на предмет сообщений об ошибках. </para>
+                                                        </listitem>
+                                                    </orderedlist>
+                                                    <para/>
+                                                </section>
+    <section>
+        <info><title>GPRS  через Bluetooth</title></info>
+        <para>Смотрите "<link xlink:href="#">HOWTO Соединение с Internet !</link>"</para></section>
+</article>

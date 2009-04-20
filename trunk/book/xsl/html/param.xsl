@@ -3,6 +3,8 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 version='1.0'>
 
+  <xsl:param name="saxon.character.representation">native;decimal</xsl:param>
+  <xsl:param name="chunker.output.encoding">UTF-8</xsl:param>
 
   <!-- Index / ToC -->
   <xsl:param name="generate.index">1</xsl:param>

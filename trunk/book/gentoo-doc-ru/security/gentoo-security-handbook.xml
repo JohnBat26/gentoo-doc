@@ -1,0 +1,3488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" 
+        xml:id="gentoo-security-handbook">
+<info><title>Настольная книга по безопасности Gentoo</title></info>
+<para/>
+<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/security/">http://www.gentoo.org/doc/ru/security/</link>
+</para>
+<para>C версии: 1.3</para><section><info><title>Введение</title></info>
+<para>Эта настольная книга предназначена для людей, использующих Gentoo Linux в качестве сервера или чувствующих, что они нуждаются в повышении безопасности системы. </para>
+<para>Если после прочтения этой книги вы заинтересуетесь дальнейшим усилением защищенности системы Gentoo, то обратите внимание на проект укрепленной системы Gentoo — <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/hardened/">Hardened Gentoo Project </link>(англ.).</para>
+<para/></section><section><info><title>A. Безопасность системы</title></info><section><info><title>1. Соображения перед началом установки</title></info><section><info><title>1.a. Физическая безопасность</title></info>
+<para>Сколько преград не установи, злоумышленник, имея физический доступ к компьютеру, сможет легко их обойти. Несмотря на это, кое-какие меры для относительной защиты от злоумышленника с физическим доступом к вашей машине принять можно. Поместив оборудование в кладовку под замок, вы помешаете злоумышленнику попросту отключить его и унести с собой. Стоит запереть корпус компьютера на замок, чтобы не дать злоумышленнику просто вынуть из него жесткий диск. Чтобы предотвратить загрузку с альтернативного диска, благодаря чему можно просто обойти порядок входа в систему и права доступа, попробуйте установить в BIOS жесткий диск в качестве первого загрузочного устройства и запаролить BIOS. Также важно установить пароль для загрузчика LILO или GRUB, чтобы не дать недобросовестному пользователю загрузить систему в однопользовательском режиме, получив к ней полный доступ. Это подробно описано в третьей главе, в разделах <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/security/security-handbook.xml?style=printable&amp;full=1#passwording_GRUB">защита GRUB паролем</link> и <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/security/security-handbook.xml?style=printable&amp;full=1#passwording_LILO">защита LILO паролем</link>. </para></section><section><info><title>1.b. Планирование демонов/служб</title></info>
+<para>Для начала выпишите службы, которые должны работать на машине. Это поможет вам выбрать наилучшую схему разбивки разделов в системе и позволит лучше спланировать меры безопасности. Конечно же, в этом нет необходимости, если ваш компьютер служит для одной определенной задачи, например в качестве рабочей станции или выделенного межсетевого экрана. В таких случаях не должны запускаться никакие службы, за исключением, возможно, sshd. </para>
+<para>Составленный список также может пригодиться для администрирования системы. Вы увидите, что, поддерживая перечень текущих версий, значительно легче удерживать все в актуальном состоянии, когда в каких-либо из ваших демонов обнаруживаются уязвимости к удаленному доступу.</para></section><section><info><title>1.c. Схемы создания разделов</title></info>
+<para>Правила разбиения разделов: </para>
+<orderedlist>
+<listitem>
+<para>любое дерево каталогов, в которое пользователь должен иметь возможность записи (например, /home, /tmp), должно размещаться в отдельном разделе с использованием дисковых квот. Это снижает риск переполнения всей файловой системы каким-либо пользователем. Portage использует /var/tmp для компиляции, поэтому этот раздел должен быть большим </para>
+</listitem>
+<listitem>
+<para>любое дерево каталогов, в которое вы планируете устанавливать программное обеспечение не средствами управления пакетами дистрибутива, следует размещать в отдельном разделе. Согласно <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.pathname.com/fhs/">стандарту иерархии файлов</link> (англ.), это /opt или /usr/local. Являясь отдельными разделами, они не удаляются при переустановке системы </para>
+</listitem>
+<listitem>
+<para>для лишней защиты можно поместить статические данные в отдельный раздел, монтируемый только для чтения. Если вы настоящий параноик, можете пользоваться неперезаписываемым носителем, например, компакт-диском </para>
+</listitem>
+</orderedlist></section><section><info><title>1.d. Пользователь root</title></info>
+<para>Администратор системы (пользователь root) является наиболее важным пользователем, и его права не следует использовать без крайней необходимости. Если злоумышленник получит доступ с правами администратора, единственным способом восстановить доверие к системе будет переустановить ее. </para>
+<para>Золотые правила для root </para>
+<orderedlist>
+<listitem>
+<para>всегда создавайте пользователя для каждодневных работ, а если этому пользователю понадобятся права администратора, добавьте его в группу «wheel». Это дает возможность обычным пользователям выполнять команды с правами администратора с помощью su </para>
+</listitem>
+<listitem>
+<para>никогда не запускайте X или другое пользовательское приложение под root. Права администратора следует использовать только при крайней необходимости: если уязвимость есть в приложении, запущенном от имени пользователя, злоумышленник может получить права этого пользователя. А если приложение запущено с правами администратора, то злоумышленник получит их. </para>
+</listitem>
+<listitem>
+<para>войдя под учетной записью администратора, всегда указывайте абсолютные пути (или всегда используйте команду su -, которая заменяет переменные среды пользователя на администраторские, обеспечивая наличие в PATH администратора только защищенных каталогов, например /bin и /sbin). Иначе можно обмануть администратора и заставить его выполнить совершенно другое приложение. Если PATH администратора защищен или он использует только абсолютные пути, то можно быть уверенным, что это не произойдет </para>
+</listitem>
+<listitem>
+<para>если пользователю нужно выполнять лишь несколько команд с правами администратора, то вместо использования учетной записи root, рекомендуется использовать команду sudo. Просто также задумывайтесь, кому вы даете доступ к этой команде! </para>
+</listitem>
+<listitem>
+<para>никогда не оставляйте без присмотра терминал, в котором вы зарегистрированы в качестве root </para>
+</listitem>
+</orderedlist>
+<para>В Gentoo по умолчанию есть некоторая защита от обычных пользователей, пытающихся с помощью su получить права администратора. По умолчанию настройки PAM требуют, чтобы пользователь был членом группы «wheel» для того, чтобы запускать команду su. </para></section><section><info><title>1.e. Правила безопасности</title></info>
+<para>Есть ряд причин набросать правила безопасности для своей системы или сети. </para>
+<orderedlist>
+<listitem>
+<para>хорошие правила безопасности позволяют вам наметить подход к безопасности системно, а не сваливать в кучу разрозненные меры. Например, без правил администратор может решить отключить telnet, так как в нем пароли передаются не зашифрованными, оставив доступ по FTP, обладающему таким же недостатком. Хорошие правила безопасности позволяют выявить, какие меры безопасности имеют смысл, а какие — нет </para>
+</listitem>
+<listitem>
+<para>чтобы выявлять проблемы, проводить аудит или выслеживать злоумышленников, может потребоваться перехват данных, передаваемых по сети, проверка истории входа пользователей и выполнявшихся ими команд, а также просмотр их домашних каталогов. Без указания об этом в документации и явного предупреждения пользователей такие действия могут оказаться незаконными и привести к привлечению вас к ответственности по закону </para>
+</listitem>
+<listitem>
+<para>похищенные учетные записи пользователей являются одной из самых распространенных угроз безопасности системы. Не объясняя пользователям, почему безопасность важна, и как ее поддерживать (например, не записывать пароли на клочках бумаги на рабочем месте), можно и не надеяться на защищенность пользовательских данных </para>
+</listitem>
+<listitem>
+<para>хорошо задокументированная схема сети и системы поможет как вам, так и, при необходимости, суду и следствию, отслеживать проникновение злоумышленника и выявлять слабые места по факту взлома. Уведомление правил безопасности о том, что ваша система является частной сетью и несанкционированный доступ запрещен, также способствует надлежащему преследованию нарушителя по закону после его поимки </para>
+</listitem>
+</orderedlist>
+<para>Надеемся, что теперь необходимость в хороших правилах безопасности более чем ясна. </para>
+<para>Сами по себе правила — это документ или набор документов, раскрывающих функции сети или системы (например, какие именно услуги предоставляются), допустимые и запрещенные действия, применение «передового опыта» обеспечения безопасности, и т. д. Все пользователи должны быть знакомы как с правилами безопасности, так и с изменениями, которые вы вносите для поддержания их актуальности. Важно уделять время, чтобы добиваться понимания правил пользователями, объяснять, зачем знакомится под роспись, и что будет, если пользователь явно нарушит их требования (в правилах безопасности об этом должно быть ясно указано). Необходимо повторять ознакомление по крайней мере раз в год, так как правила подвержены изменениям (а также для напоминания пользователям). </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Создавайте правила, понятные для чтения и не допускающие разночтений в любой ситуации. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Правила безопасности должны охватывать по крайней мере следующие темы: </para>
+<orderedlist>
+<listitem>
+<para>допустимые действия </para>
+</listitem>
+<listitem>
+<para>обращение с ценными сведениями (в любом письменном виде, на электронном или бумажном носителе) </para>
+</listitem>
+<listitem>
+<para>обращение с компьютерным оборудованием в поездках </para>
+</listitem>
+</orderedlist>
+<para>Для разных пользователей могут требоваться разные типы или уровни доступа, и содержание ваших правил может отличаться, чтобы охватить их все. </para>
+<para>В распухших правилах безопасности легко упустить важные моменты. В правилах для ИТ-персонала могут содержаться сведения, закрытые для обычных пользователей. Поэтому есть смысл разделить их на несколько небольших разделов, например, «допустимые действия», «использование паролей», «правила использования электронной почты», «правила удаленного доступа». </para>
+<para>Примеры правил безопасности приведены на сайте <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.sans.org/resources/policies/">проекта правил безопасности SANS</link> (англ.). Если у вас небольшая сеть, и вы считаете, что эти примеры слишком велики, можете обратиться к <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ftp://ftp.isi.edu/in-notes/rfc2196.txt">руководству по объектовой безопасности (Site Security Handbook)</link> (англ.). </para></section></section><section><info><title>2. Закручивание гаек</title></info><section><info><title>2.a. USE-флаги</title></info>
+<para>В Gentoo Linux файл make.conf содержит USE-флаги, определенные пользователем, а /etc/make.profile/make.defaults — USE-флаги по умолчанию. Для данного руководства важны флаги pam (Pluggable Authentication Modules — подключаемые модули опознания), tcpd (Упаковщики TCP) и ssl (Secure Socket Layer). Все они включены в USE-флаги по умолчанию. </para></section><section><info><title>2.b. Защита GRUB паролем</title></info>
+<para>В GRUB можно защитить загрузчик паролем двумя различными способами. В первом используется открытый пароль, а во втором — шифрование с использованием md5+salt. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: /boot/grub/grub.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>timeout 5</para>
+<para>password changeme</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Благодаря этим строкам был добавлен пароль changeme. Если во время загрузки не ввести пароль, то GRUB просто загружает вариант по умолчанию. </para>
+<para>При добавлении пароля MD5 вы должны преобразовать открытый пароль в зашифрованный в том же формате, что и в файле /etc/shadow. За дополнительными сведениями обращайтесь к man crypt. Зашифрованный пароль, например changeme, может выглядеть вот так: $1$T7/dgdIJ$dJM.n2wZ8RG.oEiIOwJUs. </para>
+<para>Зашифровать пароль можно прямо в оболочке GRUB: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2: md5crypt в оболочке grub</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>#/sbin/grub</para>
+<para/>
+<para>GRUB version 0.92 (640K lower / 3072K upper memory)</para>
+<para/>
+<para>   [ Minimal BASH-like line editing is supported. For the first word, TAB lists</para>
+<para>     possible command completions. Anywhere else TAB lists the possible</para>
+<para>     completions of a device/filename. ]</para>
+<para/>
+<para>grub&gt; md5crypt</para>
+<para/>
+<para>Password: ********</para>
+<para>(было набрано слово changeme)</para>
+<para>Encrypted: $1$T7/dgdIJ$dJM.n2wZ8RG.oEiIOwJUs.</para>
+<para/>
+<para>grub&gt; quit</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Затем скопируйте полученный пароль в /boot/grub/grub.conf. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 3: /boot/grub/grub.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>timeout 5</para>
+<para>password --md5 $1$T7/dgdIJ$dJM.n2wZ8RG.oEiIOwJUs.</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Задержка в 5 секунд пригодится в случае, когда система физически недоступна, и нужна возможность перезагрузки без использования клавиатуры. Более подробно о паролях в GRUB вы можете узнать, набрав info grub. </para></section><section><info><title>2.c. Защита LILO паролем</title></info>
+<para>В LILO также поддерживается два способа защиты с помощью пароля: общий и для отдельного образа, в обоих случаях пароль хранится в открытом виде. </para>
+<para>Общий пароль устанавливается в начале файла конфигурации и относится к каждому загрузочному образу: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 4: /etc/lilo.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>password=changeme</para>
+<para>restricted</para>
+<para>delay=3</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Пароль для отдельного образа устанавливается следующим образом: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 5: /etc/lilo.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>image=/boot/bzImage</para>
+<para>      read-only</para>
+<para>      password=changeme</para>
+<para>      restricted</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Если параметр restricted не введен, то пароль будет запрашиваться при каждой загрузке. </para>
+<para>Чтобы сохранить новые сведения в файле lilo.conf, нужно запустить /sbin/lilo. </para></section><section><info><title>2.d. Ограничение доступа к консоли</title></info>
+<para>С помощью файла /etc/securetty можно указать, с каких терминальных устройств (tty) можно входить в систему администратору. </para>
+<para>Рекомендуется закомментировать все строки, кроме vc/1 (если у вас devfs), или кроме tty1 (если у вас udev). Благодаря этому суперпользователь сможет входить в систему одновременно только один раз и только с одного терминала. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Пользователи, входящие в группу «wheel» по-прежнему смогут воспользоваться su -, чтобы стать администратором, работая с других терминалов. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 6: /etc/securetty</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>(для devfs)</para>
+<para>vc/1</para>
+<para>(для udev)</para>
+<para>tty1</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section></section><section><info><title>3. Журналирование</title></info><section><info><title>3.a. Введение</title></info>
+<para>Для перехвата предупреждений и ошибок, которые могут свидетельствовать о происходящей атаке или успешном взломе, следует подключать дополнительное журналирование. Часто злоумышленники сканируют систему и «проверяют ее на зуб» перед атакой. </para>
+<para>Также немаловажно, чтобы файлы журналов были легко читаемыми и обозримыми. В Gentoo Linux при установке на выбор предлагается 3 разных средства журналирования. </para></section><section><info><title>3.b. Журналирование: Syslogd</title></info>
+<para>Syslogd является самым распространенным средством журналирования для Linux и Unix. Он способен делать ротацию журналов, однако использование /usr/sbin/logrotate с вызовом по расписанию (logrotate настраивается с помощью файла /etc/logrotate.conf) может оказаться полезней, так как у logrotate есть много дополнительных возможностей. Частота ротации подбирается в зависимости от загрузки системы. </para>
+<para>Ниже приведен стандартный файл syslog.conf с некоторыми добавлениями. Мы раскомментировали строки cron и tty, и добавили удаленный сервер журналирования. Для дальнейшего усиления журналирования можно настроить ведение журнала в двух местах. </para>
+<para/>
+<para/>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: /etc/syslog.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>#  /etc/syslog.conf     Файл настройки syslogd.</para>
+<para>#</para>
+<para>#                       За дополнительной информацией обращайтесь к</para>
+<para>#                       странице справки syslog.conf(5).</para>
+<para>#                       Взято из Debian, пока пользуемся им</para>
+<para>#                       Daniel Robbins, 5/15/99</para>
+<para/>
+<para>#</para>
+<para># Сначала стандартные файлы журналов.  Журналирование по подсистемам.</para>
+<para>#</para>
+<para/>
+<para>auth,authpriv.*                 /var/log/auth.log</para>
+<para>*.*;auth,authpriv.none          -/var/log/syslog</para>
+<para>cron.*                         /var/log/cron.log</para>
+<para>daemon.*                        -/var/log/daemon.log</para>
+<para>kern.*                          -/var/log/kern.log</para>
+<para>lpr.*                           -/var/log/lpr.log</para>
+<para>mail.*                          /var/log/mail.log</para>
+<para>user.*                          -/var/log/user.log</para>
+<para>uucp.*                          -/var/log/uucp.log</para>
+<para>local6.debug                    /var/log/imapd.log</para>
+<para/>
+<para>#</para>
+<para># Журналирование почтовой системы. Разбито на части, чтобы</para>
+<para># легко писать сценарии для разбора этих файлов.</para>
+<para>#</para>
+<para>mail.info                       -/var/log/mail.info</para>
+<para>mail.warn                       -/var/log/mail.warn</para>
+<para>mail.err                        /var/log/mail.err</para>
+<para/>
+<para># Журналирование новостной системы INN</para>
+<para>#</para>
+<para>news.crit                       /var/log/news/news.crit</para>
+<para>news.err                        /var/log/news/news.err</para>
+<para>news.notice                     -/var/log/news/news.notice</para>
+<para/>
+<para>#</para>
+<para># Журналы, куда может попадать "все подряд".</para>
+<para>#</para>
+<para>*.=debug;\</para>
+<para>        auth,authpriv.none;\</para>
+<para>        news.none;mail.none     -/var/log/debug</para>
+<para>*.=info;*.=notice;*.=warn;\</para>
+<para>        auth,authpriv.none;\</para>
+<para>        cron,daemon.none;\</para>
+<para>        mail,news.none          -/var/log/messages</para>
+<para/>
+<para>#</para>
+<para># Предупреждения и чрезвычайные сообщения, посылаемые всем вошедшим.</para>
+<para>#</para>
+<para>*.emerg                         *</para>
+<para>*.=alert                        *</para>
+<para/>
+<para>#</para>
+<para># Мне нравится вывод сообщений на консоль, но только на ту виртуальную</para>
+<para># консоль, что я обычно оставляю простаивать.</para>
+<para>#</para>
+<para>daemon,mail.*;\</para>
+<para>       news.=crit;news.=err;news.=notice;\</para>
+<para>       *.=debug;*.=info;\</para>
+<para>       *.=notice;*.=warn       /dev/tty8</para>
+<para/>
+<para># Настройка сервера удаленного журналирования</para>
+<para>*.*                        @logserver</para>
+<para/>
+<para># Именованный канал /dev/xconsole - для утилиты `xconsole'. Чтобы использовать,</para>
+<para># следует запускать `xconsole' с параметром `-file':</para>
+<para>#</para>
+<para>#    $ xconsole -file /dev/xconsole [...]</para>
+<para>#</para>
+<para># ПРИМЕЧАНИЕ: измените список, данный ниже, или вы с ума сойдете, если</para>
+<para>#      у вас осносительно загруженная площадка..</para>
+<para>#</para>
+<para>#daemon.*,mail.*;\</para>
+<para>#       news.crit;news.err;news.notice;\</para>
+<para>#       *.=debug;*.=info;\</para>
+<para>#       *.=notice;*.=warn       |/dev/xconsole</para>
+<para/>
+<para>local2.*                --/var/log/ppp.log</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Злоумышленники, скорее всего, будут стараться уничтожать следы своего пребывания, исправляя или удаляя файлы журналов. Можно затруднить им работу, ведя журналирование на одном или нескольких удаленных серверах журнала, расположенных на других компьютерах. Узнать больше о syslogd можно, запустив man syslog.</para></section><section><info><title>3.c. Metalog</title></info>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://metalog.sourceforge.net/">Metalog</link>, написанный Frank Dennis, не может отправлять журнал на удаленный сервер, но дает преимущество, когда речь о скорости и гибкости журналирования. Он может вести журналы по названию программы, срочности, подсистеме (как и syslogd), и комплектуется разборщиком регулярных выражений, с помощью которых можно запускать внешние сценарии при обнаружении заданных шаблонов. При необходимости это может оказаться очень полезным. </para>
+<para>Стандартной настройки обычно достаточно. Если необходимо, чтобы вам отправлялось письмо при любом неверно введенном пароле, используйте один из следующих сценариев. </para>
+<para>Для postfix: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2: /usr/local/sbin/mail_pwd_failures.sh для postfix</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>#! /bin/sh</para>
+<para>echo "$3" | mail -s "Warning (program : $2)" root</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Для netqmail: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 3: /usr/local/sbin/mail_pwd_failures.sh for netqmail</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>#!/bin/sh</para>
+<para>echo "To: root</para>
+<para>Subject:Failure (Warning: $2)</para>
+<para>$3</para>
+<para>" | /var/qmail/bin/qmail-inject -f root</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Не забудьте сделать сценарий исполняемым командой /bin/chmod +x /usr/local/sbin/mail_pwd_failures.sh. </para>
+<para>Затем в файле /etc/metalog/metalog.conf раскомментируйте строку под «Password failures»: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 4: /etc/metalog/metalog.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>command  = "/usr/local/sbin/mail_pwd_failures.sh"</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>3.d. Syslog-ng</title></info>
+<para>Syslog-ng, за некоторыми отличиями, обладает теми же возможностями, что и syslog и metalog. Он может фильтровать сообщения по уровню и содержимому (как metalog), вести удаленное журналирование, как syslog, обрабатывать журналы, получаемые от syslogd (даже потоки от Solaris), записывать в TTY, запускать программы, и служить сервером журналирования. То есть, он сочетает лучшие черты обоих средств журналирования с возможностью расширенной настройки. </para>
+<para>Ниже приведен слегка подправленный классический конфигурационный файл. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 5: /etc/syslog-ng/syslog-ng.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>options { chain_hostnames(off); sync(0); };</para>
+<para/>
+<para>#источник, откуда читать журнал</para>
+<para>source src { unix-stream("/dev/log"); internal(); };</para>
+<para>source kernsrc { file("/proc/kmsg"); };</para>
+<para/>
+<para>#получатели</para>
+<para>destination authlog { file("/var/log/auth.log"); };</para>
+<para>destination syslog { file("/var/log/syslog"); };</para>
+<para>destination cron { file("/var/log/cron.log"); };</para>
+<para>destination daemon { file("/var/log/daemon.log"); };</para>
+<para>destination kern { file("/var/log/kern.log"); };</para>
+<para>destination lpr { file("/var/log/lpr.log"); };</para>
+<para>destination user { file("/var/log/user.log"); };</para>
+<para>destination mail { file("/var/log/mail.log"); };</para>
+<para/>
+<para>destination mailinfo { file("/var/log/mail.info"); };</para>
+<para>destination mailwarn { file("/var/log/mail.warn"); };</para>
+<para>destination mailerr { file("/var/log/mail.err"); };</para>
+<para/>
+<para>destination newscrit { file("/var/log/news/news.crit"); };</para>
+<para>destination newserr { file("/var/log/news/news.err"); };</para>
+<para>destination newsnotice { file("/var/log/news/news.notice"); };</para>
+<para/>
+<para>destination debug { file("/var/log/debug"); };</para>
+<para>destination messages { file("/var/log/messages"); };</para>
+<para>destination console { usertty("root"); };</para>
+<para>destination console_all { file("/dev/tty12"); };</para>
+<para>destination xconsole { pipe("/dev/xconsole"); };</para>
+<para/>
+<para>#создание фильтров</para>
+<para>filter f_authpriv { facility(auth, authpriv); };</para>
+<para>filter f_syslog { not facility(authpriv, mail); };</para>
+<para>filter f_cron { facility(cron); };</para>
+<para>filter f_daemon { facility(daemon); };</para>
+<para>filter f_kern { facility(kern); };</para>
+<para>filter f_lpr { facility(lpr); };</para>
+<para>filter f_mail { facility(mail); };</para>
+<para>filter f_user { facility(user); };</para>
+<para>filter f_debug { not facility(auth, authpriv, news, mail); };</para>
+<para>filter f_messages { level(info..warn)</para>
+<para>        and not facility(auth, authpriv, mail, news); };</para>
+<para>filter f_emergency { level(emerg); };</para>
+<para/>
+<para>filter f_info { level(info); };</para>
+<para>filter f_notice { level(notice); };</para>
+<para>filter f_warn { level(warn); };</para>
+<para>filter f_crit { level(crit); };</para>
+<para>filter f_err { level(err); };</para>
+<para>filter f_failed { match("failed"); };</para>
+<para>filter f_denied { match("denied"); };</para>
+<para/>
+<para>#связывание фильтров с получателями</para>
+<para>log { source(src); filter(f_authpriv); destination(authlog); };</para>
+<para>log { source(src); filter(f_syslog); destination(syslog); };</para>
+<para>log { source(src); filter(f_cron); destination(cron); };</para>
+<para>log { source(src); filter(f_daemon); destination(daemon); };</para>
+<para>log { source(kernsrc); filter(f_kern); destination(kern); };</para>
+<para>log { source(src); filter(f_lpr); destination(lpr); };</para>
+<para>log { source(src); filter(f_mail); destination(mail); };</para>
+<para>log { source(src); filter(f_user); destination(user); };</para>
+<para>log { source(src); filter(f_mail); filter(f_info); destination(mailinfo); };</para>
+<para>log { source(src); filter(f_mail); filter(f_warn); destination(mailwarn); };</para>
+<para>log { source(src); filter(f_mail); filter(f_err); destination(mailerr); };</para>
+<para/>
+<para>log { source(src); filter(f_debug); destination(debug); };</para>
+<para>log { source(src); filter(f_messages); destination(messages); };</para>
+<para>log { source(src); filter(f_emergency); destination(console); };</para>
+<para/>
+<para>#журнал по умолчанию</para>
+<para>log { source(src); destination(console_all); };</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Syslog-ng очень легко настраивается, но с той же легкостью можно что-либо упустить в файле настройки, так как он очень велик. Автор также обещает дополнительные возможности, например, шифрование, опознание, сжатие и обязательную проверку прав доступа (MAC — mandatory access control). С такими возможностями программа станет незаменимой для журналирования в сети, так как злоумышленник не сможет перехватывать журнал. </para>
+<para>К тому же у syslog-ng есть еще одно достоинство: он не требует прав администратора для запуска! </para></section><section><info><title>3.e. Анализ журналов с помощью Logcheck</title></info>
+<para>Конечно же, ведение журналов — это только полдела. Приложение наподобие Logcheck может значительно облегчить регулярный анализ журналов. Logcheck — это сценарий, который вместе с двоичным файлом logtail, запускается службой cron и сверяет журналы с заданными правилами на предмет подозрительной деятельности. При совпадении он отправляет электронное письмо с соответствующими записями на почтовый ящик администратора. </para>
+<para>Logcheck и logtail входят в состав пакета app-admin/logsentry. </para>
+<para>Logcheck использует четыре файла для выделения важных событий из обычных сообщений. Этими файлами являются logcheck.hacking, содержащий известные сообщения, встречающиеся при взломе, logcheck.violations, содержащий шаблоны, сигнализирующие о нарушениях безопасности, logcheck.violations.ignore, содержащий ключевые слова, совпадающие с шаблонами в файле нарушений, но которые можно игнорировать, и logcheck.ignore, содержащий записи, которые можно игнорировать. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Предупреждение: Не оставляйте logcheck.violations.ignore пустым. Для обработки журналов Logcheck использует grep, некоторые версии которого считают пустой файл знаком подстановки (wildcard). В таком случае все нарушения будут игнорироваться. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section></section><section><info><title>4. Монтирование разделов</title></info><section><info><title>4.a. Монтирование разделов</title></info>
+<para>При монтировании разделов с файловой системой ext2, ext3 или reiserfs можно указать различные параметры в файле /etc/fstab. Среди них: </para>
+<orderedlist>
+<listitem>
+<para>nosuid — игнорировать установленный для файла бит SUID, уподобляя его обычному файлу </para>
+</listitem>
+<listitem>
+<para>noexec — предотвращать запуск файлов с данного раздела </para>
+</listitem>
+<listitem>
+<para>nodev — игнорировать файлы устройств </para>
+</listitem>
+</orderedlist>
+<para>К сожалению, эти настройки можно легко обойти, задействовав косвенные пути. Тем не менее, установкой noexec для /tmp можно воспрепятствовать использованию большинства вредоносных программ, разработанных для запуска напрямую из каталога /tmp. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: /etc/fstab</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>/dev/sda1 /boot ext2 noauto,noatime 1 1</para>
+<para>/dev/sda2 none swap sw 0 0</para>
+<para>/dev/sda3 / reiserfs notail,noatime 0 0</para>
+<para>/dev/sda4 /tmp reiserfs notail,noatime,nodev,nosuid,noexec 0 0</para>
+<para>/dev/sda5 /var reiserfs notail,noatime,nodev 0 0</para>
+<para>/dev/sda6 /home reiserfs notail,noatime,nodev,nosuid 0 0</para>
+<para>/dev/sda7 /usr reiserfs notail,noatime,nodev,ro 0 0</para>
+<para>/dev/cdroms/cdrom0 /mnt/cdrom iso9660 noauto,ro 0 0</para>
+<para>proc /proc proc defaults 0 0</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Предупреждение: Установка /tmp в режим noexec может помешать нормальной работе различных сценариев. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: За сведениями о дисковых квотах обращайтесь к разделу <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/security/security-handbook.xml?style=printable&amp;full=1#quotas">квоты</link>. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Я не устанавливаю для /var параметры noexec или nosuid, даже если обычно файлы никогда не запускаются из этого каталога, так как netqmail устанавливается в /var/qmail и требует разрешения на исполнение и доступ к одному файлу с SUID. Я устанавливаю /usr в режим только для чтения, так как я никогда ничего не записываю туда, кроме случая обновления Gentoo. Тогда я перемонтирую файловую систему в режиме чтения-записи, обновляю систему и перемонтирую обратно в режиме только для чтения. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Даже если вы не используете netqmail, Gentoo все же нужен установленный бит исполнения для /var/tmp, так поскольку сборка ebuild выполняется именно здесь. Но если у вас есть насущная необходимость монтировать каталог /var с параметром noexec, можно указать для этого альтернативный путь. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section></section><section><info><title>5. Ограничения пользователей/групп</title></info><section><info><title>5.a. /etc/security/limits.conf</title></info>
+<para>Контроль использования ресурсов может быть очень эффективным при попытке предотвращения локальной атаки на отказ от обслуживания или ограничения максимального количества входов в систему для группы или пользователя. Однако излишне строгие настройки будут затормаживать работу вашей системы и станут причиной сбоев программ, поэтому проверьте каждый из параметров. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: /etc/security/limits.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>*    soft core 0</para>
+<para>*    hard core 0</para>
+<para>*    hard nproc 15</para>
+<para>*    hard rss 10000</para>
+<para>*    -    maxlogins 2</para>
+<para>@dev hard core 100000</para>
+<para>@dev soft nproc 20</para>
+<para>@dev hard nproc 35</para>
+<para>@dev -    maxlogins 10</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Если вы пытаетесь установить nproc или maxlogins в 0, то подумайте, может, лучше вместо этого удалить пользователя. В примере выше установлены настройки группы dev для процессов, основных файлов и maxlogins. Все остальное установлено в значения по умолчанию. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: /etc/security/limits.conf является частью пакета PAM и применима только для пакетов, использующих PAM. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>5.b. /etc/limits</title></info>
+<para>/etc/limits очень схож с файлом ограничений /etc/security/limits.conf. Единственное отличие — формат, который применим лишь для пользователей или заполнителей (но не для групп). Вот пример конфигурации: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2: /etc/limits</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>*   L2 C0 U15 R10000</para>
+<para>kn L10 C100000 U35</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Здесь устанавливаются настройки по умолчанию и специфичные настройки для пользователя kn. limits являются частью пакета sys-apps/shadow. Если вы включили pam в make.conf, то нет необходимости устанавливать какие-либо ограничения в этом файле. </para></section><section><info><title>5.c. Квоты</title></info>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Предупреждение: Проверьте, что рабочая файловая система поддерживает квоты. Чтобы задействовать квоты для ReiserFS, необходимо наложить заплатку на ядро,которая доступна на сайте <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing/quota-2.4.20">Namesys</link>. Пользовательские утилиты можно загрузить с сайта проекта <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.sf.net/projects/linuxquota/">Linux DiskQuota project</link>. При совместной работе квот с ReiserFS вы можете встретить проблемы. Мы вас предупредили! </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Установка квот на файловые разделы ограничивает использование дискового пространства для каждого пользователя или каждой группы. Квоты должны быть включены в ядре и добавлены к точке монтирования в /etc/fstab. Параметр ядра включается в конфигурации ядра в разделе File systems-&gt;Quota support. Установите следующие настройки, пересоберите ядро и перезагрузитесь в систему с новым ядром. </para>
+<para>Начните с установки квот, запустив emerge quota. Затем измените /etc/fstab и добавьте usrquota и grpquota к разделам, использование которых вы хотите ограничить, так, как показано в примере ниже. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 3: /etc/fstab</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>/dev/sda1 /boot ext2 noauto,noatime 1 1</para>
+<para>/dev/sda2 none swap sw 0 0</para>
+<para>/dev/sda3 / reiserfs notail,noatime 0 0</para>
+<para>/dev/sda4 /tmp ext3 noatime,nodev,nosuid,noexec,usrquota,grpquota 0 0</para>
+<para>/dev/sda5 /var ext3 noatime,nodev,usrquota,grpquota 0 0</para>
+<para>/dev/sda6 /home ext3 noatime,nodev,nosuid,usrquota,grpquota 0 0</para>
+<para>/dev/sda7 /usr reiserfs notail,noatime,nodev,ro 0 0</para>
+<para>/dev/cdroms/cdrom0 /mnt/cdrom iso9660 noauto,ro 0 0</para>
+<para>proc /proc proc defaults 0 0</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Создайте для каждого раздела, для которого включены квоты, файлы квот (aquota.user и aquota.group) и поместите их в корень каждого из разделов. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 4: Создание файлов квот</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># touch /tmp/aquota.user</para>
+<para># touch /tmp/aquota.group</para>
+<para># chmod 600 /tmp/aquota.user</para>
+<para># chmod 600 /tmp/aquota.group</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Это шаг выполняется для любого раздела, для которого включены квоты. После добавления и настройки файлов квот вам понадобится добавить сценарий запуска quota в загрузочный уровень запуска. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Важно: XFS проверяет все квоты самостоятельно, поэтому для нее не требуется добавления сценария quota в начальный уровень загрузки. Есть ряд файловых систем, не указанных в этом документе, которые функционируют также, поэтому обратитесь к странице руководства вашей файловой системы, для того, чтобы узнать, как она обрабатывает проверки квот. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 5: Добавление квот в загрузочный уровень исполнения</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># rc-update add quota boot</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Теперь настроим систему для проверки квот раз в неделю, добавив следующую строку в /etc/crontab: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 6: Добавление проверки квот в crontab</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>0 3 * * 0 /usr/sbin/quotacheck -avug.</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Перезагрузив компьютер, время установить квоты для пользователей и групп. С помощью команды edquota -u kn запустится редактор, определенный переменной $EDITOR (по умолчанию nano) для правки квот для пользователя kn. edquota -g сделает то же самое для групп. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 7: Установка квот для пользователя kn</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>Quotas for user kn:</para>
+<para>/dev/sda4: blocks in use: 2594, limits (soft = 5000, hard = 6500)</para>
+<para>         inodes in use: 356, limits (soft = 1000, hard = 1500)</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Для большей информации обратитесь к man edquota или <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.tldp.org/HOWTO/Quota.html">Quota miniHOWTO</link>. </para></section><section><info><title>5.d. /etc/login.defs</title></info>
+<para>Если правилами определено, что пользователи должны менять свои пароли каждые две недели, измените значения переменной PASS_MAX_DAYS на 14 и PASS_WARN_AGE на 7. Это рекомендуется для того, чтобы предотвратить старение пароля, так как полный перебор всех значений может взломать любой пароль, если есть достаточно времени. Также рекомендуется установить LOG_OK_LOGINS в значение yes. </para></section><section><info><title>5.e. /etc/login.access</title></info>
+<para>Файл login.access также является частью пакета sys-apps/shadow, который управляет процессом входа в систему. Он определяет на основании имени пользователя, группы или узла, кто сможет войти в систему, а кто не сможет. Так как по умолчанию этот файл содержит лишь примеры и комментарии, то все пользователи системы могут войти в систему. В зависимости от того, что вы защищаете — сервер или рабочую станцию, рекомендуется настроить этот файл так, чтобы никто, кроме вас (как администратора), не мог получить доступ к консоли. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Эти настройки не влияют на суперпользователя. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 8: /etc/login.access</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-:ALL EXCEPT wheel sync:console</para>
+<para>-:wheel:ALL EXCEPT LOCAL .gentoo.org</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Важно: Настраивая эти параметры, будьте осторожны, так как любая ошибка может привести к тому, что вы не сможете войти в собственную систему, не воспользовавшись правами суперпользователя. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Эти настройки не применимы для SSH, так как по умолчанию для SSH не запускается /bin/login. Это может быть включено с помощью параметра UseLogin yes в файле /etc/ssh/sshd_config. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Это устанавливает доступ на вход в систему так, что только члены группы wheel могут входить в систему локально или из домена gentoo.org. Возможно, попахивает паранойей, но лучше быть в безопасности, чем сожалеть о потерянном. </para></section></section><section><info><title>6. Права доступа к файлам</title></info><section><info><title>6.a. Файлы, доступные по чтению для всех</title></info>
+<para>Обычные пользователи не должны иметь доступ к конфигурационным файлам или паролям. Атакующий может украсть пароли к базе данных или веб-сайту и использовать их для дефейса или даже хуже — для удаления файлов. Вот почему важно правильно установить разрешения на файлы. Если вы уверены, что определенный файл может использоваться только суперпользователем, установите для него права 0600 и назначьте ему правильного владельца с помощью chown. </para></section><section><info><title>6.b. Файлы, доступные по записи для группы или для всех</title></info>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: Поиск файлов, доступных по записи всем</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># find / -type f \( -perm -2 -o -perm -20 \) -exec ls -lg {} \; 2&gt;/dev/null &gt;writable.txt</para>
+<para># find / -type d \( -perm -2 -o -perm -20 \) -exec ls -ldg {} \; 2&gt;/dev/null &gt;&gt;writable.txt</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Эти команды создадут огромный файл, содержащий имена файлов, которые имеют права на запись для группы и всех остальных. Проверьте их и устраните ненужные права, запустив для файлов команду /bin/chmod o-w. </para></section><section><info><title>6.c. Файлы SUID/SGID</title></info>
+<para>Файлы с битами SUID или SGID будут запущены с привелегиями владельца или группы владельца, а не с привелегиями запустившего их пользователя. Обычно это используется для файлов, которые должны запускаться с правами суперпользователя для выполнения необходимых задач. Эти файлы, если содержат уязвимости, могут стать источником повышения привелегий локальным пользователем. Это может быть опасным, поэтому с подобных файлов необходимо любой ценой удалить установленный бит SUID или SGID. Если вы не используете эти файлы, запустите для них команду chmod 0 или удалите пакет, установивший этот файл (проверить, какому пакету принадлежит определенный файл, можно с помощью команды equery; если у вас ее еще нет, то, чтобы установить ее, просто наберите emerge gentoolkit). Иначе просто удалите бит SUID с помощью chmod -s. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2: Поиск файлов с setuid</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># find / -type f \( -perm -004000 -o -perm -002000 \) -exec ls -lg {} \; 2&gt;/dev/null &gt;suidfiles.txt</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Эта команда создаст файл, содержащий список всех SUID/SGID-файлов. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 3: Список файлов с setuid</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>/bin/su</para>
+<para>/bin/ping</para>
+<para>/bin/mount</para>
+<para>/bin/umount</para>
+<para>/var/qmail/bin/qmail-queue</para>
+<para>/usr/bin/chfn</para>
+<para>/usr/bin/chsh</para>
+<para>/usr/bin/crontab</para>
+<para>/usr/bin/chage</para>
+<para>/usr/bin/expiry</para>
+<para>/usr/bin/sperl5.6.1</para>
+<para>/usr/bin/newgrp</para>
+<para>/usr/bin/passwd</para>
+<para>/usr/bin/gpasswd</para>
+<para>/usr/bin/procmail</para>
+<para>/usr/bin/suidperl</para>
+<para>/usr/lib/misc/pt_chown</para>
+<para>/usr/sbin/unix_chkpwd</para>
+<para>/usr/sbin/traceroute</para>
+<para>/usr/sbin/pwdb_chkpwd</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>По умолчанию в Gentoo Linux не так много файлов с битом SUID (хотя это зависит от типа вашей установки), но у вас может получиться список, представленный выше. Большинство команд используется только суперпользователем. Удалите SUID-бит с ping, mount, umount, chfn, chsh, newgrp, suidperl, pt_chown и traceroute, запустив для каждого из них chmod -s. Не удаляйте бит с su, qmail-queue или unix_chkpwd. Удалив setuid с этих файлов, вы не сможете стать суперпользователем и получать почту. Удаляя бит (там, где это безопасно), вы исключаете возможность обычного пользователя (или злоумышленника) получить права суперпользователя с помощью этих файлов. </para>
+<para>В моей системе есть только несколько SUID-файлов: su, passwd, gpasswd, qmail-queue, unix_chkpwd и pwdb_chkpwd. Но если у вас запущен X-сервер, то в вашей системе их будет больше, так как X нужны повышенные привелегии, которые могут быть предоставлены посредством SUID. </para></section><section><info><title>6.d. SUID/SGID-файлы и жесткие ссылки</title></info>
+<para>Файл может считаться удаленным лишь в том случае, когда нет больше ссылок, указывающих на него. Это может звучать странно, но просто следует понять, что файл (например, /usr/bin/perl) на самом деле является ссылкой на inode, в котором сохранены данные. На файл может указывать любое число ссылок, и пока каждая их них не будет удалена, файл будет существовать. </para>
+<para>Если у ваших пользователей есть доступ к разделам, которые не смонтированы с параметрами nosuid или noexec (например, если /tmp, /home, /var/tmp не являются отдельными разделами), вы должны удостовериться, что они не смогут создать жесткие ссылки на файлы с SUID- или SGID-битами, благодаря чему они могут иметь доступ к устаревшим версиям файлов. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Предупреждение: Если вы получаете предупреждения об оставшихся жестких ссылках, а ваши пользователи имеют доступ по записи к разделам, позволяющим запускать файлы с SUID/SGID-битами, вы должны прочитать этот раздел очень внимательно. Любой из ваших пользователей может разрушить ваши обновления, сохранив устаревшую версию программы. Если ваши пользователи не могут создавать собственные файлы с битом SUID или могут только запускать программы с помощью динамического загрузчика (разделы, смонтированные с параметром noexec), то вам не о чем беспокоиться. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Пользователям не нужен доступ по чтению для файла, чтобы создать на него ссылку, им нужен всего лишь доступ по чтению к каталогу, содержащему этот файл. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Чтобы проверить, сколько ссылок имеет файл, вы можете использовать команду stat. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 4: Команда stat</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>$ stat /bin/su</para>
+<para>  File: `/bin/su'</para>
+<para>  Size: 29350           Blocks: 64         IO Block: 131072 regular file</para>
+<para>Device: 900h/2304d      Inode: 2057419     Links: 1</para>
+<para>Access: (4711/-rws--x--x)  Uid: (    0/    root)   Gid: (    0/    root)</para>
+<para>Access: 2005-02-07 01:59:35.000000000 +0000</para>
+<para>Modify: 2004-11-04 01:46:17.000000000 +0000</para>
+<para>Change: 2004-11-04 01:46:17.000000000 +0000</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Чтобы найти файлы с SUID и SGID со множеством ссылок, вы можете задействовать команду find. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 5: Поиск suid/sgid-файлов с несколькими ссылками</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>$ find / -type f \( -perm -004000 -o -perm -002000 \) -links +1 -ls</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section></section><section><info><title>7. PAM</title></info><section><info><title>7.a. PAM</title></info>
+<para>PAM — это набор библиотек, предоставляющих альтернативный способ аутентификации пользователя в программах. USE-флаг pam уже включен по умолчанию. Хотя настройки PAM в Gentoo Linux довольно разумны, всегда есть возможность что-нибудь улучшить. Для начала установите cracklib. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: Установка cracklib</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># emerge cracklib</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2: /etc/pam.d/passwd</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>auth     required pam_unix.so shadow nullok</para>
+<para>account  required pam_unix.so</para>
+<para>password required pam_cracklib.so difok=3 retry=3 minlen=8 dcredit=2 ocredit=2</para>
+<para>password required pam_unix.so md5 use_authtok</para>
+<para>session  required pam_unix.so</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>После этого с помощью cracklib будет проверяться пароль пользователя, имеет ли он длину по крайней мере 8 символов, содержит ли он по крайней мере 2 цифры, 2 других символа и не менее 3 символов, отличающихся от символов прошлого пароля. Благодаря этому пользователь будет выбирать стойкие пароли. Проверьте <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kernel.org/pub/linux/libs/pam/Linux-PAM-html/pam-6.html#ss6.3">документацию PAM</link> для других параметров. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 3: /etc/pam.d/sshd</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>auth     required pam_unix.so nullok</para>
+<para>auth     required pam_shells.so</para>
+<para>auth     required pam_nologin.so</para>
+<para>auth     required pam_env.so</para>
+<para>account  required pam_unix.so</para>
+<para>password required pam_cracklib.so difok=3 retry=3 minlen=8 dcredit=2 ocredit=2 use_authtok</para>
+<para>password required pam_unix.so shadow md5</para>
+<para>session  required pam_unix.so</para>
+<para>session  required pam_limits.so</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Любая служба, не описанная в одном из файлов PAM из каталога /etc/pam.d, будет использовать правила, взятые из /etc/pam.d/other. По умолчанию установлена политика deny, как и должно быть. Но нам нужна регистрация, поэтому добавим pam_warn.so. Последняя конфигурация — это pam_limits, которая управляется с помощью /etc/security/limits.conf. См. раздел <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/security/security-handbook.xml?style=printable&amp;full=1#limits_conf">/etc/security/limits.conf</link> для подробного описания этих настроек. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 4: /etc/pam.d/other</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>auth     required pam_deny.so</para>
+<para>auth     required pam_warn.so</para>
+<para>account  required pam_deny.so</para>
+<para>account  required pam_warn.so</para>
+<para>password required pam_deny.so</para>
+<para>password required pam_warn.so</para>
+<para>session  required pam_deny.so</para>
+<para>session  required pam_warn.so</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section></section><section><info><title>8. Упаковщики TCP</title></info><section><info><title>8.a. Упаковщики TCP</title></info>
+<para>Обычно для контроля доступом к службам используется inetd (которого в Gentoo нет), но так же можно воспользоваться xinetd или другими сервисами. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Служба должна быть запущена с помощью tcpd в качестве аргумента сервера (для случая xinetd). См. раздел о xinetd для большей информации. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: /etc/hosts.deny</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ALL:PARANOID</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2: /etc/hosts.allow</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ALL: LOCAL @wheel</para>
+<para>time: LOCAL, .gentoo.org</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Как вы видите, формат записи очень похож на содержимое файла /etc/login.access. Tcpd поддерживает отдельная служба; она никак не связана с /etc/login.access. Эти настройки применимы только для служб, использующих упаковщики TCP. </para>
+<para>Также возможно запускать команды при разрешенной службе (это может быть полезным для создания трансляций для коммутируемых пользователей), но это не рекомендуется, так как обычно, решая одну проблему, люди создают еще больше. Допустим, что вы настроили сценарий, отправляющий электронное письмо в том случае, когда кто-то подпал под запрещающее правило, но тогда злоумышленник может запустить DoS-атаку, попадающую под правило запрещения. Из-за этого создастся много ввода-вывода и ненужно электронной почты, поэтому не делайте так! Прочтите man 5 hosts_access для дальнейшей информации. </para></section></section><section><info><title>9. Безопасность ядра</title></info><section><info><title>9.a. Удаление функциональности</title></info>
+<para>Основное правило при конфигурации ядра — удалять все ненужное. Это не только создаст маленькое ядро, но и также исключит вероятные уязвимости, которые могут присутствовать в драйверах и других возможностях. </para>
+<para>Также рекомендуется отключить поддержку загружаемых модулей. Хотя возможность внедрения руткитов сохраняется, это делает систему более неприступной для обычного злоумышленника, пытающегося установить руткит в виде модуля ядра.</para></section><section><info><title>9.b. Файловая система proc</title></info>
+<para>Множество параметров ядра может быть изменено с помощью файловой системы /proc или sysctl. </para>
+<para>Чтобы иметь возможность на лету изменять параметры и переменные ядра, вам понадобится определить в ядре CONFIG_SYSCTL. Она включена по умолчанию в ядрах серии 2.4. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: Отключения IP-форвардинга</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># /bin/echo "0" &gt; /proc/sys/net/ipv4/ip_forward</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Проверьте, что проброс IP-пакетов отключен. Эта возможность необходима лишь для узла, имеющего доступ к нескольким сетям. Рекомендуется устанавливать и отключать этот флаг до включения или отключения других флагов. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2: Отбрасывание пакетов ping</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># /bin/echo "1" &gt; /proc/sys/net/ipv4/icmp_echo_ignore_all</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Это просто заставит ядро игнорировать все сообщения ping (ICMP-пакеты типа 0). IP-пакет, несущий ICMP-сообщение, может содержать также в нагрузку и другую информацию, о которой вы можете не подозревать, поэтому следует отключить прием. Администраторы используют ping как утилиту диагностики и часто выражают недовольство, если она отключена, но нет причины позволять чужакам пинговать узел. Тем не менее, если необходимо разрешить внутренним пользователям использовать ping, то можно отключить сообщения ICMP типа 0 в межсетевом экране (тем самым позволив локальным администраторам использовать эту утилиту). </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 3: Игнорирование широковещательных запросов ping</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># /bin/echo "1" &gt; /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Это отключает ответ на широковещательные ICMP-запросы, предотвращая реализацию Smurf-атаки. Smurf-атака основана на отправке ICMP-пакета типа 0 (ping) по широковещательному адресу сети. Обычно для этого злоумышленник использует поддельный адрес. Все компьютеры сети ответят на сообщение ping, что может вызвать наводнение трафика на узел, адрес которого был подделан. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 4: Отключение исходящих маршрутизированных пакетов.</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># /bin/echo "0" &gt; /proc/sys/net/ipv4/conf/all/accept_source_route</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Не принимать исходящие маршрутизированные пакеты. Злоумышленники могут использовать исходящую маршрутизацию для генерации трафика, имеющего адрес внутренней сети, но на самом деле возвращаемого назад злоумышленнику, что позволит ему компрометировать сеть. Исходящая маршрутизация очень редко используется по назначению, так что безопаснее ее отключить. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 5: Отключение приема перенаправлений</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># /bin/echo "0" &gt; /proc/sys/net/ipv4/conf/all/accept_redirects</para>
+<para># /bin/echo "0" &gt; /proc/sys/net/ipv4/conf/all/secure_redirects</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Не принимать ICMP-пакеты перенаправления. ICMP-перенаправления могут быть использованы злоумышленником для изменения таблиц маршрутизации. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 6: Защита против неправильных сообщений об ошибках</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># /bin/echo "1" &gt; /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Включить защиту против приходящих неправильных сообщений об ошибках. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 7: Включение фильтрации обратного пути</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># for i in /proc/sys/net/ipv4/conf/*; do</para>
+<para>        /bin/echo "1" &gt; $i/rp_filter</para>
+<para>done</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Включает фильтрацию обратного пути. Это поможет быть уверенным, что в пакетах используются правомерные адреса, при этом входящие пакеты будут автоматически отброшены, если запись в таблице маршрутизации об адресе этих пакетов не соответствуют сетевому интерфейсу, с которого они пришли. Это позволит предотвратить подделку IP-адресов. Необходимо включить эту возможность для каждого net/ipv4/conf/*, иначе проверка исходящих пакетов не будет полностью функционировать. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Предупреждение: Тем не менее включение фильтрации обратного пути может стать проблемой при использовании асимметричной маршрутизации (исходящие пакеты идут отличным от входящих пакетов путем) или при использовании немаршрутизируемом узле с несколькими IP-адресами на различных интерфейсах. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 8: Регистрация всех поддельных, исходящих маршрутизированных и перенаправленных пакетов</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># /bin/echo "1" &gt; /proc/sys/net/ipv4/conf/all/log_martians</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Регистрировать поддельные пакеты, пакеты с исходящей маршрутизацией и пакеты перенаправлений. </para>
+<para>Все настройки будут сброшены после перезагрузки компьютера. Рекомендуется добавлять их в /etc/sysctl.conf, который будет автоматически загружен сценарием инициализации /etc/init.d/bootmisc. </para>
+<para>Синтаксис /etc/sysctl.conf достаточно понятный. Удалите из указанных путей /proc/sys/ и замените / на .: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 9: Переход к файлу sysctl.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>(Вручную с помощью команды echo:)</para>
+<para>/bin/echo "0" &gt; /proc/sys/net/ipv4/ip_forward</para>
+<para/>
+<para>(Автоматически в файле sysctl.conf:)</para>
+<para>net.ipv4.ip_forward = 0</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>9.c. Grsecurity</title></info>
+<para>Заплатка от <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://grsecurity.net/">Grsecurity</link> входит в sys-kernel/hardened-sources, но по умолчанию отключена. Сначала сконфигурируйте ядро, а затем настройте параметры Grsecurity. Подробное описание доступных параметров Grsecurity можно найти на странице проекта <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/hardened?style=printable">укрепленного Gentoo</link>. </para>
+<para>Последние версии hardened-sources содержат Grsecurity версии 2.*. Для дополнительной информации о наборе патчей Grsecurity обратитесь к документации, доступной на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.grsecurity.net/">домашнем сайте Grsecurity</link>. </para></section><section><info><title>9.d. Kerneli</title></info>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.Kerneli.org/">Kerneli</link> — это заплатка, которая добавляет функции шифрования к существующему ядру. Наложив эту заплатку на ядро, вы получите такие новые параметры, как алгоритмы шифрования, дайджеста и фильтры к зашифрованным образам. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Предупреждение: В настоящий момент заплатка kerneli для последнего ядра нестабильна, поэтому будьте осторожны при ее использовании. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>9.e. Другие заплатки к ядру</title></info>
+<orderedlist>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.openwall.com/">Проект OpenWall</link> </para>
+</listitem>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.lids.org/">Linux Intrusion Detection System</link> </para>
+</listitem>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.rsbac.org/">Rule Set Based Access Control</link> </para>
+</listitem>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.nsa.gov/selinux">NSA's security enhanced kernel</link> </para>
+</listitem>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://sourceforge.net/projects/wolk/">Wolk</link> </para>
+</listitem>
+</orderedlist>
+<para>И множество других. </para></section></section><section><info><title>10. Безопасность служб</title></info><section><info><title>10.a. Apache</title></info>
+<para>Apache поставляется с достаточно полным конфигурационным файлом по умолчанию, но опять же необходимо улучшить некоторые аспекты, например, использовать для Apache только один адрес. Ниже приведены параметры, которые вы должны внести в конфигурационный файл. </para>
+<para>Если вы не отключали поддержку ssl в /etc/make.conf перед установкой Apache, то теперь вы должны иметь доступ к серверу с включенным SSL. Чтобы включить ее, просто добавьте следующую строку. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: /etc/conf.d/apache</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>HTTPD_OPTS="-D SSL"</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2: /etc/apache/conf/apache.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>#Добавьте свой IP для прослушивания</para>
+<para>Listen 127.0.0.1</para>
+<para>BindAddress 127.0.0.1</para>
+<para>#Не следует использовать nobody или nogroup для каждого сервиса, запущенного</para>
+<para>#без административных привелегий</para>
+<para>#(просто добавляем пользователя apache с группой apache)</para>
+<para>User apache</para>
+<para>Group apache</para>
+<para>#Не сообщать информацию о версии сервера</para>
+<para>ServerSignature Off</para>
+<para>ServerTokens Prod</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Apache собран с параметрами --enable-shared=max и --enable-module=all. По умолчанию это включает все модули, поэтому вы должны закомментировать все неиспользуемые модули в разделе LoadModule (LoadModule и AddModule). Затем перезапустите сервис, выполнив /etc/init.d/apache restart. </para>
+<para>Документация доступна по адресу <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.apache.org/">http://www.apache.org</link>. </para></section><section><info><title>10.b. Bind</title></info>
+<para>Документацию можно найти на сайте <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.isc.org/products/BIND/bind9.html">Internet Software Consortium</link>. Руководство администратора BIND 9 также доступно каталоге doc/arm. </para>
+<para>Новые сборочные файлы BIND поддерживают изменение корневого каталога из коробки. После установки bind следуйте этим простым инструкциям: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 3: Изолирование среды BIND</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># emerge --config bind</para>
+<para>(Перед запуском следующей команды вам может потребоваться изменить каталог</para>
+<para>chroot в файле /etc/conf.d/named. Иначе будет использован /chroot/dns.)</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>10.c. Djbdns</title></info>
+<para>Djbdns — это реализация DNS, за обнаружение уязвимостей в которой автор готов выплачивать <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://cr.yp.to/djbdns/guarantee.html">деньги</link>. Принцип работы сильно отличается от Bind 9, однако он работает. Дополнительная информация может быть получена на сайте <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.djbdns.org/">http://www.djbdns.org</link>. </para></section><section><info><title>10.d. FTP</title></info>
+<para>В общем случае использование FTP (File Transfer Protocol, протокол передачи файлов) является плохой идеей. Этот протокол отправляет данные незашифрованными (в том числе и пароли), прослушивает 2 порта (обычно это порты 20 и 21), и часто злоумышленники ищут анонимный доступ для обмена варезом. Так как протокол содержит ряд проблем безопасности, то следует использовать sftp или HTTP. Если это невозможно, то максимально обезопасьте свои сервисы и будьте готовы. </para></section><section><info><title>10.e. Mysql</title></info>
+<para>Если вам необходимо предоставить доступ к базе данных mysql локальным приложениям, раскомментируйте следующую строку в /etc/mysql/my.cnf. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 4: Отключение доступа к сети</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>skip-networking</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Затем мы отключаем использование команды LOAD DATA LOCAL INFILE. Это предотвратит несанкционированное чтение локальных файлов. Это также подходит против SQL-инъекций в PHP-сценариях. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 5: Отключение LOAD DATA LOCAL INFILE в разделе [mysqld]</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>set-variable=local-infile=0</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Затем необходимо удалить тестовую базу данных (test) и все учетные записи за исключением root. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 6: Удаление тестовой базы данных и всех ненужных пользователей</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>mysql&gt; drop database test;</para>
+<para>mysql&gt; use mysql;</para>
+<para>mysql&gt; delete from db;</para>
+<para>mysql&gt; delete from user where not (host="localhost" and user="root");</para>
+<para>mysql&gt; flush privileges;</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Предупреждение: Если вас уже есть настроенные учетные записи, то будьте осторожны с этими командами. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Если вы изменяли пароли в командной строке MySQL, то всегда очищайте ~/.mysql_history и /var/log/mysql/mysql.log, так как они сохраняют список выполненных SQL-команд с открытыми паролями. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>10.f. Proftpd</title></info>
+<para>У proftpd было несколько проблем с безопасностью, но большинство из них было исправлено. Тем не менее, неплохо внести некоторые улучшения: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 7: /etc/proftpd/proftpd.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ServerName "My ftp daemon"</para>
+<para># Не показывать ident сервера</para>
+<para>ServerIdent on "Go away"</para>
+<para/>
+<para># Упрощаем создание виртуальных пользователей</para>
+<para>RequireValidShell off</para>
+<para/>
+<para># Использовать альтернативные файлы паролей и групп (в формате passwd)</para>
+<para>AuthUserFile "/etc/proftpd/passwd"</para>
+<para>AuthGroupFile "/etc/proftpd/group"</para>
+<para/>
+<para># Разрешения</para>
+<para>Umask 077</para>
+<para/>
+<para># Таймауты и ограничения</para>
+<para>MaxInstances 30</para>
+<para>MaxClients 10 "Only 10 connections allowed"</para>
+<para>MaxClientsPerHost 1 "You have already logged on once"</para>
+<para>MaxClientsPerUser 1 "You have already logged on once"</para>
+<para>TimeoutStalled 10</para>
+<para>TimeoutNoTransfer 20</para>
+<para>TimeoutLogin 20</para>
+<para/>
+<para># Все входят в изолированную оболочку</para>
+<para>DefaultRoot ~</para>
+<para/>
+<para># Не запускать с правами администратора</para>
+<para>User  nobody</para>
+<para>Group nogroup</para>
+<para/>
+<para># Регистрировать любые передачи</para>
+<para>TransferLog /var/log/transferlog</para>
+<para/>
+<para># Проблемы с универсализацией имен файлов</para>
+<para>DenyFilter \*.*/</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Дополнительная информация может быть найдена на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.proftpd.org/">http://www.proftpd.org</link>. </para></section><section><info><title>10.g. Pure-ftpd</title></info>
+<para>Pure-ftpd является ответвлением оригинального trollftpd с модификациями Фрэнка Денниса по части безопасности и функциональности. </para>
+<para>Используйте виртуальных пользователей (и никогда не применяйте системные учетные записи), включив параметр AUTH. Установите его для -lpuredb:/etc/pureftpd.pdb и создайте пользователей при помощи команды /usr/bin/pure-pw. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 8: /etc/conf.d/pure-ftpd</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>AUTH="-lpuredb:/etc/pureftpd.pdb"</para>
+<para/>
+<para>## Misc. Others ##</para>
+<para>MISC_OTHER="-A -E -X -U 177:077 -d -4 -L100:5 -I 15"</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Добавьте к переменной MISC_OTHER параметры запрета на подключение анонимных пользователей (-E), изменения корневого каталога для всех (-A), запрета записи и чтения файлов, начинающихся с точки (-X), максимального периода бездействия (-I), ограничения рекурсии (-L) и подходящего umask. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Предупреждение: Не используйте параметры -w или -W! Если же вы хотите, чтобы у вас был сайт с варезом, то перестаньте читать это руководство! </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Дополнительная информация может быть найдена на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.pureftpd.org/">http://www.pureftpd.org</link>. </para></section><section><info><title>10.h. Vsftpd</title></info>
+<para>Vsftpd (сокращение от very secure ftp) — это небольшой FTP-демон, который может запускаться с настройками по умолчанию. Он прост и не имеет множества возможностей, присущих pureftp и proftp. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 9: /etc/vsftpd</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>anonymous_enable=NO</para>
+<para>local_enable=YES</para>
+<para/>
+<para>#read only</para>
+<para>write_enable=NO</para>
+<para/>
+<para>#enable logging of transfers</para>
+<para>xferlog_std_format=YES</para>
+<para/>
+<para>idle_session_timeout=20</para>
+<para>data_connection_timeout=20</para>
+<para>nopriv_user=nobody</para>
+<para/>
+<para>chroot_list_enable=YES</para>
+<para>chroot_list_file=/etc/vsftpd/chrootlist</para>
+<para/>
+<para>ls_recurse_enable=NO</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Как вы можете видеть, нет возможности установить для данного сервиса индивидуальные разрешения, но если используется настройки для анонимного доступа, то это он не так уж плох. Иногда неплохо иметь анонимный FTP-сервер (для доступа к открытому ПО), и vsftpd неплохо подходит для этой работы. </para></section><section><info><title>10.i. Netqmail</title></info>
+<para>Netqmail часто признается наиболее безопасным почтовым сервером. Он написан с прицелом на безопасность (и паранойю). По умолчанию он не разрешает релей и, начиная с 1996 года, не имеет никаких уязвимостей безопасности. Просто наберите emerge netqmail и настройте его! </para></section><section><info><title>10.j. Samba</title></info>
+<para>Samba — это протокол, предоставляющий файлы в сетях Microsoft/Novell, и он не должен использоваться в интернете. Его необходимо обезопасить. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 10: /etc/samba/smb.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>[global]</para>
+<para>  #Прослушивать определенный интерфейс</para>
+<para>  interfaces = eth0 10.0.0.1/32</para>
+<para/>
+<para>  #Использовать зашифрованные пароли</para>
+<para>  encrypt passwords = yes</para>
+<para>  directory security mask = 0700</para>
+<para/>
+<para>  #Разрешить трафик из подсети 10.0.0.*</para>
+<para>  hosts allow = 10.0.0.</para>
+<para/>
+<para>  #Включить аутентификацию</para>
+<para>  #(не используйте режим share)</para>
+<para>  security = user</para>
+<para/>
+<para>  #Запретить привелигерованные учетные записи</para>
+<para>  invalid users = root @wheel</para>
+<para/>
+<para>  #Максимальный отображаемый размер ресурса (не является ограничителем)</para>
+<para>  max disk size = 102400</para>
+<para/>
+<para>  #Ужесточить политики паролей</para>
+<para>  min password length = 8</para>
+<para>  null passwords = no</para>
+<para/>
+<para>  #Использовать PAM (если была добавлена поддержка)</para>
+<para>  obey pam restrictions = yes</para>
+<para>  pam password change = yes</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Проверьте, что для каждого ресурса выставлены правильные разрешения и не забудьте прочитать <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.samba.org/">документацию</link>. </para>
+<para>Теперь перезапустите сервер и добавьте пользователей, которым необходим доступ к этому сервису. Это можно сделать с помощью команды /usr/bin/smbpasswd с параметром -a. </para></section><section><info><title>10.k. ssh</title></info>
+<para>Для OpenSSH необходимо лишь одно улучшение — использование более надежного механизма аутентификации, основанного на шифровании с использованием открытого ключа. Очень много сайтов (например, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.sourceforge.net/">http://www.sourceforge.net</link>, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.php.net/">http://www.php.net</link> и <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.apache.org/">http://www.apache.org</link>) было подвержено несанкционированному доступу из-за пустых или слабых паролей. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 11: /etc/ssh/sshd_config</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>#Включаем только версию 2</para>
+<para>Protocol 2</para>
+<para/>
+<para>#Отключаем вход администратора. Пользователи могут использовать su для входа</para>
+<para>PermitRootLogin no</para>
+<para/>
+<para>#Включаем аутентификацию по открытому ключу</para>
+<para>PubkeyAuthentication yes</para>
+<para>AuthorizedKeysFile      .ssh/authorized_keys</para>
+<para/>
+<para>#Отключаем .rhost и обычную аутентификацию по паролю</para>
+<para>HostbasedAuthentication no</para>
+<para>PasswordAuthentication no</para>
+<para>PermitEmptyPasswords no</para>
+<para/>
+<para>#Разрешаем подключаться только пользователям из групп wheel или admin</para>
+<para>AllowGroups wheel admin</para>
+<para/>
+<para>#Из этих групп разрешаем подключаться только следующим пользователям</para>
+<para>#@&lt;domainname&gt; не обязательна, но заменяет старую директиву</para>
+<para>#AllowHosts</para>
+<para>AllowUsers kn@gentoo.org bs@gentoo.org</para>
+<para/>
+<para>#Вход в систему</para>
+<para>SyslogFacility AUTH</para>
+<para>LogLevel INFO</para>
+<para/>
+<para>(Измените адрес на свой)</para>
+<para>ListenAddress 127.0.0.1</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Также проверьте, что в конфигурационном файле нет параметра UsePAM yes, который перекрывает механизм аутентификации с помощью открытого ключа. </para>
+<para>Теперь создайте для каждого пользователя ключ (на компьютере, с которого они будут регистрироваться) с помощью следующей команды: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 12: Создание пар ключей DSA</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># /usr/bin/ssh-keygen -t dsa</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>И введите пароль. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 13: Вывод ssh-keygen</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>Generating public/private dsa key pair.</para>
+<para>Enter file in which to save the key (/home/kn/.ssh/id_dsa):[Press enter]</para>
+<para>Created directory '/home/kn/.ssh'.</para>
+<para>Enter passphrase (empty for no passphrase): [Enter passphrase]</para>
+<para>Enter same passphrase again: [Enter passphrase again]</para>
+<para>Your identification has been saved in /home/kn/.ssh/id_dsa.</para>
+<para>Your public key has been saved in /home/kn/.ssh/id_dsa.pub.</para>
+<para>The key fingerprint is:</para>
+<para>07:24:a9:12:7f:83:7e:af:b8:1f:89:a3:48:29:e2:a4 kn@knielsen</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>После этого в каталоге ~/.ssh/ появятся два файла с названием id_dsa и id_dsa.pub. Файл id_dsa является секретным ключом и должен оберегаться от других. Другой файл, id_dsa.pub, должен быть размещен на каждом сервере, к которому необходим доступ. Добавьте этот ключ в каталог ~/.ssh/authorized_keys в домашнем каталоге пользователя. Теперь пользователь должен иметь доступ к подключению: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 14: Adding the id_dsa.pub file to the authorized_keys file</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>$ scp id_dsa.pub other-host:/var/tmp/currenthostname.pub</para>
+<para>$ ssh other-host</para>
+<para>password:</para>
+<para>$ cat /var/tmp/currenthostname.pub &gt;&gt; ~/.ssh/authorized_keys</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Теперь ваши пользователи должны тщательно оберегать свои секретные ключи. Поместите их на сменный носитель, который они будут всегда носить с собой, или спрячьте их на рабочих станциях пользователей (поместите их под правила <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/security/security-handbook.xml?style=printable&amp;full=1#security_policies">паролей</link>). </para>
+<para>Для дальнейшей информации посетите веб-сайт <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.openssh.org/">OpenSSH</link>. </para></section><section><info><title>10.l. Использование xinetd</title></info>
+<para>xinetd является заменой inetd (которого в Gentoo нет), демона сетевых сервисов. Он поддерживает контроль доступа, основанный на адресе удаленного узла и времени доступа. Он также предоставляет расширенные возможности регистрации событий, включая время запуска сервера, адрес удаленного узла, имя удаленного пользователя, время работы сервера и выполненные запросы. </para>
+<para>Как в случае с другими сервисами, важно создать хорошую конфигурацию по умолчанию. Но так как xinetd запускается с правами администратора и поддерживает протоколы, о работе которых вы можете не знать, рекомендуется не использовать его. Но если вы все равно хотите использовать его, то вы можете укрепить его безопасность: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 15: Установка xinetd</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># emerge xinetd tcp-wrappers</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>И отредактируйте конфигурационный файл: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 16: /etc/xinetd.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>defaults</para>
+<para>{</para>
+<para> only_from = localhost</para>
+<para> instances = 10</para>
+<para> log_type = SYSLOG authpriv info</para>
+<para> log_on_success = HOST PID</para>
+<para> log_on_failure = HOST</para>
+<para> cps = 25 30</para>
+<para>}</para>
+<para/>
+<para># Это установит работу pserver (cvs) через xinetd со следующими:</para>
+<para># настройками:</para>
+<para># максимум 10 обработчиков (10 подключений одновременно)</para>
+<para># использовать только TCP</para>
+<para># использовать пользователя cvs для запуска сервиса</para>
+<para># использовать только 1 IP</para>
+<para># разрешать доступ с 10.0.0.*</para>
+<para># разработчики могут пользоваться cvs только с 8 до 17 часов</para>
+<para># использовать упаковщики tpcd (контроль доступа через</para>
+<para># /etc/hosts.allow и /etc/hosts.deny)</para>
+<para># max_load для компьютера 1.0</para>
+<para># Отключающий флаг для настроек по умолчанию, я предпочитаю,</para>
+<para># чтобы он был отключен</para>
+<para>service cvspserver</para>
+<para>{</para>
+<para> socket_type = stream</para>
+<para> protocol = tcp</para>
+<para> instances = 10</para>
+<para> protocol = tcp</para>
+<para> wait = no</para>
+<para> user = cvs</para>
+<para> bind = 10.0.0.2</para>
+<para> only_from = 10.0.0.0</para>
+<para> access_times = 8:00-17:00</para>
+<para> server = /usr/sbin/tcpd</para>
+<para> server_args = /usr/bin/cvs --allow-root=/mnt/cvsdisk/cvsroot pserver</para>
+<para> max_load = 1.0</para>
+<para> log_on_failure += RECORD</para>
+<para> disable = no</para>
+<para>}</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Для большей информации см. man 5 xinetd.conf. </para></section><section><info><title>10.m. X</title></info>
+<para>По умолчанию Xorg настроен функционировать в качестве Xserver. Это может быть опасным, так как X использует не зашифрованные TCP-соединения и прослушивает подключения xclient. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Важно: Если вам не нужен этот сервис, отключите его! </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Но если вам требуется использовать рабочую станцию в качестве X-сервера, используйте команду /usr/X11R6/bin/xhost с большой осторожностью. Эта команда позволит клиентам других узлов подключаться к вашему экрану. Это может быть полезно при необходимости запуска приложения X с другого компьютера, и это возможно лишь через сеть, но это может быть использовано и злоумышленником. Синтаксис этой команды — /usr/X11R6/bin/xhost +hostname. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Предупреждение: Не используйте возможность xhost +! Эта возможность позволит любому клиенту подключиться к X-серверу и взять контроль над ним. Если злоумышленник может получить доступ к X, то сможет регистрировать нажатия на клавиши, что позволит ему взять контроль над вашим компьютером. Если вы все же используете ее, то всегда указывайте узел. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Более безопасным решением является полное отключение этой возможности при старте X-сервера с помощью startx -- -nolisten tcp или отключение ее навсегда в файлах конфигурации. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 17: /usr/X11R6/bin/startx</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>defaultserverargs="-nolisten tcp"</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Вы должны защитить startx, чтобы не допустить его перезаписи при установке новой версии Xorg. Добавьте следующую строку в /etc/make.conf: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 18: /etc/make.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>CONFIG_PROTECT_MASK="/usr/X11R6/bin/startx"</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Если вы используете графический диспетчер входа в систему, вам понадобится другой подход. </para>
+<para>Для gdm (Gnome Display Manager) </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 19: /etc/X11/gdm/gdm.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>[server-Standard]</para>
+<para>command=/usr/X11R6/bin/X -nolisten tcp</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Для xdm (X Display Manager) и kdm (Kde Display Manager) </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 20: /etc/X11/xdm/Xservers</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>:0 local /usr/bin/X11/X -nolisten tcp</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section></section><section><info><title>11. Изменение корневого каталога и виртуальные серверы</title></info><section><info><title>11.a. Изменение корневого каталога</title></info>
+<para>Изменение корневого каталога для службы является способом ограничения среды службы (или пользователя), в которой она имеет доступ лишь к необходимым ресурсам. Запущенная служба под пользователем, отличном от суперпользователя (nobody, apache, named) может предоставить злоумышленнику доступ лишь к тем файлам, к которым имеет доступ пользователь, от имени которого запущена служба. Это означает, что злоумышленник не сможет получить права root, даже если служба подвержена различным уязвимостям. </para>
+<para>Некоторые службы, например pure-ftpd и bind, могут быть заключены в chroot. Если служба поддерживает эту возможность, используйте ее, иначе вы можете можете создать среду собственноручно. Давайте рассмотрим пример создания chroot. Чтобы изучить работу механизма chroot, мы будем экспериментировать с bash (простейший для изучения случай). </para>
+<para>Создайте каталог /chroot, выполнив команду mkdir /chroot. Затем определите, какие динамические библиотеки необходимы для работы bash (если он собран с параметром -static, этот шаг можно пропустить): </para>
+<para>Следующая команда создаст список библиотек, необходимых для bash. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: Получение списка используемых библиотек</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># ldd /bin/bash</para>
+<para>  libncurses.so.5 =&gt; /lib/libncurses.so.5 (0x4001b000)</para>
+<para>  libdl.so.2 =&gt; /lib/libdl.so.2 (0x40060000)</para>
+<para>  libc.so.6 =&gt; /lib/libc.so.6 (0x40063000)</para>
+<para>  /lib/ld-linux.so.2 =&gt; /lib/ld-linux.so.2 (0x40000000)</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Теперь создадим изолированную среду для bash. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2: Создание изолированной среды для bash</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># mkdir /chroot/bash</para>
+<para># mkdir /chroot/bash/bin</para>
+<para># mkdir /chroot/bash/lib</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Затем скопируем файлы, используемые bash (/lib) в изолированный lib и скопируем файл bash в изолированный каталог bin. Этим мы создадим ту же самую среду, но с ограниченными возможностями. После этого попробуйте выполнить команду chroot /chroot/bash /bin/bash. Если вы получите строку приглашения, гласящую /, то у вас все получилось! Иначе вам сообщат, какого файла не хватает. Некоторые разделяемые библиотеки могут использовать другие файлы. </para>
+<para>Как вы можете заметить, внутри изолированной среды ничего, кроме echo, не работает. Это потому что в внутри среды chroot кроме bash нет никаких других команд, а echo является встроенной командой. </para>
+<para>Подобным образом вы можете создать службу в изолированной среде. Единственное различие в том, что служба может время от времени обращаться к устройствам и файлам настроек в /etc. Просто скопируйте их (файлы устройств можно скопировать с помощью команды cp -a) в изолированную среду, отредактируйте сценарий инициализации перед тем, как заключить службу в среду. Может быть сложным определить, какие устройства и файлы конфигурации могут понадобиться. Здесь может пригодиться команда strace. Запустите службу вместе с /usr/bin/strace и отследите все вызовы open, read, stat и, возможно, connect. Это подскажет вам, что нужно копировать. Но в большинстве случаев вам понадобится скопировать файл passwd (отредактируйте копию, удалив из него всех пользователей, не нужных для запуска службы), /dev/zero, /dev/log и /dev/random. </para></section><section><info><title>11.b. Пользовательский режим Linux</title></info>
+<para>Другим способом создания безопасной среды является запуск виртуальной машины. Виртуальная машина — это процесс, выглядящий как отдельная ОС и работающий в реальной операционной системе, которая предоставляет ему необходимые системные ресурсы. Безопасность достигается в том, что если сервер, запущенный внутри виртуальной машины, будет взломан, то будет затронут только виртуальный сервер, а не родительская установка. </para>
+<para>Для дальнейшей информации по установке пользовательского режима Linux, обратитесь к <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/uml.xml?style=printable">руководству по пользовательскому режиму Linux</link>. </para></section></section><section><info><title>12. Межсетевые экраны</title></info><section><info><title>12.a. Межсетевой экран</title></info>
+<para>Люди часто думают, что межсетевой экран окончательно защитит их систему, но они ошибаются. В большинстве случаев плохо настроенный межсетевой экран предоставляет еще меньше безопасен, чем его отсутствие. Он тоже является программой, и с ним нужно обращаться так же, как и с остальными программами, так как он может содержать уязвимости. </para>
+<para>А теперь подумайте перед реализацией межсетевого экрана! Так ли он вам нужен? Если да, то вам нужно написать правила, определяющие его работу, тип межсетевого экрана и кто должен им управлять. Но сначала прочитайте это руководство. </para>
+<para>Межсетевые экраны используются для двух целей: </para>
+<orderedlist>
+<listitem>
+<para>Для защиты извне (черви/злоумышленники) </para>
+</listitem>
+<listitem>
+<para>Для защиты изнутри (сотрудники/дети) </para>
+</listitem>
+</orderedlist>
+<para>В основном есть три типа межсетевых экранов: </para>
+<orderedlist>
+<listitem>
+<para>Фильтрование пакетов </para>
+</listitem>
+<listitem>
+<para>Прокси </para>
+</listitem>
+<listitem>
+<para>Программный шлюз </para>
+</listitem>
+</orderedlist>
+<para>Межсетевой экран должен работать на выделенном компьютере без лишних запущенных сервисов (или же только с sshd) и обезопасен такими способами, которые описаны в этом руководстве. </para></section><section><info><title>12.b. Фильтрование пакетов</title></info>
+<para>Весь сетевой трафик передается в виде пакетов. Непрерывный поток разделяется на маленькие, легко управляемые пакеты, которые собираются в точке назначения. В заголовке каждого пакета содержится информация о способе и месте его назначения. Также эта информация используется работы межсетевого экрана. Фильтрация основана на: </para>
+<orderedlist>
+<listitem>
+<para>разрешении или запрещении пакетов на основании IP-адреса отправителя/получателя </para>
+</listitem>
+<listitem>
+<para>разрешении или запрещении пакетов на основании порта отправителя/получателя </para>
+</listitem>
+<listitem>
+<para>разрешении или запрещении пакетов на основании протокола </para>
+</listitem>
+<listitem>
+<para>разрешении или запрещении пакетов на основании параметров, специфичных для каждого из протоколов </para>
+</listitem>
+</orderedlist>
+<para>Другими словами, фильтрация основана на содержимом заголовка пакета, а не самого пакета. </para>
+<para>Недостатки: </para>
+<orderedlist>
+<listitem>
+<para>адрес в пакете может быть ненастоящим адресом IP (или подделанным отправителем) </para>
+</listitem>
+<listitem>
+<para>данные или запросы в пропущенном пакете могут содержать непредвиденные данные, которые злоумышленник может использовать для эксплуатации известных уязвимостей в сервисах, расположенным на межсетевом экране или позади него </para>
+</listitem>
+<listitem>
+<para>критично к сбоям </para>
+</listitem>
+</orderedlist>
+<para>Преимущества: </para>
+<orderedlist>
+<listitem>
+<para>простая реализация </para>
+</listitem>
+<listitem>
+<para>возможность отправки предупреждений о возможных атаках до того, как они произойдут (то есть регистрация сканирования портов) </para>
+</listitem>
+<listitem>
+<para>хорош против предотвращения SYN-атак </para>
+</listitem>
+</orderedlist>
+<para>Вот примеры свободных фильтров пакетов для Linux: </para>
+<orderedlist>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.iptables.org/">Iptables</link> </para>
+</listitem>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.linuxdocs.org/HOWTOs/IPCHAINS-HOWTO.html">Ipchains</link> </para>
+</listitem>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.smoothwall.org/">SmoothWall</link> </para>
+</listitem>
+</orderedlist>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Рекомендуется использовать iptables. ipchains устарел. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>12.c. Прокси</title></info>
+<para>Шлюз сеансового уровня является межсетевым экраном, проверяющим соединения перед разрешением обмена данных. Это значит, что он не только разрешает или запрещает пересылку пакетов на основании их заголовка, но и определяет перед открытием сессии на основании настраиваемых правил, что оба адресата реально существуют. Фильтрация основывается на: </para>
+<orderedlist>
+<listitem>
+<para>IP-адресе отправителя/получателя </para>
+</listitem>
+<listitem>
+<para>порте отправителя/получателя </para>
+</listitem>
+<listitem>
+<para>времени </para>
+</listitem>
+<listitem>
+<para>протоколе </para>
+</listitem>
+<listitem>
+<para>пользователе </para>
+</listitem>
+<listitem>
+<para>пароле </para>
+</listitem>
+</orderedlist>
+<para>Весь трафик прослушивается и проверяется, и непрошенный трафик может быть отброшен. </para>
+<para>Недостатки: </para>
+<orderedlist>
+<listitem>
+<para>Взаимодействует на транспортном уровне и может потребовать изменения программ, предоставляющих транспортные функции. </para>
+</listitem>
+</orderedlist></section><section><info><title>12.d. Программный шлюз</title></info>
+<para>Шлюзы уровня приложений являются прокси-серверами для приложений, обменивающимися вместо клиентов данными с удаленными системами. Это позволяет находиться вне доступа извне за ДМЗ (демилитаризованной зоной, частью частной сети, видимой сквозь межсетевой экран) или разрешать межсетевому экрану предотвращать соединения извне. Фильтрация основывается на: </para>
+<orderedlist>
+<listitem>
+<para>разрешении или запрещении на основании IP-адреса источника/назначения </para>
+</listitem>
+<listitem>
+<para>на содержимом пакетов </para>
+</listitem>
+<listitem>
+<para>ограничения доступа к файлу на основе типа файла и расширения </para>
+</listitem>
+</orderedlist>
+<para>Преимущества: </para>
+<orderedlist>
+<listitem>
+<para>Может кэшировать файлы, увеличивая производительность сети </para>
+</listitem>
+<listitem>
+<para>Детализированная регистрация всех подключений </para>
+</listitem>
+<listitem>
+<para>Хорошая расширяемость (некотрые прокси могут распределять кэшированные данные между собой) </para>
+</listitem>
+<listitem>
+<para>Нет прямого доступа извне </para>
+</listitem>
+<listitem>
+<para>Может изменять содержимое пакета на лету </para>
+</listitem>
+</orderedlist>
+<para>Недостатки: </para>
+<orderedlist>
+<listitem>
+<para>Конфигурация является комплексной </para>
+</listitem>
+</orderedlist>
+<para>Программные шлюзы принято считать наиболее безопасным решением, так как они не запускаются с правами администратора, и все узлы за ними будут недоступными из интернета. </para>
+<para>Пример свободного шлюза: </para>
+<orderedlist>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.squid-cache.org/">Squid</link> </para>
+</listitem>
+</orderedlist></section><section><info><title>12.e. Iptables</title></info>
+<para>Для нормального функционирования iptables должен быть включен в ядро. Я включил поддержку iptables модулей (команда iptables загрузит их по мере необходимости) и пересобрал ядро (но вы можете включить их в само ядро, если намереваетесь отказаться от загружаемых модулей ядра, как сказано выше). Для более детальной информации по настройке iptables в ядре обратитесь к странице <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://iptables-tutorial.frozentux.net/iptables-tutorial.html#PREPARATIONS">Iptables Tutorial Chapter 5: Preparations</link>. После пересборки нового ядра (или во время компиляции) вы должны добавить команду iptables. Для этого просто наберите emerge iptables. </para>
+<para>Теперь проверим свою работу, запустив iptables -L. Если команда завершилась ошибкой, значит, что-то не так, поэтому проверьте еще раз настройки. </para>
+<para>iptables — новый и весьма улучшенный межсетевой экран в ядрах Linux 2.4.x. Он является наследником ipchains для ядер Linux 2.2.x. Одним из значительных нововведений является то, что iptables способен совершать полноценную фильтрацию пакетов. С ее помощью стало возможным следить за каждым установленным TCP-соединением. </para>
+<para>TCP-соединение содержит в себе серию пакетов, содержащих информацию IP-адресе и порте отправителя и получателя, а также последовательное число, поэтому пакеты могут быть воссозданы без потери данных. TCP является протоколом, ориентированном на подключение, в отличии от UDP, который не гарантирует доставку. </para>
+<para>Изучая заголовок TCP-пакета, межсетевой экран может может определить, является ли полученный пакет частью уже установленного соединения или нет, и принять решение, принять или отбросить этот пакет. </para>
+<para>При использовании межсетевого экрана, не отслеживающего соединения, возможно провести его и заставить с помощью манипулирования заголовками TCP-пакета принимать пакеты, которые необходимо отбросить. Это может быть сделано с помощью установки SYN или других флагов заголовка TCP и создания поддельного пакета, который будет считаться частью уже установленного соединения (ведь межсетевой экран не будет отслеживать состояние соединения). При использовании фильтрации пакетов, отслеживающих соединения, можно отбрасывать подобные пакеты, если они не являются частью уже установленного соединения. Это также предотвратит «stealth-сканирование», разновидности сканирования, с помощью которого сканер отправляет пакеты с такой комбинацией флагов, при которых они не будут зарегистрированы межсетевым экраном, полагающим, что это — обычные SYN-пакеты. </para>
+<para>В iptables также есть различные возможности, как например NAT (Network Address Translation, сетевая трансляция адресов) и ограничения по частоте. Ограничение по частоте весьма полезна для предотвращения DoS-атак (Denial of Service, отказ от обслуживания), например SYN-наводнений. </para>
+<para>TCP-соединения устанавливаются после так называемого троекратного рукопожатия. При установлении TCP-соединения клиент отправляет серверу пакет с установленным флагом SYN. При получении сервер возвращает клиенту пакет с установленными SYN+ACK. При его получении клиент отвечает третьим пакетом с ACK для подтверждения соединения. </para>
+<para>SYN-наводнения основаны на отправке SYN-пакетов с одновременным запретом отправки пакетов SYN+ACK. Клиент может создать пакет с поддельным IP-адресом отправителя, так как ему не нужно на что-либо отвечать. Сервер заполнит очередь подключений полуоткрытыми соединениями, ожидающими окончательного пакета с ACK, до того, как удалит их из очереди. Очередь ограничена определенным числом, и когда она заполнится, то станет невозможным принимать новые подключения. Если пакет с ACK не будет получен по истечении определенного временного интервала, то он будет автоматически удален из очереди. Настройки таймаута могут быть различными, но обычно они находятся в пределах 30—60 секунд или даже больше. Клиент инициирует атаку, создавая множество SYN-пакетов с различных IP-адресов и отправляя их на адрес цели как можно чаще, заполняя тем самым очередь полуоткрытыми соединениями и не позволяя другим клиентам устанавливать легитимные подключения к серверу. </para>
+<para>В данном случае может быть полезным ограничение отправки. Можно ограничить частоту отправки принятых SYN-пакетов с помощью -m limit --limit 1/s, тем самым ограничив число SYN-пакетов до одного в секунду и оградив свои ресурсы от SYN-наводнений. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Другим решением, предотвращающим SYN-наводнения является использование <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://cr.yp.to/syncookies.html">SYN cookies</link>, которые позволят вашему компьютеру отвечать на SYN-пакеты без заполнения очереди подключений. SYN cookies могут быть включены при конфигурировании ядра Linux, однако на данный момент эта поддержка считается экспериментальной. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>А теперь немного практических занятий! </para>
+<para>Будучи загруженным в ядро, iptables предоставляет 5 ловушек, в которые вы можете поместить свои правила. Они называются INPUT, OUTPUT, FORWARD, PREROUTING и POSTROUTING. Каждая из них называется цепочкой и содержит список правил. Каждое правило описывает, что если заголовок пакета выглядит как образец, то делать с этим пакетом нужно то-то и то-то. Если правило не подходит под пакет, то пакет переходит к следующему правилу в цепочке. </para>
+<para>Вы можете поместить правила в 5 цепочках напрямую или создать новые цепочки и добавлять в них правила таким же способом, как и в обычную цепочку. Iptables поддерживает следующие параметры. </para>
+<informaltable frame="all">
+<tgroup cols="2"><tbody>
+<row>
+<entry>
+<para>Параметр:</para>
+</entry>
+<entry>
+<para>Описание:</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-A</para>
+</entry>
+<entry>
+<para>Добавление</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-D</para>
+</entry>
+<entry>
+<para>Удаление</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-I</para>
+</entry>
+<entry>
+<para>Вставка</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-R</para>
+</entry>
+<entry>
+<para>Замена</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-L</para>
+</entry>
+<entry>
+<para>Просмотр</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-F</para>
+</entry>
+<entry>
+<para>Удалить все правила в цепочке или все цепочки</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-Z</para>
+</entry>
+<entry>
+<para>Обнулить счетчики во всех цепочках</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-C</para>
+</entry>
+<entry>
+<para>Проверить этот пакет в цепочке</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-N</para>
+</entry>
+<entry>
+<para>Создать новую пользовательскую цепочку</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-X</para>
+</entry>
+<entry>
+<para>Удалить пользовательскую цепочку</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-P</para>
+</entry>
+<entry>
+<para>Изменить политику цепочки для цели</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-E</para>
+</entry>
+<entry>
+<para>Изменить имя цепочки</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-p</para>
+</entry>
+<entry>
+<para>протоколе</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-s</para>
+</entry>
+<entry>
+<para>Адрес/маска источника</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-d</para>
+</entry>
+<entry>
+<para>Адрес/маска назначения</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-i</para>
+</entry>
+<entry>
+<para>Входящее имя (имя ethernet)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-o</para>
+</entry>
+<entry>
+<para>Исходящее имя (имя ethernet)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-j</para>
+</entry>
+<entry>
+<para>Перейти (цель для правила)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-m</para>
+</entry>
+<entry>
+<para>Расширенные сравнения (могут использовать внешние расширения)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-n</para>
+</entry>
+<entry>
+<para>Числовой вывод адресов и портов</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-t</para>
+</entry>
+<entry>
+<para>Таблица для обработки</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-v</para>
+</entry>
+<entry>
+<para>Расширенный режим</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-x</para>
+</entry>
+<entry>
+<para>Расширить числа (вывести все значения)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-f</para>
+</entry>
+<entry>
+<para>Проверять только второй и последующие фрагменты</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>-V</para>
+</entry>
+<entry>
+<para>Версия пакета</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>--line-numbers</para>
+</entry>
+<entry>
+<para>Указывать номера строк при выводе</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Сначала попробуем заблокировать все ICMP-пакеты, идущие на наш компьютер, просто для того, чтобы познакомиться с iptables поближе. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: Блокировка всех пакетов ICMP</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># iptables -A INPUT -p icmp -j DROP</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Сначала мы указываем цепочку, в которую хотим поместить правило, затем протокол проверяемого пакета и в конце цель. Цель может быть именем пользовательской цепочки или одной из специальных целей — ACCEPT, DROP, REJECT, LOG, QUEUE или MASQUERADE. В случае, если мы укажем DROP, то пакет будет отброшен без уведомления клиента. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: LOG является «необрывающей» целью. Если пакет подпадает под правило с целью LOG, то он будет передан следующему правилу в цепочке, а не обработан только этим правилом. Это позволяет регистрировать пакеты и при этом их обрабатывать. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Теперь попробуйте выполнить ping localhost. Вы не должны получить ответа, так как iptables будет отбрасывать все входящие ICMP-сообщения. Вы также не сможете проверить и другие компьютеры, так как ответные ICMP-пакеты тоже будут отбрасываться. А теперь, чтобы вновь получать ICMP, очистим цепочку. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2: Сбросить все правила</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># iptables -F</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Теперь взглянем на полноценную фильтрацию пакетов с помощью iptables. Если нужно полноценное исследование входящих пакетов на интерфейсе eth0, то выполним следующую команду: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 3: Принимать пакеты от уже установленных соединений</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># iptables -A INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Это разрешит принимать любой пакет из уже установленного соединения или связанного в цепочке INPUT. Вы можете отбросить любой пакет, не соответствующий состоянию таблицы, выполнив команду iptables -A INPUT -i eth0 -m state --state INVALID -j DROP сразу же после предыдущей. Эта команда включит фильтрацию пакетов на основании состояния, подключив внешнее расширение «state». Если вам необходимо разрешить подключаться клиентам к компьютеру, то вы можете использовать флаг --state NEW. Iptables содержит несколько модулей различного назначения. Вот некоторые из них: </para>
+<informaltable frame="all">
+<tgroup cols="3"><tbody>
+<row>
+<entry>
+<para>Модуль/сравнение</para>
+</entry>
+<entry>
+<para>Описание</para>
+</entry>
+<entry>
+<para>Расширенные параметры</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>mac</para>
+</entry>
+<entry>
+<para>Расширение для проверки MAC-адресов входящих пакетов.</para>
+</entry>
+<entry>
+<para>--mac-source</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>state</para>
+</entry>
+<entry>
+<para>Включение проверки состояния соединения</para>
+</entry>
+<entry>
+<para>--state (состоянием может быть ESTABLISHED,RELATED, INVALID, NEW)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>limit</para>
+</entry>
+<entry>
+<para>Частотное ограничение</para>
+</entry>
+<entry>
+<para>--limit, --limit-burst</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>owner</para>
+</entry>
+<entry>
+<para>Попытка проверить различные характеристики создателя пакета</para>
+</entry>
+<entry>
+<para>--uid-owner userid --gid-owner groupid --pid-owner processid --sid-owner sessionid </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>unclean</para>
+</entry>
+<entry>
+<para>Различные случайны проверки пакетов на правильность</para>
+</entry>
+<entry>
+<para/>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Теперь попробуем создать пользовательскую цепочку и применить ее для одного из существующих: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 4: Создание пользовательской цепочки</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>(Создаем новую цепочку с одним правилом)</para>
+<para># iptables -X mychain</para>
+<para># iptables -N mychain</para>
+<para># iptables -A mychain -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT</para>
+<para>(Разрешающая политика по умолчанию для всего исходящего трафика. Входящий будет отброшен.)</para>
+<para># iptables -P OUTPUT ACCEPT</para>
+<para># iptables -P INPUT DROP</para>
+<para>(И добавление ее в цепочку INPUT)</para>
+<para># iptables -A INPUT -j mychain</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Применив правило к входящей цепочке, мы получим следующую политику: все исходящие пакеты будут пропущены, а все входящие — отброшены. </para>
+<para>Документация может быть найдена по адресу <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.iptables.org/documentation/index.html#HOWTO">Netfilter/iptables documentation</link>. </para>
+<para>Теперь взглянем на полный пример. Мои правила для межсетевого экрана/шлюза будут следующими: </para>
+<orderedlist>
+<listitem>
+<para>Подключения к межсетевому экрану разрешены только через SSH (порт 22) </para>
+</listitem>
+<listitem>
+<para>Локальная сеть должна иметь доступ к HTTP, HTTPS и SSH (также должен быть разрешен DNS) </para>
+</listitem>
+<listitem>
+<para>ICMP может содержать постороннюю информацию и не должен быть разрешен. Конечно же, мы разрешаем некоторые ICMP-сообщения. </para>
+</listitem>
+<listitem>
+<para>Сканирование портов должно быть определено и зарегистрировано </para>
+</listitem>
+<listitem>
+<para>SYN-атаки должны быть пресечены </para>
+</listitem>
+<listitem>
+<para>Весь остальной трафик должен быть отброшен и запротоколирован </para>
+</listitem>
+<listitem>
+<para/>
+</listitem>
+</orderedlist>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 5: /etc/init.d/firewall</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>#!/sbin/runscript</para>
+<para>IPTABLES=/sbin/iptables</para>
+<para>IPTABLESSAVE=/sbin/iptables-save</para>
+<para>IPTABLESRESTORE=/sbin/iptables-restore</para>
+<para>FIREWALL=/etc/firewall.rules</para>
+<para>DNS1=212.242.40.3</para>
+<para>DNS2=212.242.40.51</para>
+<para>#inside</para>
+<para>IIP=10.0.0.2</para>
+<para>IINTERFACE=eth0</para>
+<para>LOCAL_NETWORK=10.0.0.0/24</para>
+<para>#outside</para>
+<para>OIP=217.157.156.144</para>
+<para>OINTERFACE=eth1</para>
+<para/>
+<para>opts="${opts} showstatus panic save restore showoptions rules"</para>
+<para/>
+<para>depend() {</para>
+<para>  need net</para>
+<para>}</para>
+<para/>
+<para>rules() {</para>
+<para>  stop</para>
+<para>  ebegin "Setting internal rules"</para>
+<para/>
+<para>  einfo "Setting default rule to drop"</para>
+<para>  $IPTABLES -P FORWARD DROP</para>
+<para>  $IPTABLES -P INPUT   DROP</para>
+<para>  $IPTABLES -P OUTPUT  DROP</para>
+<para/>
+<para>  #default rule</para>
+<para>  einfo "Creating states chain"</para>
+<para>  $IPTABLES -N allowed-connection</para>
+<para>  $IPTABLES -F allowed-connection</para>
+<para>  $IPTABLES -A allowed-connection -m state --state ESTABLISHED,RELATED -j ACCEPT</para>
+<para>  $IPTABLES -A allowed-connection -i $IINTERFACE -m limit -j LOG --log-prefix \</para>
+<para>      "Bad packet from ${IINTERFACE}:"</para>
+<para>  $IPTABLES -A allowed-connection -j DROP</para>
+<para/>
+<para>  #ICMP traffic</para>
+<para>  einfo "Creating icmp chain"</para>
+<para>  $IPTABLES -N icmp_allowed</para>
+<para>  $IPTABLES -F icmp_allowed</para>
+<para>  $IPTABLES -A icmp_allowed -m state --state NEW -p icmp --icmp-type \</para>
+<para>      time-exceeded -j ACCEPT</para>
+<para>  $IPTABLES -A icmp_allowed -m state --state NEW -p icmp --icmp-type \</para>
+<para>      destination-unreachable -j ACCEPT</para>
+<para>  $IPTABLES -A icmp_allowed -p icmp -j LOG --log-prefix "Bad ICMP traffic:"</para>
+<para>  $IPTABLES -A icmp_allowed -p icmp -j DROP</para>
+<para/>
+<para>  #Incoming traffic</para>
+<para>  einfo "Creating incoming ssh traffic chain"</para>
+<para>  $IPTABLES -N allow-ssh-traffic-in</para>
+<para>  $IPTABLES -F allow-ssh-traffic-in</para>
+<para>  #Flood protection</para>
+<para>  $IPTABLES -A allow-ssh-traffic-in -m limit --limit 1/second -p tcp --tcp-flags \</para>
+<para>      ALL RST --dport ssh -j ACCEPT</para>
+<para>  $IPTABLES -A allow-ssh-traffic-in -m limit --limit 1/second -p tcp --tcp-flags \</para>
+<para>      ALL FIN --dport ssh -j ACCEPT</para>
+<para>  $IPTABLES -A allow-ssh-traffic-in -m limit --limit 1/second -p tcp --tcp-flags \</para>
+<para>      ALL SYN --dport ssh -j ACCEPT</para>
+<para>  $IPTABLES -A allow-ssh-traffic-in -m state --state RELATED,ESTABLISHED -p tcp --dport ssh -j ACCEPT</para>
+<para/>
+<para>  #outgoing traffic</para>
+<para>  einfo "Creating outgoing ssh traffic chain"</para>
+<para>  $IPTABLES -N allow-ssh-traffic-out</para>
+<para>  $IPTABLES -F allow-ssh-traffic-out</para>
+<para>  $IPTABLES -A allow-ssh-traffic-out -p tcp --dport ssh -j ACCEPT</para>
+<para/>
+<para>  einfo "Creating outgoing dns traffic chain"</para>
+<para>  $IPTABLES -N allow-dns-traffic-out</para>
+<para>  $IPTABLES -F allow-dns-traffic-out</para>
+<para>  $IPTABLES -A allow-dns-traffic-out -p udp -d $DNS1 --dport domain \</para>
+<para>      -j ACCEPT</para>
+<para>  $IPTABLES -A allow-dns-traffic-out -p udp -d $DNS2 --dport domain \</para>
+<para>     -j ACCEPT</para>
+<para/>
+<para>  einfo "Creating outgoing http/https traffic chain"</para>
+<para>  $IPTABLES -N allow-www-traffic-out</para>
+<para>  $IPTABLES -F allow-www-traffic-out</para>
+<para>  $IPTABLES -A allow-www-traffic-out -p tcp --dport www -j ACCEPT</para>
+<para>  $IPTABLES -A allow-www-traffic-out -p tcp --dport https -j ACCEPT</para>
+<para/>
+<para>  #Catch portscanners</para>
+<para>  einfo "Creating portscan detection chain"</para>
+<para>  $IPTABLES -N check-flags</para>
+<para>  $IPTABLES -F check-flags</para>
+<para>  $IPTABLES -A check-flags -p tcp --tcp-flags ALL FIN,URG,PSH -m limit \</para>
+<para>      --limit 5/minute -j LOG --log-level alert --log-prefix "NMAP-XMAS:"</para>
+<para>  $IPTABLES -A check-flags -p tcp --tcp-flags ALL FIN,URG,PSH -j DROP</para>
+<para>  $IPTABLES -A check-flags -p tcp --tcp-flags ALL ALL -m limit --limit \</para>
+<para>      5/minute -j LOG --log-level 1 --log-prefix "XMAS:"</para>
+<para>  $IPTABLES -A check-flags -p tcp --tcp-flags ALL ALL -j DROP</para>
+<para>  $IPTABLES -A check-flags -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG \</para>
+<para>      -m limit --limit 5/minute -j LOG --log-level 1 --log-prefix "XMAS-PSH:"</para>
+<para>  $IPTABLES -A check-flags -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP</para>
+<para>  $IPTABLES -A check-flags -p tcp --tcp-flags ALL NONE -m limit \</para>
+<para>      --limit 5/minute -j LOG --log-level 1 --log-prefix "NULL_SCAN:"</para>
+<para>  $IPTABLES -A check-flags -p tcp --tcp-flags ALL NONE -j DROP</para>
+<para>  $IPTABLES -A check-flags -p tcp --tcp-flags SYN,RST SYN,RST -m limit \</para>
+<para>      --limit 5/minute -j LOG --log-level 5 --log-prefix "SYN/RST:"</para>
+<para>  $IPTABLES -A check-flags -p tcp --tcp-flags SYN,RST SYN,RST -j DROP</para>
+<para>  $IPTABLES -A check-flags -p tcp --tcp-flags SYN,FIN SYN,FIN -m limit \</para>
+<para>      --limit 5/minute -j LOG --log-level 5 --log-prefix "SYN/FIN:"</para>
+<para>  $IPTABLES -A check-flags -p tcp --tcp-flags SYN,FIN SYN,FIN -j DROP</para>
+<para/>
+<para>  # Apply and add invalid states to the chains</para>
+<para>  einfo "Applying chains to INPUT"</para>
+<para>  $IPTABLES -A INPUT -m state --state INVALID -j DROP</para>
+<para>  $IPTABLES -A INPUT -p icmp -j icmp_allowed</para>
+<para>  $IPTABLES -A INPUT -j check-flags</para>
+<para>  $IPTABLES -A INPUT -i lo -j ACCEPT</para>
+<para>  $IPTABLES -A INPUT -j allow-ssh-traffic-in</para>
+<para>  $IPTABLES -A INPUT -j allowed-connection</para>
+<para/>
+<para>  einfo "Applying chains to FORWARD"</para>
+<para>  $IPTABLES -A FORWARD -m state --state INVALID -j DROP</para>
+<para>  $IPTABLES -A FORWARD -p icmp -j icmp_allowed</para>
+<para>  $IPTABLES -A FORWARD -j check-flags</para>
+<para>  $IPTABLES -A FORWARD -o lo -j ACCEPT</para>
+<para>  $IPTABLES -A FORWARD -j allow-ssh-traffic-in</para>
+<para>  $IPTABLES -A FORWARD -j allow-www-traffic-out</para>
+<para>  $IPTABLES -A FORWARD -j allowed-connection</para>
+<para/>
+<para>  einfo "Applying chains to OUTPUT"</para>
+<para>  $IPTABLES -A OUTPUT -m state --state INVALID -j DROP</para>
+<para>  $IPTABLES -A OUTPUT -p icmp -j icmp_allowed</para>
+<para>  $IPTABLES -A OUTPUT -j check-flags</para>
+<para>  $IPTABLES -A OUTPUT -o lo -j ACCEPT</para>
+<para>  $IPTABLES -A OUTPUT -j allow-ssh-traffic-out</para>
+<para>  $IPTABLES -A OUTPUT -j allow-dns-traffic-out</para>
+<para>  $IPTABLES -A OUTPUT -j allow-www-traffic-out</para>
+<para>  $IPTABLES -A OUTPUT -j allowed-connection</para>
+<para/>
+<para>  #Allow client to route through via NAT (Network Address Translation)</para>
+<para>  $IPTABLES -t nat -A POSTROUTING -o $OINTERFACE -j MASQUERADE</para>
+<para>  eend $?</para>
+<para>}</para>
+<para/>
+<para>start() {</para>
+<para>  ebegin "Starting firewall"</para>
+<para>  if [ -e "${FIREWALL}" ]; then</para>
+<para>    restore</para>
+<para>  else</para>
+<para>    einfo "${FIREWALL} does not exists. Using default rules."</para>
+<para>    rules</para>
+<para>  fi</para>
+<para>  eend $?</para>
+<para>}</para>
+<para/>
+<para>stop() {</para>
+<para>  ebegin "Stopping firewall"</para>
+<para>  $IPTABLES -F</para>
+<para>  $IPTABLES -t nat -F</para>
+<para>  $IPTABLES -X</para>
+<para>  $IPTABLES -P FORWARD ACCEPT</para>
+<para>  $IPTABLES -P INPUT   ACCEPT</para>
+<para>  $IPTABLES -P OUTPUT  ACCEPT</para>
+<para>  eend $?</para>
+<para>}</para>
+<para/>
+<para>showstatus() {</para>
+<para>  ebegin "Status"</para>
+<para>  $IPTABLES -L -n -v --line-numbers</para>
+<para>  einfo "NAT status"</para>
+<para>  $IPTABLES -L -n -v --line-numbers -t nat</para>
+<para>  eend $?</para>
+<para>}</para>
+<para/>
+<para>panic() {</para>
+<para>  ebegin "Setting panic rules"</para>
+<para>  $IPTABLES -F</para>
+<para>  $IPTABLES -X</para>
+<para>  $IPTABLES -t nat -F</para>
+<para>  $IPTABLES -P FORWARD DROP</para>
+<para>  $IPTABLES -P INPUT   DROP</para>
+<para>  $IPTABLES -P OUTPUT  DROP</para>
+<para>  $IPTABLES -A INPUT -i lo -j ACCEPT</para>
+<para>  $IPTABLES -A OUTPUT -o lo -j ACCEPT</para>
+<para>  eend $?</para>
+<para>}</para>
+<para/>
+<para>save() {</para>
+<para>  ebegin "Saving Firewall rules"</para>
+<para>  $IPTABLESSAVE &gt; $FIREWALL</para>
+<para>  eend $?</para>
+<para>}</para>
+<para/>
+<para>restore() {</para>
+<para>  ebegin "Restoring Firewall rules"</para>
+<para>  $IPTABLESRESTORE &lt; $FIREWALL</para>
+<para>  eend $?</para>
+<para>}</para>
+<para/>
+<para>restart() {</para>
+<para>  svc_stop; svc_start</para>
+<para>}</para>
+<para/>
+<para>showoptions() {</para>
+<para>  echo "Usage: $0 {start|save|restore|panic|stop|restart|showstatus}"</para>
+<para>  echo "start)      will restore setting if exists else force rules"</para>
+<para>  echo "stop)       delete all rules and set all to accept"</para>
+<para>  echo "rules)      force settings of new rules"</para>
+<para>  echo "save)       will store settings in ${FIREWALL}"</para>
+<para>  echo "restore)    will restore settings from ${FIREWALL}"</para>
+<para>  echo "showstatus) Shows the status"</para>
+<para>}</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Вот несколько советов при создании правил для межсетевого экрана: </para>
+<orderedlist>
+<listitem>
+<para>Создайте политику межсетевого экрана до того, как ее реализуете </para>
+</listitem>
+<listitem>
+<para>Сделайте ее простой </para>
+</listitem>
+<listitem>
+<para>Знайте принцип работы каждого протокола (прочитайте подходящий <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.ietf.org/">RFC</link>) </para>
+</listitem>
+<listitem>
+<para>Всегда помните, что межсетевой экран — это просто программа, запускаемая с правами администратора. </para>
+</listitem>
+<listitem>
+<para>Проверьте свой межсетевой экран </para>
+</listitem>
+</orderedlist>
+<para>Если вам кажется, что iptables труден для понимания или нужно слишком много времени для настройки межсетевого экрана, то вы можете попробовать <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.shorewall.net/">Shorewall</link>. Для генерации правил межсетевого экрана он использует iptables, но акцентируется на правилах и не указывает протокол. </para></section><section><info><title>12.f. Squid</title></info>
+<para>Squid является очень хорошим прокси-сервером. Он может фильтровать трафик на основании времени, регулярных выражений в пути/URI, IP-адреса получателя и отправителя, домена, браузера, имени зарегистрированного пользователя, типа MIME и номера порта (протокола). Некоторые возможности не указаны, но трудно перечислить их всех. </para>
+<para>В следующем примере я добавил фильтр баннеров вместо фильтра, основанного на фильтрации порносайтов. По этой причине gentoo.org не должен быть перечислен в списке порносайтов. И я не собираюсь тратить свое время на поиски хороших сайтов для вас. </para>
+<para>В данном случае, вот мои правила: </para>
+<orderedlist>
+<listitem>
+<para>Веб-серфинг (HTTP/HTTPS) разрешен только в рабочее время (с понедельника по пятницу с 8 до 17 часов и в субботу с 8 до 13 часов), но если служащие остаются, то они должны работать, а не сидеть в интернете. </para>
+</listitem>
+<listitem>
+<para>Скачивание файлов не разрешено (.exe, .com, .arj, .zip, .asf, .avi, .mpg, .mpeg и так далее) </para>
+</listitem>
+<listitem>
+<para>Нам не нужны баннеры, поэтому они будут отфильтрованы и заменены на прозрачный GIF (здесь пригодится ваша креативность!). </para>
+</listitem>
+<listitem>
+<para>Все остальные подключения в/из Интернета запрещены. </para>
+</listitem>
+</orderedlist>
+<para>Все это реализуется в 4 простых шага. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 6: /etc/squid/squid.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># Указываем IP и порт</para>
+<para>http_port 10.0.2.1:3128</para>
+<para/>
+<para># Стандартная конфигурация</para>
+<para>hierarchy_stoplist cgi-bin ?</para>
+<para>acl QUERY urlpath_regex cgi-bin \?</para>
+<para>no_cache deny QUERY</para>
+<para/>
+<para># Добавляем основные списки контроля доступа</para>
+<para>acl all src 0.0.0.0/0.0.0.0</para>
+<para>acl manager proto cache_object</para>
+<para>acl localhost src 127.0.0.1/255.255.255.255</para>
+<para/>
+<para># Добавляем тех, кто может пользоваться прокси</para>
+<para>acl localnet src 10.0.0.0/255.255.0.0</para>
+<para/>
+<para># Добавляем порты</para>
+<para>acl SSL_ports port 443</para>
+<para>acl Safe_ports port 80</para>
+<para>acl Safe_ports port 443</para>
+<para>acl purge method PURGE</para>
+<para/>
+<para># Добавляем список контроля доступа, основанного на регулярных</para>
+<para># выражениях, встречаемых в URL</para>
+<para>acl archives urlpath_regex "/etc/squid/files.acl"</para>
+<para>acl url_ads url_regex "/etc/squid/banner-ads.acl"</para>
+<para/>
+<para># Добавляем список контроля доступа, основанного на времени и дате</para>
+<para>acl restricted_weekdays time MTWHF 8:00-17:00</para>
+<para>acl restricted_weekends time A 8:00-13:00</para>
+<para/>
+<para>acl CONNECT method CONNECT</para>
+<para/>
+<para># Разрешаем менеджеру подключаться с localhost</para>
+<para>http_access allow manager localhost</para>
+<para>http_access deny manager</para>
+<para/>
+<para># Разрешать очищать запросы только с localhost</para>
+<para>http_access allow purge localhost</para>
+<para>http_access deny purge</para>
+<para/>
+<para># Запрещать запросы на неизвестные порты</para>
+<para>http_access deny !Safe_ports</para>
+<para/>
+<para># Запрещать подключение к портам, не относящимся к SSL</para>
+<para>http_access deny CONNECT !SSL_ports</para>
+<para/>
+<para># Мои собственные правила</para>
+<para/>
+<para># Добавляем страницу, отображаемую на месте</para>
+<para># удаленного баннера</para>
+<para>deny_info NOTE_ADS_FILTERED url_ads</para>
+<para/>
+<para># Запрещаем баннеры</para>
+<para>http_access deny url_ads</para>
+<para/>
+<para># Запрещаем любые архивы</para>
+<para>http_access deny archives</para>
+<para/>
+<para># Ограничиваем доступ в рабочим временем</para>
+<para>http_access allow localnet restricted_weekdays</para>
+<para>http_access allow localnet restricted_weekends</para>
+<para/>
+<para># Запрещаем все остальное</para>
+<para>http_access deny all</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Далее перечислим типы запрещенных к скачиванию файлов. Я добавил zip, viv, exe, mp3, rar, ace, avi, mov, mpg, mpeg, au, ra, arj, tar, gz и z файлы. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 7: /etc/squid/files.acl</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>\.[Zz][Ii][pP]$</para>
+<para>\.[Vv][Ii][Vv].*</para>
+<para>\.[Ee][Xx][Ee]$</para>
+<para>\.[Mm][Pp]3$</para>
+<para>\.[Rr][Aa][Rr]$</para>
+<para>\.[Aa][Cc][Ee]$</para>
+<para>\.[Aa][Ss][Ff]$</para>
+<para>\.[Aa][Vv][Ii]$</para>
+<para>\.[Mm][Oo][Vv]$</para>
+<para>\.[Mm][Pp][Gg]$</para>
+<para>\.[Mm][Pp][Ee][Gg]$</para>
+<para>\.[Aa][Uu]$</para>
+<para>\.[Rr][Aa]$</para>
+<para>\.[Aa][Rr][Jj]$</para>
+<para>\.[Tt][Aa][Rr]$</para>
+<para>\.[Gg][Zz]$</para>
+<para>\.[Zz]$</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Обратите внимание на [] с заглавными и строчными буквами. Это сделано для того, чтобы никто не смог обмануть наш фильтр, пытаясь скачать файл с расширением AvI вместо avi. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Далее добавим регулярные выражения для определения баннеров. Вы, возможно, будете более изобретательнее меня: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 8: /etc/squid/banner-ads.acl</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>/adv/.*\.gif$</para>
+<para>/[Aa]ds/.*\.gif$</para>
+<para>/[Aa]d[Pp]ix/</para>
+<para>/[Aa]d[Ss]erver</para>
+<para>/[Aa][Dd]/.*\.[GgJj][IiPp][FfGg]$</para>
+<para>/[Bb]annerads/</para>
+<para>/adbanner.*\.[GgJj][IiPp][FfGg]$</para>
+<para>/images/ad/</para>
+<para>/reklame/</para>
+<para>/RealMedia/ads/.*</para>
+<para>^http://www\.submit-it.*</para>
+<para>^http://www\.eads.*</para>
+<para>^http://ads\.</para>
+<para>^http://ad\.</para>
+<para>^http://ads02\.</para>
+<para>^http://adaver.*\.</para>
+<para>^http://adforce\.</para>
+<para>adbot\.com</para>
+<para>/ads/.*\.gif.*</para>
+<para>_ad\..*cgi</para>
+<para>/Banners/</para>
+<para>/SmartBanner/</para>
+<para>/Ads/Media/Images/</para>
+<para>^http://static\.wired\.com/advertising/</para>
+<para>^http://*\.dejanews\.com/ads/</para>
+<para>^http://adfu\.blockstackers\.com/</para>
+<para>^http://ads2\.zdnet\.com/adverts</para>
+<para>^http://www2\.burstnet\.com/gifs/</para>
+<para>^http://www.\.valueclick\.com/cgi-bin/cycle</para>
+<para>^http://www\.altavista\.com/av/gifs/ie_horiz\.gif</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>И в заключении мы хотим, чтобы отображался следующий файл вместо удаленного баннера. Он основан половине HTML-файла с прозрачным GIF-изображением размером 4х4. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 9: /etc/squid/errors/NOTE_ADS_FILTERED</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>&lt;HTML&gt;</para>
+<para>&lt;HEAD&gt;</para>
+<para>&lt;META HTTP-EQUIV="REFRESH" CONTENT="0; URL=http://localhost/images/4x4.gif"&gt;</para>
+<para>&lt;TITLE&gt;ERROR: The requested URL could not be retrieved&lt;/TITLE&gt;</para>
+<para>&lt;/HEAD&gt;</para>
+<para>&lt;BODY&gt;</para>
+<para>&lt;H1&gt;Add filtered!&lt;/H1&gt;</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Не закрывайте теги &lt;HTML&gt; и &lt;BODY&gt;. Squid сделает это самостоятельно. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Как вы видите, у Squid есть множество возможностей для очень эффективной фильтрации и кэширования. Можно даже использовать альтернативные прокси-сервера Squid для сегментирования очень больших сетей. Приведенная конфигурация подходит для небольшой сети с 1—20 пользователями. </para>
+<para>Однако комбинация межсетевого экрана (iptables) и программного шлюза (Squid), возможно, является наилучшей, особенно если Squid находится где-нибудь в безопасном месте, где никто не может иметь к нему доступ извне. Нам все же стоит позаботиться об атаках изнутри. </para>
+<para>Теперь вам необходимо настроить клиентские браузеры для использования прокси-сервера. Шлюз предотвратит попытки пользователей общаться с внешним миром без использования прокси. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: В Mozilla это может быть сделано через Edit-&gt;Preferences-&gt;Advanced-&gt;Proxies. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Также можно настроить прозрачное использование прокси, указав iptables перенаправлять весь исходящий трафик на вход Squid. Это можно сделать, добавив следующее правило на шлюзе: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 10: Разрешить проброс портов для нашего прокси-сервера</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to proxyhost:3128</para>
+<para># iptables -t nat -A PREROUTING -p tcp --dport 443 -j DNAT --to proxyhost:3128</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Если прокси-сервер работает на том же узле, что и межсетевой экран (хотя это не рекомендуется, но может понадобится из-за отсутствия свободных компьютеров), то используйте цель REDIRECT вместо DNAT (REDIRECT направит пакеты на localhost). </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>12.g. Изучено</title></info>
+<para>Мы узнали: </para>
+<orderedlist>
+<listitem>
+<para>Межсетевой экран является опасным сам по себе. Плохо настроенный межсетевой экран хуже, чем его отсутствие. </para>
+</listitem>
+<listitem>
+<para>Как установить простой шлюз и прозрачный прокси-сервер. </para>
+</listitem>
+<listitem>
+<para>Залогом хорошей работы межсетевого экрана заключается в знании протоколов, которые вы собираетесь разрешить. </para>
+</listitem>
+<listitem>
+<para>IP-трафик не всегда содержит законные данные, например пакеты ICMP, которые могут содержать вредоносное содержимое. </para>
+</listitem>
+<listitem>
+<para>Как предотвратить SYN-атаку. </para>
+</listitem>
+<listitem>
+<para>Фильтрация HTTP-трафика предотвратит загрузку нежелательных изображений и вирусов. </para>
+</listitem>
+<listitem>
+<para>Сочетание пакетных фильтров и программных шлюзов дает лучший контроль. </para>
+</listitem>
+</orderedlist>
+<para>Теперь, если вам действительно это нужно, идите и создайте правила межсетевого экрана, отвечающего вашим требованиям. </para></section></section><section><info><title>13. Обнаружение вторжения</title></info><section><info><title>13.a. AIDE (Advanced Intrusion Detection Environment)</title></info>
+<para>AIDE — это система обнаружения атак, основанная на узле (Host-Based Intrusion Detection System, HIDS), свободная альтернатива Tripwire (если вы уже работали с Tripwire, то не должны испытывать сложности с конфигурационным файлом AIDE). HIDS используется для обнаружения изменений в важных системных файлах настроек и двоичных файлах с помощью сверки уникальных криптографических контрольных сумм, созданных каждого из файлов и сохраненных в надежном месте. Принцип действия таков: заранее сохраненный и достоверный хеш сравнивается с сгенерированным с текущей копии каждого файла, чтобы определить какой из файлов был изменен. HIDS является великолепным решением для регистрации подозрительных изменений в системе, однако для того, чтобы она заработала, нужно приложить небольшие усилия. </para>
+<para>Конфигурационный файл основан на применении регулярных выражений, макросов и правил для файлов и каталогов. Есть следующие макросы: </para>
+<informaltable frame="all">
+<tgroup cols="3"><tbody>
+<row>
+<entry>
+<para>Макрос</para>
+</entry>
+<entry>
+<para>Описание</para>
+</entry>
+<entry>
+<para>Синтаксис</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ifdef</para>
+</entry>
+<entry>
+<para>если определен</para>
+</entry>
+<entry>
+<para>@@ifdef "name"</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ifndef</para>
+</entry>
+<entry>
+<para>если не определен</para>
+</entry>
+<entry>
+<para>@@ifndef "name"</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>define</para>
+</entry>
+<entry>
+<para>определить переменную </para>
+</entry>
+<entry>
+<para>@@define "name" "value"</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>undef</para>
+</entry>
+<entry>
+<para>удалить переменную</para>
+</entry>
+<entry>
+<para>@@undef "name"</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ifhost</para>
+</entry>
+<entry>
+<para>если "hostname"</para>
+</entry>
+<entry>
+<para>@@ifhost "hostname"</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ifnhost</para>
+</entry>
+<entry>
+<para>если не "hostname"</para>
+</entry>
+<entry>
+<para>@@ifnhost "hostname"</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>endif</para>
+</entry>
+<entry>
+<para>endif должен использоваться каждый раз, когда используется любой из вышеприведенных макросов, за исключением define и undef </para>
+</entry>
+<entry>
+<para>@@endif</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Если у вас есть много компьютеров с Gentoo и вы хотите использовать на них AIDE, то макросы будут весьма полезными. Но не на всех компьютерах запускаются одни и те же сервисы или есть одни и те же пользователи. </para>
+<para>Теперь необходимо установить флаги проверок для файлов и каталогов. Возможны сочетания прав доступа, свойств файлов и криптографических хешей (контрольных сумм). </para>
+<informaltable frame="all">
+<tgroup cols="2"><tbody>
+<row>
+<entry>
+<para>Флаг</para>
+</entry>
+<entry>
+<para>Описание</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>p</para>
+</entry>
+<entry>
+<para>права доступа</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>i</para>
+</entry>
+<entry>
+<para>inode</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>n</para>
+</entry>
+<entry>
+<para>количество ссылок</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>u</para>
+</entry>
+<entry>
+<para>пользователь</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>g</para>
+</entry>
+<entry>
+<para>группа</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>s</para>
+</entry>
+<entry>
+<para>размер</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>b</para>
+</entry>
+<entry>
+<para>число блоков</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>m</para>
+</entry>
+<entry>
+<para>время последней модификации</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>a</para>
+</entry>
+<entry>
+<para>время последнего доступа</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>c</para>
+</entry>
+<entry>
+<para>время изменения</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>S</para>
+</entry>
+<entry>
+<para>проверка растущего размера</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>md5</para>
+</entry>
+<entry>
+<para>контрольная сумма MD5</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>sha1</para>
+</entry>
+<entry>
+<para>контрольная сумма SHA1</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>rmd160</para>
+</entry>
+<entry>
+<para>контрольная сумма RMD160</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>tiger</para>
+</entry>
+<entry>
+<para>контрольная сумма Tiger</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>R</para>
+</entry>
+<entry>
+<para>p+i+n+u+g+s+m+c+md5</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>L</para>
+</entry>
+<entry>
+<para>p+i+n+u+g</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>E</para>
+</entry>
+<entry>
+<para>Пустая группа</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>&gt;</para>
+</entry>
+<entry>
+<para>растущий лог-файл p+u+g+i+n+S</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>А если AIDE собран с поддержкой mhash, то доступны следующие возможности: </para>
+<informaltable frame="all">
+<tgroup cols="2"><tbody>
+<row>
+<entry>
+<para>Флаг</para>
+</entry>
+<entry>
+<para>Описание</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>haval</para>
+</entry>
+<entry>
+<para>контрольная сумма HAVAL</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>gost</para>
+</entry>
+<entry>
+<para>контрольная сумма ГОСТ</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>crc32</para>
+</entry>
+<entry>
+<para>контрольная сумма CRC32</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Теперь вы можете создать собственные правила, основанные на сочетании вышеперечисленных флагов, например: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: Создание набора правил для AIDE</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>All=R+a+sha1+rmd160</para>
+<para>Norm=s+n+b+md5+sha1+rmd160</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>И последнее, что нам понадобится для создания собственного конфигурационного файла, — это умение добавлять правило для файла или каталога. Чтобы ввести правило, скомбинируйте файл или каталог с правилом. AIDE добавляет все файлы рекурсивно, если вы не указали обратное в другом правиле. </para>
+<informaltable frame="all">
+<tgroup cols="2"><tbody>
+<row>
+<entry>
+<para>Флаг</para>
+</entry>
+<entry>
+<para>Описание</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>!</para>
+</entry>
+<entry>
+<para>Не добавлять этот файл или каталог.</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>=</para>
+</entry>
+<entry>
+<para>Добавлять этот каталог, но не рекурсивно.</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>А теперь взглянем на полный пример: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2: /etc/aide/aide.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>@@ifndef TOPDIR</para>
+<para>@@define TOPDIR /</para>
+<para>@@endif</para>
+<para/>
+<para>@@ifndef AIDEDIR</para>
+<para>@@define AIDEDIR /etc/aide</para>
+<para>@@endif</para>
+<para/>
+<para>@@ifhost smbserv</para>
+<para>@@define smbactive</para>
+<para>@@endif</para>
+<para/>
+<para># Расположение базы данных для чтения.</para>
+<para>database=file:@@{AIDEDIR}/aide.db</para>
+<para/>
+<para># Расположение базы данных для записи.</para>
+<para>database_out=file:aide.db.new</para>
+<para/>
+<para>verbose=20</para>
+<para>report_url=stdout</para>
+<para/>
+<para># Определение правил</para>
+<para>All=R+a+sha1+rmd160</para>
+<para>Norm=s+n+b+md5+sha1+rmd160</para>
+<para/>
+<para>@@{TOPDIR} Norm</para>
+<para>!@@{TOPDIR}etc/aide</para>
+<para>!@@{TOPDIR}dev</para>
+<para>!@@{TOPDIR}media</para>
+<para>!@@{TOPDIR}mnt</para>
+<para>!@@{TOPDIR}proc</para>
+<para>!@@{TOPDIR}root</para>
+<para>!@@{TOPDIR}sys</para>
+<para>!@@{TOPDIR}tmp</para>
+<para>!@@{TOPDIR}var/log</para>
+<para>!@@{TOPDIR}var/run</para>
+<para>!@@{TOPDIR}usr/portage</para>
+<para>@@ifdef smbactive</para>
+<para>!@@{TOPDIR}etc/smb/private/secrets.tdb</para>
+<para>@@endif</para>
+<para>=@@{TOPDIR}home Norm</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>В приведенном примере мы указали некоторые макросы, корневой каталог, с которого будет начинать свою работу AIDE, и каталог, в котором находится AIDE. AIDE сверяется с /etc/aide/aide.db при проверке на целостность. Но при обновлении или создании нового файла она сохраняет информацию в /etc/aide/aide.db.new. Это делается для того, чтобы не переписать старую базу данных. Параметр report_URL пока не реализован, но, согласно автору, он должен отправлять электронную почту или даже запуск сценариев. </para>
+<para>Теперь по умолчанию пакет AIDE поставляется вместе с рабочим конфигурационным файлом, сценарием-помощником и сценарием планировщика заданий crontab. Сценарий-помощник содержит множество задач для вас и предоставляет более дружественный интерфейс. Чтобы просмотреть все доступные параметры, попробуйте aide --help. Все что вам нужно, чтобы начать, — запустить aide -i, и теперь сценарий crontab должен найти базу данных и ежедневно отправлять отчеты по электронной почте. Рекомендуется все же пересмотреть файл /etc/aide/aide.conf и удостовериться, что конфигурация подходит для данного компьютера. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: В зависимости от процессора, скорости чтения диска и установленных для файлов флагов, это может занять много времени. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Не забудьте установить алиасы, чтобы получать почту, адресуемую суперпользователю. Иначе вы никогда не узнаете, что пишет для вас в отчетах AIDE. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Все же есть небольшой риск, заключающийся в том, что злоумышленник может (если узнает об установленном AIDE) изменить локальную базу данных файлов, обновить ее или изменить /usr/bin/aide. Поэтому вы должны создать компакт-диск или иной носитель и сохранить на нем копию файла .db и двоичных файлов AIDE. </para>
+<para>Дополнительную информацию вы можете найти на сайте проекта <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.cs.tut.fi/%7Erammer/aide.html">AIDE</link> </para></section><section><info><title>13.b. Snort</title></info>
+<para>Snort является сетевой системой обнаружения вторжения (Network Intrusion Detection System, NIDS). Чтобы установить и настроить его, воспользуйтесь следующими примерами. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 3: /etc/conf.d/snort</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>PIDFILE=/var/run/snort_eth0.pid</para>
+<para>MODE="full"</para>
+<para>NETWORK="10.0.0.0/24"</para>
+<para>LOGDIR="/var/log/snort"</para>
+<para>CONF=/etc/snort/snort.conf</para>
+<para>SNORT_OPTS="-D -s -u snort -dev -l $LOGDIR -h $NETWORK -c $CONF"</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 4: /etc/snort/snort.conf</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>(Шаг 1)</para>
+<para>var HOME_NET 10.0.0.0/24</para>
+<para>var EXTERNAL_NET any</para>
+<para>var SMTP $HOME_NET</para>
+<para>var HTTP_SERVERS $HOME_NET</para>
+<para>var SQL_SERVERS $HOME_NET</para>
+<para>var DNS_SERVERS [10.0.0.2/32,212.242.40.51/32]</para>
+<para>var RULE_PATH ./</para>
+<para/>
+<para>(Шаг 2)</para>
+<para>preprocessor frag2</para>
+<para>preprocessor stream4: detect_scans detect_state_problems detect_scans disable_evasion_alerts</para>
+<para>preprocessor stream4_reassemble: ports all</para>
+<para>preprocessor http_decode:80 8080 unicode iis_alt_unicode double_encode iis_flip_slash full_whitespace</para>
+<para>preprocessor rpc_decode: 111 32771</para>
+<para>preprocessor bo: -nobrute</para>
+<para>preprocessor telnet_decode</para>
+<para/>
+<para>(Шаг 3)</para>
+<para>include classification.config</para>
+<para/>
+<para>(Шаг 4)</para>
+<para>include $RULE_PATH/bad-traffic.rules</para>
+<para>include $RULE_PATH/exploit.rules</para>
+<para>include $RULE_PATH/scan.rules</para>
+<para>include $RULE_PATH/finger.rules</para>
+<para>include $RULE_PATH/ftp.rules</para>
+<para>include $RULE_PATH/telnet.rules</para>
+<para>include $RULE_PATH/smtp.rules</para>
+<para>include $RULE_PATH/rpc.rules</para>
+<para>include $RULE_PATH/rservices.rules</para>
+<para>include $RULE_PATH/dos.rules</para>
+<para>include $RULE_PATH/ddos.rules</para>
+<para>include $RULE_PATH/dns.rules</para>
+<para>include $RULE_PATH/tftp.rules</para>
+<para>include $RULE_PATH/web-cgi.rules</para>
+<para>include $RULE_PATH/web-coldfusion.rules</para>
+<para>include $RULE_PATH/web-iis.rules</para>
+<para>include $RULE_PATH/web-frontpage.rules</para>
+<para>include $RULE_PATH/web-misc.rules</para>
+<para>include $RULE_PATH/web-attacks.rules</para>
+<para>include $RULE_PATH/sql.rules</para>
+<para>include $RULE_PATH/x11.rules</para>
+<para>include $RULE_PATH/icmp.rules</para>
+<para>include $RULE_PATH/netbios.rules</para>
+<para>include $RULE_PATH/misc.rules</para>
+<para>include $RULE_PATH/attack-responses.rules</para>
+<para>include $RULE_PATH/backdoor.rules</para>
+<para>include $RULE_PATH/shellcode.rules</para>
+<para>include $RULE_PATH/policy.rules</para>
+<para>include $RULE_PATH/porn.rules</para>
+<para>include $RULE_PATH/info.rules</para>
+<para>include $RULE_PATH/icmp-info.rules</para>
+<para>include $RULE_PATH/virus.rules</para>
+<para># include $RULE_PATH/experimental.rules</para>
+<para>include $RULE_PATH/local.rules</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 5: /etc/snort/classification.config</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>config classification: not-suspicious,Not Suspicious Traffic,3</para>
+<para>config classification: unknown,Unknown Traffic,3</para>
+<para>config classification: bad-unknown,Potentially Bad Traffic, 2</para>
+<para>config classification: attempted-recon,Attempted Information Leak,2</para>
+<para>config classification: successful-recon-limited,Information Leak,2</para>
+<para>config classification: successful-recon-largescale,Large Scale Information Leak,2</para>
+<para>config classification: attempted-dos,Attempted Denial of Service,2</para>
+<para>config classification: successful-dos,Denial of Service,2</para>
+<para>config classification: attempted-user,Attempted User Privilege Gain,1</para>
+<para>config classification: unsuccessful-user,Unsuccessful User Privilege Gain,1</para>
+<para>config classification: successful-user,Successful User Privilege Gain,1</para>
+<para>config classification: attempted-admin,Attempted Administrator Privilege Gain,1</para>
+<para>config classification: successful-admin,Successful Administrator Privilege Gain,1</para>
+<para/>
+<para># NEW CLASSIFICATIONS</para>
+<para>config classification: rpc-portmap-decode,Decode of an RPC Query,2</para>
+<para>config classification: shellcode-detect,Executable code was detected,1</para>
+<para>config classification: string-detect,A suspicious string was detected,3</para>
+<para>config classification: suspicious-filename-detect,A suspicious filename was detected,2</para>
+<para>config classification: suspicious-login,An attempted login using a suspicious username was detected,2</para>
+<para>config classification: system-call-detect,A system call was detected,2</para>
+<para>config classification: tcp-connection,A TCP connection was detected,4</para>
+<para>config classification: trojan-activity,A Network Trojan was detected, 1</para>
+<para>config classification: unusual-client-port-connection,A client was using an unusual port,2</para>
+<para>config classification: network-scan,Detection of a Network Scan,3</para>
+<para>config classification: denial-of-service,Detection of a Denial of Service Attack,2</para>
+<para>config classification: non-standard-protocol,Detection of a non-standard protocol or event,2</para>
+<para>config classification: protocol-command-decode,Generic Protocol Command Decode,3</para>
+<para>config classification: web-application-activity,access to a potentially vulnerable web application,2</para>
+<para>config classification: web-application-attack,Web Application Attack,1</para>
+<para>config classification: misc-activity,Misc activity,3</para>
+<para>config classification: misc-attack,Misc Attack,2</para>
+<para>config classification: icmp-event,Generic ICMP event,3</para>
+<para>config classification: kickass-porn,SCORE! Get the lotion!,1</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Дополнительной информация может быть найдена на сайте <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.snort.org/">Snort</link>. </para></section><section><info><title>13.c. Обнаружение вредоносных программ с помощью chkrootkit</title></info>
+<para>Система HIDS, как AIDE, является лучшим средством для обнаружения изменений в вашей системе, но хуже не будет, если будет установлен еще один рубеж обороны. chkrootkit — это утилита, которая сканирует системные файлы на наличие руткитов — программ, разработанных для сокрытия присутствия взломщика и сохранения доступа к системе, а также на наличие следов кейлоггеров и прочих вредоносных программ. Хотя chkrootkit (и прочие аналоги, например rkhunter) являются полезными утилитами, как контроля за системой, так и для обнаружения следов вторжения, но они не могут гарантировать, что ваша система в безопасности. </para>
+<para>Наилучший способ использовать chkrootkit для обнаружения внедрения — запускать его с помощью cron. Сначала установите app-admin/chkrootkit. chkrootkit может запускаться из командной строки или же с помощью записи в cron следующего вида: </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 6: Назначение задания chrootkit в crontab</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>0 3 * * * /usr/sbin/chkrootkit</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section></section><section><info><title>14. Регулярные обновления</title></info><section><info><title>14.a. Регулярные обновления</title></info>
+<para>После успешной установки и настройки ее безопасности систему, тем не менее, нельзя называть завершенной. Процесс обеспечения безопасности является постоянным по времени, ведь большинство известных взломов является результатом использования известных уязвимостей в устаревших системах. Постоянное обновление системы — наиболее значимый шаг, который вы можете совершить для обеспечения наилучшей безопасности. </para>
+<para>Если у вас установлена последняя версия portage, то, предварительно обновив дерево с помощью команды emerge --sync, вы можете запустить команду glsa-check --list, которая проверит вашу систему на наличие известных уязвимостей. glsa-check является частью пакета app-portage/gentoolkit. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1: Пример вывода glsa-check -l</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># glsa-check -l</para>
+<para>WARNING: This tool is completely new and not very tested, so it should not be</para>
+<para>used on production systems. It's mainly a test tool for the new GLSA release</para>
+<para>and distribution system, it's functionality will later be merged into emerge</para>
+<para>and equery.</para>
+<para>Please read http://www.gentoo.org/proj/en/portage/glsa-integration.xml</para>
+<para>before using this tool AND before reporting a bug.</para>
+<para/>
+<para>[A] means this GLSA was already applied,</para>
+<para>[U] means the system is not affected and</para>
+<para>[N] indicates that the system might be affected.</para>
+<para/>
+<para>200406-03 [N] sitecopy: Multiple vulnerabilities in included libneon ( net-misc/sitecopy )</para>
+<para>200406-04 [U] Mailman: Member password disclosure vulnerability ( net-mail/mailman )</para>
+<para>.......</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Предупреждение: Утилита glsa-check все еще является экспериментальной, поэтому, если вы действительно ставите безопасность превыше всего, то лучше также свериться с другими источниками. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Все строки, содержащие [A] и [U], могут быть игнорированы, так как они неприменимы для данной системы. </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Важно: Не забывайте, что использование emerge -vpuD world не устанавливает все необходимые обновления пакетов. Используйте glsa-check, если хотите быть уверенным, что все GLSA исправлены в вашей системе. </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2: Проверка всех GLSA</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>(Подвержена ли ваша система GLSA?)</para>
+<para># glsa-check -t all</para>
+<para>WARNING: This tool is completely new and not very tested, so it should not be</para>
+<para>used on production systems. It's mainly a test tool for the new GLSA release</para>
+<para>and distribution system, it's functionality will later be merged into emerge</para>
+<para>and equery.</para>
+<para>Please read http://www.gentoo.org/proj/en/portage/glsa-integration.xml</para>
+<para>before using this tool AND before reporting a bug.</para>
+<para/>
+<para>This system is affected by the following GLSA:</para>
+<para>200504-06</para>
+<para>200510-08</para>
+<para>200506-14</para>
+<para>200501-35</para>
+<para>200508-12</para>
+<para>200507-16</para>
+<para/>
+<para>(Просмотр всех пакетов, подверженных переустановке)</para>
+<para># glsa-check -p $(glsa-check -t all)</para>
+<para>     (частичный вывод)</para>
+<para>Checking GLSA 200504-06</para>
+<para>The following updates will be performed for this GLSA:</para>
+<para>     app-arch/sharutils-4.2.1-r11 (4.2.1-r10)</para>
+<para/>
+<para>     **********************************************************************</para>
+<para/>
+<para>     Checking GLSA 200510-08</para>
+<para>     The following updates will be performed for this GLSA:</para>
+<para>          media-libs/xine-lib-1.1.0-r5 (1.1.0-r4)</para>
+<para/>
+<para>(применение необходимых исправлений)</para>
+<para># glsa-check -f $(glsa-check -t all)</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Если вы обновили запущенный сервис, не забудьте перезапустить его. </para>
+<para>Также рекомендуется регулярно <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/kernel-upgrade.xml?style=printable">обновлять ядро</link>. </para>
+<para>Вы можете также подписаться на список рассылки gentoo-announce, чтобы получать уведомления GLSA по электронной почте. Инструкции по подписке могут быть найдены на странице <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/main/ru/lists.xml?style=printable">Введение в почтовые рассылки Gentoo Linux</link>. </para>
+<para>Другим хорошим источником информации по безопасности является <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.securityfocus.com/archive/1">список рассылки Bugtraq</link>. </para></section></section></section>
+</article>

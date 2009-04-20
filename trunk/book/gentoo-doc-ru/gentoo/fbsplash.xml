@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info><title>HOWTO fbsplash</title></info>
+        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/kde-config.xml">http://ru.gentoo-wiki.com/HOWTO_fbsplash</link>
+        </para>
+        <para>С версии: 1.2</para>
+        <para/><section><info><title>Введение </title></info>
+            <para>Во первых я хочу выразить благодарность gentoo-разработчику <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev.gentoo.org/%7Espock/">Spock</link> за разработку gensplash (fbsplash and splashutils) и vesafb-tng. Как альтернативу этому how-to, вы можете попробовать Spock's <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev.gentoo.org/%7Espock/projects/gensplash/gensplash-in-5-easy-steps.php">Gensplash-in-5-easy-steps How-to</link>. </para><section><info><title>Что такое gensplash?</title></info>
+                <para>Gensplash - это проект основаный <link xlink:href="http://dev.gentoo.org/%7Espock/">Spock`ом</link>, цель которого — создание набора инструментов, способных "обогатить" процесс загрузки Gentoo (отображение сообщений, анимации, полос состояния, и т. д.). </para></section>
+            <section>
+                <info><title>Что такое fbsplash (framebuffer splash)?</title>
+                </info>
+                <para>Fbsplash - это часть gensplash проекта. Согласно документации по fbsplash, "framebuffer splash - это особенность ядра которая разрешает отображать фоновые изображения на выбранных консолях и переключать первую консоль в так называемый безмолвный режим (silent mode),в то время когда система загружается/перезагружается/выключается. Доступ до устройства fbsplash осуществляется путем обращения к /dev/fbsplash. Для работы с fbsplash, требуется устройсво поддерживающее framebuffer. </para>
+                </section>
+            <section><info><title>Что такое устройство frame buffer?</title></info>
+                    <para>Устройство frame buffer обеспечивает уровень абстракции устройствам вывода графики, что обеспечивает буфер кадров некоторых видеоустройств и интерфейс доступа к ним для программного обеспечения, т. е. программе не обязательно знать о существовании низкоуровневых системных вызовов, регистров и т. д. Доступ к устройству осуществляется через определенные файлы, обычно расположенные в ветке /dev дерева каталогов, в частности /dev/fb*. </para>
+                    <para>Существует множество различных frame buffer устройств. </para>
+                    <orderedlist>
+                        <listitem>
+                            <para>Некоторые из них, стандартные поддерживают большинство современных видеокарт: </para>
+                        </listitem>
+                        <listitem>
+                            <para>Другие специфичные, будут работать только с определенными моделями: </para>
+                        </listitem>
+                    </orderedlist>
+                    <para>Предполагается, что Fbsplash будет работать на любом из frame buffer устройств (и вообще на любой видеокарте способной на 8/15/16/24/32 битную цветовую гамму и directcolor/pseudocolor режимы). </para></section></section><section><info><title>Установка fbsplash и splashutils</title></info>
+                        <para>В дальнейшем как пример используется vesafb-tng frame buffer устройство. Также подразумевается что вы используете Gentoo дистрибутив. </para>
+                        <informaltable frame="all">
+                            <tgroup cols="1"><tbody>
+                                <row>
+                                    <entry>
+                                        <para>Code: Emerging splashutils &amp; themes </para>
+                                    </entry>
+                                </row>
+                                <row>
+                                    <entry>
+                                        <para># emerge -va splashutils splash-themes-gentoo splash-themes-livecd</para>
+                                    </entry>
+                                </row></tbody></tgroup>
+                        </informaltable><section><info><title>Установка заплат ядра</title></info>
+                            <para>Во первых убедитесь что fbsplash и vesafb-tng заплаты установлены в вашем ядре. Начиная с версии 2.6.10 ( а может и раньше ) всё это входит в gentoo-sources. Если у вас нет этих заплат вы можете взять их с <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev.gentoo.org/%7Espock/">Spock's homepage</link> </para></section><section><info><title>Конфигурация ядра</title></info>
+                                <para>Во первых нужно включить поддержку vesafb-tng frame buffer в вашем ядре (вы можете пропустить этот шаг если у вас уже настроен framebuffer драйвер отличный от vesa-tng, например i810fb): </para>
+                                <para>Device Drivers ---&gt; Graphics support---&gt;:</para>
+                                <para> &lt;*&gt; Support for frame buffer devices</para>
+                                <para> &lt;*&gt;   VESA VGA graphics support</para>
+                                <para>       VESA driver type (vesafb-tng)</para>
+                                <para> (1280x1024@60) VESA default mode</para>
+                                <para>Еще вам нужна поддержка fbsplash в вашем ядре. </para>
+                                <para>Device Drivers &gt; Graphics support &gt; Console display driver support:</para>
+                                <para> &lt;*&gt; Framebuffer Console support</para>
+                                <para> &lt;*&gt; Support for the framebuffer splash</para>
+                                <para>Если вы хотите загружать initramfs изображение динамически во время загрузки ( смотрите "Загрузка initramfs изображений динамически во время загрузки" раздел этого howto), вы можете включить еще одну специальную опцию. Если вы ещё не знаете что хотите делать, включите её все равно ( это не повредит :) </para>
+                                <para>Device Drivers &gt; Block devices:</para>
+                                <para> &lt;*&gt; RAM disk support</para>
+                                <para> (4096) Default RAM disk size (kbytes) (NEW)</para>
+                                <para> [*]   Initial RAM disk (initrd) support</para>
+                                <para>Initial RAM disk (initrd) support теперь (в ядре 2.6.22) находится в General setup. </para></section><section><info><title>Компиляция ядра (Вручную)</title></info>
+                                    <para># cd /usr/src/linux</para>
+                                    <para>Вы должны убедится что не осталось файлов после предыдущей компиляции в каталоге вашего ядра: </para>
+                                    <para># make mrproper</para>
+                                    <para>Теперь настраиваем ядро. </para>
+                                    <para># make menuconfig</para>
+                                    <para>После того как вы настроили ваше ядро, откомпилируйте (Важно: этот шаг нужно сделать до установки splashutils). "make" скомпилирует одновременно и образ ядра('make bzImage') и модули ('make modules'). </para>
+                                    <para># make</para></section><section><info><title>Конфигурация / компиляция ядра (Для пользователей genkernel)</title></info>
+                                        <para>Необходимо запустить genkernel со следующими ключами: </para>
+                                        <para># genkernel --gensplash=livecd-2006.0 --gensplash-res=1280x1024 --menuconfig all</para>
+                                        <para>где ключи означают следующее: </para>
+                                        <para>--gensplash=livecd-2006.0 - использовать тему livecd-2006.0 (из пакета splash-themes-livecd), </para>
+                                        <para>--gensplash-res=1280x1024 - при загрузке необходимо использовать разрешение 1280x1024, </para>
+                                        <para>--menuconfig - необходимо запустить ncurses конфигуратор ядра, </para>
+                                        <para>all - компилировать ядро, модули и initrd образ. </para></section><section><info><title>Установка splashutils</title></info>
+                                            <para>Теперь настало время для установки splashutils. Splashutils это ПО используемое для загрузки изображений (а также перекодировки jpg, png). </para>
+                                            <para># emerge splashutils</para>
+                                            <para>Конечно, /usr/src/linux должна ссылаться на исходники с установленными заплатами.. </para></section><section><info><title>Конфигурация / компиляция ядра (ручная работа)</title></info>
+                                                <para>Теперь ваше ядро и система подготовлены для того чтобы показать splash screen. Для завершения компиляции и установки вашего нового ядра осталось сделать следующее. </para>
+                                                <para>Если /boot расположен на отдельном разделе подмонтируйте его. </para>
+                                                <orderedlist>
+                                                    <listitem>
+                                                        <para>mount /boot </para>
+                                                    </listitem>
+                                                </orderedlist>
+                                                <para>Затем инсталируйте модули и образ ядра. </para>
+                                                <orderedlist>
+                                                    <listitem>
+                                                        <para>make modules_install </para>
+                                                    </listitem>
+                                                    <listitem>
+                                                        <para>make install </para>
+                                                    </listitem>
+                                                </orderedlist>
+                                            </section>
+                    </section>
+    <section>
+        <info><title>Создание образа initramfs </title></info>
+        <para>Приведенных выше инструкций (а также второй части следующего howto, <link xlink:href="http://gentoo-wiki.com/HOWTO_fbsplash#Configuring_your_bootloader">Configuring your bootloader</link>) достаточно, чтобы получить splash screen после того как ядро будет загруженно. Однако если вы хотите чтобы сексапильная девка с пингвином на маечке появлялась раньше (сразу после инициализации - vesafb-tng), вам понадобится initramfs. </para>
+        <section>
+            <info>
+                <title>Что такое initramfs?</title>
+            </info>
+            <para>(Цитата <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev.gentoo.org/%7Espock/">Spock'а</link>): "Initramfs (initial ramfs) это кусок кода который распаковывает сжатый cpio образ во время загрузки ядра. </para>
+                                                        <para>Чтобы использовать initramfs его надо сначала создать.Образ initramfs должен содержать: </para>
+                                                        <orderedlist>
+                                                            <listitem>
+                                                                <para>картинки,которые будут использоваться как фон; </para>
+                                                            </listitem>
+                                                            <listitem>
+                                                                <para>необходимы файлы конфигурации; </para>
+                                                            </listitem>
+                                                            <listitem>
+                                                                <para>утилиту помощника (splash_helper). </para>
+                                                            </listitem>
+                                                        </orderedlist>
+                                                        <para>Изображения и конфигурационные файлы вместе образуют тему gensplash. </para>
+                                                        <para>Существует два пути для использования initramfs image: </para>
+                                                        <orderedlist>
+                                                            <listitem>
+                                                                <para>компиляция initramfs image непосредственно в ядро; </para>
+                                                            </listitem>
+                                                            <listitem>
+                                                                <para>загрузка initramfs image динамически во время загрузки системы (с использованием 'initial ram disk' - initrd). </para>
+                                                            </listitem>
+                                                        </orderedlist>
+                                                        <para>Вы можете сами выбирать вариант,который вам по душе. . </para></section><section><info><title>Компиляция образа initramfs непосредственно в ядро</title></info>
+                                                            <para>Сначала удалите старый образ initramfs: </para>
+                                                            <para># rm /usr/src/linux/usr/initramfs_data.cpio.gz</para>
+                                                            <para>Теперь создайте новый образ initramfs, содержащий изображения, конфгурационные файлы и userspace helper. Проще всего будет сделать это при помощи splash_geninitramfs (идущим в составе splashutils). Его использование похоже на утилиту 'splash' из пакета bootsplash. </para>
+                                                            <para># splash_geninitramfs -v -g /usr/src/linux/usr/initramfs_data.cpio.gz -r 1024x768 emergence</para>
+                                                            <para>При компиляции образа initramfs непосредственно в ядро, вам придется пересобрать ядро (этого недостатка лишен способ с использованием initrd): </para>
+                                                            <para># cd /usr/src/linux</para>
+                                                            <para># touch usr/initramfs_data.cpio.gz</para>
+                                                            <para># make bzImage</para>
+                                                            <para># mount /boot</para>
+                                                            <para># make install</para></section><section><info><title>Загрузка образа initramfs динамически</title></info>
+                                                                <para>Этот вариант практически идентичен сборке образа initramfs вместе с ядром. Различие заключается в том, что вместо создания образа внутри ядра (и последующей сборке его коммандой 'make' и копированием в точку монтирования /boot при помощи 'make install'), вы создадите образ initramfs как отдельный (initrd) файл и вам не придется пересобирать ядро. Однако, придется добавить строчку в конфигурационный файл загрузчика (по которой он найдет initrd файл). Этим мы и займемся в этой части howto </para>
+                                                                <para>Сначала при помощи splash_geninitramfs создадим initrd файл (который содержит изображения, конфиги и userspace helper): </para>
+                                                                <para># mount /boot</para>
+                                                                <para># cd /etc/splash</para>
+                                                                <para># splash_geninitramfs -v -g /boot/fbsplash-emergence-1024x768  -r 1024x768 emergence</para>
+                                                                <para>Как видно файл будет создан в точке монтирования(или каталоге) /boot. </para>
+                                                                <para>К сожалению, по <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?p=1488636#1488636">словам Spock'а</link>,"вы не сможете дописать новую initramfs информацию к initrd образу". Это означает, что данной возможностью не смогут воспользоваться пользователи genkernel ядер, т. к. genkernel создает собственный образ initrd для процесса загурзки. </para>
+                                                                <para>solshark [solshark_at_rambler_dot_ru]: genkernel 3.3.6 позволяет сделать так: </para>
+                                                                <orderedlist>
+                                                                    <listitem>
+                                                                        <para>genkernel --gensplash=DangerGirl initrd </para>
+                                                                    </listitem>
+                                                                </orderedlist>
+                                                                <para>Так что теперь и для пользователей genkernel есть возможность воспользоваться данной фишкой. </para>
+                                                                <para>Если вы не меняете ядро, то просто поменяйте строку описания initrd в grub.conf с: </para>
+                                                                <para>root=/dev/ram0 real_root=/dev/$ROOT</para>
+                                                                <para>initrd (hd0,0)/boot/initrd</para>
+                                                                <para>на: </para>
+                                                                <para>root=/dev/$ROOT</para>
+                                                                <para>initrd (hd0,0)/boot/fbsplash-emergence-1024x768</para></section><section><info><title>Создание собственных тем для gensplash</title></info>
+                                                                    <para>Стандартная тема 'emergence' и её конфигурационные файлы находятся в /etc/splash/emergence. </para>
+                                                                    <para>Если хотите создать новую (например с названием 'newtheme'), вам следует: </para>
+                                                                    <para>1. создать для неё каталог в /etc/splash: </para>
+                                                                    <para># mkdir /etc/splash/newtheme</para>
+                                                                    <para>2. создать каталог 'images' в /etc/splash/newtheme: </para>
+                                                                    <para># mkdir /etc/splash/newtheme/images</para>
+                                                                    <para>и скоприовать туда картинки (в форматах png/jpg) которые будут использованы в теме. </para>
+                                                                    <para>3. создать необходимые конфигурационные файлы. Они должны иметь расширение *.cfg и находиться в каталоге темы (/etc/splash/newtheme). Образцы конфигруационных файлов можно посмотреть в теме ('emergence'): </para>
+                                                                    <para># ls -l /etc/splash/emergence/</para>
+                                                                    <para>images/</para>
+                                                                    <para>1024x768.cfg</para>
+                                                                    <para>1280x1024.cfg</para>
+                                                                    <para>800x600.cfg</para>
+                                                                    <para>Очень важно убедиться в том в опциях 'jpeg=' и 'silentjpeg=' (в *.cfg файлах) прописаны корректные ссылки на файлы с изображениями (в каталоге/etc/splash/newtheme/images). Если вы не используете jpeg для создания темы, замените опции на 'pic=' и 'silentpic='. </para>
+                                                                    <para>Для более близкого знакомства с форматом тем fbsplash, изучите документацию пакета splashutils: </para>
+                                                                    <para># less /usr/doc/splashutils-version/theme_format.gz</para></section><section><info><title>Перевод тем bootsplash в темы gensplash</title></info>
+                                                                        <para>Так же Spock сделал удобную утилиту bootsplash2fbsplash (этот скрипт идет в комплекте со splashutils) ,который сделает легким преобразование тем bootsplash формат gensplash. </para>
+                                                                        <para>Например если у вас есть тема 'gentoo-highquality' ,расположенная в /etc/bootsplash ,вам нужно только скомандовать(от рута): </para>
+                                                                        <para># bootsplash2fbsplash gentoo-highquality</para>
+                                                                        <para>и утилита сделает gensplash-совместимую тему в каталоге /etc/splash (/etc/splash/gentoo-highquality) со всеми необходимыми файлами. </para></section><section><info><title>Использование собственных тем gensplash</title></info>
+                                                                            <para>Для создания нового образа из темы которую вы только что сделали(пусть ее имя 'newtheme',а разрешение 1280x1024), вам необходимо использовать splash_geninitramfs. </para>
+                                                                            <para>Если вы решили вкомпилировать образ в ядро(первый вариант): </para>
+                                                                            <para># splash_geninitramfs -v -g /usr/src/linux/usr/initramfs_data.cpio.gz -r 1280x1024 newtheme</para>
+                                                                            <para># cd /usr/src/linux</para>
+                                                                            <para># touch usr/initramfs_data.cpio.gz</para>
+                                                                            <para># make bzImage</para>
+                                                                            <para># mount /boot</para>
+                                                                            <para># make install</para>
+                                                                            <para>Если вы используете initrd (второй вариант): </para>
+                                                                            <para># mount /boot</para>
+                                                                            <para># splash_geninitramfs -v -g /boot/fbsplash-newtheme-1280x1024 -r 1280x1024 newtheme</para>
+                                                                            <para>Вот что означают опции splash_geninitramfs: </para>
+                                                                            <para>-v  splash_geninitramfs выводит дополнительную информацию</para>
+                                                                            <para>-g указывает splash_geninitramfs создать образ initramfs</para>
+                                                                            <para> (/usr/src/linux/usr/initramfs_data.cpio.gz</para>
+                                                                            <para> или /boot/fbsplash-newtheme-1280x1024)</para>
+                                                                            <para>-r говорит splash_geninitramfs использовать разрешение 1280x1024</para>
+                                                                            <para>-'newtheme'указывает splash_geninitramfs искать .cfg файлы</para>
+                                                                            <para> в каталоге /etc/splash/newtheme</para>
+                                                                            <para>Для просмотра описания всех опций splash_geninitramfs' введите: </para>
+                                                                            <para># splash_geninitramfs --help</para>
+                                                                            <para>Последний пункт в этой части how-to,полезный совет из документации splashutils': </para>
+                                                                            <para>Если вы хотите сохранить немного памяти и не планируете использовать </para>
+                                                                            <para>все доступные разрешения вы можете скопировать .cfg файлы</para>
+                                                                            <para>и фоновые картинки только для того разрешения,которое вы используете.</para>
+                                                                            <para>А теперь пришло время настроить ваш загрузчик. </para></section></section><section><info><title>Настройка загрузчика </title></info><section><info><title>Параметры ядра</title></info>
+                                                                                <para>Вот опции,которые необходимо добавить в конфигурационный файлы grub(lilo): </para>
+                                                                                <para>1. Необходимо указание устройства frame buffer.Вот как это может выглядеть например для драйвера vesafb-tng: </para>
+                                                                                <para>video=vesafb:ywrap,mtrr,1024x768-16@85</para>
+                                                                                <para>Вышеприведенный пример указывает на то,что мы хотим использовать разрешение 1024x768, 16 бит цвет и частоту обновления 85Hz. Если вы используете vesafb-tng, вам также необходимо удалить опцию 'vga=' из файла конфигурации вашего загрузчика(эта опция используеться только 'обычными' vesafb frame buffer устройствами): </para>
+                                                                                <para># НЕ СТАВЬТЕ опцию 'vga=' для vesafb-tng (если она стоит,то удалите ее):</para>
+                                                                                <para>vga=791</para>
+                                                                                <para>vga=0x517</para>
+                                                                                <para>2. fbsplash'у необходимы свои параметры: </para>
+                                                                                <para>splash=verbose,theme:emergence</para>
+                                                                                <para>Сначала fbsplash выбирает режим (в примере используется режим 'verbose' ). Вот цитата из документации по fbsplash "fbsplash может работать в двух режимах: verbose и silent. Первый режим подразумевает простую консоль с фоновым рисунком. Режим silent был впервые реализован в bootsplash. Когда этот режим включен, консоль переключается в графический режим. При этом, текст не печатается. Все что будет отображатся в этом режиме зависит от программ, запущенных в пользовательском пространстве. Таким образом, может быть реализован, например, индикатор прогресса загрузки. </para>
+                                                                                <para>Вторая часть парметра fbsplash позволяет указать какую тему нужно использовать (в примере используется стандартная тема 'emergence'). </para>
+                                                                                <para>Для работы fbsplash необходимо указать оба параметра: режим и тему. </para>
+                                                                                <para>3. Если вы решили использовать initrd (посмотрите предыдущую главу - <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-wiki.com/HOWTO_fbsplash#Loading_the_initramfs_image_dynamically_at_boot_time">Загрузка образа initramfs</link>), вам необходимы дополнительные опции в конфигурации загрузчика: </para>
+                                                                                <para>initrd /boot/fbsplash-emergence-1024x768     # Grub</para>
+                                                                                <para>initrd = /boot/fbsplash-emergence-1024x768   # Lilo</para>
+                                                                                <para>В приведенном примере подразумевается?что имя рамдиска fbsplash-emergence-1024x768 (и он размещен в каталоге или разделе /boot). </para>
+                                                                                <para>Следующие примеры для обоих загрузчиков grub и lilo. Используется тема 'newtheme', разрешение 1280x1024, 32 бит цвети частота обновления 70Hz. Указан режим fbsplash 'silent' и используется initrd файл. </para></section><section><info><title>Пример конфигурации Grub</title></info>
+                                                                                    <para>title  Gentoo</para>
+                                                                                    <para>root (hd0,0)</para>
+                                                                                    <para>kernel (hd0,0)/kernel-2.6.8-gentoo-r1 root=/dev/hda3 video=vesafb:ywrap,mtrr,1280x1024-32@70 splash=silent,theme:newtheme</para>
+                                                                                    <para>initrd (hd0,0)/fbsplash-newtheme-1280x1024</para>
+                                                                                    <para>Замените (hd0,0) своим загрузочным разделом (или,если /boot не на отдельном разделе,используйте корневой раздел добавив '/boot' к путям образа ядра и initrd) </para>
+                                                                                    <para>Пользователи genkernel должны использовать что-то типа этого(все в одной строке): </para>
+                                                                                    <para>kernel (hd0,0)/kernel-2.6.8-gentoo-r1 init=/linuxrc root=/dev/hda3 video=vesafb:ywrap,mtrr,1280x1024-32@70 splash=silent,theme:newtheme</para></section><section><info><title>Пример конфигурации Lilo</title></info>
+                                                                                        <para>image=/boot/kernel-2.6.8-gentoo-r1</para>
+                                                                                        <para>label = "Gentoo"</para>
+                                                                                        <para>root = /dev/hda3</para>
+                                                                                        <para>append="video=vesa:ywrap,mtrr,1280x1024-32@70 splash=silent,theme:newtheme" </para>
+                                                                                        <para>read-only</para>
+                                                                                        <para>initrd = /boot/fbsplash-newtheme-1280x1024</para>
+                                                                                        <para>Не забудьте запустить lilo после изменения lilo.conf: </para>
+                                                                                        <para># mount /boot</para>
+                                                                                        <para># lilo -v</para>
+                                                                                        <para>После ребута и вы получите графическую загрузку. </para></section></section><section><info><title>Добавление фона на все консоли </title></info>
+                                                                                            <para>Если вы хотите чтобы на всех консолях был сплеш (картинка из режима 'verbose'),а не только на первой,то отредактируйте /etc/conf.d/splash установив нужные опции и и добавьте splash в ваш стандартный уровень запуска: </para>
+                                                                                            <para> # rc-update add splash default</para>
+                                                                                            <para>Если вы используете bootsplash, удалите его из уровня запуска: </para>
+                                                                                            <para> # rc-update del bootsplash</para></section><section><info><title>Gensplash для других дистрибутивов </title></info>
+                                                                                                <para>(Jakub) Я думаю этот раздел должен состоять из трех частей: </para>
+                                                                                                <para>Вступление: Gensplash работает на других дистрибутивах. </para>
+                                                                                                <orderedlist>
+                                                                                                    <listitem>
+                                                                                                        <para>Что нужно сделать по-другому (в сравнении с этим руководством) - к примеру из-за отсутствия emerge. Это касается всех дистрибутивов не подобных Gentoo. </para>
+                                                                                                    </listitem>
+                                                                                                    <listitem>
+                                                                                                        <para>Какие дополнительные действия нужно предпринять - например модификация загрузочных скриптов. Тоже для не Gentoo дистрибутивов. </para>
+                                                                                                    </listitem>
+                                                                                                    <listitem>
+                                                                                                        <para>Другая специфика не охваченная предыдущими двумя разделами. </para>
+                                                                                                    </listitem>
+                                                                                                </orderedlist>
+                                                                                                <para>Различия </para>
+                                                                                                <orderedlist>
+                                                                                                    <listitem>
+                                                                                                        <para>Наложение патчей на ядро - необходимо. Мы не используем gentoo-dev-sources (хотя все возможно) </para>
+                                                                                                    </listitem>
+                                                                                                    <listitem>
+                                                                                                        <para>Конфигурация/сборка ядра - из-за невозможности использования genkerel. </para>
+                                                                                                    </listitem>
+                                                                                                    <listitem>
+                                                                                                        <para>Установка splashutils - нет package.keywords, нет emerge. Ручками:). Добавить ссылки. Предложение перейти на Gentoo было бы своевременно. </para>
+                                                                                                    </listitem>
+                                                                                                    <listitem>
+                                                                                                        <para>Добавление splash screen на все терминалы(и удаление bootpslash) - скорее всего зависит от дистрибутива. Способ для Gentoo скорее всего работать не будет (очевидно). </para>
+                                                                                                    </listitem>
+                                                                                                </orderedlist><section><info><title>Дополнительные шаги</title></info>
+                                                                                                    <para>Модификация загрузочных скриптов потребуется для работы индикатора прогресса. Два варианта: </para>
+                                                                                                    <orderedlist>
+                                                                                                        <listitem>
+                                                                                                            <para>с использованием bootsplash (простой) </para>
+                                                                                                        </listitem>
+                                                                                                        <listitem>
+                                                                                                            <para>без использования bootsplash (более сложный) </para>
+                                                                                                        </listitem>
+                                                                                                    </orderedlist></section><section><info><title>Тут должно быть название пункта 3</title></info>
+                                                                                                        <para>Вариант для Debian упоминался Spock'ом на forums.gentoo.org. </para></section></section><section><info><title>Решение проблем </title></info><section><info><title>Если /usr на отдельном разделе</title></info>
+                                                                                                            <para>Если у вас splashutils версии 0.9-pre08 и новее и каталог /usr монтируется с другого раздела, gensplash должен работать "из коробки" (без напильника). Однако, если у вас более древняя версия splashutils и, по каким-либо причинам, нет возможности ее обновить следуйте нижеописанным инструкциям. </para>
+                                                                                                            <para>Программы и библиотеки, которые нужны splash_util'у чтобы запустить fbset и отобразить вашу сплешку расположены в /usr/bin и /usr/lib. И если эти каталоги находятся на других разделах (например при использовании RAID или LVM2 архитектуры), они могут быть недоступны (не примонтированы)в момент, когда они нужны splash_utils и вы не сможете увидеть свою замечательную сплешку. </para>
+                                                                                                            <para>Как решить ? Скопируйте их в место где они доступны как описано в (спасибо aslocum и форумам Gentoo) <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?t=206778&amp;start=200&amp;postdays=0&amp;postorder=asc&amp;highlight=">Gensplash-How-to with progressbar!!!!!</link> треде: </para>
+                                                                                                            <para># cp /usr/bin/fbset /sbin</para>
+                                                                                                            <para># cp /usr/lib/libjpeg.so.62 /lib</para>
+                                                                                                            <para># cp /usr/lib/libpng.so.3 /lib</para>
+                                                                                                            <para>поправьте /sbin/splash (например при помощи nano, набрав nano -w /sbin/splash) и приведите строку 31 к виду: </para>
+                                                                                                            <para>res=`/sbin/fbset | grep "^mode" | sed -r 's/mode "([0-9]+x[0-9]+).*/\1/'`</para>
+                                                                                                            <para>Где надо только прописать /sbin/ перед fbset. Сохраните результат и выйдите из редактора, и ваша сплешка должна появиться. </para></section><section><info><title>Установка фона во время загрузки</title></info>
+                                                                                                                <para>Вы наверное заметили,что фоновое изображение загружается с небольшой задержкой,даже если вы используете образ initramfs .До этого момента используется разрешение 640x480 и черно-белая цветовая гамма. </para>
+                                                                                                                <para>Такое положение дел нормально. Единственным выходом (чтобы получил фон как можно раньше) будет использование драйвера vesafb вместо vesafb-tng. Вот <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?t=206778">ответ </link>
+                                                                                                                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?t=206778">Spock'а</link> по этому поводу: "Образ initramfs используется,чтобы подключить корневую ФС ,и до того как инициализируется кадровый буфер,так что не волнуйтесь по этому поводу.Как вы заметили, компъютер загружается в текстовом режиме,а не в графическом. Графический режим устанавливается после инициализации подсистемы кадрового буфера. Но до этого момента должна произойти инициализация других вещей,а это требует времени.Вот почему в течение секунды-двух вы видите сообщения ядра. Вы наверно скажете,что с vesafb у вас такого не было. И будете правы. Но vesafb исключение,а не правило (его инициализация происходит во время загрузки ядра) . Все остальные кадровые драйверы(vesafb-tng, rivafb, radeonfb)инициализируются с подсистемой fbdev". </para></section></section><section><info><title>Ссылки</title></info>
+                                                                                                                        <orderedlist>
+                                                                                                                            <listitem>
+                                                                                                                                <para>
+                                                                                                                                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev.gentoo.org/%7Espock/">Домашняя страница Spock'а</link> </para>
+                                                                                                                            </listitem>
+                                                                                                                            <listitem>
+                                                                                                                                <para>
+                                                                                                                                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://dev.gentoo.org/%7Espock/projects/gensplash/gensplash-in-5-easy-steps.php">Spock's Gensplash-in-5-easy-steps</link> </para>
+                                                                                                                            </listitem>
+                                                                                                                        </orderedlist>
+                                                                                                                        <para>Из форумов Gentoo: </para>
+                                                                                                                        <orderedlist>
+                                                                                                                            <listitem>
+                                                                                                                                <para>
+                                                                                                                                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?t=206778">Gensplash-How-to с прогрессбаром!!!!!</link> </para>
+                                                                                                                            </listitem>
+                                                                                                                        </orderedlist>
+                                                                                                                        <para>Оффлайновая документация: </para>
+                                                                                                                        <orderedlist>
+                                                                                                                            <listitem>
+                                                                                                                                <para>Документация по Fbsplash (/usr/src/linux/Documentation/fb/splash.txt). </para>
+                                                                                                                            </listitem>
+                                                                                                                            <listitem>
+                                                                                                                                <para>Документация по кадровым буферам (/usr/src/linux/Documentation/fb/framebuffer.txt). </para>
+                                                                                                                            </listitem>
+                                                                                                                            <listitem>
+                                                                                                                                <para>Документация по splashutils (/usr/share/doc/splashutils-0.9_pre07/). </para>
+                                                                                                                            </listitem>
+                                                                                                                        </orderedlist>
+                                                                                                                        <para/>
+                                                                                                                        <para/>
+                                                                                                                    </section>
+</article>

@@ -28,12 +28,23 @@
 	<xi:include href="releasenotes-ru.xml"/>
 	<xi:include href="overview-ru.xml"/>
 	<xi:include href="introductory-word-ru.xml"/>
-	<xi:include href="general-info.xml"/>
-	<xi:include href="linuxndi-ru.xml"/>
-	<xi:include href="linux-fs.xml"/>
-	<xi:include href="windows-counterparts.xml"/>
+	<xi:include href="linux-general/linux-general.xml"/>
 	
 	<xi:include href="gentoo/gentoo-basic.xml"/>
+	<xi:include href="gentoo/gentoo-using.xml"/>
+	<xi:include href="desktop/desktop.xml"/>
+	<xi:include href="hardware/hardware.xml"/>
+	<xi:include href="security/security.xml"/>
 	
-	<index/>
+	<xi:include href="linux-more/linux-more.xml"/>
+	
+	<xi:include href="gentoo4dev/gentoo4dev.xml"/>
+	
+	<xi:include href="dev4gentoo/dev4gentoo.xml"/>
+	
+	<xi:include href="glossary.xml"/>
+	
+	<xi:include href="reference/reference.xml"/>
+	
+	<index/>x
 </book>

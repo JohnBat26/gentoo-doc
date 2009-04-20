@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info>
+    <title>HOWTO Соединение с Internet</title>
+</info>
+<para>    Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/HOWTO_Соединение_с_Internet">http://ru.gentoo-wiki.com/</link>
+</para>
+<para>C версии: 1.0</para>
+<para>Изменено: 1.3</para>
+<section>
+    <info>
+        <title>Настройка VPN</title>
+    </info>
+    <para>Это работает для ядер &gt;=2.6.15 </para><section><info><title>Проверка параметров ядра </title></info>
+<para>Если ваш провайдер использует mppe-mppc проверьте следующее: </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Linux Kernel Configuration: Параметры ядра </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>  Device Drivers ---&gt;</para>
+<para>    Network support ---&gt;</para>
+<para>      &lt;M&gt;   PPP (point-to-point protocol) support</para>
+<para>        &lt;M&gt;   PPP MPPE compression (encryption) (EXPERIMENTAL)  </para>
+<para> Cryptographic options ---&gt; </para>
+<para>&lt;M&gt;   SHA1 and RC4 algorithms</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Теперь необходимо собрать наше ядро. Без разницы, как вы скомпилировали эти части. Вы можете вкомпилировать все в ядро или собрать модулями. В конце вы должны подгрузить модули: </para>
+<orderedlist>
+<listitem>
+<para>libcrc32c </para>
+</listitem>
+<listitem>
+<para>ip_gre </para>
+</listitem>
+<listitem>
+<para>crc_ccitt </para>
+</listitem>
+<listitem>
+<para>ppp_async </para>
+</listitem>
+<listitem>
+<para>и конечно ppp_mppe_mppc. </para>
+</listitem>
+</orderedlist>
+<para>А затем запустите modules-config. </para></section><section><info><title>Установка пакетов </title></info>
+<para>Это работает для ядер &gt;=2.6.15 </para>
+<para>Установка очень проста: </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: Установка </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>emerge sys-kernel/gentoo-dev-sourcesemerge ppp для ppp должны быть включены флаги pam,atp,dhcp (не достоверно, у меня работает без atp и dhcp)emerge pptpclient </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>Настройка клиента</title></info>
+<para>Если все удалось, то теперь вам необходимо сконфигурировать клиента. Вот пример конфигурации /etc/ppp/peers/myvpn: </para>
+<para>pty            "/usr/sbin/pptp xxx.xxx.xxx.xxx --nolaunchpppd" #xxx...это адрес сервера</para>
+<para>name           myname</para>
+<para>remotename     myvpn</para>
+<para>lock</para>
+<para>dump</para>
+<para>noipx</para>
+<para>#debug  #включите эту опцию,если хотите видеть отладочные сообщения(пригодиться если ничего не работает)</para>
+<para>ipcp-accept-local</para>
+<para>ipcp-accept-remote</para>
+<para>lcp-echo-failure 4</para>
+<para>lcp-echo-interval 30</para>
+<para>asyncmap 0</para>
+<para>crtscts</para>
+<para>require-mppe</para>
+<para>refuse-eap</para>
+<para>nobsdcomp</para>
+<para>nodeflate</para>
+<para>proxyarp</para>
+<para>ipparam myvpn</para>
+<para>Осталось только дозвониться до провайдера: pon myvpn Для вывода отладочных сообщений на этой же консоли введите: pon myvpn debug dump logfd 2 </para>
+<para>Теперь необходимо настроить таблицы маршрутизации. Обычно это делается так: route add default dev ppp0 </para></section><section><info><title>Настройка с помощью pptpconfig</title></info>
+<para>Для графической (GTK+) настройки PPTP используйте </para>
+<orderedlist>
+<listitem>
+<para>net-dialup/pptpconfig </para>
+</listitem>
+</orderedlist>
+<para>он пока под маской "~x86" </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: установка pptpconfig </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ACCEPT_KEYWORDS="~x86" emerge pptpconfig </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Или более правильно в файл /etc/portage/package.keywords добавить следующие строки: </para>
+<para>net-dialup/pptpconfig ~x86 </para>
+<para/>
+<para>dev-php4/php-gtk ~x86 </para>
+<para/>
+<para>А затем </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: установка pptpconfig </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>emerge pptpconfig </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: Для нормальной сборки необходимы флаги USE=cli pcntl pcre posix session </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Наберите от рута, например в xterm: pptpconfig &amp; </para>
+<para>Создайте новое соединение и настройте в соответствии с параметрами указаннымы выше, плюс поправка на рекомендации провайдера. </para>
+<para>Для настройки маршрутизации по умолчанию используется вкладка Routing , на ней используйте значение All to tunnel.Выберите созданное соединение и нажмите Start. Все :) </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Примечание: если возникнут проблемы с соединением на вкладке "Miscellanyous" в опциях для pppd напишите </para>
+<para>noipdefault 50 </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>Проверяем соединение </title></info>
+<para/>
+<para>Теперь все готово. Можно навестить <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/">Gentoo-Wiki</link> ;) </para>
+<para>Проверить соединение можно командой: </para>
+<para># ifconfig ppp0</para>
+<para>ppp0  Link encap:Point-to-Point Protocol</para>
+<para>      inet addr:xxx.xxx.xxx.xxx  P-t-P:xxx.xxx.xxx.xxx  Mask:xxx.xxx.xxx.xxx.xxx</para>
+<para>      UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1500  Metric:1</para>
+<para>      RX packets:6 errors:0 dropped:0 overruns:0 frame:0</para>
+<para>      TX packets:6 errors:0 dropped:0 overruns:0 carrier:0</para>
+<para>      collisions:0 txqueuelen:3</para>
+<para>      RX bytes:72 (72.0 b)  TX bytes:78 (78.0 b)</para>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://pptpclient.sourceforge.net/howto-gentoo.phtml">Настройка VPN-соединения</link> для Gentoo </para>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://pptpclient.sourceforge.net/routing.phtml">Настройка маршрутизации</link> для VPN-соединений</para>
+<para/>
+<para>Примечание (JohnBat26): Я использую perl скрипт: pptp-command для работы с VPN. Также можно воспользоваться Webmin. Взято с сайта провайдера <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://2com.net/">2Com:</link>
+</para>
+<para>/usr/sbin/pptp-command (появится после установки pptp-client) </para>
+<para/>
+<para>Надо запустить этот скрипт из под пользователя root.</para>
+<para>Затем выбрать:</para>
+<para>Setup -&gt; Manage CHAP secrets -&gt; Add a New CHAP secret</para>
+<para>Local Name:         ВАШ_ЛОГИН</para>
+<para>Remote Name [PPTP]: 2Com</para>
+<para>Password:           ВАШ_ПАРОЛЬ</para>
+<para/>
+<para>Затем выбрать Quit</para>
+<para/>
+<para>Затем выбрать:</para>
+<para>Add a NEW PPTP Tunnel -&gt; Other </para>
+<para>Tunnel Name:         2Com</para>
+<para>Server IP:           192.168.X.2        (здесь Х - номер вашей сети)</para>
+<para>route:               add default ppp0</para>
+<para>route:          </para>
+<para>Local Name:          ВАШ_ЛОГИН</para>
+<para>Remote Name [PPTP]:  2Com</para>
+<para>        </para>
+<para>Затем выбрать Quit</para>
+<para/>
+<para>ВНИМАНИЕ!!!!</para>
+<para>проверьте наличие файла /etc/ppp/options.pptp </para>
+<para>Файл /etc/ppp/options.pptp должен выглядеть след. образом:</para>
+<para>lock</para>
+<para>noauth</para>
+<para>nobsdcomp</para>
+<para>nodeflate</para>
+<para>novj</para>
+<para>novjccomp</para>
+<para>nopcomp</para>
+<para>noaccomp</para>
+<para/>
+<para>Для установки VPN соединения надо запустить скрипт /usr/sbin/pptp-command</para>
+<para>Затем выбрать:</para>
+<para> start -&gt; 2Com</para>
+<para/>
+<para>Для разрыва VPN соединения надо запустить скрипт /usr/sbin/pptp-command</para>
+<para>Затем выбрать:</para>
+<para> stop </para>
+<para/></section></section><section><info><title>Через pppoe</title></info>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: Устанавливаем pppoe </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>emerge pppoe </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>В /etc/conf.d/net прописываем</para>
+<para/>
+<para>modules=( "ifconfig" )</para>
+<para>config_eth0=( "null" )</para>
+<para>config_ppp0=( "ppp" )</para>
+<para>link_ppp0="eth0"</para>
+<para>plugins_ppp0=("pppoe")</para>
+<para>username_ppp0='login'</para>
+<para>password_ppp0='passwd'</para>
+<para>pppd_ppp0=(</para>
+<para>       "defaultroute"  # Make this PPP interface the default route</para>
+<para>       "usepeerdns"    # Use the DNS settings provided by PPP</para>
+<para>       "lcp-echo-interval 15"  # Send a LCP echo every 15 seconds</para>
+<para>       "lcp-echo-failure 3"    # Make peer dead after 3 consective</para>
+<para>       )</para>
+<para>#Если собираемся раздавать интернет в локалку с помощью маскарадинга то нужно добавить такую строчку в IPTABLES:</para>
+<para>#iptables -I FORWARD 1 -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu</para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: Делаем симлинк </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ln -s /etc/init.d/net.lo /etc/init.d/net.ppp0 </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: Запускаем </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>/etc/inet.d/net.ppp0 start </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>Настройка выхода через DIAL-UP</title></info>
+<para/><section><info><title>Подключение модема</title></info><section><info><title>Последовательный порт</title></info>
+<para>Подключение данного типа модема заключается в физическом "втыкании" в один из COM портов дата кабеля модема, включении модема в розетку и подсоединения к нему телефонной лини. Все это можно прочитать в руководстве к модему. Как извесно последовательные порты в Линукс именуются /dev/ttySx (где x - номер порта, /dev/ttyS0 = COM1 и т.д.) Вам нужно будет знать имя порта на который Вы "повесили свой модем"...скорее всего у вас их два или даже один, поэтому ошибиться здесь довольно сложно. Либо /dev/ttyS0, либо /dev/ttyS1.На этом подключение модема к последовательному порту можно считаль законченым. </para></section><section><info><title>Подключение через USB</title></info>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Linux Kernel Configuration: Установка пакетов </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>   "USB support" &gt;&gt;</para>
+<para>     &lt;*&gt;"USB Modem (CDC ADCM)support" </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>устройство будет называться /dev/ttyACM0 </para></section><section><info><title>Win модемы</title></info>
+<para>Для работы Win-модема нужно установить драйвер. Не все win-модемы поддерживаються поэтому Вам остается надеяться на лучшее. За драйверами идем на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.linmodems.org/">http://www.linmodems.org/</link> Там можно взять отличную софтину под названием scanModem которая опросит Ваш модем и выдаст (или не выдаст) URL откуда взять драйвер. Тянем. Распаковываем. Читаем INSTALL. Ставим. Еще можно почитать эту статью: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/Linmodems">linmodems</link> </para></section><section><info><title>Для всех типов модемов</title></info>
+<para>Для удобства можно создать симлинк вида /dev/modem на соответствующее модему устройство: </para>
+<para>ln -s /dev/ttyS0 /dev/modem</para>
+<para>и в дальшейшем в настройках использовать устройство ( /dev/modem )...хотя никто и не запрещает использовать устройство модема без симлинка /dev/tyySx </para></section><section><info><title>Проверка работоспособности, возможные грабли</title></info>
+<para>После подключения модема и установки всех необходимых драйверов необходимо проверить его работоспособность. Я делаю это так: запускаю утилиту minicom и даю команду AT. Если все в порядке, я в ответ получаю ОК, и не получаю если что-то не так. Если ОК не получен, то самое первое, что нужно сделать - это проверить настройки minicom. Если модем ответил "ОК", можно попробовать позвонить провайдеру:</para>
+<para>ATDP 554554 - для пульсового набораилиATDT 554554 - для тонового набора</para>
+<para>если модемы соединились и на экране появилось приглашение ввести логин или посыпался мусор в виде фигурных скобок ({{{{{{), можете себя поздравить и переходить к настройке програмного обеспечения, модем у вас работает. </para></section></section><section><info><title>Настройка программного обеспечения</title></info><section><info><title>Включение поддержки PPP в ядре</title></info>
+<para>в ядре должны быть включены опции отвечающие за ppp: </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Linux Kernel Configuration: Установка пакетов </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>Device Drivers---------&gt;</para>
+<para>  Networking support---------&gt;</para>
+<para>     &lt;*&gt;PPP (point-to-point protocol) support</para>
+<para>     &lt;*&gt;PPP support for async serial ports</para>
+<para>     &lt;*&gt;PPP Deflate compression</para>
+<para>     &lt;*&gt;PPP BSD compression</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>Установка необходимых пакетов</title></info>
+<para>во-первых нужно установить пакет который реализует поддержку протокола точка-точка (point-to-point protocol) </para>
+<para>emerge ppp</para>
+<para>во-вторых нужна звонилка или скрипт для автоматизирования процеса установления соединения. </para>
+<para>Обзор звонилок и примеры скриптов смотри ниже...</para></section><section><info><title>Настройка соединения с помощью chat-script</title></info>
+<para>Прежде чем писать скрипт, необходимо настроить pppd:в /etc/ppp/pap-secrets пропишем свои Логин/Пароль </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: /etc/ppp/pap-secrets </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>login * password * </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>где login и password выданые Вашим провайдером Вам логин и пароль соответственно... </para>
+<para>в /etc/ppp/options пропишем: </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: /etc/ppp/options </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>nodetachdefaultroutelockcrtscts </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>в /etc/resolv.conf прописываем один или несколько ip-адресов DNS серверов (спросить у провайдера адрес его сервера) </para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: /etc/resolv.conf </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>nameserver xx.xx.xx.xx</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>xx.xx.xx.xx - заменить на ip-адресс DNS сервера </para>
+<para>В каталоге /usr/share/doc/ppp-*/scripts лежат примеры скриптов, нам нужны:</para>
+<para>ppp-on</para>
+<para>ppp-off</para>
+<para>ppp-on-dialer</para>
+<para>подправляем в них логин, номер телефона, пароль...и вуаля...ppp-on поднимает соединение, ppp-off разрывает его, а ppp-on-dialer -воспомогательный скрипт для осуществления дозвона. </para>
+<para>замечу только что для тонового набора используется AT-команда ATDT, а для пульсового - ATDP. </para></section><section><info><title>Обзор звонилок</title></info>
+<para>Хорошая звонилка избавит Вас от процеса написания скриптов, вникания в опции pppd, и сделает настройку соединения довольно тривиальной</para>
+<para/></section><section><info><title>chestnut-dialer</title></info>
+<para>Замечательная звонилка которая к сожалению не поставляется в стандартных портах gentoo. ebuild можна взять <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://bugs.gentoo.org/show_bug.cgi?id=123820">здесь</link> </para>
+<para>Из плюсов </para>
+<orderedlist>
+<listitem>
+<para>Настройка тривиальна </para>
+</listitem>
+<listitem>
+<para>Умеет работать в консоли </para>
+</listitem>
+<listitem>
+<para>Умеет работать в GUI (имеет GTK+ и Qt интерфейсы) </para>
+</listitem>
+<listitem>
+<para>Умеет call back </para>
+</listitem>
+<listitem>
+<para>Нетребовательна к ресурсам </para>
+</listitem>
+<listitem>
+<para>"Местного разлива" - можно пообщаться с автором на родном языке, что для многих немаловажно. </para>
+</listitem>
+</orderedlist>
+<para>Из минусов </para>
+<orderedlist>
+<listitem>
+<para>Не входит в официальное дерево портов </para>
+</listitem>
+</orderedlist></section></section><section><info><title>Настройка Call back</title></info>
+<para>pppd должен быть собран с поддержкой CALLBACK. В gentoo это делается по умолчанию, так что вам нужно просто собрать pppd штатными средствами. </para>
+<para>Самый простой скрипт для CALLBACK был обнаружен в /usr/doc/ppp-2.4.2/README.cbcp: </para>
+<para>#!/bin/sh</para>
+<para>pppd debug nodetach /dev/modem 115200 crtscts modem \</para>
+<para>callback СВОЙ_НОМЕР name ЛОГИН \</para>
+<para>connect 'chat -v "" atz OK atdtНОМЕР_ПРОВАЙДЕРА CONNECT "~--"'</para>
+<para>sleep 1</para>
+<para>pppd debug nodetach /dev/modem 115200 crtscts modem \</para>
+<para>name ЛОГИН defaultroute \</para>
+<para>connect 'chat -v RING ATA CONNECT "\c"'</para>
+<para>ЛОГИН должен соответствовать записи в /etc/ppp/chap-secrets (/etc/ppp/pap-secrets). В /etc/resolv.conf нужно прописать адрес DNS-сервера (можно добавить опцию usepeerdns в /etc/ppp/options для получения списка DNS серверов от провайдера). </para>
+<para>Также можно использовать kppp или chestnut-dialer для установки callback соединения. Настройки их достаточно тривиальны. </para>
+<para>Самым сложным может оказаться правильно подобрать строку инициализации для модема. Рекомендуют отключить CallerID. Приведу несколько строк инициализации для примера, но лучше берите документацию от модема (часто идет только на сидироме хотя иногда бывает и в бумажном виде), смотрите что каждая из AT комманд означает и экспериментируйте. </para>
+<orderedlist>
+<listitem>
+<para>Для модемов Lucent: </para>
+</listitem>
+</orderedlist>
+<para>ats0=1s38=0s37=17-v90=0</para>
+<para>ats0=1s38=0s37=17-v90=0+vcid=0</para>
+<para>значение регистра s37 можна понижать до 14 </para>
+<orderedlist>
+<listitem>
+<para>Для модемов GVC Vector K2D: </para>
+</listitem>
+</orderedlist>
+<para>ATS0=1+VCID=0&amp;U1</para>
+<para>Я лично подобрав подходящую строку инициализации, сохранил ее прямо в профиле модема... </para></section></section><section><info><title>Настройка выхода через GPRS</title></info>
+<para>Если вы подключаетесь через GPRS с помощью звонилки (kppp, chestnut-dialer), может быть важным использование опции pppd - noipdefault !!! </para><section><info><title>Требуемая аппаратура</title></info>
+<para>Для соединения по GPRS потребуется следующее: </para>
+<orderedlist>
+<listitem>
+<para>Мобильный телефон, поддерживающий технологию GPRS </para>
+</listitem>
+<listitem>
+<para>Кабель COM или USB для подключения к компьютеру ("data-кабель") либо IrDA-интерфейс. </para>
+</listitem>
+</orderedlist></section><section><info><title>Подключение с помощью USB-кабеля</title></info>
+<para>Убедитесь, что в конфигурационном файле Вашего ядра присутствуют следующие опции: </para>
+<para>"Device Drivers" &gt;&gt;</para>
+<para>  [*]"Networking support" &gt;&gt;</para>
+<para>    [*] "Network device support"</para>
+<para>    &lt;M&gt; "PPP (point-to-point protocol) support"</para>
+<para>    &lt;M&gt; "PPP support for async serial ports"</para>
+<para>    &lt;M&gt; "PPP support for sync tty ports"</para>
+<para>    &lt;M&gt; "PPP Deflate compression"</para>
+<para>    &lt;M&gt; "PPP BSD-Compress compression"</para>
+<para>Для data-кабелей на основе микросхем Profilic 2303 (используются для подключения большинства телефонов, в том числе Siemens, Motorola, Nokia и др.) проверьте наличие: </para>
+<para>  "USB support" &gt;&gt;</para>
+<para>    "USB Serial Converter support" &gt;&gt;</para>
+<para>      &lt;M&gt; "USB Prolific 2303 Single Port Serial Driver"</para>
+<para>После компиляции ядра проверьте модуль: </para>
+<para>modprobe pl2303</para>
+<para>Теперь кабель представлен в системе как устройство /dev/usb/tts/0 (возможно /dev/ttyUSB0), которое может быть использовано в качестве обычного модема. </para>
+<para>Для телефонов Motorola, которые подключаются кабелем mini-USB (например С380,С390) достаточно включить </para>
+<para>   "USB support" &gt;&gt;</para>
+<para>     &lt;*&gt;"USB Modem (CDC ADCM)support" </para>
+<para>устройство будет называться /dev/ttyACM0 </para></section><section><info><title>Подключение с помощью COM-кабеля</title></info>
+<para>Тут все просто, "втыкаем" и используем...как любой модем на последовательном порту. </para></section><section><info><title>Подключение через Bluetooth</title></info>
+<para>Предполагается что вы уже настроили соединение телефона с компьютером через bluetooth, например по этой статье :<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/Работа_с_мобильными_телефонами_через_bluetooth">Работа с мобильными телефонами через bluetooth</link>. Итак устройства сопряжены. Теперь нам необходимо подключить телефон как модем. Для этого мы выполним привязку bluetooth-сервиса 1(то есть Dial-Up) к устройству /dev/rfcomm0.Начнем по порядку. </para>
+<orderedlist>
+<listitem>
+<para>Поищем телефон </para>
+</listitem>
+</orderedlist>
+<para>#hcitool scan</para>
+<para>Scanning ...</para>
+<para>       00:60:57:D5:3B:BE       Gtbear</para>
+<orderedlist>
+<listitem>
+<para>Подключим его к rfcomm0 </para>
+</listitem>
+</orderedlist>
+<para>#rfcomm bind 0 00:60:57:D5:3B:BE 1</para>
+<para>Этой командой мы подключили в rfcomm0 канал 1. Теперь телефон готов к работе. Осталось настроить соединения в конфигах pppd. </para>
+<orderedlist>
+<listitem>
+<para>Создадим файл /etc/ppp/peers/gprs.В него запишем следующее: </para>
+</listitem>
+</orderedlist>
+<para>lcp-echo-failure 0</para>
+<para>lcp-echo-interval 0</para>
+<para>/dev/rfcomm0</para>
+<para>connect /etc/ppp/peers/suct-connect # Это скрипт соединения,такое имя выбрано в честь моего оператора:</para>
+<para>115200                              #Южно-Уральский Сотовый Телефон :)</para>
+<para>crtscts</para>
+<para>local</para>
+<para>ipcp-accept-local</para>
+<para>noauth</para>
+<para>usepeerdns</para>
+<para>user suct</para>
+<para>defaultroute</para>
+<para>noipdefault</para>
+<orderedlist>
+<listitem>
+<para>Теперь сделаем скрипт соединения: </para>
+</listitem>
+</orderedlist>
+<para>#!/bin/bash</para>
+<para>exec chat -vS  \</para>
+<para>'' \rAT \</para>
+<para>TIMEOUT 12 \</para>
+<para>OK ATH \</para>
+<para>OK ATE1 \</para>
+<para>OK 'AT+CGDCONT=1,"IP","internet.usi.ru"' \</para>
+<para>OK ATD*99***1# \</para>
+<para>TIMEOUT 22 \</para>
+<para>SAY "\nWaiting for connect...\n" \</para>
+<para>CONNECT "" \</para>
+<para>SAY "\nGPRS connected.Enjoy.."</para>
+<orderedlist>
+<listitem>
+<para>В принципе все готово. Для запуска соединения можно использовать команду pppd call gprs nodetach </para>
+</listitem>
+</orderedlist></section><section><info><title>Подключение через IrDA</title></info>
+<para>Пакеты: </para>
+<para>emerge irda-utils</para>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Linux Kernel Configuration: Ядро 2.6 </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>Device Drivers ---&gt;</para>
+<para>[*] Networking support</para>
+<para>  &lt;*&gt; IrDA (infrared) subsystem support ---&gt;</para>
+<para>  &lt;*&gt; IrCOMM protocol</para>
+<para>  Infrared-port device drivers ---&gt;</para>
+<para>    &lt;*&gt; IrDA USB dongles</para>
+<para>    &lt;*&gt; SigmaTel STIr4200 bridge (EXPERIMENTAL)</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Когда ядро будет готово можно запускать команду: </para>
+<para>irattach irda0 -s</para>
+<para>Теперь если поднести телефон к инфракрасному порту он должен определиться... Дальше можно поднимать ppp как для обычного модема</para></section></section><section><info><title>Настройка выхода через CDMA (SKYLINK)</title></info><section><info><title>Подключение аппаратуры</title></info>
+<orderedlist>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/Работа_с_модемом_AnyDATA_ADU-E100A_%28SKYLINK%29">Модем AnyDATA ADU-E100A</link> </para>
+</listitem>
+</orderedlist></section><section><info><title>Настройка программного обеспечения</title></info>
+<orderedlist>
+<listitem>
+<para>Устанавливаем пакет который реализует поддержку протокола точка-точка (point-to-point protocol) </para>
+</listitem>
+</orderedlist>
+<para># emerge ppp </para>
+<orderedlist>
+<listitem>
+<para>Редактируем файл /etc/ppp/chap-secrets </para>
+</listitem>
+</orderedlist>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: /etc/ppp/chap-secrets </para>
+</entry>
+</row>
+<row>
+<entry>
+<para># Secrets for authentication using CHAP# client server secret IPaddresses"mobile" * "internet" * </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<orderedlist>
+<listitem>
+<para>Создаем файл /etc/ppp/peers/cdma </para>
+</listitem>
+</orderedlist>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: /etc/ppp/peers/cdma </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>debug/dev/ttyUSB0921600noipdefaultdefaultrouteipcp-accept-locallcp-echo-interval 60lcp-echo-failure 5usepeerdnsnopcompnoauthnoaccompnodetachuser "mobile"connect "/usr/sbin/chat -s -S -V -t 5 -f /etc/ppp/cdma.chat" </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<orderedlist>
+<listitem>
+<para>Создаем файл /etc/ppp/cdma.chat </para>
+</listitem>
+</orderedlist>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Code: /etc/ppp/cdma.chat </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>'' '' # "Это не кавычки, а два знака, который на клавиатуре слева от единички'' 'ATZ' # "Это не кавычки, а два знака, который на клавиатуре слева от единички'OK' 'ATI''OK' 'ATDT#777''CONNECT' 'ATO' </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<orderedlist>
+<listitem>
+<para>Пробуем </para>
+</listitem>
+</orderedlist>
+<para># pon cdma </para>
+<para/></section></section>
+</article>

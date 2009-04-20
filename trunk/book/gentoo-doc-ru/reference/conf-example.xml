@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info><title>Примеры конфигурационных файлов</title></info>
+<para/>
+<para>Автор:  <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:johnbat26@gmail.com?subject=По%20поводу%20примеров%20конфигурационных%20файлов">Евгений Батогов a.k.a JohnBat26</link>
+</para>
+<para>С версии: 1.0</para>
+<para>Обновлено: 1.5 (30.03.08)</para>
+<para/>
+<para>Мой компьютер:   </para>
+<para>Ноутбук DELL Inspiron 9400:</para>
+<orderedlist>
+<listitem>
+<para>Intel Core 2 Duo 2 Ghz.</para>
+</listitem>
+<listitem>
+<para>RAM: 2 gb DDR2.</para>
+</listitem>
+<listitem>
+<para>VIDEO: Nvidia Geforce 7900 GS 256 Mb DDR3 </para>
+</listitem>
+<listitem>
+<para>HDD: 120 Gb.</para>
+</listitem>
+<listitem>
+<para>Max. Res. 1920X1200 pixels</para>
+</listitem>
+<listitem>
+<para>FS: Only XFS !</para>
+</listitem>
+</orderedlist>
+<para>Программное обеспечение:</para>
+<orderedlist>
+<listitem>
+<para>Gentoo Linux.</para>
+</listitem>
+<listitem>
+<para>Kernel: 2.6.24</para>
+</listitem>
+<listitem>
+<para>GCC: 4.2.3</para>
+</listitem>
+<listitem>
+<para>Glibc: 2.7</para>
+</listitem>
+<listitem>
+<para>X.org: 1.4.0.90-r2</para>
+</listitem>
+<listitem>
+<para>KDE 3.5.9</para>
+</listitem>
+<listitem>
+<para>...</para>
+</listitem>
+</orderedlist>
+<section><info><title>Мой make.conf</title></info>
+<para>Важно: в данном файле я использую оптимизацию: O3. Этот вариант не гарантирует надежной работы. Поэтому используйте O2, когда не хотите рисковать.</para>
+<para># These settings were set by the catalyst build script that automatically built this stage</para>
+<para># Please consult /etc/make.conf.example for a more detailed example</para>
+<para>CFLAGS="-O3 -march=native -mtune=native -msse3 -mfpmath=sse -pipe -fomit-frame-pointer"</para>
+<para>CHOST="x86_64-pc-linux-gnu"</para>
+<para>CXXFLAGS="${CFLAGS}"</para>
+<para>MAKEOPTS="-j3"</para>
+<para>USE="64bit 7zip X a52 aac aalib accessibility acl acpi aim alsa amarok amazon</para>
+<para>     amuled apm archive arts asf async audiofile automount avi bash-completion</para>
+<para>     bcmath berkdb big-iron binary-drivers bitmap-fonts bluetooth branding</para>
+<para>     bzip2 c++ cairo caps captury cardbus ccache cdda cddb cdinstall cdio</para>
+<para>     cdparanoia cdr cdrom cdsound chm chroot cisco clamav clamd colordiff</para>
+<para>     compress connectionstatus contactnotes cpio cpudetection cpulimit</para>
+<para>     cracklib crypt cscope ctype cups curl curlwrappers custom-cflags cviewer</para>
+<para>     cxx cyrillic darcs dba dbus dell depth32 designer-plugin device-mapper</para>
+<para>     devil dhcp dia dialup dict directfb divx divx4linux djvu dri dv dvb dvd</para>
+<para>     dvdr dvdread dvi dxr3 editor effects emerald emovix enca encode exif</para>
+<para>     expat extensions fat fbcon fbsplash festival ffmpeg fftw firefox flac</para>
+<para>     flash font-server fontconfig foomaticdb fortran freeimage ftp gadu games</para>
+<para>     gd gdb gdbm gif gimp gimpprint ginac glitz gmail gnuplot gpac gpg gphoto2</para>
+<para>     gpm graphics graphviz groupwise grub gtk gtk2 hal hbci hddtemp highlight</para>
+<para>     history htmlhandbook iconv icq id3tag ieee1394 ifp imagemagick imap imlib</para>
+<para>     inkjar interbase ipq-mon iptv ipv6 ipw3945 ipw4965 irc jabber java java6</para>
+<para>     javascript jbig jce jpeg jpeg2k kcal kde kdecards kdeenablefinal</para>
+<para>     kdehiddenvisibility kdepim kdexdeltas kdgraphics kdm kdrive kernel_linux</para>
+<para>     kig-scripting kipi kontact krb4 lame laptop latex lcd lcmsjpeg ldap</para>
+<para>     ldapsam lha libcaca libclamav libg++ libgcrypt libnotify libvisual libwww</para>
+<para>     live lm_sensors logitech-mouse logrotate magic maps matroska md5sum</para>
+<para>     memlimit mikmod mime mmx mng modplug mozbranding mozdevelop mozilla mp2</para>
+<para>     mp3 mp4 mp4live mpeg mpeg2 mplayer mplayer-bin musepack musicbrains mysql</para>
+<para>     ncurses nemesi netmeeting networkmanager nfs nls nokia6600 nomotif</para>
+<para>     nowlistening nptl nptlonly nsplugin ntfs numeric nvidia obex objc objc++</para>
+<para>     objc-gc octave office ofx ogg oggvorbis oodict openexr opengl openssl</para>
+<para>     openvpn oscar overlays pam pcntl pcre pda pdf pdflib perl pie pink plasma</para>
+<para>     player pmount pmu png portage posix postgres povray ppp pptp pulseaudio</para>
+<para>     pymol python qq qt qt-copy qt-static qt3 qt3support qt4 query-browser</para>
+<para>     quicktime rar rc5 rdesktop readline real realmedia rss rtc ruby samba</para>
+<para>     sametime sasl savepwd sbig scaner scanfolder scanner sdl search sensord</para>
+<para>     session sharedext sharedmem simplexml skins slang slp smp sms smtp</para>
+<para>     snapshot sndfile soap sockets solver sound sounds spamassassin speech</para>
+<para>     speedo speex spell spexx sql sqlite sqlite3 sse sse2 ssl statistics stats</para>
+<para>     stream subtitles subversion svg svnserve symlink sysfs tcl tcltk tcpd</para>
+<para>     texteffect tga theora thesaurus threads tiff translator transparency</para>
+<para>     trayicon truetype tunepimp type1 udev unicode upnp usb utempter utf8 vcd</para>
+<para>     videos vim vim-pager vim-syntax vim-with-x visualization vnc vncviewer</para>
+<para>     vorbis vorbis-psy weather webpresence widescreen wifi winpopup wireshark</para>
+<para>     wmf wmp wxgtk1 wxwindows xcomposite xforms xfs xine xinerama xml xml2 xmp</para>
+<para>     xorg xosd xpm xprint xrender xskatcards xsl xv xvid yahoo zip zlib -daap</para>
+<para>     -privacy -unzip"</para>
+<para>ACCEPT_KEYWORDS="~amd64 ~x86 amd64 x86"</para>
+<para>AUTOCLEAN="yes"</para>
+<para>PORTAGE_NICENESS=39</para>
+<para>#FEATURES="ccache candy userfetch buildpkg -sandbox collision-protect"</para>
+<para>FEATURES="ccache candy userfetch buildpkg -sandbox"</para>
+<para>CCACHE_DIR="/var/tmp/ccache/"</para>
+<para>CCACHE_SIZE="4G"</para>
+<para>CC="gcc"</para>
+<para>CXX="g++"</para>
+<para>#PORTDIR_OVERLAY="/usr/portage/local/alsa /usr/portage/local/infra /usr/portage/local/qstardict #/usr/portage/local/stardict  /usr/portage/local/layman /usr/portage/local/google /usr/portage/local/layman/#sunrise /usr/portage/local/layman/xeffects /usr/portage/local/krusader"</para>
+<para/>
+<para>GENTOO_MIRRORS="http://trumpetti.atm.tut.fi/gentoo ftp://ftp.ussg.iu.edu/pub/linux/gentoo ftp://ftp.ucsb.edu/pub/mirrors/linux/gentoo/ http://ftp.ucsb.edu/pub/mirrors/linux/gentoo/ http://gentoo.chem.wisc.edu/gentoo/ ftp://gentoo.mirrors.pair.com/  http://gentoo.mirrors.tds.net/gentoo/ ftp://gentoo.mirrors.tds.net/gentoo/ http://gentoo.netnitco.net/  ftp://gentoo.netnitco.net/pub/mirrors/gentoo/source/ http://mirror.espri.arizona.edu/gentoo/</para>
+<para>#http://mirrors.acm.cs.rpi.edu/gentoo/ ftp://ftp.ndlug.nd.edu/pub/gentoo/ http://open-systems.ufl.edu/mirrors/gentoo #http://gentoo.llarian.net/ ftp://gentoo.llarian.net/pub/gentoo #http://gentoo.binarycompass.org #http://mirror.datapipe.net/gentoo ftp://mirror.datapipe.net/gentoo http://prometheus.cs.wmich.edu/gentoo #http://modzer0.cs.uaf.edu/public/gentoo/ #http://mirror.usu.edu/mirrors/gentoo/ ftp://mirror.usu.edu/mirrors/gentoo/ #ftp://lug.mtu.edu/gentoo http://mirror.phy.olemiss.edu/mirror/gentoo http://mirror.mcs.anl.gov/pub/gentoo/ #ftp://mirror.mcs.anl.gov/pub/gentoo/ http://gentoo.mirrors.easynews.com/linux/gentoo/ #http://gentoo.cites.uiuc.edu/pub/gentoo/ ftp://gentoo.cites.uiuc.edu/pub/gentoo/ #ftp://ftp.wwc.edu/pub/mirrors/ftp.gentoo.org http://gentoo.localhost.net.ar/ #ftp://mirrors.localhost.net.ar/pub/mirrors/gentoo http://www.las.ic.unicamp.br/pub/gentoo/ #ftp://ftp.las.ic.unicamp.br/pub/gentoo/ http://gentoo.inode.at/ ftp://gentoo.inode.at/source/ #http://gd.tuwien.ac.at/opsys/linux/gentoo/ ftp://gd.tuwien.ac.at/opsys/linux/gentoo/ #http://ftp.belnet.be/mirror/rsync.gentoo.org/gentoo/ ftp://ftp.belnet.be/mirror/rsync.gentoo.org/gentoo/ #http://mirror.bih.net.ba/gentoo/ ftp://mirror.bih.net.ba/gentoo/ #ftp://ftp.sh.cvut.cz/MIRRORS/gentoo/gentoo #http://gentoo.supp.name/ http://mirror.uni-c.dk/pub/gentoo/ http://ftp.linux.ee/pub/gentoo/distfiles/ #ftp://ftp.linux.ee/pub/gentoo/distfiles/ #http://trumpetti.atm.tut.fi/gentoo/ ftp://trumpetti.atm.tut.fi/gentoo/ #http://ftp.public.fix.fi/gentoo/ ftp://ftp.public.fix.fi/gentoo http://gentoo.modulix.net/gentoo/ #http://ftp.club-internet.fr/pub/mirrors/gentoo ftp://gentoo.imj.fr/pub/gentoo/ #ftp://ftp.tu-clausthal.de/pub/linux/gentoo/ ftp://sunsite.informatik.rwth-aachen.de/pub/Linux/gentoo #http://linux.rz.ruhr-uni-bochum.de/download/gentoo-mirror/ "</para>
+<para/>
+<para>#FETCHCOMMAND="/usr/bin/getdelta.sh \${URI}"</para>
+<para>SYNC="rsync://rsync.gentoo.org/gentoo-portage"</para>
+<para>INPUT_DEVICES="keyboard mouse synaptics evdev"</para>
+<para>VIDEO_CARDS="nv nvidia vesa"</para>
+<para>LINGUAS="ru"</para>
+<para>PORTDIR="/usr/portage" </para>
+<para>ALSA_CARDS="hda-intel"</para>
+<para/></section><section><info><title>2. Файл xorg.conf для NVIDIA Geforce</title></info>
+<para/>
+<para>Section "Module" </para>
+<para>    Load        "ddc"   # ddc probing of monitor </para>
+<para>    Load        "dbe"   # Double buffer extension </para>
+<para>    SubSection  "extmod" </para>
+<para>      Option    "omit xfree86-dga"   # don't initialize the DGA extension </para>
+<para>    EndSubSection </para>
+<para>    Load          "record"</para>
+<para>    Load          "xtrap"</para>
+<para>    Load               "type1" </para>
+<para>    Load             "freetype" </para>
+<para>    Load             "synaptics" </para>
+<para>    Load             "glx"</para>
+<para>    Load             "wfb" </para>
+<para>EndSection</para>
+<para/>
+<para>Section "Files"</para>
+<para>    FontPath     "/usr/share/fonts/misc:unscaled"</para>
+<para>    FontPath     "/usr/share/fonts/Type1/" </para>
+<para>    FontPath     "/usr/share/fonts/TTF/"</para>
+<para>    FontPath     "/usr/share/fonts/corefonts"</para>
+<para>    FontPath     "/usr/share/fonts/freefonts"</para>
+<para>    FontPath     "/usr/share/fonts/sharefonts"        </para>
+<para>    FontPath     "/usr/share/fonts/terminus"</para>
+<para>    FontPath     "/usr/share/fonts/ttf-bitstream-vera"</para>
+<para>    FontPath     "/usr/share/fonts/unifont"</para>
+<para>    FontPath     "/usr/share/fonts/100dpi:unscaled"</para>
+<para>    FontPath     "/usr/share/fonts/75dpi:unscaled" </para>
+<para>    FontPath     "/usr/share/fonts/artwiz"</para>
+<para>    FontPath     "/usr/share/fonts/cyrillic"</para>
+<para>EndSection</para>
+<para/>
+<para>Section "ServerFlags" </para>
+<para>    Option       "AllowMouseOpenFail" "true" </para>
+<para>    Option       "SuspendTime"        "10" </para>
+<para>    Option       "OffTime"            "15"</para>
+<para>    Option "AutoAddDevices" "false" </para>
+<para>EndSection</para>
+<para/>
+<para>Section "InputDevice" </para>
+<para>    Identifier  "Keyboard1" </para>
+<para>    Driver      "kbd" </para>
+<para>    Option      "XkbRules"      "xorg"</para>
+<para>    Option      "XkbModel"      "microsoftpro" </para>
+<para>    Option      "XkbLayout"     "us,ru" </para>
+<para>    Option      "XkbVariant"     ",winkeys"</para>
+<para>    Option      "XkbOptions"    "grp:shift_toggle,grp_led:scroll"</para>
+<para>    Option      "AutoRepeat"    "500 30" </para>
+<para>EndSection</para>
+<para/>
+<para>Section "InputDevice" </para>
+<para>    Identifier  "USBMouse" </para>
+<para>    Driver      "mouse"</para>
+<para>    Option      "Device" "/dev/input/mice"</para>
+<para>    Option      "Buttons"      "7"</para>
+<para>    Option      "CorePointer"</para>
+<para>    Option      "Protocol" "auto"</para>
+<para>    Option      "ZAxisMapping" "4 5 6 7"</para>
+<para>EndSection</para>
+<para/>
+<para>Section "InputDevice"</para>
+<para>    Driver      "synaptics"</para>
+<para>    Identifier  "TouchPad"</para>
+<para>    Option      "Device"       "/dev/input/mice"</para>
+<para>    Option      "Protocol"     "auto-dev"</para>
+<para>    Option      "LeftEdge"     "1900"</para>
+<para>    Option      "RightEdge"    "5400"</para>
+<para>    Option      "BottomEdge"   "1800"</para>
+<para>    Option      "TopEdge"      "3900"</para>
+<para>    Option      "FingerLow"    "25"</para>
+<para>    Option      "FingerHigh"   "30"</para>
+<para>    Option      "MaxTapTime"   "180"</para>
+<para>    Option      "MaxTapMove"   "220"</para>
+<para>    Option      "VertScrollDelta" "100"</para>
+<para>    Option      "MinSpeed"     "0.02"</para>
+<para>    Option      "MaxSpeed"     "0.18"</para>
+<para>    Option      "AccelFactor"  "0.0010"</para>
+<para>    Option      "SendCoreEvents" "true"</para>
+<para>    Option      "Repeater"     "/dev/ps2mouse"</para>
+<para>    Option      "SHMConfig"    "true"</para>
+<para>EndSection</para>
+<para>Section "Monitor" </para>
+<para>    Identifier  "DellLFP" </para>
+<para>    HorizSync       28.0 - 96.0</para>
+<para>    VertRefresh     43.0 - 60.0</para>
+<para>    Option      "DPMS" </para>
+<para>#    DisplaySize     320 240</para>
+<para>EndSection</para>
+<para/>
+<para/>
+<para>Section "Device" </para>
+<para>    # Some names might need to be changed hereafter: </para>
+<para>    Identifier  "NVIDIA GeForce 7900GS" </para>
+<para>    Driver      "nvidia" </para>
+<para>    VendorName  "nVidia Corporation"</para>
+<para>    BoardName   "GeForce 7900 GS" </para>
+<para>    BusID       "PCI:1:0:0"</para>
+<para>    #Option     "NoLogo" "1" </para>
+<para>    Option "UseDisplayDevice" "DFP"</para>
+<para>    ### 2D ACCELLERATION</para>
+<para>    #Option  "RenderAccel"           "false" # hardware Render acceleration</para>
+<para>    #Option  "BackinStore"           "true"  #[] prevent artifacts?</para>
+<para>    #Option  "NoRenderExtension"     "true"</para>
+<para>    ## some options</para>
+<para>    Option  "SWcursor"              "false" #[]</para>
+<para>    Option  "Render"                "true"</para>
+<para>    Option  "Composite"             "true"</para>
+<para>    ### 3D ACCELLERATION</para>
+<para>    Option  "EnablePageFlip"        "yes"   #[] Improves performance</para>
+<para>    Option  "AGPFastWrite"          "yes"   #[]</para>
+<para>    Option  "AGPMode"               "4"     # Supports AGP 4x</para>
+<para>    # VideoRam    262144 </para>
+<para>    # Insert Clocks lines here if appropriate </para>
+<para>    #Option "IgnoreDisplayDevices" "CRT, TV"</para>
+<para>    Option "TripleBuffer" "True"</para>
+<para>    Option "AddARGBGLXVisuals" "True"</para>
+<para>    Option "AllowGLXWithComposite" "true" </para>
+<para>    Option "Coolbits" "1"</para>
+<para>EndSection</para>
+<para/>
+<para>Section "Screen"</para>
+<para>        Identifier "Screen1"</para>
+<para>        Device     "NVIDIA GeForce 7900GS"</para>
+<para>        Monitor    "DellLFP"</para>
+<para>        DefaultDepth     24</para>
+<para>        SubSection "Display"</para>
+<para>                Viewport   0 0</para>
+<para>                Depth     8</para>
+<para>                Modes    "1920x1200" "1400x1050" "1280x1024" "1024x768" "800x600" "640x480"</para>
+<para>        EndSubSection</para>
+<para>        SubSection "Display"</para>
+<para>                Viewport   0 0</para>
+<para>                Depth     16</para>
+<para>                Modes    "1920x1200" "1400x1050" "1280x1024" "1024x768" "800x600" "640x480"</para>
+<para>        EndSubSection</para>
+<para>        SubSection "Display"</para>
+<para>                Viewport   0 0</para>
+<para>                Depth     24</para>
+<para>                Modes    "1920x1200" "1400x1050" "1280x1024" "1024x768" "800x600" "640x480"</para>
+<para>        EndSubSection</para>
+<para>    Option         "RenderAccel" "true"</para>
+<para>    Option         "AddARGBGLXVisuals" "True"</para>
+<para>    Option         "DisableGLXRootClipping" "True" </para>
+<para>EndSection</para>
+<para/>
+<para>Section "ServerLayout" </para>
+<para>    Identifier  "Flat Panel Only" </para>
+<para>    Screen      "Screen 1" </para>
+<para>  #InputDevice "Touchpad"      "AlwaysCore" </para>
+<para>    InputDevice    "TouchPad" </para>
+<para>    InputDevice    "USBMouse" "CorePointer"</para>
+<para>EndSection </para>
+<para> Section "Extensions"</para>
+<para>        Option      "Composite"   "enable"</para>
+<para>EndSection</para>
+<para/></section><section><info><title> 3. Файл xorg.conf для ATI radeon:</title></info>
+<para>Section "ServerLayout"</para>
+<para>        Identifier     "X.org Configured"</para>
+<para>        Screen      0  "Screen0" 0 0</para>
+<para>        InputDevice    "Synaptics" "CorePointer"</para>
+<para>        InputDevice    "Mouse"      "SendCoreEvents"</para>
+<para>        InputDevice    "Keyboard0" "CoreKeyboard"</para>
+<para>        Option               "OffTime"  "3"        # 3 indicates number of min until monitor-off</para>
+<para>EndSection</para>
+<para/>
+<para>Section "ServerFlags"</para>
+<para>  Option        "AllowMouseOpenFail"</para>
+<para>EndSection</para>
+<para/>
+<para>Section "dri"</para>
+<para># Access to OpenGL ICD is allowed for all users:</para>
+<para>#    Mode 0666</para>
+<para># Access to OpenGL ICD is restricted to a specific user group:</para>
+<para>    Group 27    # video</para>
+<para>    Mode 0660</para>
+<para>EndSection</para>
+<para/>
+<para/>
+<para>Section "Files"</para>
+<para>    FontPath     "/usr/share/fonts/misc:unscaled"</para>
+<para>    FontPath     "/usr/share/fonts/Type1/" </para>
+<para>    FontPath     "/usr/share/fonts/TTF/"</para>
+<para>    FontPath     "/usr/share/fonts/corefonts"</para>
+<para>    FontPath     "/usr/share/fonts/freefonts"</para>
+<para>    FontPath     "/usr/share/fonts/sharefonts"        </para>
+<para>    FontPath     "/usr/share/fonts/terminus"</para>
+<para>    FontPath     "/usr/share/fonts/ttf-bitstream-vera"</para>
+<para>    FontPath     "/usr/share/fonts/unifont"</para>
+<para>    FontPath     "/usr/share/fonts/100dpi:unscaled"</para>
+<para>    FontPath     "/usr/share/fonts/75dpi:unscaled" </para>
+<para>    FontPath     "/usr/share/fonts/artwiz"</para>
+<para>    FontPath     "/usr/share/fonts/cyrillic"</para>
+<para>EndSection</para>
+<para/>
+<para>Section "Module"</para>
+<para>        Load  "glx"</para>
+<para>        # This loads the miscellaneous extensions module, and disables</para>
+<para>        # initialisation of the XFree86-DGA extension within that module.</para>
+<para>            SubSection  "extmod"</para>
+<para>                 Option    "omit xfree86-dga"   # don't initialise the DGA extension</para>
+<para>            EndSubSection</para>
+<para>        Load  "dbe"</para>
+<para>        Load  "dri"</para>
+<para>        Load  "xtrap"</para>
+<para>        Load  "record"</para>
+<para>        Load  "freetype"</para>
+<para>        Load  "type1"</para>
+<para>EndSection</para>
+<para/>
+<para>Section "InputDevice"</para>
+<para>        Identifier  "Keyboard0"</para>
+<para>        Driver          "kbd"</para>
+<para/>
+<para>        Option                "XkbModel"      "aspire5020"</para>
+<para>        Option                "XkbLayout"     "se"</para>
+<para>        #Option                "XkbVariant"    "nodeadkeys"</para>
+<para>EndSection</para>
+<para/>
+<para>Section "InputDevice"</para>
+<para>  Identifier    "Synaptics"</para>
+<para>  Driver        "synaptics"</para>
+<para>  Option        "Device"        "/dev/psaux"</para>
+<para>  Option        "Protocol"      "auto-dev"</para>
+<para>  Option        "LeftEdge"      "1700"</para>
+<para>  Option        "RightEdge"     "5300"</para>
+<para>  Option        "TopEdge"       "1700"</para>
+<para>  Option        "BottomEdge"    "4200"</para>
+<para>  Option        "FingerLow"     "25"</para>
+<para>  Option        "FingerHigh"    "30"</para>
+<para>  Option        "MaxTapTime"    "180"</para>
+<para>  Option        "MaxTapMove"    "220"</para>
+<para>  Option        "VertScrollDelta" "100"</para>
+<para>  Option        "MinSpeed"      "0.09"</para>
+<para>  Option        "MaxSpeed"      "0.18"</para>
+<para>  Option        "AccelFactor"   "0.0015"</para>
+<para>  Option        "SHMConfig"     "on"</para>
+<para>#  #  Option       "Repeater"      "/dev/ps2mouse"</para>
+<para>EndSection</para>
+<para/>
+<para>Section "InputDevice"</para>
+<para>  Identifier    "Mouse"</para>
+<para>  Driver        "mouse"</para>
+<para>  Option        "Device"        "/dev/input/mice"</para>
+<para>  Option        "Protocol"      "imps/2"</para>
+<para>  Option        "ZAxisMapping"  "4 5"</para>
+<para>  Option        "Buttons"        "5"</para>
+<para>EndSection</para>
+<para/>
+<para>Section "Monitor"</para>
+<para>        Identifier   "Monitor0"</para>
+<para>        VendorName   "LPL"</para>
+<para>        ModelName    "0"</para>
+<para>        Option             "DPMS"</para>
+<para>EndSection</para>
+<para/>
+<para># === ATI device section ===</para>
+<para/>
+<para>Section "Device"</para>
+<para>    Identifier  "Card0"</para>
+<para>    Driver      "fglrx"        </para>
+<para>    VendorName  "ATI Technologies Inc"</para>
+<para>    BoardName   "ATI Mobility X600"</para>
+<para># ### generic DRI settings ###</para>
+<para># === disable PnP Monitor  ===</para>
+<para>    #Option                              "NoDDC"</para>
+<para># === disable/enable XAA/DRI ===</para>
+<para>    Option "no_accel"                   "no"</para>
+<para>    Option "no_dri"                     "no"</para>
+<para># === misc DRI settings ===</para>
+<para>    Option "mtrr"                       "off" # disable DRI mtrr mapper, driver has its own code for mtrr</para>
+<para># ### FireGL DDX driver module specific settings ###</para>
+<para># === Screen Management ===</para>
+<para>    Option "DesktopSetup"               "0x00000100"</para>
+<para>    Option "MonitorLayout"              "NONE,LVDS"</para>
+<para>    Option "IgnoreEDID"                 "off"</para>
+<para>    Option "HSync2"                     "unspecified"</para>
+<para>    Option "VRefresh2"                  "unspecified"</para>
+<para>    Option "ScreenOverlap"              "0"</para>
+<para># === TV-out Management ===</para>
+<para>    Option "NoTV"                       "yes"</para>
+<para>    Option "TVStandard"                 "NTSC-M"</para>
+<para>    Option "TVHSizeAdj"                 "0"</para>
+<para>    Option "TVVSizeAdj"                 "0"</para>
+<para>    Option "TVHPosAdj"                  "0"</para>
+<para>    Option "TVVPosAdj"                  "0"</para>
+<para>    Option "TVHStartAdj"                "0"</para>
+<para>    Option "TVColorAdj"                 "0"</para>
+<para>    Option "GammaCorrectionI"           "0x00000000"</para>
+<para>    Option "GammaCorrectionII"          "0x00000000"</para>
+<para># === OpenGL specific profiles/settings ===</para>
+<para>    Option "Capabilities"               "0x00000000"</para>
+<para># === Video Overlay for the Xv extension ===</para>
+<para>    Option "VideoOverlay"               "on"</para>
+<para># === OpenGL Overlay ===</para>
+<para># Note: When OpenGL Overlay is enabled, Video Overlay</para>
+<para>#       will be disabled automatically</para>
+<para>    Option "OpenGLOverlay"              "off"</para>
+<para># === Center Mode (Laptops only) ===</para>
+<para>    Option "CenterMode"                 "off"</para>
+<para># === Pseudo Color Visuals (8-bit visuals) ===</para>
+<para>    Option "PseudoColorVisuals"         "off"</para>
+<para># === QBS Management ===</para>
+<para>    Option "Stereo"                     "off"</para>
+<para>    Option "StereoSyncEnable"           "1"</para>
+<para># === FSAA Management ===</para>
+<para>    Option "FSAAEnable"                 "no"</para>
+<para>    Option "FSAAScale"                  "1"</para>
+<para>    Option "FSAADisableGamma"           "no"</para>
+<para>    Option "FSAACustomizeMSPos"         "no"</para>
+<para>    Option "FSAAMSPosX0"                "0.000000"</para>
+<para>    Option "FSAAMSPosY0"                "0.000000"</para>
+<para>    Option "FSAAMSPosX1"                "0.000000"</para>
+<para>    Option "FSAAMSPosY1"                "0.000000"</para>
+<para>    Option "FSAAMSPosX2"                "0.000000"</para>
+<para>    Option "FSAAMSPosY2"                "0.000000"</para>
+<para>    Option "FSAAMSPosX3"                "0.000000"</para>
+<para>    Option "FSAAMSPosY3"                "0.000000"</para>
+<para>    Option "FSAAMSPosX4"                "0.000000"</para>
+<para>    Option "FSAAMSPosY4"                "0.000000"</para>
+<para>    Option "FSAAMSPosX5"                "0.000000"</para>
+<para>    Option "FSAAMSPosY5"                "0.000000"</para>
+<para># === Misc Options ===</para>
+<para>    Option "UseFastTLS"                 "0"</para>
+<para>    Option "BlockSignalsOnLock"         "on"</para>
+<para>    Option "UseInternalAGPGART"         "no"</para>
+<para>    Option "ForceGenericCPU"            "no"</para>
+<para>    Option "DynamicClocks"                "on" # Use ATI Powerplay features</para>
+<para>    BusID "PCI:1:0:0"    # vendor=1002, device=3150</para>
+<para>    Screen 0</para>
+<para>EndSection</para>
+<para/>
+<para>#Section "Device"</para>
+<para>        ### Available Driver options are:-</para>
+<para>        ### Values: &lt;i&gt;: integer, &lt;f&gt;: float, &lt;bool&gt;: "True"/"False",</para>
+<para>        ### &lt;string&gt;: "String", &lt;freq&gt;: "&lt;f&gt; Hz/kHz/MHz"</para>
+<para>        ### [arg]: arg optional</para>
+<para>        #Option     "NoAccel"                    # [&lt;bool&gt;]</para>
+<para>        #Option     "SWcursor"                   # [&lt;bool&gt;]</para>
+<para>        #Option     "Dac6Bit"                    # [&lt;bool&gt;]</para>
+<para>        #Option     "Dac8Bit"                    # [&lt;bool&gt;]</para>
+<para>        #Option     "BusType"                    # [&lt;str&gt;]</para>
+<para>        #Option     "CPPIOMode"                  # [&lt;bool&gt;]</para>
+<para>        #Option     "CPusecTimeout"              # &lt;i&gt;</para>
+<para>        #Option     "AGPMode"                    # &lt;i&gt;</para>
+<para>        #Option     "AGPFastWrite"               # [&lt;bool&gt;]</para>
+<para>        #Option     "AGPSize"                    # &lt;i&gt;</para>
+<para>        #Option     "GARTSize"                   # &lt;i&gt;</para>
+<para>        #Option     "RingSize"                   # &lt;i&gt;</para>
+<para>        #Option     "BufferSize"                 # &lt;i&gt;</para>
+<para>        #Option     "EnableDepthMoves"           # [&lt;bool&gt;]</para>
+<para>        #Option     "EnablePageFlip"             # [&lt;bool&gt;]</para>
+<para>        #Option     "NoBackBuffer"               # [&lt;bool&gt;]</para>
+<para>        #Option     "DRIReinit"                  # [&lt;bool&gt;]</para>
+<para>        #Option     "PanelOff"                   # [&lt;bool&gt;]</para>
+<para>        #Option     "DDCMode"                    # [&lt;bool&gt;]</para>
+<para>        #Option     "MonitorLayout"              # [&lt;str&gt;]</para>
+<para>        #Option     "IgnoreEDID"                 # [&lt;bool&gt;]</para>
+<para>        #Option     "UseFBDev"                   # [&lt;bool&gt;]</para>
+<para>        #Option     "VideoKey"                   # &lt;i&gt;</para>
+<para>        #Option     "MergedFB"                   # [&lt;bool&gt;]</para>
+<para>        #Option     "CRT2HSync"                  # [&lt;str&gt;]</para>
+<para>        #Option     "CRT2VRefresh"               # [&lt;str&gt;]</para>
+<para>        #Option     "CRT2Position"               # [&lt;str&gt;]</para>
+<para>        #Option     "MetaModes"                  # [&lt;str&gt;]</para>
+<para>        #Option     "MergedDPI"                  # [&lt;str&gt;]</para>
+<para>        #Option     "NoMergedXinerama"           # [&lt;bool&gt;]</para>
+<para>        #Option     "MergedXineramaCRT2IsScreen0"         # [&lt;bool&gt;]</para>
+<para>        #Option     "DisplayPriority"            # [&lt;str&gt;]</para>
+<para>        #Option     "PanelSize"                  # [&lt;str&gt;]</para>
+<para>        #Option     "ForceMinDotClock"           # &lt;freq&gt;</para>
+<para>        #Option     "RenderAccel"                # [&lt;bool&gt;]</para>
+<para>        #Option     "SubPixelOrder"              # [&lt;str&gt;]</para>
+<para>        #Option     "ShowCache"                  # [&lt;bool&gt;]</para>
+<para>        #Option     "DynamicClocks"              # [&lt;bool&gt;]</para>
+<para>        #Option     "VGAAccess"                  # [&lt;bool&gt;]</para>
+<para>        #Option     "LVDSProbePLL"               # [&lt;bool&gt;]</para>
+<para>        #Option     "ReverseDDC"                 # [&lt;bool&gt;]</para>
+<para>        #Option     "BIOSHotkeys"                # [&lt;bool&gt;]</para>
+<para>#        Identifier  "Card0"</para>
+<para>#        Driver      "ati"</para>
+<para>#        VendorName  "ATI Technologies Inc"</para>
+<para>#        BoardName   "ATI Mobility X600"</para>
+<para>#        BusID       "PCI:1:0:0"</para>
+<para>#EndSection</para>
+<para/>
+<para>Section "Screen"</para>
+<para>        Identifier "Screen0"</para>
+<para>        Device     "Card0"</para>
+<para>        Monitor    "Monitor0"</para>
+<para>           DefaultDepth 24</para>
+<para/>
+<para>        SubSection "Display"</para>
+<para>                Viewport   0 0</para>
+<para>                Depth     16</para>
+<para>#                Modes     "1280x800"</para>
+<para>        EndSubSection</para>
+<para>        SubSection "Display"</para>
+<para>                Viewport   0 0</para>
+<para>                Depth     24</para>
+<para>#                Modes     "1280x800"</para>
+<para>        EndSubSection</para>
+<para>EndSection</para>
+<para/>
+</section>
+    <section>
+        <info><title>4. Файл /etc/fstab</title></info>
+<para/>
+<para/>
+<para/></section>
+</article>

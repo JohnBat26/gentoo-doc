@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info><title>Руководство Gentoo Linux ALSA</title></info>
+<para/>
+<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/kde-config.xml">http://www.gentoo.org/doc/ru/alsa-guide.xml</link>
+</para>
+<para>С версии: 1.0</para>
+<para>Обновлено:  1.2</para><section><info><title>1. Введение</title></info>
+<para/>
+<para>Что такое ALSA?</para>
+<para/>
+<para>ALSA, или Advanced Linux Sound Architecture — продвинутая звуковая архитектура Linux, позволяет работать аудио и MIDI (Musical Instrument Digital Interface — Цифровой интерфейс музыкальных инструментов) в операционной системе Linux. ALSA является основной звуковой подсистемой в ядрах 2.6, заменяя собой OSS (Open Sound System — Открытая звуковая система), которая использовалась в ядрах 2.4. </para>
+<para>Главные преимущества ALSA включают эффективную поддержку всех типов аудио интерфейсов, начиная от широко распространённых аудио карт и заканчивая профессиональным звуковым оборудованием, полностью модульные драйверы, поддержку многопроцессорных систем и потоковую безопасность, обратную совместимости с OSS, а также пользовательскую библиотеку alsa-lib, делающую разработку приложений лёгкой. </para>
+<para/>
+<para/>
+<para>ALSA в Gentoo</para>
+<para/>
+<para>Одна из сильных сторон Gentoo заключается в предоставлении пользователю максимального контроля над тем, как система установлена/сконфигурирована. ALSA в Gentoo следует этому принципу. Существуют два способа, с помощью которых вы можете установить и запустить ALSA на вашей системе. Мы подробно рассмотрим их в следующей главе.</para>
+<para/></section><section><info><title>2. Установка ALSA</title></info>
+<para/>
+<para>Варианты</para>
+<para/>
+<para>Предупреждение: Способы, описываемые ниже, являются взаимно исключающими. Вы не можете одновременно собрать ALSA в ядре и установить media-sound/alsa-driver. Это не получится. </para>
+<para/>
+<para>Два варианта установки ALSA драйверов: </para>
+<orderedlist>
+<listitem>
+<para>Использовать ALSA драйверы, предоставляемые вашим ядром. Этот метод предпочтительный и рекомендуемый. </para>
+</listitem>
+<listitem>
+<para>Использовать пакет media-sound/alsa-driver. </para>
+</listitem>
+</orderedlist>
+<para>Драйверы, предоставляемые ядром, могут немного отличаться от предоставляемых пакетом alsa-driver; возможности и исправления одного могут оказаться всё ещё не включёнными в другой. Разработчики ALSA осознают ситуацию, но эти два драйвера по существу являются отдельными ветвями проекта ALSA; они не идентичны. Вы должны понимать, что они могут по-разному функционировать, поэтому если один из них у вас не работает, попробуйте другой! Мы бегло рассмотрим оба варианта перед принятием окончательного решения. </para>
+<para>Преимущества и недостатки использования ALSA драйверов, предоставляемых ядром: </para>
+<para> ALSA в ядре        за и против</para>
+<para>+        Нет необходимости устанавливать ещё один пакет; драйверы включены в         ядро</para>
+<para>+        Единое решение, никаких повторных команд emerge</para>
+<para>-        Может немного отличаться от alsa-driver</para>
+<para/>
+<para/>
+<para>А если вы выберете alsa-driver, то: </para>
+<para/>
+<para>Драйверы ALSA        за и против</para>
+<orderedlist>
+<listitem>
+<para/>
+</listitem>
+</orderedlist>
+<para>+        Самые свежие драйверы от проекта ALSA</para>
+<para>+        Удобно, если вы собираетесь разрабатывать драйверы для аудио устройств</para>
+<para>-        Каждая пересборка ядра требует повторной переустановки alsa-driver</para>
+<para>-        Определенные параметры конфигурации ядра дожны быть отключены</para>
+<para/>
+<para/>
+<para>Итак...</para>
+<para/>
+<para>Как сказано выше, отличия между драйверами из пакета alsa-driver и ALSA драйверами, поставляемыми с ядром, очень незначительны. Так как между ними нет большой разницы, сначала попробуйте ALSA драйвера, поставляемые ядром, так как их проще использовать. Перед тем как сообщить о любой проблеме, связанной со звуком, в <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://bugs.gentoo.org/">Gentoo Bugzilla</link>, пожалуйста, попробуйте её воспроизвести, используя alsa-driver, и создайте запрос об ошибке вне зависимости от результата.</para>
+<para/>
+<para>Перед тем как вы продолжите</para>
+<para/>
+<para/>
+<para>Какие драйверы использует ваша карта. В большинстве случаев звуковые карты (встроенные и подключаемые) основаны на PCI, и lspci поможет вам раскопать необходимую информацию. Пожалуйста, если вы ещё не установили lspci, установите командой emerge sys-apps/pciutils. Если у вас USB звуковая карта, вам может помочь lsusb из sys-apps/usbutils. Для карт ISA попробуйте sys-apps/isapnptools. Кроме того, следующие ресурсы могут помочь владельцам ISA звуковых карт: </para>
+<orderedlist>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.roestock.demon.co.uk/isapnptools/">Страница ISAPNPTOOLS</link> </para>
+</listitem>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www2.linuxjournal.com/article/3269">Статья о PnP в LinuxJournal</link> </para>
+</listitem>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.tldp.org/HOWTO/Sound-HOWTO/x320.html">TLDP Sound HOWTO</link> </para>
+</listitem>
+</orderedlist>
+<para/>
+<para>Примечание: Ради простоты в оставшейся части руководства мы предположим, что у пользователя звуковая карта, основанная на PCI. </para>
+<para>Теперь мы попробуем найти информацию о звуковой карте. </para>
+<para/>
+<para/>
+<para>Теперь мы попробуем найти информацию о звуковой карте. </para>
+<para/>
+<para>Листинг 2.1: Подробности звуковой карты</para>
+<para># lspci -v | grep -i audio</para>
+<para>0000:00:0a.0 Multimedia audio controller: Creative Labs SB Live! EMU10k1 (rev 06)</para>
+<para/>
+<para>Теперь мы знаем, что звуковая карта, установленная в компьютере, — Sound Blaster Live!, а производителем является Creative Labs. Зайдём на страницу с <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://bugtrack.alsa-project.org/main/index.php/Matrix:Main">таблицой звуковых карт ALSA</link> и выберем Creative Labs из списка. В результате вы попадёте на страницу, содержащую таблицу продуктов Creative Labs, из которой вы можете узнать, что SB Live! использует модуль emu10k1. Эта та информация, которая нам и нужна. Если вам интересна более подробная информация, то вы можете перейти по ссылке «Details» на страницу, посвящённую emu10k1. </para>
+<para>Если вы намереваетесь использовать MIDI, то перед установкой любых пакетов ALSA необходимо добавить midi к USE-флагам в файле /etc/make.conf. Ниже в руководстве мы продемонстрируем, как <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/alsa-guide.xml#midi">настроить MIDI</link>. </para>
+<para/>
+<para>Использование ALSA драйверов, предоставляемых ядром</para>
+<para/>
+<para/>
+<para>Если вам нравится идти по пути наименьшего сопротивления, то этот способ для вас.</para>
+<para/>
+<para>Примечание: Начиная с выпуска 2005.0, Gentoo Linux в качестве основного ядра использует ядра ветки 2.6. Пожалуйста, удостоверьтесь, что у вас ядро ветки 2.6. Этот способ не применим для ядер ветки 2.4. </para>
+<para/>
+<para/>
+<para>А теперь давайте сконфигурируем ядро так, чтобы включить в нём ALSA.</para>
+<para/>
+<para>Важно: Пользователи genkernel должны запустить genkernel --menuconfig all и следовать инструкциям из раздела <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/alsa-guide.xml#doc_chap2_pre3">Параметры ядра для ALSA</link>.</para>
+<para/>
+<para>Листинг 2.2: Погружение в исходные коды</para>
+<para># cd /usr/src/linux</para>
+<para># make menuconfig</para>
+<para/>
+<para>Примечание: В только что приведённом примере предполагалось, что символическая ссылка /usr/src/linux указывает на исходные коды используемого вами ядра. Пожалуйста, перед тем как продолжить, проверьте, что у вас так оно и есть. </para>
+<para/>
+<para/>
+<para>Теперь рассмотрим часть параметров конфигурации ядра 2.6, которые гарантируют работоспособность ALSA с нашей звуковой картой. </para>
+<para>Обратите внимание, что во всех примерах мы собираем ALSA модулями. Мы советуем вам поступать так же, так как в дальнейшем это позволит использовать alsaconf, упрощающую настройку звуковой карты. Пожалуйста, не пропустите раздел <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/alsa-guide.xml#alsa-config">Настройка</link>. Если вы всё же решаете не использовать модули, удостоверьтесь, что вы соответствующим образом изменили вашу конфигурацию. </para>
+<para/>
+<para/>
+<para>Листинг 2.3: Параметры ядра для ALSA</para>
+<para>Device Drivers  ---&gt;</para>
+<para>   Sound  ---&gt;</para>
+<para/>
+<para>(Это необходимо включить)</para>
+<para>&lt;M&gt; Sound card support</para>
+<para/>
+<para>(Убедитесь, что OSS отключена)</para>
+<para>Open Sound System   ---&gt;</para>
+<para>   &lt; &gt; Open Sound System (DEPRECATED)</para>
+<para/>
+<para>(Вернитесь на шаг назад и войдите в раздел ALSA)</para>
+<para>Advanced Linux Sound Architecture  ---&gt;</para>
+<para>   &lt;M&gt; Advanced Linux Sound Architecture</para>
+<para>   (Выберите, если вам нужен MIDI sequencing и routing)</para>
+<para>   &lt;M&gt; Sequencer support</para>
+<para>   (Поддержка старых /dev/mixer* и /dev/dsp*. Рекомендуется.)</para>
+<para>   &lt;M&gt; OSS Mixer API</para>
+<para>   &lt;M&gt; OSS PCM (digital audio) API</para>
+<para/>
+<para>(Теперь вы можете выбрать устройства, поддержка которых вам требуется.</para>
+<para>Обычно в системе есть только одна звуковая карта. Если у вас их несколько,</para>
+<para>включите поддержу для каждой.)</para>
+<para/>
+<para>(Для тестирования и разработки, обычным пользователям они не требуются,</para>
+<para>только если вы знаете, что делаете...)</para>
+<para>Generic devices  ---&gt;</para>
+<para/>
+<para>(Для звуковых карт ISA)</para>
+<para>ISA devices   ---&gt;</para>
+<para>(Если у вас Gravis, включите этот параметр)</para>
+<para>   &lt;M&gt; Gravis UltraSound Extreme</para>
+<para/>
+<para>(Перейдите на один уровень назад и войдите в раздел PCI-устройств.</para>
+<para>Большинство современных звуковых карт являются таковыми)</para>
+<para>PCI devices   ---&gt;</para>
+<para>   (Теперь выберем драйвер emu10k1 для нашей карты)</para>
+<para>   &lt;M&gt; Emu10k1 (SB Live!, Audigy, E-mu APS)</para>
+<para>   (Или для карты Intel)</para>
+<para>   &lt;M&gt; Intel/SiS/nVidia/AMD/ALi AC97 Controller</para>
+<para>   (А может у вас карта на чипсете VIA?)</para>
+<para>   &lt;M&gt; VIA 82C686A/B, 8233/8235 AC97 Controller</para>
+<para/>
+<para>(Вернитесь на один уровень назад и, если у вас звуковая карта USB, включите)</para>
+<para>USB Devices   ---&gt;</para>
+<para/>
+<para/>
+<para>Теперь параметры вашего ядра установлены, и вы можете пересобрать ядро. Поддержка ALSA для вашей карты будет доступной сразу, после того как вы загрузитесь с новым ядром. Чтобы использовать новое ядро, не забудьте обновить конфигурацию вашего загрузчика. Теперь, чтобы проверить, что всё работает как должно, переходите к разделу <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/alsa-guide.xml#alsa-utilities">Утилиты ALSA</link>.</para>
+<para/>
+<para>Использование пакета драйверов ALSA</para>
+<para/>
+<para/>
+<para>Итак, вы решили использовать пакет alsa-driver. Тогда начнём. Нужно выполнить несколько небольших действий для того, чтобы был скомпилирован только необходимый вашей аудио карте драйвер. Хотя это и не требуется, это сократит количество лишних драйверов, которые в противном случае были бы собраны. </para>
+<para>Если вы не знаете, какие драйверы для звуковой карты вам могут понадобиться, ознакомьтесь с разделом, посвящённым <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/alsa-guide.xml#lspci">lspci</link> этого руководства. Как только вы узнаете имя драйвера (emu10k1 в нашем примере), добавьте переменную ALSA_CARDS в файл /etc/make.conf. </para>
+<para/>
+<para/>
+<para/>
+<para>Листинг 2.4: Добавление ALSA_CARDS в make.conf</para>
+<para>(Для одной звуковой карты)</para>
+<para>ALSA_CARDS="emu10k1"</para>
+<para>(Для нескольких карт разделите имена пробелами)</para>
+<para>ALSA_CARDS="emu10k1 via82xx"</para>
+<para/>
+<para/>
+<para>Если вы уже собирали своё ядро и хотите использовать alsa-driver, пожалуйста, удостоверьтесь в следующем, перед тем как продолжить, иначе alsa-driver, скорее всего, не установится. Следующий перечень поможет вам провести проверку.</para>
+<para/>
+<para>Примечание: Пользователи genkernel могут продолжить с <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/alsa-guide.xml#doc_chap2_pre6">установки alsa-driver</link>, так как конфигурация их обновлённого ядра по умолчанию соответствует нижеприведённой. </para>
+<para/>
+<orderedlist>
+<listitem>
+<para>CONFIG_SOUND включён. (Общая поддержка звука включена)</para>
+</listitem>
+<listitem>
+<para>CONFIG_SOUND_PRIME выключен. (Встроенная поддержка OSS отключена) </para>
+</listitem>
+<listitem>
+<para>CONFIG_SND выключен. (Встроенная поддержка ALSA отключена) </para>
+</listitem>
+<listitem>
+<para>Символическая ссылка /usr/src/linux указывает на то ядро, в котором ALSA будет работать. </para>
+</listitem>
+</orderedlist>
+<para/>
+<para/>
+<para/>
+<para>Листинг 2.5: .config checks</para>
+<para>(Проверяем, что символическая ссылка указывает на нужное ядро.)</para>
+<para># cd /usr/src/linux</para>
+<para># grep SOUND .config</para>
+<para>(Первый пункт выполнен)</para>
+<para>CONFIG_SOUND=y</para>
+<para>(Второй пункт выполнен)</para>
+<para>CONFIG_SOUND_PRIME is not set</para>
+<para># grep SND .config</para>
+<para>(Третий пункт выполнен)</para>
+<para>CONFIG_SND is not set</para>
+<para/>
+<para/>
+<para>Теперь всё, что вам нужно сделать, это набрать магические слова... нет, не абракадабру. </para>
+<para/>
+<para/>
+<para/>
+<para>Листинг 2.6: Установка alsa-driver</para>
+<para># emerge alsa-driver</para>
+<para/>
+<para>Важно: Помните, что вам придётся выполнять emerge alsa-driver каждый раз после (пере)сборки ядра, так как предыдущие драйверы будут удалены. Чтобы упростить эту задачу, вы можете воспользоваться пакетом module-rebuild, который будет вести учёт всем пакетам с модулями ядра и по необходимости пересобирать их. Сначала, чтобы создать список пакетов, выполните module-rebuild populate, а затем после (пере)сборки ядра просто запускайте module-rebuild rebuild, и все внешние модули ядра будут пересобраны.</para>
+<para/>
+<para/></section><section><info><title>3. Настройка/тестирование ALSA</title></info>
+<para/>
+<para>Утилиты ALSA</para>
+<para/>
+<para>Пакет alsa-utils составляет неотъемлемую часть ALSA и содержит множество крайне полезных программ, в том числе и сценарий инициализации ALSA. Поэтому мы настоятельно советуем вам установить alsa-utils.</para>
+<para/>
+<para>Листинг 3.1: Установка alsa-utils</para>
+<para># emerge alsa-utils</para>
+<para/>
+<para>Примечание: Eсли вы включили поддержку ALSA в вашем <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/alsa-guide.xml#kernel">ядре</link>, а не собрали её в качестве модулей, пожалуйста, перейдите в раздел <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/alsa-guide.xml#initscript">сценарий инициализации ALSA</link>. Всё, что осталось сделать всем остальным, это настроить ALSA. Сделать это очень просто благодаря утилите, входящей в состав alsa-utils — alsaconf. </para>
+<para/>
+<para/>
+<para>Настройка</para>
+<para/>
+<para>Последние версии udev (&gt;=udev-103) в некоторой степени предоставляют автоматическое конфигурирование вашей аудио карты на уровне ядра. По возможности старайтесь полагаться на автоматическую настройку и позвольте ядру настроить вашу звуковую карту. В противном случае, чтобы настроить карту, используйте alsaconf, как это показано ниже.</para>
+<para/>
+<para>Примечание: Пожалуйста, завершите все программы, которые могут обратиться к звуковой карте во время работы alsaconf.</para>
+<para/>
+<para>Чтобы настроить вашу звуковую карту просто наберите alsaconf в командной оболочке с правами root. </para>
+<para/>
+<para>Листинг 3.2: Запуск alsaconf</para>
+<para># alsaconf</para>
+<para/>
+<para/>
+<para>Вы увидите изящный управляемый с помощью меню интерфейс программы, которая автоматически исследует ваши устройства и попробует найти вашу звуковую карту. Вас попросят выбрать вашу звуковую карту из списка. Как только это будет сделано, вас спросят разрешения автоматически сделать необходимые изменения в /etc/modules.d/alsa. После этого программа изменит настройки громкости на оптимальный уровень, выполнит update-modules и запустит службу /etc/init.d/alsasound. Как только alsaconf завершит работу, вы сможете продолжить с настройки сценария инициализации ALSA.</para>
+<para/>
+<para>Сценарий инициализации ALSA</para>
+<para/>
+<para>Мы почти завершили настройку. Вне зависимости от выбранного вами способа установки ALSA, вам понадобится что-то, что будет загружать модули или инициализировать ALSA и восстанавливать настройки громкости при загрузке системы. Сценарий инициализации ALSA, называемый alsasound, сделает всё это для вас. Добавьте его в загрузочный уровень исполнения.</para>
+<para/>
+<para>Листинг 3.3: Добавление ALSA в загрузочный уровень исполнения</para>
+<para># rc-update add alsasound boot</para>
+<para> * alsasound added to runlevel boot</para>
+<para> * rc-update complete.</para>
+<para/>
+<para/>
+<para>Теперь проверьте файл /etc/conf.d/alsasound и убедитесь, что переменная SAVE_ON_STOP установлена в значение yes, тогда ваши настройки звука при выключении системы будут сохраняться.</para>
+<para/>
+<para>Группа audio</para>
+<para/>
+<para>Перед тем как начать проверку звука, необходимо сделать одну последнюю важную вещь. Главное правило в операционных системах *nix гласит: «не запускай ничего с правами root, если этого не требуется». И в данной ситуации это правило тоже применимо ;) Каким образом? Пожалуй, большую часть времени вы будете работать под учётной записью пользователя, при этом слушать музыку или иметь доступ к звуковой карте. Чтобы вы могли это делать, вы должны быть в группе audio. Тут то мы и добавим пользователей в эту группу, чтобы у них не было проблем с доступом к аудио устройствам. Мы воспользуемся gpasswd, так что вы должны иметь права root, чтобы сделать это. </para>
+<para> </para>
+<para>Листинг 3.4: Добавление пользователей в группу audio</para>
+<para>(Замените &lt;имя_пользователя&gt; на необходимое имя)</para>
+<para># gpasswd -a &lt;имя_пользователя&gt; audio </para>
+<para>Adding user &lt;имя_пользователя&gt; to group audio</para>
+<para/>
+<para/>
+<para>Проверка громкости!</para>
+<para/>
+<para/>
+<para>Теперь все настройки и необходимые предпосылки выполнены, так что давайте заставим ALSA работать. Если вы запускали утилиту alsaconf, то можете пропустить этот шаг, так как alsaconf уже всё сделал за вас.</para>
+<para/>
+<para>Листинг 3.5: Запуск сервиса</para>
+<para>/etc/init.d/alsasound start</para>
+<para/>
+<para/>
+<para>Теперь мы позаботились обо всём, что может быть необходимым, нам нужно проверить громкость, так как в определённых случаях звук выключен. Для этого мы воспользуемся alsamixer.</para>
+<para/>
+<para>Листинг 3.6: Запуск alsamixer</para>
+<para>(Откройте в терминале. Будут отображены только необходимые настройки)</para>
+<para># alsamixer</para>
+<para/>
+<para>Важно: Если у вас проблемы с запуском alsamixer и вы получаете ошибки, подобные этой: «alsamixer: function snd_ctl_open failed for default: No such file or directory», то, скорее всего, проблема в том, как демон udev инициализировал устройства. Выполните killall udevd; udevstart для перезагрузки устройств в /dev и попробуйте снова alsamixer. Это должно решить проблему.</para>
+<para/>
+<para/>
+<para>Вот так может выглядеть микшер ALSA при первом запуске. Обратите внимание, что уровни каналов Master и PCM занижены и что под ними буквы MM. Это означает, что они выключены. Если вы попробуете что-нибудь проиграть, в то время пока alsamixer в таком состоянии, то вы ничего не услышите из ваших динамиков.</para>
+<para/>
+<para>Для начала включим каналы и установим необходимые уровни громкости.</para>
+<para/>
+<para>Предупреждение: Оба канала Master и PCM должны быть включены и установлены в слышимый уровень громкости, если вы хотите услышать что-нибудь из ваших динамиков. </para>
+<para/>
+<orderedlist>
+<listitem>
+<para>Для перемещения между каналами используйте клавиши влево и вправо. (&lt;- и -&gt;). </para>
+</listitem>
+<listitem>
+<para>Для того чтобы выключить/включить канал, например Master, выберите его и нажмите клавишу m. </para>
+</listitem>
+<listitem>
+<para>Чтобы увеличить или уменьшить уровень громкости, используйте клавиши вверх и вниз. </para>
+</listitem>
+</orderedlist>
+<para>Примечание: Будьте осторожны при установке значений для Bass и Treble. Обычно для обоих оптимально значение 50. Слишком высокие значения Bass могут вызвать дребезжание неспособных воспроизводить глубокие басы динамиков.</para>
+<para/>
+<para/>
+<para/>
+<para>После того как вы всё сделаете, ваш микшер ALSA должен выглядеть, так, как это показано ниже. Заметьте, что вместо MM стоит 00 и уровни громкости в оптимальном значении.</para>
+<para/>
+<para/>
+<para>Проверка звука!</para>
+<para/>
+<para>Наконец-то. Какие-нибудь звуки. Если всё прошло успешно, то теперь вы сможете услышать музыку. Быстрый способ проверить — это воспользоваться консольной командой, наподобие media-sound/madplay. Вы также можете использовать что-нибудь более известное, например, mpg123. Если вы поклонник формата OGG, используйте программу ogg123 из пакета media-sound/vorbis-tools. Используйте любой удобный для вас плеер. Как всегда, emerge — всё что вам нужно.</para>
+<para/>
+<para>Листинг 3.7: Получение программ</para>
+<para>(Установка необходимых приложений)</para>
+<para># emerge madplay mpg123</para>
+<para>(Для проигрывания ogg-файлов)</para>
+<para># emerge vorbis-tools</para>
+<para/>
+<para/>
+<para>А теперь проиграем ваш любимый саундтрек... </para>
+<para/>
+<para>Листинг 3.8: Проигрывание музыки</para>
+<para># madplay -v /mnt/shyam/Music/Paul\ Oakenfold\ -\ Dread\ Rock.mp3</para>
+<para>MPEG Audio Decoder 0.15.2 (beta) - Copyright (C) 2000-2004 Robert Leslie et al.</para>
+<para>          Title: Dread Rock</para>
+<para>         Artist: Paul Oakenfold</para>
+<para>          Album: Matrix Reloaded</para>
+<para>           Year: 2003</para>
+<para>          Genre: Soundtrack</para>
+<para>                 Soundtrack</para>
+<para> 00:04:19 Layer III, 160 kbps, 44100 Hz, joint stereo (MS), no CRC</para>
+<para/>
+<para># ogg123 Paul\ Oakenfold\ -\ Dread\ Rock.ogg</para>
+<para>Audio Device:   Advanced Linux Sound Architecture (ALSA) output</para>
+<para/>
+<para>Playing: Paul Oakenfold - Dread Rock.ogg</para>
+<para>Ogg Vorbis stream: 2 channel, 44100 Hz</para>
+<para>Genre: Soundtrack</para>
+<para>Transcoded: mp3;160</para>
+<para>Title: Dread Rock</para>
+<para>Artist: Paul Oakenfold</para>
+<para>Date: 2003</para>
+<para>Album: Matrix Reloaded</para>
+<para>Time: 00:11.31 [04:28.75] of 04:40.06  (200.6 kbps)  Output Buffer  96.9%</para>
+<para/>
+<para/><section><info><title>ALSA и USE</title></info>
+<para/>
+<para>Теперь, для того чтобы приложения, поддерживающие ALSA, были собраны с поддержкой оной, вам нужно добавить USE-флаг alsa в файл /etc/make.conf. Некоторые архитектуры, например, x86 и amd64, включают этот флаг по умолчанию.</para>
+<para/>
+<para>Проблемы?</para>
+<para/>
+<para>Если по каким-либо причинам вы не слышите звука, перво-наперво проверьте настройки <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/alsa-guide.xml#doc_chap3_pre6">alsamixer</link>. 80% всех проблем заключаются в выключенных каналах или низкой громкости. Кроме того, проверьте звуковой апплет вашего оконного менеджера и удостоверьтесь, что громкости каналов установлены на слышимом уровне. </para>
+<para>/proc — ваш друг. В этом случае, /proc/asound — ваш лучший друг. Мы бегло просмотрим, сколько полезной информации доступно нам здесь. </para>
+<para/>
+<para/>
+<para>Листинг 3.9: Развлечение с /proc/asound</para>
+<para>(Прежде всего, если /proc/asound/cards отображает вашу карту, то ALSA</para>
+<para>распознала вашу звуковую карту.)</para>
+<para># cat /proc/asound/cards</para>
+<para>0 [Live           ]: EMU10K1 - Sound Blaster Live!</para>
+<para>                     Sound Blaster Live! (rev.6, serial:0x80271102) at 0xb800, irq 11</para>
+<para/>
+<para>(Следующая команда оторбразит текущую версию ALSA)</para>
+<para># cat /proc/asound/version</para>
+<para>Advanced Linux Sound Architecture Driver Version 1.0.8 (Thu Jan 13 09:39:32 2005 UTC).</para>
+<para/>
+<para>(Подробности эмуляции OSS в ALSA)</para>
+<para># cat /proc/asound/oss/sndstat</para>
+<para>Sound Driver:3.8.1a-980706 (ALSA v1.0.8 emulation code)</para>
+<para>Kernel: Linux airwolf.zion 2.6.11ac1 #2 Wed May 4 00:35:08 IST 2005 i686</para>
+<para>Config options: 0</para>
+<para/>
+<para>Installed drivers:</para>
+<para>Type 10: ALSA emulation</para>
+<para/>
+<para>Card config:</para>
+<para>Sound Blaster Live! (rev.6, serial:0x80271102) at 0xb800, irq 11</para>
+<para/>
+<para>Audio devices:</para>
+<para>0: EMU10K1 (DUPLEX)</para>
+<para/>
+<para>Synth devices: NOT ENABLED IN CONFIG</para>
+<para/>
+<para>Midi devices:</para>
+<para>0: EMU10K1 MPU-401 (UART)</para>
+<para/>
+<para>Timers:</para>
+<para>7: system timer</para>
+<para/>
+<para>Mixers:</para>
+<para/>
+<para/>
+<para>Другой очень распространённой проблемой среди пользователей является странная ошибка «Unknown symbol in module» («Неизвестный символ в модуле»). Пример её появления показан ниже.</para>
+<para/>
+<para>Листинг 3.10: Ошибка: неизвестный символ в модуле</para>
+<para># /etc/init.d/alsasound start</para>
+<para> * Loading ALSA modules ...</para>
+<para> *   Loading: snd-card-0 ...                                              [ ok ]</para>
+<para> *   Loading: snd-pcm-oss ...</para>
+<para>WARNING: Error inserting snd_mixer_oss</para>
+<para>(/lib/modules/2.6.12-gentoo-r6/kernel/sound/core/oss/snd-mixer-oss.ko): Unknown</para>
+<para>symbol in module, or unknown parameter (see dmesg) FATAL: Error inserting</para>
+<para>snd_pcm_oss</para>
+<para>(/lib/modules/2.6.12-gentoo-r6/kernel/sound/core/oss/snd-pcm-oss.ko): Unknown</para>
+<para>symbol in module, or unknown parameter (see dmesg)</para>
+<para>                                                                          [ !! ]</para>
+<para> *   Loading: snd-mixer-oss ...</para>
+<para>FATAL: Error inserting snd_mixer_oss</para>
+<para>(/lib/modules/2.6.12-gentoo-r6/kernel/sound/core/oss/snd-mixer-oss.ko): Unknown</para>
+<para>symbol in module, or unknown parameter (see dmesg)</para>
+<para>                                                                          [ !! ]</para>
+<para> *   Loading: snd-seq ...                                                 [ ok ]</para>
+<para> *   Loading: snd-emu10k1-synth ...                                       [ ok ]</para>
+<para> *   Loading: snd-seq-midi ...                                            [ ok ]</para>
+<para> * Restoring Mixer Levels ...                                             [ ok ]</para>
+<para>                                       </para>
+<para/>
+<para>И если, как советуют, просмотреть вывод dmesg, то, скорее всего, можно увидеть следующее:</para>
+<para/>
+<para>Листинг 3.11: Вывод dmesg</para>
+<para>(Показаны только относящиеся к делу части вывода)</para>
+<para># dmesg | less</para>
+<para>ACPI: PCI Interrupt 0000:02:06.0[A] -&gt; Link [APC3] -&gt; GSI 18 (level, low) -&gt; IRQ 209</para>
+<para>snd_mixer_oss: Unknown symbol snd_unregister_oss_device</para>
+<para>snd_mixer_oss: Unknown symbol snd_register_oss_device</para>
+<para>snd_mixer_oss: Unknown symbol snd_mixer_oss_notify_callback</para>
+<para>snd_mixer_oss: Unknown symbol snd_oss_info_register</para>
+<para>snd_pcm_oss: Unknown symbol snd_unregister_oss_device</para>
+<para>snd_pcm_oss: Unknown symbol snd_register_oss_device</para>
+<para>snd_pcm_oss: Unknown symbol snd_mixer_oss_ioctl_card</para>
+<para>snd_pcm_oss: Unknown symbol snd_oss_info_register</para>
+<para>snd_mixer_oss: Unknown symbol snd_unregister_oss_device</para>
+<para>snd_mixer_oss: Unknown symbol snd_register_oss_device</para>
+<para>snd_mixer_oss: Unknown symbol snd_mixer_oss_notify_callback</para>
+<para>snd_mixer_oss: Unknown symbol snd_oss_info_register</para>
+<para/>
+<para/>
+<para/>
+<para>Эта проблема вызвана переключением с alsa-driver на драйверы, предоставляемые ядром, потому что когда вы удаляете alsa-driver, то файлы модулей сохраняются системой защиты конфигурации. И поэтому, когда вы переходите на встроенные в ядро драйверы, попытка modprobe выдаст вам смесь модулей из alsa-driver и встоенных в ядро, вызывая приведённые выше ошибки. </para>
+<para>Решение очень простое. Удалите вызывающий проблемы каталог после удаления alsa-driver. Проверьте, что удаляете модули правильной, но не текущей версии ядра! </para>
+<para/>
+<para/>
+<para>Листинг 3.12: Удаление модулей alsa-driver</para>
+<para># rm -rf /lib/modules/$(uname -r)/alsa-driver</para>
+<para/>
+<para/>
+<para>Другой причиной подобных сообщений может являться файл в /etc/modules.d, содержащий параметр device_mode, в то время как он не требуется. Проверьте, так ли это, и выясните, какой файл является источником проблем.</para>
+<para/>
+<para>Листинг 3.13: Подтверждение проблемы и поиск device_mode</para>
+<para>(Проверим вывод dmesg для идентификации проблемы)</para>
+<para># dmesg | grep device_mode</para>
+<para>snd: Unknown parameter `device_mode'</para>
+<para>(И теперь найдём источник проблемы)</para>
+<para># grep device_mode /etc/modules.d/*</para>
+<para/>
+<para/>
+<para>Обычно это файл с именем alsa, в котором присутствует строка options snd device_mode=0666. Удалите эту строку и перезапустите службу alsasound. Это должно решить проблему.</para>
+<para/></section></section><section><info><title>4. Другие возможности ALSA</title></info>
+<para/>
+<para>Настройка поддержки MIDI</para>
+<para/>
+<para>Сначала проверьте, что у вас включён USE-флаг midi в файле /etc/make.conf. Если вы до сих пор этого не сделали, то сделайте это сейчас. Помимо этого вам потребуется пересобрать все пакеты ALSA, использующие флаг midi: alsa-lib, alsa-utils и alsa-driver. </para>
+<para>Если ваша карта имеет встроенный MIDI синтезатор и вы хотите слушать *.mid файлы, вам придётся установить пакет awesfx, содержащий основной набор программ для управления драйвером AWE32. Сначала вам надо установить его. Если у вас нет синтезатора, вы можете использовать виртуальный. Обратитесь к разделу <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/alsa-guide.xml#vsynth">виртуальные синтезаторы</link> для дополнительной информации.</para>
+<para/>
+<para>Листинг 4.1: Установка awesfx</para>
+<para># emerge awesfx</para>
+<para/>
+<para>Примечание: Вам понадобится скопировать файлы банка звуков (SoundFont: SF2) с компакт-диска с драйверами для вашей звуковой карты или установленные в Windows в каталог /usr/share/sounds/sf2/. Например, файл банка звуков для карты Creative SBLive! может называться 8MBGMSFX.SF2.</para>
+<para/>
+<para/>
+<para>После копирования файлов банка звуков мы сможем проигрывать midi-файлы. Также, для того чтобы банк звуков загружался каждый раз при загрузке системы, вы можете добавить команду asfxload в /etc/conf.d/local.start.</para>
+<para/>
+<para>Примечание: Использованные ниже пути, начинающиеся с /mnt, не применимы для вашего компьютера. Они являются примерами. Пожалуйста, будьте осторожны при изменении путей на соответствующие вашей системе.</para>
+<para/>
+<para/>
+<para>Листинг 4.2: Загрузка сэмплов</para>
+<para>(Сначала копируем файл с банком звуков)</para>
+<para># cp /mnt/win2k/Program\ Files/CreativeSBLive2k/SFBank/8MBGMSFX.SF2 /usr/share/sounds/sf2/</para>
+<para>(Или берём его с компакт-диска SoundBlaster)</para>
+<para># cp /mnt/cdrom/AUDIO/ENGLISH/SFBANK/8MBGMSFX.SF2 /usr/share/sounds/sf2/</para>
+<para>(Загружаем определённый банк звуков)</para>
+<para># asfxload /usr/share/sounds/sf2/8MBGMSFX.SF2</para>
+<para/>
+<para>Теперь вы можете проигрывать midi-файлы, используя программу, подобную aplaymidi. Запустите aplaymidi -l, чтобы получить список доступных портов, а затем задействуйте один из них для проигрывания файла.</para>
+<para/>
+<para>Листинг 4.3: Проигрывание MIDI</para>
+<para>(Проверка открытых портов)</para>
+<para># aplaymidi -l</para>
+<para> Port    Client name                      Port name</para>
+<para> 64:0    EMU10K1 MPU-401 (UART)           EMU10K1 MPU-401 (UART)</para>
+<para> 65:0    Emu10k1 WaveTable                Emu10k1 Port 0</para>
+<para> 65:1    Emu10k1 WaveTable                Emu10k1 Port 1</para>
+<para> 65:2    Emu10k1 WaveTable                Emu10k1 Port 2</para>
+<para> 65:3    Emu10k1 WaveTable                Emu10k1 Port 3</para>
+<para>(Выбираем порт и проигрываем mid-файл)</para>
+<para>#  aplaymidi --port=65:0 /mnt/shyam/music/midi/mi2.mid</para>
+<para/>
+<para/>
+<para/>
+<para>Виртуальные синтезаторы</para>
+<para/>
+<para>Если у вашей карты отсутствует встроенный синтезатор, вы можете использовать виртуальный, например, timidity++. Установка происходит на одном дыхании.</para>
+<para/>
+<para>Листинг 4.4: Установка timidity++</para>
+<para># emerge timidity++</para>
+<para/>
+<para/>
+<para>Чтобы timidity воспроизводил звуки, ему нужен набор сэмплов (или банк звуков). К счастью, вместе с пакетом устанавливаются несколько банков звуков. Есть ещё несколько пакетов с банками звуков в Portage, например, timidity-freepats и timidity-eawpatches. Вы можете установить несколько банков звуков, а также можете разместить собственный банк звуков в каталог /usr/share/timidity/. Для переключения timidity между разными банками звуков используйте eselect. </para>
+<para>Листинг 4.5: Изменение конфигураций</para>
+<para># eselect timidity list</para>
+<para># eselect timidity set eawpatches</para>
+<para/>
+<para/>
+<para>Не забудьте добавить timidity в основной уровень исполнения.</para>
+<para/>
+<para>Листинг 4.6: Добавление timidity в основной уровень исполнения</para>
+<para># rc-update add timidity default</para>
+<para># /etc/init.d/timidity start</para>
+<para/>
+<para/>
+<para>Теперь вы можете попробовать <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/alsa-guide.xml#doc_chap4_pre3">проиграть MIDI</link> файлы.</para>
+<para/>
+<para>Утилиты и Firmware</para>
+<para/>
+<para>Для некоторых звуковых карт могут быть полезны утилиты из пакетов alsa-tools и alsa-firmware. Вы можете установить любой из этих пакетов, просто запустив emerge. </para>
+<para>Листинг 4.7: Установка утилит ALSA</para>
+<para># emerge alsa-tools</para>
+<para/>
+<para>Несколько звуковых карт</para>
+<para>Вы можете использовать больше одной звуковой карты, при условии что вы собрали ALSA как модули ядра (или из пакета alsa-driver). Сначала в файле /etc/modules.d/alsa вам следует лишь указать, какая из карт должна быть запущена первой. В этом файле карты идентифицируются по именам своих драйверов. 0 означает первую карту, 1 — вторую, и так далее. Вот пример для системы, в которой присутствуют две звуковые карты. </para>
+<para>Листинг 4.8: Две карты в файле /etc/modules.d/alsa</para>
+<para>options snd-emu10k1 index=0</para>
+<para>options snd-via82xx index=1</para>
+<para/>
+<para/>
+<para>Или если у вас две карты, использующие один и тот же драйвер, то их следует указать на одной строке, разделяя цифры запятой. Ниже приведён пример системы, в которой установлено три звуковые карты, две из которых являются картами Intel High Definition Audio. </para>
+<para>Листинг 4.9: Несколько звуковых карт в /etc/modules.d/alsa</para>
+<para>options snd-ymfpci index=0</para>
+<para>options snd-hda-intel index=1,2</para>
+<para/>
+<para/>
+<para/>
+<para>Модули расширения</para>
+<para>Для расширения возможностей ALSA вы можете установить дополнительные расширения. Пакет alsa-plugins является собранием полезных модулей расширения, который включает: модуль вывода PulseAudio, конвертер частоты дискретизации, jack (аудио сервер с малым временем задержки) и кодек, позволяющий вам выводить шестиканальный звук через цифровой S/PDIF-вывод (оптический или коаксиальный). Вы можете выбрать те расширения, которые вы хотите установить, добавив соответствующие USE-флаги в /etc/portage/package.use. </para>
+<para>Листинг 4.10: Установка alsa-plugins</para>
+<para># emerge -avt alsa-plugins</para>
+<para/>
+<para/>
+<para>Огромное спасибо вам всем...</para>
+<para>Всем, кто принимал участие в написании ранних версий руководства ALSA в Gentoo: Vincent Verleye, Grant Goodyear, Arcady Genkin, Jeremy Huddleston, John P. Davis, Sven Vermeulen, Benny Chuang, Tiemo Kieft и Erwin. А также Dr][aM за перевод ранней версии руководства на русский язык. </para>
+<para>Ссылки</para>
+<orderedlist>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.alsa-project.org/">Домашняя страница проекта ALSA</link> </para>
+</listitem>
+<listitem>
+<para>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://linux-sound.org/">Linux Sound/MIDI Software</link> </para>
+</listitem>
+</orderedlist>
+<para/></section>
+</article>

@@ -1,0 +1,868 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info><title>Gentoo и  KDE</title></info>
+<para/><section><info><title>HOWTO по настройке KDE версии 3.x.x</title></info>
+<para/>
+<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/kde-config.xml">http://www.gentoo.org/doc/ru/kde-config.xml</link>
+</para>
+<para>С версии: 1.0</para><section><info><title>1. Что же такое K Desktop Environment?</title></info>
+<para>Проект</para>
+<para/>
+<para>Проект KDE - проект открытого программного обеспечения посвящённый разработке KDE, графической рабочей среде для рабочих станций Linux и Unix. Разработкой занимаются несколько сотен разработчиков со всего мира, преданных разработке бесплатного программного обеспечения. Смотрите также Что из себя представляет проект KDE. </para>
+<para/>
+<para>Программное обеспечение</para>
+<para/>
+<para>K Desktop Environment - это простая рабочая среда построенная на хорошо продуманной прикладной структуре (application framework), которая предоставляет функциональную совместимость, drag 'n drop и многое другое. Кроме необходимых компонентов, KDE предоставляет готовые к использованию приложения для всех мыслимых задач: файловый менеджер, интернет-браузер, офис приложения, email-клиент и т.д. И всё это относится к KDE проекту. </para>
+<para/>
+<para>KDE доступен более чем на 70 языках и охватывает огромное количество пользователей. Для тех, кто интересуется, есть много скриншотов. Для большей информации о KDE, читайте статью Что такое KDE? на KDE.org. </para>
+<para/>
+<para>Сообщество</para>
+<para/>
+<para>Существует много сайтов KDE сообществ. На KDEnews.org вы найдёте последние новости про KDE вообще. KDE developers.org специализируется на разработке KDE, а KDE-форум больше подходит для широкой массы. Больше ссылок можно найти на Странице семейства KDE. </para>
+<para/></section><section><info><title>2. Установка KDE</title></info>
+<para/>
+<para>Что вам нужно?</para>
+<para/>
+<para>Прежде всего, если вы заинтересованы в установке KDE (или поддержке kde), вам придётся убедиться, что переменная USE содержит kde и qt флаги. Для тех, кто не знает, Qt - графическая библиотека элементов управления (graphical widget library), которую использует KDE. </para>
+<para/>
+<para>Во-вторых, вам нужно подумать над тем, что вы хотите установить из дистрибутива KDE. Как ранее упоминалось, KDE очень богат возможностями и включает в себя много программ. Для этого вам не обязательно верить нашим словам -- сами проверьте :) </para>
+<para/>
+<para>Листинг 2.1: Перечисляем все пакеты KDE</para>
+<para># emerge --pretend kde | less</para>
+<para/>
+<para/>
+<para>Если вы не заинтересованы в установке всех этих пакетов, вы можете поставить лишь некоторые из них. Очевидно, что вам понадобится kdebase, так как он содержит основные и необходимые программы. Следующая таблица показывает несколько пакетов, которые вы можете установить.</para>
+<para/>
+<para/>
+<para>Таблица: Пакеты KDE.</para>
+<informaltable frame="all">
+<tgroup cols="2"><tbody>
+<row>
+<entry>
+<para>Пакет</para>
+</entry>
+<entry>
+<para>Описание</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kdeaccessibility</para>
+</entry>
+<entry>
+<para>Программы для людей с ограниченными возможностями разрабатываются Проектом KDE Accessibility</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kdeadmin</para>
+</entry>
+<entry>
+<para>Административные утилиты, такие как KCron (Планирование задач), KUser (Управление пользователями) и KDat (Управление резервными копиями) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kdeartwork</para>
+</entry>
+<entry>
+<para>Некоторые программы, связанные с искусством, включая хранители экрана и темы. Также смотрите artist.kde.org. </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kdeedu</para>
+</entry>
+<entry>
+<para>Образовательные KDE приложения для школьников от 3 до 18 лет. Также смотрите Проект KDE Edu. </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kdegames</para>
+</entry>
+<entry>
+<para>KDE игры. Больше информации можно найти по ссылке KDE центр игр.</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kdegraphics</para>
+</entry>
+<entry>
+<para>Графические приложения для KDE, плюс KSnapshot (Программа для снятия скриншотов), KPain (Простой графический редактор), Kpdf (Для просмотра PDF), KIconEdit (Icon Editor) и KPovModeler (Создание 3D моделей). </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kde-i18n</para>
+</entry>
+<entry>
+<para>Этот пакет включает поддержку для многих языков (также валют, форматов чисел и дат, ...) и документации. Больше информации по ссылке Проект KDE i18n. </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kdemultimedia</para>
+</entry>
+<entry>
+<para>Мультимедийные приложения, включая поддержку CD, MP3, DVD, форматов, звуковых и видео приложений. Больше информации по ссылке Проект KDE Multimedia website. </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kdenetwork</para>
+</entry>
+<entry>
+<para>Сетевые приложения, такие как kppp (Dial-In) и lisa (networking). Заметьте, что konqueror (файловый менеджер и веб-браузер) часть пакета kdebase! </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kdepim</para>
+</entry>
+<entry>
+<para>Личные Информационные инструментальные средства Управления, такие как KOrganizer (Журнал), KAddressbook (Адресная книга), Kontact (Программное обеспечение для коллективной работы) и KMail (E-mail). Больше информации по ссылке Проект KDE PIM. </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kdesdk</para>
+</entry>
+<entry>
+<para>Основные инструменты разработки, включая KBabel (Утилита для перевода), KBugBuster (Front end для отслеживания ошибок KDE) и Kompare (GUI для просмотра разницы между файлами). </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kdetoys</para>
+</entry>
+<entry>
+<para>Различные безделушки, которыми можно позабавится, в ожидании, пока доставят вашу пиццу. В этом пакете вы найдёте такие апплеты, как eyesapplet и fifteenapplet, а также стильные утилиты как amor, которые ничего не делают, кроме как пожирают ресурсы :)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kdeutils</para>
+</entry>
+<entry>
+<para>Графические системные утилиты как kcalc (Калькулятор), kdessh (SSH терминал), kfloppy (производит действия связанные с floppy), и другие. </para>
+<para/>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<para/>
+<para/>
+<para>К примеру, чтобы поставить KDE только с сетевыми и административными приложениями: </para>
+<para/>
+<para>Листинг 2.2: Пример установки индивидуальных компонентов KDE</para>
+<para># emerge kdebase kdenetwork kdeadmin</para>
+<para/>
+<para/>
+<para>Если вам интересно знать: компиляция KDE занимает очень много времени :) </para>
+<para/>
+<para>Первые ощущения</para>
+<para/>
+<para>Теперь давайте взглянем на результаты. Твоя мама наверное говорила тебе никогда не работать под root-ом. Ну что ж, последуем маминому совету и запустим KDE под пользователем. Зайдите под вашим пользователем и настройте вашу сессию так, чтобы загружался KDE после выполнения команды startx. Вы можете это сделать добавив строчку exec startkde в ~/.xinitrc: </para>
+<para/>
+<para>Листинг 2.3: Настраиваем локальную сессию</para>
+<para>$ echo "exec startkde" &gt; ~/.xinitrc</para>
+<para/>
+<para/>
+<para>Теперь выполните команду startx для загрузки вашей графической среды. </para>
+<para/>
+<para>Листинг 2.4: Запускаем KDE</para>
+<para>$ startx</para>
+<para/>
+<para/>
+<para>Вас встретит приложение под названием KPersonalizer. Поздравляем, теперь давайте посмотрим, как можно настроить KDE... </para>
+<para/></section><section><info><title>3. Настройка KDE</title></info>
+<para/>
+<para>KPersonalizer</para>
+<para/>
+<para>KPersonalizer - приложение, которое настроит KDE за вас. Это очень полезный мастер, который помогает быстро изменить KDE под ваши нужды. KPersonalizer автоматически появится при первой загрузке KDE. </para>
+<para/>
+<para>Первое, о чём спросит вас KPersonalizer будет страна и язык на ваш выбор. Так как мы не устанавливали никаких языковых пакетов, выбор языков будет небольшим -- очевидно в списке будет только английский. Не волнуйтесь, мы сменим язык позже (если вы конечно захотите этого). </para>
+<para/>
+<para>Потом вам нужно будет выбрать System Behaviour. Эта настройка включает в себя активацию окна, выбор мыши, и другое. При выборе определённого поведения, можно увидеть его описание. Если вы не уверены что выбрать, не паникуйте -- всегда можно будет поменять настройки. </para>
+<para/>
+<para>Далее KPersonalizer спросит о количестве разнообразных эффектов. Чем больше эффектов вы активируете, тем моднее будет KDE, но и процессор будет более загружен. Однако, не стоит так переживать из-за этого -- на компьютере с процессором в 600 Mhz с 128 Mb памяти разрешение всех эффектов не особо не повлияет на быстродействие системы. </para>
+<para/>
+<para>Наконец, остаётся выбрать стиль. Стиль определяет декорацию окон, тему, вид кнопок, и другое. Попробуйте несколько стилей, чтобы выбрать тот, который вам понравится. Я ещё не говорил вам, что KDE полностью настраиваемый? </para>
+<para/>
+<para>Откиньтесь на спинку кресла и наслаждайтесь -- запустится KDE и вас встретит милая, чистая и функциональная интерактивная рабочая среда. </para>
+<para/>
+<para>Установка языковых пакетов</para>
+<para/>
+<para>Если ваш родной язык не английский или вы хотите работать в KDE на другом языке, тогда читайте дальше. Мы установим языковые пакеты для языков, которые вам нужны. </para>
+<para/>
+<para>Все языковые пакеты содержатся в одном kde-i18n пакете. Чтобы поставить только нужные пакеты, а не все, нужно присвоить значение переменной LINGUAS. Рекомендуется прописать переменную в /etc/make.conf. </para>
+<para/>
+<para>Листинг 3.1: Прописываем переменную LINGUAS в /etc/make.conf</para>
+<para># nano -w /etc/make.conf</para>
+<para>(К примеру, мы поставим языковые пакеты для русского (ru) </para>
+<para> и французского (fr))</para>
+<para>LINGUAS="ru fr"</para>
+<para/>
+<para/>
+<para>Теперь выполните команду emerge kde-i18n. Когда установка закончится, запускайте KDE и KDE центр управления (Control Center) (K-menu &gt; Settings &gt; Control Center). Это приложение, где можно изменить намного больше настроек KDE, чем в KPersonalizer. </para>
+<para/>
+<para>Чтобы изменить язык, идите в Regional &amp; Accessibility, Country/Region &amp; Languages. Потом добавьте язык на ваш выбор и перезагрузите KDE. </para>
+<para/>
+<para>Графический вход в систему</para>
+<para/>
+<para>Если вы хотите использовать kdm как менеджер графического входа в систему (что значит, что вам не придётся каждый раз набивать на клавиатуре команду startx) сначала загляните в /etc/X11/Sessions, чтобы узнать, как называется KDE сессия: </para>
+<para/>
+<para>Листинг 3.2: Узнаем название KDE сессии</para>
+<para># ls /etc/X11/Sessions</para>
+<para>Xsession  fluxbox  kde-3.2.1</para>
+<para/>
+<para/>
+<para>В примере выше, KDE сессия называется kde-3.2.1. Давайте добавим её в /etc/rc.conf в переменную XSESSION. Также измените значение переменной DISPLAYMANAGER на kdm. </para>
+<para/>
+<para>Листинг 3.3: Изменяем значение переменной XSESSION в /etc/rc.conf</para>
+<para># nano -w /etc/rc.conf</para>
+<para>(Измените две следующие переменные)</para>
+<para>XSESSION="kde-3.2.1"</para>
+<para>DISPLAYMANAGER="kdm"</para>
+<para/>
+<para/>
+<para>Завершаем добавив xdm в default runlevel: </para>
+<para/>
+<para>Листинг 3.4: Добавляем xdm в default runlevel</para>
+<para># rc-update add xdm default</para>
+<para/>
+<para/>
+<para>После перезагрузки системы, как графический вход в систему будет использоваться KDM.</para>
+<para/></section></section><section><info><title>Способы переключения раскладок клавиатуры в KDE (3в1)</title></info>
+<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo.blog.ru/3638115.html">http://gentoo.blog.ru/3638115.html</link>
+</para>
+<para>Авторы: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo.blog.ru/profile">gentoo</link>
+</para>
+<para>С версии: 1.4</para>
+<para>Дата: 18.12.2007</para>
+<para/>
+<para>Читая <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://runix.org/">Планету блогов о *NIX</link> (нагло пиарю) наткнулся на несколько постов о настройке переключения раскладок клавиатуры. Кто-то советует править xorg.conf, кто-то - поставить kkbswitch, самые пытливые заставляют завестись встроенное средство переключения раскладок в KDE. Сам использовал в основном kkbswitch (сейчас включил встроенный kxkb), только в SuSE переключался средствами xorg.conf - не нашёл kkbswitch в репах. Недостаток использования переключения из xorg.conf - раскладка для всех окон всегда одна. Встроенная переключалка KDE работает неплохо, если настроить, но... в русской раскладке не срабатывают хоткеи (решено, спасибо комраду Fallen). У kkbswitch изъянов мной замечено не было, с тремя языками работает (кого волнует этот вопрос). Кстати, он читает xorg.conf и соответствующим образом настраивает себя, так что для начала потребуется настроить xorg.conf.</para>
+<para>1. /etc/X11/xorg.conf</para>
+<para>Section "InputDevice"</para>
+<para>    Identifier  "Keyboard0"</para>
+<para>    Driver      "kbd"</para>
+<para>    Option      "XkbRules" "xorg"</para>
+<para>    Option      "XkbModel" "pc104"</para>
+<para>    Option      "XkbLayout" "us,ru"</para>
+<para>    Option      "XkbOptions" "grp:ctrl_shift_toggle"</para>
+<para>    Option      "XkbVariant" ",winkeys"</para>
+<para>    Option      "AutoRepeat" "250 30"</para>
+<para>EndSection</para>
+<para>Добавление: Option "XkbOptions" "grp_led:caps"будет включать/выключать индикатор CapsLock'а при переключении языков.2. Поставить <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://kkbswitch.sourceforge.net/">kkbswitch</link>. Берёт инфо о языках и клавишах переключения из xorg.conf. Пример для 3х языков:</para>
+<para>Section "InputDevice"</para>
+<para>    Identifier  "Keyboard0"</para>
+<para>    Driver      "kbd"</para>
+<para>    Option      "XkbRules" "xorg"</para>
+<para>    Option      "XkbModel" "pc104"</para>
+<para>    Option      "XkbLayout" "us,de,ru"</para>
+<para>    Option      "XkbOptions" "grp:ctrl_shift_toggle"</para>
+<para>    Option      "XkbVariant" ",,winkeys"</para>
+<para>    Option      "AutoRepeat" "250 30"</para>
+<para>EndSection</para>
+<para>Перед winkeys в данном случае две запятые (т.к. русский язык теперь третий по счёту). Языки переключаются по-кругу по Ctrl+Shift.Один нюанс - в этом случае при трёх языках у меня почему-то не срабатывает переход в текстовую консоль по Ctrl+Alt+F1-6, хм.3. Включение встроенного средства переключения раскладок клавиатуры KDE.</para>
+<para>Достичь окончательного (?) просветления в этом вопросе помог пост "<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://tolikzilla.blogspot.com/2007/12/kde.html">Переключение раскладок KDE в комиксах</link>". В настройке переключения есть как минимум две неочевидные вещи. Рассмотрю два варианта: настройка для двух языков и для трёх, а в качестве кнопок переключения - Ctrl+Shift (как наиболее популярный вариант у иммигрантов с Windows).а) Настройка для двух языков (Англ/Рус).Центр Управления - Региональные и спец. возможности - Раскладка клавиатуры1я закладка (Раскладка):Добавляем две раскладки - Англ и Русскую, причём для русской ставим галку "Включить латинскую раскладку" (иначе в русской раскладке не будут работать хоткеи):</para>
+<para>
+<!-- inlinegraphic fileref="embedded:Графический объект15" width="10.584cm" depth="8.341cm"/-->
+</para>
+<para>2я закладка (Параметры переключения):по вкусу</para>
+<para>
+<!-- inlinegraphic fileref="embedded:Графический объект16" width="10.584cm" depth="8.341cm"-->
+</para>
+<para>3я закладка (Параметры XKB):Выбираем "Ctrl+Shift переключает группу" и, ниже, можно выбрать "ScrollLock показывает альтернативную группу" (учтите, что хоткеи, в которых используется комбинация "Ctrl+Shift+some_key" больше не будут работать).</para>
+<para>
+<!--<inlinegraphic fileref="embedded:Графический объект17" width="10.584cm" depth="11.685cm"/>
+--></para>
+<para>Первая неочевидная вещь заключается в том, что "Настройка переключения групп" на данной закладке - это отнюдь не переключатель раскладок (!), это переключатель групп языков в конкретной раскладке. Поэтому идём к пункту четыре:4й шаг: Центр Управления - Региональные и спец. возможности - Комбинации клавиш:В самом низу нужно назначить клавиши для "Переключиться на следующую раскладку клавиатуры" - здесь и задаётся желаемая комбинация, в нашем случае - попробуем задать Ctrl+Shift. Для основной комбинации нажимаем левые Ctrl+Shift, для альтернативной - правые.</para>
+<para>
+<!--inlinegraphic fileref="embedded:Графический объект18" width="10.584cm" depth="12.278cm"-->
+</para>
+<para>Скорей всего вы увидите "Ctrl+ISO_Prev_Group; Ctrl+ISO_Next_Group", проверяем переключаются ли раскладки. Не переключаются? И у меня нет. В справке проблема описана так: "Если kxkb не переключает с помощью комбинации клавиш, когда вы переключаетесь на какую либо раскладку, но переключает при использовании мыши, возможно ваша раскладка не содержит клавишу, назначенную в комбинации".Можно исправить вручную так:$ nano ~/.kde/share/config/kdeglobalsНайти строку "Switch to Next Keyboard Layout=..." и изменить её на:Switch to Next Keyboard Layout=Ctrl+Shift_L;Ctrl+Shift_R(кстати, для варианта переключения по левой клавише "Win" такие ухищрения не будут нужны, и хоткеи "Ctrl+Shift+some_key" будут работать)Идём снова в "Раскладка клавиатуры", отключаем и вночь включаем:[x] Включить переключение раскладок клавиатурыВсё, теперь должно работать.б) Настройка для трёх языков (Англ/Рус/Укр). Настраивается практически аналогично:1я закладка (Раскладка):Добавляем три раскладки - Англ, Русскую, Украинскую. Для русской и украинской ставится галка "Включить латинскую раскладку" (здесь это важно не столько для отрабатывания хоткеев, сколько для удобства работы с тремя языками).2я закладка (Параметры переключения):пока не включаем опцию "Переключение между основными раскладками".3я закладка (Параметры XKB):То же самое что и для варианта двух раскладок, без каких-либо изменений (если настраиваете на три раскладки после того, как настраивали для двух, то, возможно придётся отключить и вновь включить здесь "Использовать переключатели XKB").4й шаг:$ nano ~/.kde/share/config/kdeglobalsНайти строку "Switch to Next Keyboard Layout=..." и изменить её на:Switch to Next Keyboard Layout=Ctrl+Shift_L(заметьте, альтернативная комбинация не задана)Идём снова в "Раскладка клавиатуры", отключаем и вночь включаем:[x] Включить переключение раскладок клавиатурыСмотрим, что получилось. А получиться должно вот что:При нажатии левых Ctrl+Shift изменяется текущая раскладка (и соотв. флажок в трее изменяется по кругу - Англ-Рус-Укр).При нажатии правых Ctrl+Shift изменяется текущая группа раскладки (флажок остаётся прежним). Вот так выглядит структура раскладок и групп:Английская раскладка   - англ. группаРусская раскладка   - русская группа   - англ. группаУкраинская раскладка   - украинская группа   - англ. группаТо есть, переключившись левыми Ctrl+Shift на русскую раскладку, для набора английских букв не надо снова дважды жать левые Ctrl+Shift, можно правыми переключить текущую группу на английскую, набрать что требовалось, и правыми же переключиться опять на русский язык.в) Настройка для трёх языков (Англ/Рус/Укр) с использованием опции "Основных раскладок".Всё то же самое, только:2я закладка (Параметры переключения):Включаем опцию [x] "Переключение между основными раскладками".Количество основных раскладок: 2При таком варианте по левому Ctrl+Shift будет происходить переключение только между Англ и Рус раскладками. На третий язык (Укр) можно переключиться только выбрав его мышкой. Причём после выбора будет происходить переключение между Англ и Украинскими раскладками (для всей системы или только для текущего окна - в зависимости от настройки).Вот, наверное, и всё.Какой вариант удобнее - каждый решает для себя сам.PS: в Fedora8 по-умолчанию могут отсутствовать флажки языков, можно взять из другого дистрибутива по адресу /usr/share/locale/l10n/ru/flag.png (.../us/flag.png), либо, цитирую: "Небольшое уточнение: в Fedora 8 есть флажки стран, только входят они в пакет wordtrans и находятся в /usr/share/wordtrans/flags/".PPS: включение этого средства отключает настройки раскладок xorg.conf, при выключении для возрата к использованию настроек xorg.conf необходимо перезапустить X'сы.</para>
+<para>Для переключения языков в текстовой консоли в Gentoo редактируется файл /etc/conf.d/keymaps.</para>
+<para/>
+<para/>
+<para/></section>
+    <section>
+        <info>
+            <title>Gentoo KDE 4.0 Guide (Рус.)</title>
+        </info>
+        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/desktop/kde/kde4.xml">http://www.gentoo.org/proj/en/desktop/kde/kde4.xml</link>
+</para>
+<para>Авторы: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:ingmar@gentoo.org">Ingmar Vanhassel </link>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:ingmar@gentoo.org"> , </link>
+<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:mark_alec@gentoo.org">Mark Kowarsky</link> </para>
+<para>Перевод: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:JohnBat26@gmail.com?subject=По%20поводу%20вашего%20перевода%20статьи%20о%20KDE%204.0">Батогов Е.В. a.k.a. JohnBat26</link>
+</para>
+<para>С версии: 1.4</para>
+<para>Обновлено в: 1.5</para>
+<para>Дата: 28.02.2008</para>
+<para>Дата окончания перевода: 27.03.2008</para>
+<para/><section><info><title>1. Установка</title></info>
+<para>Удаление всех, предшествующих официальной версии, ebuilds.</para>
+<para/>
+<para>Если Вы использовали <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://genkdesvn.mailstation.de/">the genkdesvn overlay</link>, тогда рекомендуется удалить все версии KDE, предшествующие официальной версии, перед обновлением. Большинства пользователей достаточно будет выполнить: layman -d kde. Кроме того, если Вы изменяли какие-либо файлы, связанные с KDE, в каталоге /etc/env.d, тогда Вам необходимо вручную удалить их.</para>
+<para/>
+<para>Включение необходимых USE-флагов</para>
+<para/>
+<para>KDE 4.0 требует не просто Qt версии 4 (x11-libs/qt:4), но и то чтобы она была собрана с минимальным набором USE-флагов. Добавьте следующую строку в Ваш файл /etc/portage/package.use. </para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 1.1: Установка необходимых USE-флагов для x11-libs/qt:4</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>x11-libs/qt:4 accessibility dbus gif jpeg png qt3support ssl zlib</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para/>
+<para>Удаление маскирования и прописывание ключевых слов</para>
+<para/>
+<para>В настоящее время (24.01.2008) KDE версии 4.0.0. жестко замаскирован (hard masked), поэтому Вы должны удалить эти маски перед его установкой. Пользователям с ACCEPT_KEYWORDS="~x86" или ACCEPT_KEYWORDS="~amd64", нет необходимости выполнять какие-либо другие шаги. Всем остальным пользователям необходимо поместить необходимые пакеты в фа package.keywords.</para>
+<para>Так как /etc/portage/package.unmask/ и /etc/portage/package.keywords/ могут быть директориями, Вы можете просто сохранить следующие примеры файлов в эти директории для снятия маскирования и прописывания ключевых слов для  KDE 4.0.0.</para>
+<para>Листинг 1.2 Пример<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www2.mailstation.de/gitweb/?p=genkde4svn-pub.git;a=blob_plain;f=Documentation/package.unmask-4.0.0;hb=HEAD"> package.unmask</link> :</para>
+<para># Unmask KDE 4.0.0</para>
+<para>kde-base/amor:kde-4</para>
+<para>kde-base/ark:kde-4</para>
+<para>kde-base/blinken:kde-4</para>
+<para>kde-base/bovo:kde-4</para>
+<para>kde-base/cervisia:kde-4</para>
+<para>kde-base/dolphin:kde-4</para>
+<para>kde-base/drkonqi:kde-4</para>
+<para>kde-base/gwenview:kde-4</para>
+<para>kde-base/juk:kde-4</para>
+<para>kde-base/kalgebra:kde-4</para>
+<para>kde-base/kalzium:kde-4</para>
+<para>kde-base/kamera:kde-4</para>
+<para>kde-base/kanagram:kde-4</para>
+<para>kde-base/kappfinder:kde-4</para>
+<para>kde-base/kapptemplate:kde-4</para>
+<para>kde-base/kate:kde-4</para>
+<para>kde-base/katomic:kde-4</para>
+<para>kde-base/kbattleship:kde-4</para>
+<para>kde-base/kblackbox:kde-4</para>
+<para>kde-base/kbounce:kde-4</para>
+<para>kde-base/kbruch:kde-4</para>
+<para>kde-base/kbugbuster:kde-4</para>
+<para>kde-base/kcachegrind:kde-4</para>
+<para>kde-base/kcalc:kde-4</para>
+<para>kde-base/kcharselect:kde-4</para>
+<para>kde-base/kcheckpass:kde-4</para>
+<para>kde-base/kcminit:kde-4</para>
+<para>kde-base/kcmshell:kde-4</para>
+<para>kde-base/kcolorchooser:kde-4</para>
+<para>kde-base/kcontrol:kde-4</para>
+<para>kde-base/kcron:kde-4</para>
+<para>kde-base/kde:kde-4</para>
+<para>kde-base/kdeaccessibility:kde-4</para>
+<para>kde-base/kdeaccessibility-colorschemes:kde-4</para>
+<para>kde-base/kdeaccessibility-iconthemes:kde-4</para>
+<para>kde-base/kdeaccessibility-meta:kde-4</para>
+<para>kde-base/kdeaccounts-plugin:kde-4</para>
+<para>kde-base/kdeadmin:kde-4</para>
+<para>kde-base/kdeadmin-meta:kde-4</para>
+<para>kde-base/kdeartwork:kde-4</para>
+<para>kde-base/kdeartwork-colorschemes:kde-4</para>
+<para>kde-base/kdeartwork-emoticons:kde-4</para>
+<para>kde-base/kdeartwork-iconthemes:kde-4</para>
+<para>kde-base/kdeartwork-kscreensaver:kde-4</para>
+<para>kde-base/kdeartwork-kworldclock:kde-4</para>
+<para>kde-base/kdeartwork-meta:kde-4</para>
+<para>kde-base/kdeartwork-sounds:kde-4</para>
+<para>kde-base/kdeartwork-styles:kde-4</para>
+<para>kde-base/kdeartwork-wallpapers:kde-4</para>
+<para>kde-base/kdebase:kde-4</para>
+<para>kde-base/kdebase-data:kde-4</para>
+<para>kde-base/kdebase-kioslaves:kde-4</para>
+<para>kde-base/kdebase-meta:kde-4</para>
+<para>kde-base/kdebase-startkde:kde-4</para>
+<para>kde-base/kdebugdialog:kde-4</para>
+<para>kde-base/kdeedu:kde-4</para>
+<para>kde-base/kdeedu-meta:kde-4</para>
+<para>kde-base/kdegames:kde-4</para>
+<para>kde-base/kdegames-meta:kde-4</para>
+<para>kde-base/kdegraphics:kde-4</para>
+<para>kde-base/kdegraphics-meta:kde-4</para>
+<para>kde-base/kde-l10n:kde-4</para>
+<para>kde-base/kdelibs:kde-4</para>
+<para>kde-base/kde-menu:kde-4</para>
+<para>kde-base/kde-menu-icons:kde-4</para>
+<para>kde-base/kde-meta:kde-4</para>
+<para>kde-base/kdemultimedia:kde-4</para>
+<para>kde-base/kdemultimedia-kioslaves:kde-4</para>
+<para>kde-base/kdemultimedia-meta:kde-4</para>
+<para>kde-base/kdenetwork:kde-4</para>
+<para>kde-base/kdenetwork-filesharing:kde-4</para>
+<para>kde-base/kdenetwork-meta:kde-4</para>
+<para>kde-base/kdepasswd:kde-4</para>
+<para>kde-base/kdepimlibs:kde-4</para>
+<para>kde-base/kdesdk:kde-4</para>
+<para>kde-base/kdesdk-kioslaves:kde-4</para>
+<para>kde-base/kdesdk-meta:kde-4</para>
+<para>kde-base/kdesdk-misc:kde-4</para>
+<para>kde-base/kdesdk-scripts:kde-4</para>
+<para>kde-base/kdessh:kde-4</para>
+<para>kde-base/kdesu:kde-4</para>
+<para>kde-base/kdetoys:kde-4</para>
+<para>kde-base/kdetoys-meta:kde-4</para>
+<para>kde-base/kdeutils:kde-4</para>
+<para>kde-base/kdeutils-meta:kde-4</para>
+<para>kde-base/kde-wallpapers:kde-4</para>
+<para>kde-base/kdf:kde-4</para>
+<para>kde-base/kdialog:kde-4</para>
+<para>kde-base/kdm:kde-4</para>
+<para>kde-base/kdnssd:kde-4</para>
+<para>kde-base/keditbookmarks:kde-4</para>
+<para>kde-base/kfile:kde-4</para>
+<para>kde-base/kfind:kde-4</para>
+<para>kde-base/kfloppy:kde-4</para>
+<para>kde-base/kfourinline:kde-4</para>
+<para>kde-base/kgamma:kde-4</para>
+<para>kde-base/kgeography:kde-4</para>
+<para>kde-base/kget:kde-4</para>
+<para>kde-base/kgoldrunner:kde-4</para>
+<para>kde-base/kgpg:kde-4</para>
+<para>kde-base/khangman:kde-4</para>
+<para>kde-base/khelpcenter:kde-4</para>
+<para>kde-base/khotkeys:kde-4</para>
+<para>kde-base/kig:kde-4</para>
+<para>kde-base/kioclient:kde-4</para>
+<para>kde-base/kiriki:kde-4</para>
+<para>kde-base/kiten:kde-4</para>
+<para>kde-base/kjots:kde-4</para>
+<para>kde-base/kjumpingcube:kde-4</para>
+<para>kde-base/klettres:kde-4</para>
+<para>kde-base/klines:kde-4</para>
+<para>kde-base/klipper:kde-4</para>
+<para>kde-base/kmag:kde-4</para>
+<para>kde-base/kmahjongg:kde-4</para>
+<para>kde-base/kmenuedit:kde-4</para>
+<para>kde-base/kmilo:kde-4</para>
+<para>kde-base/kmimetypefinder:kde-4</para>
+<para>kde-base/kmines:kde-4</para>
+<para>kde-base/kmix:kde-4</para>
+<para>kde-base/kmousetool:kde-4</para>
+<para>kde-base/kmouth:kde-4</para>
+<para>kde-base/kmplot:kde-4</para>
+<para>kde-base/knetattach:kde-4</para>
+<para>kde-base/knetwalk:kde-4</para>
+<para>kde-base/knetworkconf:kde-4</para>
+<para>kde-base/knewsticker:kde-4</para>
+<para>kde-base/knewstuff:kde-4</para>
+<para>kde-base/knotify:kde-4</para>
+<para>kde-base/kolf:kde-4</para>
+<para>kde-base/kolourpaint:kde-4</para>
+<para>kde-base/kompare:kde-4</para>
+<para>kde-base/konqueror:kde-4</para>
+<para>kde-base/konquest:kde-4</para>
+<para>kde-base/konsole:kde-4</para>
+<para>kde-base/kopete:kde-4</para>
+<para>kde-base/kpasswdserver:kde-4</para>
+<para>kde-base/kpat:kde-4</para>
+<para>kde-base/kpercentage:kde-4</para>
+<para>kde-base/kppp:kde-4</para>
+<para>kde-base/kquitapp:kde-4</para>
+<para>kde-base/krdc:kde-4</para>
+<para>kde-base/kreadconfig:kde-4</para>
+<para>kde-base/kreversi:kde-4</para>
+<para>kde-base/krfb:kde-4</para>
+<para>kde-base/kruler:kde-4</para>
+<para>kde-base/krunner:kde-4</para>
+<para>kde-base/ksame:kde-4</para>
+<para>kde-base/kscd:kde-4</para>
+<para>kde-base/kscreensaver:kde-4</para>
+<para>kde-base/kshisen:kde-4</para>
+<para>kde-base/ksmserver:kde-4</para>
+<para>kde-base/ksnapshot:kde-4</para>
+<para>kde-base/kspaceduel:kde-4</para>
+<para>kde-base/ksplash:kde-4</para>
+<para>kde-base/ksquares:kde-4</para>
+<para>kde-base/kstars:kde-4</para>
+<para>kde-base/kstart:kde-4</para>
+<para>kde-base/kstartupconfig:kde-4</para>
+<para>kde-base/kstyles:kde-4</para>
+<para>kde-base/ksudoku:kde-4</para>
+<para>kde-base/ksysguard:kde-4</para>
+<para>kde-base/ksystraycmd:kde-4</para>
+<para>kde-base/kteatime:kde-4</para>
+<para>kde-base/ktimer:kde-4</para>
+<para>kde-base/ktimezoned:kde-4</para>
+<para>kde-base/ktip:kde-4</para>
+<para>kde-base/ktouch:kde-4</para>
+<para>kde-base/ktraderclient:kde-4</para>
+<para>kde-base/kttsd:kde-4</para>
+<para>kde-base/ktuberling:kde-4</para>
+<para>kde-base/kturtle:kde-4</para>
+<para>kde-base/ktux:kde-4</para>
+<para>kde-base/kuiserver:kde-4</para>
+<para>kde-base/kuiviewer:kde-4</para>
+<para>kde-base/kurifilter-plugins:kde-4</para>
+<para>kde-base/kuser:kde-4</para>
+<para>kde-base/kwallet:kde-4</para>
+<para>kde-base/kweather:kde-4</para>
+<para>kde-base/kwin:kde-4</para>
+<para>kde-base/kwordquiz:kde-4</para>
+<para>kde-base/kworldclock:kde-4</para>
+<para>kde-base/kwrite:kde-4</para>
+<para>kde-base/libkcddb:kde-4</para>
+<para>kde-base/libkcompactdisc:kde-4</para>
+<para>kde-base/libkdeedu:kde-4</para>
+<para>kde-base/libkdegames:kde-4</para>
+<para>kde-base/libkmahjongg:kde-4</para>
+<para>kde-base/libkonq:kde-4</para>
+<para>kde-base/libkscan:kde-4</para>
+<para>kde-base/libkworkspace:kde-4</para>
+<para>kde-base/libplasma:kde-4</para>
+<para>kde-base/libtaskmanager:kde-4</para>
+<para>kde-base/lilo-config:kde-4</para>
+<para>kde-base/lskat:kde-4</para>
+<para>kde-base/marble:kde-4</para>
+<para>kde-base/nepomuk:kde-4</para>
+<para>kde-base/nsplugins:kde-4</para>
+<para>kde-base/okular:kde-4</para>
+<para>kde-base/parley:kde-4</para>
+<para>kde-base/phonon:kde-4</para>
+<para>kde-base/plasma:kde-4</para>
+<para>kde-base/poxml:kde-4</para>
+<para>kde-base/qimageblitz</para>
+<para>kde-base/secpolicy:kde-4</para>
+<para>kde-base/solid:kde-4</para>
+<para>kde-base/soliduiserver:kde-4</para>
+<para>kde-base/strigi-analyzer:kde-4</para>
+<para>kde-base/superkaramba:kde-4</para>
+<para>kde-base/svgpart:kde-4</para>
+<para>kde-base/sweeper:kde-4</para>
+<para>kde-base/systemsettings:kde-4</para>
+<para>kde-base/umbrello:kde-4</para>
+<para>Листинг 1.3 Пример<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www2.mailstation.de/gitweb/?p=genkde4svn-pub.git;a=blob_plain;f=Documentation/package.keywords.4.0.0;hb=HEAD"> package.keywords</link> :</para>
+<para># Masked qca-2.0 and dependencies for further testing, bug #129536</para>
+<para>app-crypt/qca:2 **</para>
+<para>app-crypt/qca-cyrus:2 **</para>
+<para>app-crypt/qca-gnupg:2 **</para>
+<para>app-crypt/qca-logger:2 **</para>
+<para>app-crypt/qca-ossl:2 **</para>
+<para>app-crypt/qca-pkcs11:2 **</para>
+<para/>
+<para># KDE 4 dependencies</para>
+<para>app-misc/strigi **</para>
+<para>dev-libs/libzip **</para>
+<para>dev-libs/soprano **</para>
+<para>sci-libs/indilib **</para>
+<para>sci-mathematics/gmm **</para>
+<para/>
+<para># Unmask KDE 4.0.0</para>
+<para>kde-base/amor:kde-4 **</para>
+<para>kde-base/ark:kde-4 **</para>
+<para>kde-base/blinken:kde-4 **</para>
+<para>kde-base/bovo:kde-4 **</para>
+<para>kde-base/cervisia:kde-4 **</para>
+<para>kde-base/dolphin:kde-4 **</para>
+<para>kde-base/drkonqi:kde-4 **</para>
+<para>kde-base/gwenview:kde-4 **</para>
+<para>kde-base/juk:kde-4 **</para>
+<para>kde-base/kalgebra:kde-4 **</para>
+<para>kde-base/kalzium:kde-4 **</para>
+<para>kde-base/kamera:kde-4 **</para>
+<para>kde-base/kanagram:kde-4 **</para>
+<para>kde-base/kappfinder:kde-4 **</para>
+<para>kde-base/kapptemplate:kde-4 **</para>
+<para>kde-base/kate:kde-4 **</para>
+<para>kde-base/katomic:kde-4 **</para>
+<para>kde-base/kbattleship:kde-4 **</para>
+<para>kde-base/kblackbox:kde-4 **</para>
+<para>kde-base/kbounce:kde-4 **</para>
+<para>kde-base/kbruch:kde-4 **</para>
+<para>kde-base/kbugbuster:kde-4 **</para>
+<para>kde-base/kcachegrind:kde-4 **</para>
+<para>kde-base/kcalc:kde-4 **</para>
+<para>kde-base/kcharselect:kde-4 **</para>
+<para>kde-base/kcheckpass:kde-4 **</para>
+<para>kde-base/kcminit:kde-4 **</para>
+<para>kde-base/kcmshell:kde-4 **</para>
+<para>kde-base/kcolorchooser:kde-4 **</para>
+<para>kde-base/kcontrol:kde-4 **</para>
+<para>kde-base/kcron:kde-4 **</para>
+<para>kde-base/kde:kde-4 **</para>
+<para>kde-base/kdeaccessibility:kde-4 **</para>
+<para>kde-base/kdeaccessibility-colorschemes:kde-4 **</para>
+<para>kde-base/kdeaccessibility-iconthemes:kde-4 **</para>
+<para>kde-base/kdeaccessibility-meta:kde-4 **</para>
+<para>kde-base/kdeaccounts-plugin:kde-4 **</para>
+<para>kde-base/kdeadmin:kde-4 **</para>
+<para>kde-base/kdeadmin-meta:kde-4 **</para>
+<para>kde-base/kdeartwork:kde-4 **</para>
+<para>kde-base/kdeartwork-colorschemes:kde-4 **</para>
+<para>kde-base/kdeartwork-emoticons:kde-4 **</para>
+<para>kde-base/kdeartwork-iconthemes:kde-4 **</para>
+<para>kde-base/kdeartwork-kscreensaver:kde-4 **</para>
+<para>kde-base/kdeartwork-kworldclock:kde-4 **</para>
+<para>kde-base/kdeartwork-meta:kde-4 **</para>
+<para>kde-base/kdeartwork-sounds:kde-4 **</para>
+<para>kde-base/kdeartwork-styles:kde-4 **</para>
+<para>kde-base/kdeartwork-wallpapers:kde-4 **</para>
+<para>kde-base/kdebase:kde-4 **</para>
+<para>kde-base/kdebase-data:kde-4 **</para>
+<para>kde-base/kdebase-kioslaves:kde-4 **</para>
+<para>kde-base/kdebase-meta:kde-4 **</para>
+<para>kde-base/kdebase-startkde:kde-4 **</para>
+<para>kde-base/kdebugdialog:kde-4 **</para>
+<para>kde-base/kdeedu:kde-4 **</para>
+<para>kde-base/kdeedu-meta:kde-4 **</para>
+<para>kde-base/kdegames:kde-4 **</para>
+<para>kde-base/kdegames-meta:kde-4 **</para>
+<para>kde-base/kdegraphics:kde-4 **</para>
+<para>kde-base/kdegraphics-meta:kde-4 **</para>
+<para>kde-base/kde-l10n:kde-4 **</para>
+<para>kde-base/kdelibs:kde-4 **</para>
+<para>kde-base/kde-menu:kde-4 **</para>
+<para>kde-base/kde-menu-icons:kde-4 **</para>
+<para>kde-base/kde-meta:kde-4 **</para>
+<para>kde-base/kdemultimedia:kde-4 **</para>
+<para>kde-base/kdemultimedia-kioslaves:kde-4 **</para>
+<para>kde-base/kdemultimedia-meta:kde-4 **</para>
+<para>kde-base/kdenetwork:kde-4 **</para>
+<para>kde-base/kdenetwork-filesharing:kde-4 **</para>
+<para>kde-base/kdenetwork-meta:kde-4 **</para>
+<para>kde-base/kdepasswd:kde-4 **</para>
+<para>kde-base/kdepimlibs:kde-4 **</para>
+<para>kde-base/kdesdk:kde-4 **</para>
+<para>kde-base/kdesdk-kioslaves:kde-4 **</para>
+<para>kde-base/kdesdk-meta:kde-4 **</para>
+<para>kde-base/kdesdk-misc:kde-4 **</para>
+<para>kde-base/kdesdk-scripts:kde-4 **</para>
+<para>kde-base/kdessh:kde-4 **</para>
+<para>kde-base/kdesu:kde-4 **</para>
+<para>kde-base/kdetoys:kde-4 **</para>
+<para>kde-base/kdetoys-meta:kde-4 **</para>
+<para>kde-base/kdeutils:kde-4 **</para>
+<para>kde-base/kdeutils-meta:kde-4 **</para>
+<para>kde-base/kde-wallpapers:kde-4 **</para>
+<para>kde-base/kdf:kde-4 **</para>
+<para>kde-base/kdialog:kde-4 **</para>
+<para>kde-base/kdm:kde-4 **</para>
+<para>kde-base/kdnssd:kde-4 **</para>
+<para>kde-base/keditbookmarks:kde-4 **</para>
+<para>kde-base/kfile:kde-4 **</para>
+<para>kde-base/kfind:kde-4 **</para>
+<para>kde-base/kfloppy:kde-4 **</para>
+<para>kde-base/kfourinline:kde-4 **</para>
+<para>kde-base/kgamma:kde-4 **</para>
+<para>kde-base/kgeography:kde-4 **</para>
+<para>kde-base/kget:kde-4 **</para>
+<para>kde-base/kgoldrunner:kde-4 **</para>
+<para>kde-base/kgpg:kde-4 **</para>
+<para>kde-base/khangman:kde-4 **</para>
+<para>kde-base/khelpcenter:kde-4 **</para>
+<para>kde-base/khotkeys:kde-4 **</para>
+<para>kde-base/kig:kde-4 **</para>
+<para>kde-base/kioclient:kde-4 **</para>
+<para>kde-base/kiriki:kde-4 **</para>
+<para>kde-base/kiten:kde-4 **</para>
+<para>kde-base/kjots:kde-4 **</para>
+<para>kde-base/kjumpingcube:kde-4 **</para>
+<para>kde-base/klettres:kde-4 **</para>
+<para>kde-base/klines:kde-4 **</para>
+<para>kde-base/klipper:kde-4 **</para>
+<para>kde-base/kmag:kde-4 **</para>
+<para>kde-base/kmahjongg:kde-4 **</para>
+<para>kde-base/kmenuedit:kde-4 **</para>
+<para>kde-base/kmilo:kde-4 **</para>
+<para>kde-base/kmimetypefinder:kde-4 **</para>
+<para>kde-base/kmines:kde-4 **</para>
+<para>kde-base/kmix:kde-4 **</para>
+<para>kde-base/kmousetool:kde-4 **</para>
+<para>kde-base/kmouth:kde-4 **</para>
+<para>kde-base/kmplot:kde-4 **</para>
+<para>kde-base/knetattach:kde-4 **</para>
+<para>kde-base/knetwalk:kde-4 **</para>
+<para>kde-base/knetworkconf:kde-4 **</para>
+<para>kde-base/knewsticker:kde-4 **</para>
+<para>kde-base/knewstuff:kde-4 **</para>
+<para>kde-base/knotify:kde-4 **</para>
+<para>kde-base/kolf:kde-4 **</para>
+<para>kde-base/kolourpaint:kde-4 **</para>
+<para>kde-base/kompare:kde-4 **</para>
+<para>kde-base/konqueror:kde-4 **</para>
+<para>kde-base/konquest:kde-4 **</para>
+<para>kde-base/konsole:kde-4 **</para>
+<para>kde-base/kopete:kde-4 **</para>
+<para>kde-base/kpasswdserver:kde-4 **</para>
+<para>kde-base/kpat:kde-4 **</para>
+<para>kde-base/kpercentage:kde-4 **</para>
+<para>kde-base/kppp:kde-4 **</para>
+<para>kde-base/kquitapp:kde-4 **</para>
+<para>kde-base/krdc:kde-4 **</para>
+<para>kde-base/kreadconfig:kde-4 **</para>
+<para>kde-base/kreversi:kde-4 **</para>
+<para>kde-base/krfb:kde-4 **</para>
+<para>kde-base/kruler:kde-4 **</para>
+<para>kde-base/krunner:kde-4 **</para>
+<para>kde-base/ksame:kde-4 **</para>
+<para>kde-base/kscd:kde-4 **</para>
+<para>kde-base/kscreensaver:kde-4 **</para>
+<para>kde-base/kshisen:kde-4 **</para>
+<para>kde-base/ksmserver:kde-4 **</para>
+<para>kde-base/ksnapshot:kde-4 **</para>
+<para>kde-base/kspaceduel:kde-4 **</para>
+<para>kde-base/ksplash:kde-4 **</para>
+<para>kde-base/ksquares:kde-4 **</para>
+<para>kde-base/kstars:kde-4 **</para>
+<para>kde-base/kstart:kde-4 **</para>
+<para>kde-base/kstartupconfig:kde-4 **</para>
+<para>kde-base/kstyles:kde-4 **</para>
+<para>kde-base/ksudoku:kde-4 **</para>
+<para>kde-base/ksysguard:kde-4 **</para>
+<para>kde-base/ksystraycmd:kde-4 **</para>
+<para>kde-base/kteatime:kde-4 **</para>
+<para>kde-base/ktimer:kde-4 **</para>
+<para>kde-base/ktimezoned:kde-4 **</para>
+<para>kde-base/ktip:kde-4 **</para>
+<para>kde-base/ktouch:kde-4 **</para>
+<para>kde-base/ktraderclient:kde-4 **</para>
+<para>kde-base/kttsd:kde-4 **</para>
+<para>kde-base/ktuberling:kde-4 **</para>
+<para>kde-base/kturtle:kde-4 **</para>
+<para>kde-base/ktux:kde-4 **</para>
+<para>kde-base/kuiserver:kde-4 **</para>
+<para>kde-base/kuiviewer:kde-4 **</para>
+<para>kde-base/kurifilter-plugins:kde-4 **</para>
+<para>kde-base/kuser:kde-4 **</para>
+<para>kde-base/kwallet:kde-4 **</para>
+<para>kde-base/kweather:kde-4 **</para>
+<para>kde-base/kwin:kde-4 **</para>
+<para>kde-base/kwordquiz:kde-4 **</para>
+<para>kde-base/kworldclock:kde-4 **</para>
+<para>kde-base/kwrite:kde-4 **</para>
+<para>kde-base/libkcddb:kde-4 **</para>
+<para>kde-base/libkcompactdisc:kde-4 **</para>
+<para>kde-base/libkdeedu:kde-4 **</para>
+<para>kde-base/libkdegames:kde-4 **</para>
+<para>kde-base/libkmahjongg:kde-4 **</para>
+<para>kde-base/libkonq:kde-4 **</para>
+<para>kde-base/libkscan:kde-4 **</para>
+<para>kde-base/libkworkspace:kde-4 **</para>
+<para>kde-base/libplasma:kde-4 **</para>
+<para>kde-base/libtaskmanager:kde-4 **</para>
+<para>kde-base/lilo-config:kde-4 **</para>
+<para>kde-base/lskat:kde-4 **</para>
+<para>kde-base/marble:kde-4 **</para>
+<para>kde-base/nepomuk:kde-4 **</para>
+<para>kde-base/nsplugins:kde-4 **</para>
+<para>kde-base/okular:kde-4 **</para>
+<para>kde-base/parley:kde-4 **</para>
+<para>kde-base/phonon:kde-4 **</para>
+<para>kde-base/plasma:kde-4 **</para>
+<para>kde-base/poxml:kde-4 **</para>
+<para>kde-base/qimageblitz-0.0.4 **</para>
+<para>kde-base/secpolicy:kde-4 **</para>
+<para>kde-base/solid:kde-4 **</para>
+<para>kde-base/soliduiserver:kde-4 **</para>
+<para>kde-base/strigi-analyzer:kde-4 **</para>
+<para>kde-base/superkaramba:kde-4 **</para>
+<para>kde-base/svgpart:kde-4 **</para>
+<para>kde-base/sweeper:kde-4 **</para>
+<para>kde-base/systemsettings:kde-4 **</para>
+<para>kde-base/umbrello:kde-4 **</para><section><info><title>Непосредственно установка </title></info>
+<para>Теперь Вы можете запустить одну из следующих команд emerge, для установки KDE.</para>
+<orderedlist>
+<listitem>
+<para>Первая установит Вам все из состава KDE 4.0.0, собранное из отдельных ebuilds.</para>
+</listitem>
+<listitem>
+<para>Вторая установит Вам минимальное окружение KDE 4.0.0 как базу для добавления только тех программ, которые Вы хотите.</para>
+</listitem>
+</orderedlist>
+<para/>
+<para>Листинг 1.4: Установка KDE 4.0.0</para>
+<para>emerge -avD kde-base/kde-meta:kde-4</para>
+<para>emerge -avD kde-base/kdebase-startkde:kde-4</para>
+<para/>
+<para/></section></section><section><info><title>2. Изменения по сравнению с KDE 3.5</title></info>
+<para>KDE 4 вносит впечатляющие изменения в архитектуру рабочего стола в сравнении с KDE 3. Одним из таких изменений является переход от autotools к cmake. Это означает, что теперь Вы можете видеть прогресс компиляции KDE в процентах.</para>
+<para/>
+<para>Скрипт startkde</para>
+<para>Не рекомендуется позволять KDE 3.5 и KDE 4.0  использовать одни и те же файлы конфигурации. Для предотвращения этого скрипты startkde перезапишут символическую ссылку ~./kde во время старта KDE. Это означает, что когда Вы будете находиться в сессии KDE 4.0, Ваша конфигурация для KDE 3.5 будет недоступна и наоборот.</para>
+<para>Исходя из этого, Вам не следует запускать две разный версии KDE под одним пользователем в одно время. (Войдя в KDE 4.0, KDE .3.5 остается запущенной в фоне, под тем же пользователем ! )</para>
+<para/>
+<para>Выбор менеджера входа в систему</para>
+<para>По умолчанию, самая последняя версия kde-base/kdm которая у Вас установлена, будет запускаться в момент входа с систему. Для настройки этого, откройте файл  /etc/conf.d/xdm в Вашем любимой текстовом редакторе и измените переменную DISPLAYMANAGER на kdm-3.5 или kdm-4.0. Вы можете посмотреть возможные версии kdm, запустив ls /usr/kde в консоли.</para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para>Листинг 2.1: Добавьте следующее в файл /etc/conf.d/xdm</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>DISPLAYMANAGER=kdm-3.5</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>3. FAQ (Часто задаваемые вопросы)</title></info>
+<para>В: Могу я установить KDE 4.0 и KDE 3.5 одновременно?</para>
+<para>О: Да, обе версии помещаются по слотам, и могут  быть установлены одновременно. Обе версии KDE используют различные KDEHOME, таким образом Вы можете попробовать KDE 4.0 под тем же пользователем, без перезаписи Ваших настроек их KDE 3.5.</para>
+<para/>
+<para>В: Вы сказали, что я могу установить вместе  KDE 3.5 и KDE 4.0, но они блокируют  друг друга !? </para>
+<para>О: Вам необходимо установить последнюю ревизию (не версию!) пакета kde-base/kdebase (если Вы используете монолитные ebuilds) или kde-base/kdebase-startkde (если Вы используете раздельные ebuilds). Эти ревизии включают патчи, позволяющие множествам версиям KDE сосуществовать.</para>
+<para>Примечание: Эти ревизии пока не были стабилизированы, таким образом Вам необходимо прописать ключевые слова для них. </para>
+<para/>
+<para>В: Почему KDE 4.0.0  жестко замаскирован (hard-masked)?</para>
+<para>О: KDE 4.0.0 является очень технологической версией. Он пока не предназначен для полной замены серии KDE 3. Множество возможностей отсутствуют и множество ошибок ещё будет найдено. Только когда KDE 4.x  перейдет на стадию, которая предложит полноценное обновление для пользователей, тогда с него будет снят статус: жестко замаскирован!</para>
+<para>В: Почему KDE 4.0.0  замаскирован EAPI?</para>
+<para>О: Ebuilds KDE 4.0.0  используют slot dependencies, такие как kde-base/kdebase-startkde:kde-4,  с синтаксисом зависимости. Вам необходима версия портежей, которая понимает это. Если вы получаете сообщение о маске, тогда Вам следует просто обновить портежи до новой версии.</para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para> Листинг 3.1: Обновление до версии portage, которая поддерживает EAPI=1</para>
+</entry>
+</row>
+<row>
+<entry>
+<para># emerge --oneshot &gt;=sys-apps/portage-2.1.3.12</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>В: Где монолитные KDE ebuilds?</para>
+<para>О: Мы обнаружили, что иметь оба типа ebuild: раздельные и монолитные часто вводит пользователей в замешательство, а также ненужная никому сложность в eclasses и бесцельное дублирование усилий для команды. Так как теперь KDE использует cmake, то основное недостаток раздельных ebuilds  (долгое время компиляции, потому что дублируется ./configure-runs) незначителен.  По причинам указанным выше, мы решили сопровождать только раздельные ebuilds. Для переключения от монолитных к раздельным ebuilds, удалите все установленные монолитные ebuilds:</para>
+<para/>
+<informaltable frame="all">
+<tgroup cols="1"><tbody>
+<row>
+<entry>
+<para> Листинг 3.2: Удаление монолитных ebuilds KDE4</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>emerge -C ~kde-base/kde{,accessibility,admin,artwork,base,edu,games,graphics,multimedia,network,sdk,toys,utils,webdev}-4.0.</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+<para>Потом, установите раздельные ebuilds, как объяснено ранее в этом руководстве.</para>
+<para/>
+<para>В:  Где  KDE-PIM в KDE 4?</para>
+<para>О: KDE-PIM  пока не был выпущен с KDE 4.0.0, поэтому, к сожалению,  пока вы не найдете его в дереве портежей. Вы, конечно, можете использовать, версии 3.5 kmail, akregator и их друзей совместно с KDE 4.0.0.</para>
+<para/>
+<para>В:  Я попробовал KDE4 и осознал, что пока не хочу его использовать. Что мне следует делать в этом случае?</para>
+<para>О: Удалите KDE 4 из Ваших файлов: package.keywords и package.unmask, затем удалите пакеты, которые вы установили. Не забудьте обновить Вашу переменную DISPLAYMANAGER  если Вы ранее изменяли её на  kde-4.0.</para>
+<para/>
+<para>В:  Означает ли это, что KDE 3.5 будет убран?</para>
+<para>О: Вовсе НЕТ! KDE 3.5 — это очень стабильная версия, и она имеет очень мало ошибок. Несмотря на то, что мы не увидим новых возможностей в KDE 3.5, мы планируем ещё долгое время сопровождать его.</para>
+<para/></section></section>
+</article>

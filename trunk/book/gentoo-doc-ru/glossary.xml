@@ -1,0 +1,2620 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<info><title>Термины</title></info>
+<para/>
+<para>Мы стараемся придерживаться терминов, уже определенных здесь, а сталкивась с новыми трудностями при переводе и редактировании — пополняем словарь. </para>
+<para>Кроме того, мы стремимся, чтобы терминология в разных пакетах системы была единой независимо от их происхождения. </para>
+<para>Ви́ки (WiKi) (от гавайского: быстрый)— </para>
+<para>гипертекстовая среда (обычно Веб-сайт) для сбора и структуризации письменных сведений (в программировании:документации, советов, часто задаваемых вопросов(FAQ), мини-руководств(HOWTO)). </para>
+<para>Характеризуется следующими признаками:</para>
+<orderedlist>
+<listitem>
+<para>Множество авторов. Некоторые вики могут править все посетители.</para>
+</listitem>
+<listitem>
+<para>Возможность многократно править текст посредством самой вики-среды (вебсайта), без применения особых приспособлений на стороне редактора.</para>
+</listitem>
+<listitem>
+<para>Проявление изменений сразу после их внесения.</para>
+</listitem>
+<listitem>
+<para>Разделение информации на страницы, где у каждой своё название.</para>
+</listitem>
+<listitem>
+<para>Особый язык разметки, позволяющий легко и быстро размечать в тексте структурные элементы, форматирование, гиперссылки и т. п.</para>
+</listitem>
+<listitem>
+<para>Учёт изменений (учёт версий) текста и возможность отката к ранней версии.</para>
+</listitem>
+</orderedlist>
+<para/>
+<para>Для создания вики-среды необходимо особое ПО — движок вики. Это частный вид системы управления сайтом, довольно простой в своём устройстве и функциональности, ибо почти все действия по структуризации и обработке сведений делаются пользователями вручную. Главная особенность -- посетители сайта могут сами редактировать содержимое этих страниц и создавать новые. Wiki сделаны так, чтобы редактировать страницы было просто; для редактирования ничего кроме программы веб-броузера не нужно.</para>
+<para>ALSA, или Advanced Linux Sound Architecture — </para>
+<para>продвинутая Звуковая Архитектура Linux, обеспечивает аудио- и MIDI- (Musical Instrument Digital Interface — Цифровой Интерфейс Музыкальных Инструментов) функциональность в операционной системе Linux. ALSA является основной звуковой подсистемой в ядрах 2.6, заменившей собой OSS (Open Sound System - Открытая Звуковая Система), которая использовалась в ядрах 2.4</para>
+<para/>
+<para>X сервер (или  Иксы) - </para>
+<para>обычного  пользователя могут испугать мысли о необходимости печатать в командной строке. Почему бы ему не прокладывать свой путь на территории свободы выбора Gentoo (и Linux вообще), просто «водя мышкой»? Ну, конечно, вы сможете это сделать :-). В Linux предлагается широкое разнообразие пользовательских интерфейсов и сред, которые можно установить поверх установленной у вас системы. </para>
+<para/>
+<para>Это один из самых больших сюрпризов, с которым сталкиваются новички: графический интерфейс пользователя — это всего лишь прикладная программа, выполняемая в системе. Он не является частью ядра Linux или каких-либо других компонентов системы. Это — мощный инструмент, позволяющий полностью задействовать графические возможности вашего компьютера. </para>
+<para/>
+<para>Так как стандартизация очень важна, для организации прорисовки и перемещения окон по экрану, взаимодействия пользователя с мышью и клавиатурой, а также других важных базовых аспектов, был создан стандарт под названием X Window System, сокращённо X11 или просто X. Он используется в Unix, Linux и других Unix-подобных операционных системах во всем мире. </para>
+<para/>
+<para>Приложение, которое дает пользователям Linux возможность запускать графические интерфейсы пользователя и использует стандарт X11, называется Xorg-X11, ответвление проекта XFree86. Проектом XFree86 было решено использовать лицензию, возможно, несовместимую с лицензией GPL, поэтому рекомендуется использовать Xorg. Пакет XFree86 больше не поддерживается в официальном дереве портежей. </para>
+<para/>
+<para>Проект X.org</para>
+<para/>
+<para>Проектом X.org создана и поддерживается бесплатно распространяемая реализация системы X11 с открытым исходным кодом. Это открытая инфраструктура рабочей станции, основанная на X11. </para>
+<para/>
+<para>Xorg обеспечивает интерфейс между устройствами вашего компьютера и нужными вам графическими программами. Кроме того, Xorg является полностью сетевым, то есть вы можете запускать программу на одной системе, а отображать ее — на другой. </para>
+<para/>
+<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.rugentoo.org/glossary/index.html">http://www.rugentoo.org/glossary/index.html</link>
+</para>
+<para/><section xml:id="text"><info><title>Запрещённые термины, или КАК НЕ НАДО</title></info><informaltable frame="all">
+<tgroup cols="2">
+<thead>
+<row>
+<entry>
+<para>Термин</para>
+</entry>
+<entry>
+<para>Перевод</para>
+</entry>
+</row>
+</thead><tbody>
+<row>
+<entry>
+<para>activation </para>
+</entry>
+<entry>
+<para>активация; активизация; включение; приведение в действие; запуск </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>architecture-specific </para>
+</entry>
+<entry>
+<para>архитектурно-зависимый (о режиме или параметре);посвящённый определённой архитектуре (о руководстве) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>account </para>
+</entry>
+<entry>
+<para>учётная запись </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>advanced </para>
+</entry>
+<entry>
+<para>расширенный (напр., настройка);углублённый (напр., обучение) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>attribute </para>
+</entry>
+<entry>
+<para>атрибут (например, файла);свойство, параметр (иногда) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>authentication </para>
+</entry>
+<entry>
+<para>аутентификация </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>authorization </para>
+</entry>
+<entry>
+<para>авторизация </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>authorized </para>
+</entry>
+<entry>
+<para>авторизованный; допущенный; санкционированный </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>autocompletion </para>
+</entry>
+<entry>
+<para>автодополнение (слов в строке) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>baselayout </para>
+</entry>
+<entry>
+<para>так и оставить — baselayout;при первом упоминании в тексте руководств хорошо бы в скобочках писать (размещение основных файлов и сценарии инициализации системы)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>basic </para>
+</entry>
+<entry>
+<para>базовый, основной; <emphasis>элементарный</emphasis> (lingvo.ru) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>basics </para>
+</entry>
+<entry>
+<para>основы, основные действия </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>binary </para>
+</entry>
+<entry>
+<para>двоичный; бинарный </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>binary [executable] </para>
+</entry>
+<entry>
+<para>исполняемый файл </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>bind-mounting ... </para>
+</entry>
+<entry>
+<para>монтирование ... с параметром bind (см. man mount :) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>bindings </para>
+</entry>
+<entry>
+<para>привязкипри первом упоминании в тексте имеет смысл писать в скобочках английский термин</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>board of trustees </para>
+</entry>
+<entry>
+<para>совет попечителей </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>bonding (, channel trunking) </para>
+</entry>
+<entry>
+<para>объединение ([магистральных] сетевых каналов) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>boot runlevel </para>
+</entry>
+<entry>
+<para>загрузочный уровень исполнения </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>bootable (disk) </para>
+</entry>
+<entry>
+<para>загрузочный (диск) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>bootloader </para>
+</entry>
+<entry>
+<para>[начальный] загрузчик; загрузчик OC </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>bootsplash </para>
+</entry>
+<entry>
+<para>загрузочная заставка </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>bootsplash-enabled kernel </para>
+</entry>
+<entry>
+<para>ядро с [включённой] загрузочной заставкой </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>boot (bootstrap) partition </para>
+</entry>
+<entry>
+<para>загрузочный раздел </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>bootstrapping </para>
+</entry>
+<entry>
+<para>начальная загрузка; самонастройка; самозагрузка[само]генерация (сборка) системы (в некоторых контекстах в Gentoo) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>branch (portage) </para>
+</entry>
+<entry>
+<para>ветвь (дерева портежей) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>bridge (, network) </para>
+</entry>
+<entry>
+<para>[сетевой] мост </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>broadcast [address] </para>
+</entry>
+<entry>
+<para>широковещательный адрес </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>browse to </para>
+</entry>
+<entry>
+<para>открыть [веб-страницу] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>browser </para>
+</entry>
+<entry>
+<para>браузер </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>bug </para>
+</entry>
+<entry>
+<para>запрос (требующий реагирования); ошибка (разновидность запроса) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>bug report </para>
+</entry>
+<entry>
+<para>отчёт об ошибке <emphasis>или</emphasis> запрос [форма запроса] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>bugtracking system </para>
+</entry>
+<entry>
+<para>система распределения запросов<emphasis>(внимание! не багов, не ошибок — потому что не только их; и </emphasis>
+<emphasis>не отслеживания, управления или контроля — потому что распределения — это корректный перевод одного из американизмов)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>build </para>
+</entry>
+<entry>
+<para>сборка (программный пакет) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>cache </para>
+</entry>
+<entry>
+<para>кэш </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>card </para>
+</entry>
+<entry>
+<para>плата (деталь компьютера);карта [PCMCIA, флэш-памяти] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>cascading (stacked) profile </para>
+</entry>
+<entry>
+<para>каскадный профиль </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>CD </para>
+</entry>
+<entry>
+<para>компакт-диск </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>change request </para>
+</entry>
+<entry>
+<para>запрос на изменение (разновидность запроса) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>chapter </para>
+</entry>
+<entry>
+<para>глава [руководства] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>child [tag] </para>
+</entry>
+<entry>
+<para>вложенный [тег] (о XML) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>choice </para>
+</entry>
+<entry>
+<para>выбор, вариант выбора; альтернатива; пункт меню(документация по Gentoo помешана на идеологической теме свободы выбора пользователя, русский перевод стоит разнообразить) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>choices </para>
+</entry>
+<entry>
+<para>мн. ч. от choice;возможность (свобода) выбора </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>chroot </para>
+</entry>
+<entry>
+<para>[команда] chroot;изменение корневого каталога </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>chrooted environment </para>
+</entry>
+<entry>
+<para>среда с изменённым корневым каталогом </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>Code of Conduct </para>
+</entry>
+<entry>
+<para>кодекс поведения </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>coldplugging </para>
+</entry>
+<entry>
+<para>холодное подключение (с выключением оборудования) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>color depth </para>
+</entry>
+<entry>
+<para>глубина цвета; тоже самое что bits per pixel (bpp) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>compose </para>
+</entry>
+<entry>
+<para>составлять;верстать (о разметке XML) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>configuration file </para>
+</entry>
+<entry>
+<para>конфигурационный файл; файл настроек </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>configuring; configuration </para>
+</entry>
+<entry>
+<para>настройка [системы, чего-либо];конфигурация [ядра] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>content </para>
+</entry>
+<entry>
+<para>текст, содержимое;разделы (о разметке GuideXML) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>contributor </para>
+</entry>
+<entry>
+<para>участник </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>councilcouncil meeting </para>
+</entry>
+<entry>
+<para>советсобрание совета </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>daemon </para>
+</entry>
+<entry>
+<para>демон(<emphasis>программа слежения за системными событиями; тж. </emphasis>служба<emphasis>)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>declare </para>
+</entry>
+<entry>
+<para>объявлять (переменную) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>default [by -] </para>
+</entry>
+<entry>
+<para>по умолчанию </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>define </para>
+</entry>
+<entry>
+<para>задавать, указывать, определять (последний вариант используйте с осторожностью, чтобы не путать определение в смысле установки значения с определением в смысле обнаружения) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>desktop (environment)desktop (computer)</para>
+</entry>
+<entry>
+<para>графическая среда (о KDE/Gnome и т.п.); рабочая станция (настольный компьютер, в отличие от сервера); </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>desktop documentation resources </para>
+</entry>
+<entry>
+<para>документация по графической среде Gentoo; документация по использованию в качестве рабочей станции </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>dependency </para>
+</entry>
+<entry>
+<para>зависимость </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>dependency [package] </para>
+</entry>
+<entry>
+<para>зависимый пакет </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>developer </para>
+</entry>
+<entry>
+<para>разработчик </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>device file </para>
+</entry>
+<entry>
+<para>файл устройства </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>device manager </para>
+</entry>
+<entry>
+<para>диспетчер устройств </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>device node </para>
+</entry>
+<entry>
+<para>специальный файл [устройства] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>dial-in accessdial-up access </para>
+</entry>
+<entry>
+<para>[входящий] коммутируемый доступ </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>directory </para>
+</entry>
+<entry>
+<para>каталог </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>display manager </para>
+</entry>
+<entry>
+<para>диспетчер отображения (не экрана!) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>documentation listing </para>
+</entry>
+<entry>
+<para>перечень документации </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>documentation repository </para>
+</entry>
+<entry>
+<para>хранилище документации </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>documentation resources </para>
+</entry>
+<entry>
+<para>документация (имеется в виду спектр доступной документации) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>down [interface] </para>
+</entry>
+<entry>
+<para>отключён </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>download </para>
+</entry>
+<entry>
+<para>загрузка (из интернета); загрузить </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>drive </para>
+</entry>
+<entry>
+<para>привод </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>driver </para>
+</entry>
+<entry>
+<para>драйвер, <emphasis>мн.ч.</emphasis> драйверы </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>dump </para>
+</entry>
+<entry>
+<para>программа [резервного копирования] dump;дамп [памяти] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ebuild </para>
+</entry>
+<entry>
+<para>сборочный файл; пакет; файл ebuildпрограмма ebuild(при переводе транслитерация не допускается из-за исключительной неблагозвучности для русского читателя!) Примечание: <emphasis>e-build — вероятно, авторское сокращение от emerge build file</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>emerge </para>
+</entry>
+<entry>
+<para>[команда] emerge; средство установки/удаления программПримечание: <emphasis>автор Gentoo хотел, чтобы программы «являлись» как по волшебству (изначально система называлась Енох в честь загадочного библейского персонажа); для этого придумал команду «emerge xyz», что буквально переводится как «xyz, явись!». Остальные термины системы установки подогнаны под неё</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>environment variables </para>
+</entry>
+<entry>
+<para>переменные среды </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>experience [, improvement] </para>
+</entry>
+<entry>
+<para>впечатление (от Gentoo);[повышение] удобства работы с Gentoo </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>FAQ,frequently asked questions </para>
+</entry>
+<entry>
+<para>ЧаВо, часто задаваемые вопросы </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>feature </para>
+</entry>
+<entry>
+<para>возможность [программы], функция;особенность </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>feature request </para>
+</entry>
+<entry>
+<para>запрос на добавление функции (разновидность запроса) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>fetch </para>
+</entry>
+<entry>
+<para>извлечь (ebuild/portage tree) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>firewall </para>
+</entry>
+<entry>
+<para>межсетевой экран </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>firmware </para>
+</entry>
+<entry>
+<para>прошивка; встроенное ПО </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>floppy [disk] </para>
+</entry>
+<entry>
+<para>дискета </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>framebuffer </para>
+</entry>
+<entry>
+<para>кадровый буфер (используется для промежуточного хранения исходных данных для программного или аппаратного формирования <emphasis>видеокадра</emphasis> или <emphasis>полукадра</emphasis> для вывода на экран монитора) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>front-end</para>
+</entry>
+<entry>
+<para>внешний интерфейс; пользовательский интерфейс</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>functionality </para>
+</entry>
+<entry>
+<para>возможности, функции </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>generic </para>
+</entry>
+<entry>
+<para>универсальный (о цели компиляции);общий, обычный (generic printer — обычный принтер) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>Gentoo </para>
+</entry>
+<entry>
+<para>[система] Gentoo (женский или общий род) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>Gentoo Documentation Project </para>
+</entry>
+<entry>
+<para>проект документации Gentoo </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>Gentoo Handbook </para>
+</entry>
+<entry>
+<para>настольная книга Gentoo (<emphasis>не</emphasis> руководство) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>Gentoo Minimal Installation CDMinimal LiveCD </para>
+</entry>
+<entry>
+<para>Минимальный установочный компакт-диск Gentoo </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>Gentoo Universal Installation CD </para>
+</entry>
+<entry>
+<para>Универсальный установочный диск Gentoo </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>groupware </para>
+</entry>
+<entry>
+<para>[сервер, программа, пакет] обеспечения взаимодействия (рабочих групп) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>guide </para>
+</entry>
+<entry>
+<para>руководство (требуется термин, отличный от Handbook); </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>hard link </para>
+</entry>
+<entry>
+<para>жёсткая ссылка </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>hardened [Gentoo project] </para>
+</entry>
+<entry>
+<para>укреплённая система, проект укреплённого Gentoo </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>hardware </para>
+</entry>
+<entry>
+<para>аппаратура; устройства </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>hardware [device] </para>
+</entry>
+<entry>
+<para>устройство </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>hardware requirements </para>
+</entry>
+<entry>
+<para>требования к оборудованию </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>herd </para>
+</entry>
+<entry>
+<para>группа [сопровождения пакета](не стадо и не толпа!) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>highlighted </para>
+</entry>
+<entry>
+<para>выделенный (об элементе или о тексте) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>host </para>
+</entry>
+<entry>
+<para>узел, компьютер </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>howto </para>
+</entry>
+<entry>
+<para>описание [выполнения чего-то]«Как [сделать то-то]» — в заголовке </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>hub </para>
+</entry>
+<entry>
+<para>(сетевой) концентратор </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>image [kernel, disk ...] </para>
+</entry>
+<entry>
+<para>образ </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>image [graphics] </para>
+</entry>
+<entry>
+<para>изображение </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>init script; initscript </para>
+</entry>
+<entry>
+<para>сценарий инициализации(**)сценарий запуска??? тж. runlevel script </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>initialization </para>
+</entry>
+<entry>
+<para>инициализация [переменной];подготовка [раздела] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>initrd (initial root disk) </para>
+</entry>
+<entry>
+<para>начальный корневой диск (initrd);диск initrd </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>initrd image </para>
+</entry>
+<entry>
+<para>образ диска initrd </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>injecting [into Portage] </para>
+</entry>
+<entry>
+<para>внедрение [ПО в дерево Portage] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>installation </para>
+</entry>
+<entry>
+<para>установка </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>installation CD </para>
+</entry>
+<entry>
+<para>... установочный [компакт-]диск;«...» — тип диска (минимальный, универсальный и т.д.) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>installer </para>
+</entry>
+<entry>
+<para>программа установки </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>instructions </para>
+</entry>
+<entry>
+<para>указания; инструкции </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>internet </para>
+</entry>
+<entry>
+<para>интернет (с маленькой буквы, м.р., склоняется — интернета, интернетом) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>invalid </para>
+</entry>
+<entry>
+<para>недопустимый </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>IP address </para>
+</entry>
+<entry>
+<para>IP-адрес (сетевой адрес протокола интернета в виде последовательности чисел) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>issue </para>
+</entry>
+<entry>
+<para>см. bug </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>job </para>
+</entry>
+<entry>
+<para>задание (пакетное; на печать и т.п.) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>jumper </para>
+</entry>
+<entry>
+<para>перемычка </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>kernel </para>
+</entry>
+<entry>
+<para>ядро </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>keyword </para>
+</entry>
+<entry>
+<para>ключ (в контексте типа ~arch keyword); ключевое слово </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>keymap </para>
+</entry>
+<entry>
+<para>раскладка [клавиатуры] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>laptop </para>
+</entry>
+<entry>
+<para>ноутбук, портативный компьютер </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>latest </para>
+</entry>
+<entry>
+<para>новейший </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>lightweight </para>
+</entry>
+<entry>
+<para>упрощённый (о синтаксисе) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>linker </para>
+</entry>
+<entry>
+<para>компоновщик </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>linking [static] </para>
+</entry>
+<entry>
+<para>компоновка </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>linking [dynamic] </para>
+</entry>
+<entry>
+<para>динамическое связывание </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>LiveCD </para>
+</entry>
+<entry>
+<para>загрузочный [установочный] [компакт-]диск (LiveCD) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>LiveUSB </para>
+</entry>
+<entry>
+<para>загрузочный USB-накопитель (LiveUSB) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>locale </para>
+</entry>
+<entry>
+<para>регион;[набор] региональных настроек(само слово locale означает «местность») </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>log </para>
+</entry>
+<entry>
+<para>журнал [регистрации событий] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>logger </para>
+</entry>
+<entry>
+<para>средства журналирования </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>login [user's] </para>
+</entry>
+<entry>
+<para>учётная запись </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>login [process] </para>
+</entry>
+<entry>
+<para>вход в систему </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>login [as] </para>
+</entry>
+<entry>
+<para>войти в систему [как / под именем] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>loopback connector </para>
+</entry>
+<entry>
+<para>[разъём-] заглушка </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>machine </para>
+</entry>
+<entry>
+<para>машина; компьютер </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>maintainer </para>
+</entry>
+<entry>
+<para>куратор (пакета и т.п.) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>maintenance, package </para>
+</entry>
+<entry>
+<para>сопровождение (пакета) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>man page </para>
+</entry>
+<entry>
+<para>страница справки </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>manager </para>
+</entry>
+<entry>
+<para>диспетчер (о программе) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>mark [up] </para>
+</entry>
+<entry>
+<para>вёрстка, оформление, разметка (текста документа XML) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>mask [package] </para>
+</entry>
+<entry>
+<para>замаскировать [пакет] (<emphasis>не</emphasis> «заблокировать») </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>MBR, master boot record </para>
+</entry>
+<entry>
+<para>главная загрузочная запись </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>merge [with; together]merge [software with system] </para>
+</entry>
+<entry>
+<para>объединять [c];устанавливать [ПО] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>metastructure </para>
+</entry>
+<entry>
+<para>организация проекта, метаструктура </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>modeless </para>
+</entry>
+<entry>
+<para>немодальный </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>mount </para>
+</entry>
+<entry>
+<para>монтировать; смонтировать [дисковый раздел] (включить в состав файловой системы)Вопрос к обсуждению: хочется в будущем уйти от этого термина, например, заменив его на подключение/отключение или присоединение/отсоединение.Термин произошёл от процесса установки в накопители больших ЭВМ пакетов дисков (которые действительно надо было монтировать [закреплять], иначе они могли физически улететь, покалечив кого-нибудь), и потерял смысл.</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>mountpoint </para>
+</entry>
+<entry>
+<para>точка монтирования [дискового раздела] (см. комментарий к mount) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>multilib </para>
+</entry>
+<entry>
+<para>многорежимный профиль (с одновременной поддержкой нескольких наборов библиотек для различных режимов среды пользователя, например, 32- и 64-битного) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>naming </para>
+</entry>
+<entry>
+<para>именование </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>nano </para>
+</entry>
+<entry>
+<para>nano (текстовый редактор) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>netmask </para>
+</entry>
+<entry>
+<para>маска [подсети] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>networking </para>
+</entry>
+<entry>
+<para>подключение к сети;сетевое подключение (в контексте настройки узла) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>NIS </para>
+</entry>
+<entry>
+<para>NIS (network information service — служба сетевой информации) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>open documentation license </para>
+</entry>
+<entry>
+<para>лицензия открытой документации </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>option </para>
+</entry>
+<entry>
+<para>параметр [командной строки]; директивавариант [выбора];возможность [пользователя];(никогда не опция!) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>optional </para>
+</entry>
+<entry>
+<para>необязательный [шаг, компонент];дополнительный;факультативный </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>output, [program] </para>
+</entry>
+<entry>
+<para>сообщения [программы] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>overlay </para>
+</entry>
+<entry>
+<para>оверлей </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>override </para>
+</entry>
+<entry>
+<para>подмена, подменить;переопределение, переопределять </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>overwrite </para>
+</entry>
+<entry>
+<para>перезаписать </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>package </para>
+</entry>
+<entry>
+<para>пакет [программного обеспечения] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>Package CD </para>
+</entry>
+<entry>
+<para>компакт-диск с пакетами (Package CD) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>package maintenance system </para>
+</entry>
+<entry>
+<para>система управления (!) пакетами </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>packaging system </para>
+</entry>
+<entry>
+<para>система сборки (!) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>paragraph </para>
+</entry>
+<entry>
+<para>абзац (не параграф!) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>part </para>
+</entry>
+<entry>
+<para>часть [руководства](<emphasis>общая структура</emphasis>: часть-глава-раздел-абзац;<emphasis>раздел намеренно для совместимости подчинён главе в нарушение логики)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>partition </para>
+</entry>
+<entry>
+<para>[дисковый] раздел; раздел устройства;(не раздел на устройстве! что-либо записываем тоже «в» раздел!) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>partitioning </para>
+</entry>
+<entry>
+<para>разбиение </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>patch </para>
+</entry>
+<entry>
+<para>
+<emphasis>сущ.</emphasis> заплатка, исправление, файл исправлений </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>patched </para>
+</entry>
+<entry>
+<para>исправленный </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>PC </para>
+</entry>
+<entry>
+<para>компьютер (персональный компьютер, если есть противопоставление миниЭВМ) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ping </para>
+</entry>
+<entry>
+<para>команда ping;проверка отклика [командой ping] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>pipe</para>
+</entry>
+<entry>
+<para>канал (механизм передачи данных между процессами)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>policy</para>
+</entry>
+<entry>
+<para>правила; положение (документ); политика</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>pool</para>
+</entry>
+<entry>
+<para>группа; пространство (ресурсов, памяти)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>portage [package] </para>
+</entry>
+<entry>
+<para>портеж;пакет (системы Portage) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>Portage [system] </para>
+</entry>
+<entry>
+<para>[система] Portage (женский или общий род, без перевода); <emphasis>Примечание: для «явления» программ (см. примечание к </emphasis>emerge<emphasis>) автор взял за основу систему port, и предположительно использовал игру слов:</emphasis>port<emphasis>-</emphasis>portage<emphasis> сохраняется узнаваемость</emphasis>port-age<emphasis> — «век портов», «зрелый port»</emphasis>portage<emphasis> — «кипа, связка»</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>portage tree </para>
+</entry>
+<entry>
+<para>дерево портежей </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>portage snapshot </para>
+</entry>
+<entry>
+<para>снимок [копия] дерева портежей [в некоторый фиксированный момент времени] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>prebuilt [package] </para>
+</entry>
+<entry>
+<para>готовый [двоичный] пакет </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>precompiled [package] </para>
+</entry>
+<entry>
+<para>см. prebuilt [package] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>printer-friendly version </para>
+</entry>
+<entry>
+<para>версия для печати </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>private key </para>
+</entry>
+<entry>
+<para>секретный ключ [шифрования] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>privilege </para>
+</entry>
+<entry>
+<para>полномочия </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>proxy </para>
+</entry>
+<entry>
+<para>прокси-сервер («сервер-посредник» для доступа в интернет) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>public key </para>
+</entry>
+<entry>
+<para>открытый ключ [шифрования] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>purpose </para>
+</entry>
+<entry>
+<para>назначение (в заголовке раздела документа) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>quick installation guide </para>
+</entry>
+<entry>
+<para>краткое руководство по установке </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>raise [privilege] </para>
+</entry>
+<entry>
+<para>превышать полномочия </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>reboot </para>
+</entry>
+<entry>
+<para>перезагрузка; перезагрузить </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>reference [manual] </para>
+</entry>
+<entry>
+<para>справочное руководство </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>reference [platform] </para>
+</entry>
+<entry>
+<para>эталонная платформа </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>release notes </para>
+</entry>
+<entry>
+<para>замечания к выпуску </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>release, [software] </para>
+</entry>
+<entry>
+<para>выпуск [ПО] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>release [version] </para>
+</entry>
+<entry>
+<para>окончательная (стабильная) версия </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>relevance</para>
+</entry>
+<entry>
+<para>соответствие (напр., критерию);отношение (к чему-либо) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>remote </para>
+</entry>
+<entry>
+<para>удалённый [компьютер];дистанционный </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>rendered document </para>
+</entry>
+<entry>
+<para>представление документа (о XML) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>repository </para>
+</entry>
+<entry>
+<para>хранилище </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>rescue [disk] </para>
+</entry>
+<entry>
+<para>аварийное восстановление;диск аварийного восстановления </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>return [an error] </para>
+</entry>
+<entry>
+<para>выдавать [ошибку] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>root [user] </para>
+</entry>
+<entry>
+<para>[учётная запись] root; администратор </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>router </para>
+</entry>
+<entry>
+<para>(сетевой) маршрутизатор </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>runlevel </para>
+</entry>
+<entry>
+<para>уровень исполнения </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>runlevel script </para>
+</entry>
+<entry>
+<para>сценарий инициализации (тж. initscript) (**) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>script </para>
+</entry>
+<entry>
+<para>сценарий </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>section [, guide] </para>
+</entry>
+<entry>
+<para>раздел [руководства] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>security </para>
+</entry>
+<entry>
+<para>безопасность; защита </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>security advisory</para>
+</entry>
+<entry>
+<para>предупреждение об уязвимости (защиты системы)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>serial </para>
+</entry>
+<entry>
+<para>последовательный </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>service </para>
+</entry>
+<entry>
+<para>служба (тж. демон) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>setting (of variable) </para>
+</entry>
+<entry>
+<para>значение; установка значения переменной </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>signature </para>
+</entry>
+<entry>
+<para>признак; идентификатор; подпись </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>skin </para>
+</entry>
+<entry>
+<para>образ; внешний вид? [вариант] оформления? костюм? </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>slot </para>
+</entry>
+<entry>
+<para>слот </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>socket [network] </para>
+</entry>
+<entry>
+<para>сокет </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>software </para>
+</entry>
+<entry>
+<para>программа; программное обеспечение </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>software management tool </para>
+</entry>
+<entry>
+<para>система управления программным обеспечением </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>source code </para>
+</entry>
+<entry>
+<para>исходные коды (**) как лучше: коды или код? </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>source mirror </para>
+</entry>
+<entry>
+<para>зеркало-источник [Gentoo](хотя это и зеркало исходных кодов, на нем есть и двоичные образы) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>specific </para>
+</entry>
+<entry>
+<para>определённый, конкретный (<emphasis>очень редко</emphasis> специфичный!) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>stage </para>
+</entry>
+<entry>
+<para>стадия (в Gentoo — генерации операционной системы, вообще — часто установки или загрузки системы) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>stage file (archive) </para>
+</entry>
+<entry>
+<para>файл [архив] стадии; stage-файл [stage-архив](при упоминании сохранять английское написание файла, чтобы его находили) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>start [device] </para>
+</entry>
+<entry>
+<para>запуск [устройства] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>statement </para>
+</entry>
+<entry>
+<para>выражение </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>stop [device] </para>
+</entry>
+<entry>
+<para>остановка [устройства] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>striping [raid] </para>
+</entry>
+<entry>
+<para>чередование (RAID 0, RAID 5) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>subarch[itecture] </para>
+</entry>
+<entry>
+<para>разновидность архитектуры </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>summary </para>
+</entry>
+<entry>
+<para>аннотация (краткое описание документа) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>superuser </para>
+</entry>
+<entry>
+<para>администратор (ср. пользователь) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>supplicant [WPA] </para>
+</entry>
+<entry>
+<para>запросчик </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>swap </para>
+</entry>
+<entry>
+<para>подкачка </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>switch, [command line] </para>
+</entry>
+<entry>
+<para>параметр [командной строки] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>switch, [network] </para>
+</entry>
+<entry>
+<para>(сетевой) коммутатор </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>symlink </para>
+</entry>
+<entry>
+<para>символьная ссылка(тж. в других ОС — softlink, alias, shortcut, shadow: псевдоним, ярлык, тень) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>syntax </para>
+</entry>
+<entry>
+<para>синтаксис (выражения);формат, структура (текстового конфигурационного файла) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>system information </para>
+</entry>
+<entry>
+<para>системные параметры (в руководстве по настройке), сведения о системе (при ответе на запрос пользователя) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>system, [computer] </para>
+</entry>
+<entry>
+<para>[компьютерная] система </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>tag (xml/html) </para>
+</entry>
+<entry>
+<para>тег (в XML или HTML; при указании на метки вместе с содержимым — элемент); метка (проч.) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>tarball </para>
+</entry>
+<entry>
+<para>архив (набор файлов, помещённый в один файл-контейнер) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>target [of compilation] </para>
+</entry>
+<entry>
+<para>цель [компиляции] </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>time zone </para>
+</entry>
+<entry>
+<para>часовой пояс </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>tips &amp; tricks </para>
+</entry>
+<entry>
+<para>полезные советы (<emphasis>не применяются выражения:</emphasis> «советы и хитрости», «маленькие хитрости») </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>tool </para>
+</entry>
+<entry>
+<para>средство; утилита;(иногда, по смыслу) служба </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>toolchain </para>
+</entry>
+<entry>
+<para>(**) средства компиляции?</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>traffic </para>
+</entry>
+<entry>
+<para>трафик;движение, поток (употребляется реже) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>tweak </para>
+</entry>
+<entry>
+<para>ухищрение (сущ.)подстроить (гл.) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>unmount </para>
+</entry>
+<entry>
+<para>размонтировать (см. комментарий к mount) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>up [interface]</para>
+</entry>
+<entry>
+<para>включён</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>upstream [developers]</para>
+</entry>
+<entry>
+<para>разработчики самогó пакета (входящего в состав Gentoo)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>USE flags</para>
+</entry>
+<entry>
+<para>USE-флаги (признаки использования функций, указываемые в переменной USE) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>USE-expanded variable</para>
+</entry>
+<entry>
+<para>переменная, преобразующаяся в USE флаг </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>user</para>
+</entry>
+<entry>
+<para>учётная запись (о реквизитах пользователя);пользователь (о человеке) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>user-space</para>
+</entry>
+<entry>
+<para>режим пользователя; [адресное] пространство пользователя</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>userland</para>
+</entry>
+<entry>
+<para>режим пользователя (см. user-space) (**)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>variable</para>
+</entry>
+<entry>
+<para>переменная; значение переменной (будьте внимательны!)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>verbose</para>
+</entry>
+<entry>
+<para>подробный; расширенный [вывод, листинг]подробные сообщения</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>wallpaper</para>
+</entry>
+<entry>
+<para>обои (на графическом рабочем столе)</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>web site</para>
+</entry>
+<entry>
+<para>веб-сайт</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>window manager</para>
+</entry>
+<entry>
+<para>диспетчер окон</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>wireless (сущ.)</para>
+</entry>
+<entry>
+<para>беспроводное подключение; беспроводная сеть; беспроводное устройство (по контексту) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>wrapper</para>
+</entry>
+<entry>
+<para>обёртка? упаковщик? (**)</para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+
+<para>Употребление этих терминов — лучший способ «облегчить» работу редактора: при этом задержка публикации вашего материала (из-за того, что правка документа будет вызывать непреодолимую грусть) — обеспечена ;-) </para>
+<informaltable frame="all">
+<tgroup cols="2">
+<thead>
+<row>
+<entry>
+<para>Неверный перевод</para>
+</entry>
+<entry>
+<para>Правильно</para>
+</entry>
+</row>
+</thead><tbody>
+<row>
+<entry>
+<para>брандмауэр, firewall</para>
+</entry>
+<entry>
+<para>межсетевой экран</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>карта(видео/сетевая/...)</para>
+</entry>
+<entry>
+<para>плата<emphasis>(а карта — игральная [card] или географическая </emphasis>
+<emphasis>[map])</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>гид </para>
+</entry>
+<entry>
+<para>руководство(гид — это экскурсовод) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>десктоп </para>
+</entry>
+<entry>
+<para>настольный (прил.)[графическая] среда (сущ.) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>директория </para>
+</entry>
+<entry>
+<para>каталог<emphasis>(по-русски директория — справочник или орган </emphasis>
+<emphasis>власти)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ебилд </para>
+</entry>
+<entry>
+<para>сборочный файл [ebuild]<emphasis>(догадываетесь, почему?)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>локаль </para>
+</entry>
+<entry>
+<para>регион;региональные настройки </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>менеджер </para>
+</entry>
+<entry>
+<para>диспетчер </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>опция,опциональный </para>
+</entry>
+<entry>
+<para>возможность; функция; параметр </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>патч </para>
+</entry>
+<entry>
+<para>заплатка, исправление </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>переменные окружения </para>
+</entry>
+<entry>
+<para>переменные среды<emphasis>(речь идёт о среде исполнения)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>продвинутый </para>
+</entry>
+<entry>
+<para>расширенный, углубленный </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>релиз </para>
+</entry>
+<entry>
+<para>выпуск <emphasis>(о программе)</emphasis>издание <emphasis>(о книге)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>репозиторий документации </para>
+</entry>
+<entry>
+<para>хранилище документации </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>сигнатура </para>
+</entry>
+<entry>
+<para>признак, идентификатор, подпись </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>система уведомления о ошибках и изменениях;система управления изменениямисистема отчёта об ошибках </para>
+</entry>
+<entry>
+<para>система распределения запросов </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>скрипт </para>
+</entry>
+<entry>
+<para>сценарий </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>суперпользовательсверхпользователь </para>
+</entry>
+<entry>
+<para>администратор;[корневая] учётная запись root (root administrative account)<emphasis>Споры о разности понятий в разных ОС — отставить (я не виноват, что именно в Linux упрощённая модель допуска)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>сценарий управления сервисом </para>
+</entry>
+<entry>
+<para>сценарий инициализации<emphasis>(расширение смысла разумно, но это изменение есть смысл вносить в оригинальный текст, иначе будет путаница)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ускорение не двухмерной графики </para>
+</entry>
+<entry>
+<para>ускорение <emphasis>двумерной</emphasis> (нет буквы х) графики </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>фреймбуфер </para>
+</entry>
+<entry>
+<para>кадровый буфер<emphasis>(термин устоялся, когда Линус ещё не родился)</emphasis> </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable></section><section><info><title>Запрещённые термины, или КАК НЕ НАДО</title></info>
+<para>Употребление этих терминов — лучший способ «облегчить» работу редактора: при этом задержка публикации вашего материала (из-за того, что правка документа будет вызывать непреодолимую грусть) — обеспечена ;-) </para>
+<informaltable frame="all">
+<tgroup cols="2">
+<thead>
+<row>
+<entry>
+<para>Неверный перевод</para>
+</entry>
+<entry>
+<para>Правильно</para>
+</entry>
+</row>
+</thead><tbody>
+<row>
+<entry>
+<para>брандмауэр, firewall</para>
+</entry>
+<entry>
+<para>межсетевой экран</para>
+</entry>
+</row>
+<row>
+<entry>
+<para>карта(видео/сетевая/...)</para>
+</entry>
+<entry>
+<para>плата<emphasis>(а карта — игральная [card] или географическая </emphasis>
+<emphasis>[map])</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>гид </para>
+</entry>
+<entry>
+<para>руководство(гид — это экскурсовод) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>десктоп </para>
+</entry>
+<entry>
+<para>настольный (прил.)[графическая] среда (сущ.) </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>директория </para>
+</entry>
+<entry>
+<para>каталог<emphasis>(по-русски директория — справочник или орган </emphasis>
+<emphasis>власти)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ебилд </para>
+</entry>
+<entry>
+<para>сборочный файл [ebuild]<emphasis>(догадываетесь, почему?)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>локаль </para>
+</entry>
+<entry>
+<para>регион;региональные настройки </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>менеджер </para>
+</entry>
+<entry>
+<para>диспетчер </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>опция,опциональный </para>
+</entry>
+<entry>
+<para>возможность; функция; параметр </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>патч </para>
+</entry>
+<entry>
+<para>заплатка, исправление </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>переменные окружения </para>
+</entry>
+<entry>
+<para>переменные среды<emphasis>(речь идёт о среде исполнения)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>продвинутый </para>
+</entry>
+<entry>
+<para>расширенный, углубленный </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>релиз </para>
+</entry>
+<entry>
+<para>выпуск <emphasis>(о программе)</emphasis>издание <emphasis>(о книге)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>репозиторий документации </para>
+</entry>
+<entry>
+<para>хранилище документации </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>сигнатура </para>
+</entry>
+<entry>
+<para>признак, идентификатор, подпись </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>система уведомления о ошибках и изменениях;система управления изменениямисистема отчёта об ошибках </para>
+</entry>
+<entry>
+<para>система распределения запросов </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>скрипт </para>
+</entry>
+<entry>
+<para>сценарий </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>суперпользовательсверхпользователь </para>
+</entry>
+<entry>
+<para>администратор;[корневая] учётная запись root (root administrative account)<emphasis>Споры о разности понятий в разных ОС — отставить (я не виноват, что именно в Linux упрощённая модель допуска)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>сценарий управления сервисом </para>
+</entry>
+<entry>
+<para>сценарий инициализации<emphasis>(расширение смысла разумно, но это изменение есть смысл вносить в оригинальный текст, иначе будет путаница)</emphasis> </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>ускорение не двухмерной графики </para>
+</entry>
+<entry>
+<para>ускорение <emphasis>двумерной</emphasis> (нет буквы х) графики </para>
+</entry>
+</row>
+<row>
+<entry>
+<para>фреймбуфер </para>
+</entry>
+<entry>
+<para>кадровый буфер<emphasis>(термин устоялся, когда Линус ещё не родился)</emphasis> </para>
+</entry>
+</row></tbody></tgroup>
+</informaltable>
+    <section xml:id="footer">
+        <info><title></title></info>
+        <para>Текст документа распространяется на условиях лицензии <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://creativecommons.org/licenses/by-sa/2.5">Creative Commons — Attribution / Share Alike</link>.Этот <emphasis>неофициальный</emphasis> сайт создал и поддерживает <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:achumakov@gentoo.org">Алексей Чумаков</link>. © 2005—2006 проект «русский гентý».Материалы проекта Gentoo © 2001—2006 </para>
+    </section>
+</section>
+</article>
