@@ -9,8 +9,8 @@
 		<subtitle>cборник статей</subtitle>
 		<titleabbrev>Сборник статей</titleabbrev>
 		<productname>Сборник статей</productname>
-		<edition>Версия 2.0-dev от 18.04.09</edition>
-		<date>18.04.09</date>
+		<edition>Версия 2.0-M1 от 23.04.09</edition>
+		<date>23.04.09</date>
 		<copyright>
 			<year>2007-2009</year>
 		</copyright>
@@ -25,6 +25,7 @@
 	-->
 	
 	<!-- Intro should be extended first, and some things left out -->
+	<xi:include href="dedicated-ru.xml"/>
 	<xi:include href="releasenotes-ru.xml"/>
 	<xi:include href="overview-ru.xml"/>
 	<xi:include href="introductory-word-ru.xml"/>

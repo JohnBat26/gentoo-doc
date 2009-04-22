@@ -5,9 +5,31 @@
 	<info>
 		<title>Новое и изменённое a.k.a changelog</title>
 	</info>
-	<para>Версия 2.0 от 01.10.2008</para>
-	
-	<para>Версия 1.5 от 02.04.2008</para>
+	<para><emphasis role="bold">Версия 2.0-M1 от 23.04.2008</emphasis> </para>
+	<orderedlist>
+		<listitem>
+		    <para>Добавлен новый участник проекта: Алексей Гапоник a.k.a. HedgeHog;</para>		
+		</listitem>
+		<listitem>
+		    <para>Произведена полная миграция проекта на в SVN.</para>
+		</listitem>
+		<listitem>
+		    <para>DocBook5 с RelaxNG теперь основной формат книги.</para>
+		</listitem>
+		<listitem>
+		    <para>Завершена основная реструктуризация книги.</para>		    
+		</listitem>
+		<listitem>
+		    <para>Обновлены разделы с общей информацией о Linux и UNIX.</para>		    
+		</listitem>
+		<listitem>
+		    <para>Обновлен и отформатирован сборник: "Linux не для идиотов".</para>		    
+		</listitem>
+                <listitem>
+		    <para>Добавлен раздел: "Список примеров".</para>		    
+		</listitem>
+	</orderedlist>
+	<para><emphasis role="bold">Версия 1.5 от 02.04.2008</emphasis> </para>
 	<orderedlist>
 		<listitem>
 			<para>Добавлены новые участники проекта:</para>
@@ -116,7 +138,7 @@
 			</listitem>
 		</orderedlist>
 		
-		<para>Версия 1.4 от 01.02.2008</para>
+		<para><emphasis role="bold">Версия 1.4 от 01.02.2008</emphasis> </para>
 		<orderedlist>
 			<listitem>
 				<para>Добавлено: <xref xlink:href="#overview-appeal"/>.</para>
@@ -181,7 +203,7 @@
 			</listitem>
 		</orderedlist>
 		
-		<para>Версия 1.3 от 01.11.2007</para>
+		<para><emphasis role="bold">Версия 1.3 от 01.11.2007</emphasis> </para>
 		<orderedlist>
 			<listitem>
 				<para>Изменены цели написания данного сборника.</para>
@@ -224,7 +246,7 @@
 				</listitem>
 			</orderedlist>
 			
-			<para>Версия 1.2 от 01.09.2007</para>
+			<para><emphasis role="bold">Версия 1.2 от 01.09.2007</emphasis> </para>
 			<orderedlist>
 				<listitem>
 					<para>Полностью переработан раздел по <link xlink:href="#">обновлению Gentoo</link>.</para>
@@ -251,7 +273,7 @@
 					<para>Добавлено: <link xlink:href="#">HOWTO fbsplash</link></para>
 				</listitem>
 			</orderedlist>
-			<para>Версия 1.1 от 15.07.2007</para>
+			<para><emphasis role="bold">ерсия 1.1 от 15.07.2007</emphasis> В</para>
 			<orderedlist>
 				<listitem>
 					<para>По просьбе Mati_maniak (linuxforum.ru):</para>
