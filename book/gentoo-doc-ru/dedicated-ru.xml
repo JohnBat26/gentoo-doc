@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:id="dedicated">
+ <info>
+  <title>Посвящается ...</title>
+  <author>
+  <personname>
+    <firstname>Евгений</firstname>
+    <surname>Батогов a.k.a JohnBat26</surname>
+  </personname>
+  </author>
+  <pubdate>2009</pubdate>
+  <titleabbrev>Батогов a.k.a JohnBat26</titleabbrev>
+ </info>
+  <para> Посвящаю данный труд светлой памяти моего отца: <emphasis role="bold">Батогова Владимира Ваделиновича</emphasis>.</para>
+  <para>Я никогда не забуду тебя! Пусть земля будет тебе пухом.</para>
+</article>
