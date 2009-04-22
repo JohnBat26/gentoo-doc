@@ -2,7 +2,8 @@
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
 <article xmlns="http://docbook.org/ns/docbook"
         xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+        xml:id="gentoo-rpm" xreflabel="Использование rpm-пакетов в Gentoo">
 <info><title>Использование rpm-пакетов в Gentoo</title></info>
         <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/java.xml">http://ylsoftware.com/?action=news&amp;na=viewfull&amp;news=402</link>            </para>
         <para>Автор: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:bulvinkl@gmail.com?subject=По%20поводу%20Вашей%20статьи%20об%20использовании%20rpm-пакетов%20в%20Gentoo">Калинников В.В. a.k.a. MooSe</link>

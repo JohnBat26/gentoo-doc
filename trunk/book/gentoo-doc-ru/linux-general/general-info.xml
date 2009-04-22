@@ -46,10 +46,13 @@
     </info>
     <para>В 1957 году в Bell Labs была начата работа по созданию операционной системы для собственных нужд. Под руководством Виктора Высотского (русского по происхождению) была создана система BESYS. Впоследствии он возглавил проект Multics, а затем стал главой информационного подразделения Bell Labs.</para>
     <mediaobject>
-     <imageobject>
-      <imagedata fileref="../images/Unix_history-simple.png" format="PNG" width="100%"/>
+     <imageobject role="html">
+      <imagedata fileref="images/Unix_history-simple.png" format="PNG" width="100%"/>
      </imageobject>
-     <textobject>
+        <imageobject role="fo">
+            <imagedata fileref="../../images/Unix_history-simple.png" format="PNG" width="100%"/>
+        </imageobject>
+        <textobject>
       <phrase> Генеалогическое древо UNIX-систем</phrase>
      </textobject>
      <caption>
@@ -216,8 +219,11 @@
    </info>
    <para>В отличие от Microsoft Windows (Windows NT), Mac OS (Mac OS X) и коммерческих |UNIX-подобных систем, GNU/Linux не имеет географического центра разработки. Нет и организации, которая владела бы этой системой; нет даже единого координационного центра. Программы для GNU/Linux — результат работы тысяч проектов. Некоторые из этих проектов централизованы, некоторые сосредоточены в фирмах, но большинство объединяют программистов со всего света, которые знакомы только по переписке. Создать свой проект или присоединиться к уже существующему может любой и, в случае успеха, результаты работы станут известны миллионам пользователей. Пользователи принимают участие в тестировании свободных программ, общаются с разработчиками напрямую, что позволяет быстро находить и исправлять ошибки и реализовывать новые возможности. </para>
    <mediaobject>
-    <imageobject>
-     <imagedata fileref="../images/Linus_Torvalds.jpeg" format="JPEG" width="20%" align="left"/>
+       <imageobject role="html">
+           <imagedata fileref="images/Linus_Torvalds.jpeg" format="JPEG" width="50%" align="center"/>
+       </imageobject>
+       <imageobject role="fo">
+           <imagedata fileref="../../images/Linus_Torvalds.jpeg" format="JPEG" width="50%" align="center"/>
     </imageobject>
     <textobject>
      <phrase>Линус Торвальдс</phrase>
@@ -237,10 +243,13 @@
    </info>
    <para> Большинство пользователей для установки GNU/Linux используют дистрибутивы. Дистрибутив — это не просто набор программ, а ряд решений для разных задач пользователей, объединённых едиными системами установки, управления и обновления пакетов, настройки и поддержки. </para>
    <mediaobject>
-    <imageobject>
-     <imagedata fileref="../images/Gldt.png" format="PNG" width="100%"/>
-    </imageobject>
-    <textobject>
+        <imageobject role="html">
+           <imagedata fileref="images/Gldt.png" format="PNG" width="100%"/>
+        </imageobject>
+       <imageobject role="fo">
+           <imagedata fileref="../../images/Gldt.png" format="PNG" width="100%"/>
+       </imageobject>
+       <textobject>
      <phrase>Развитие дистрибутивов GNU/Linux</phrase>
     </textobject>
     <caption>

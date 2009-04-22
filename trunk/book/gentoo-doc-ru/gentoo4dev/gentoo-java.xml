@@ -12,7 +12,14 @@
 <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/java.xml"> </link>
 </para>
 <para>
-<inlinemediaobject><imageobject><imagedata fileref="../images/Java.png" width="2.352cm" depth="4.375cm"/></imageobject></inlinemediaobject>                              +  <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Java">http://ru.wikipedia.org/wiki/Java</link>
+<inlinemediaobject>
+    <imageobject role="html">
+        <imagedata fileref="images/Java.png" width="2.352cm" depth="4.375cm"/>
+    </imageobject>
+    <imageobject role="fo">
+        <imagedata fileref="../../images/Java.png" width="2.352cm" depth="4.375cm"/>
+    </imageobject>
+</inlinemediaobject>                              +  <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Java">http://ru.wikipedia.org/wiki/Java</link>
 </para>
 <para>Перевод + дополнения: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:JohnBat26@gmail.com?subject=По%20поводу%20вашего%20перевода%20статьи:%20Gentoo%20Java%20Guide">Батогов Е.В a.k.a. JohnBat26</link> </para>
 <para>С версии: 1.0.</para>

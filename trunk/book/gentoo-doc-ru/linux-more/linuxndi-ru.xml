@@ -106,8 +106,11 @@ lrwxrwxrwx   1 root root     18 Окт  1 13:22 source -&gt; /usr/src/linux
       <para>Соответственно, перед перезапуском процесса системный администратор с помощью команды ipcrm должен освободить неиспользуемые объекты IPC, поскольку стартующее приложение не сможет их повторно создать и не будет корректно работать.</para>
       <para>Для каждого объекта IPC система устанавливает права доступа, как если бы это был файл (т.е. для каждого объекта IPC можно устанавливать набор прав ugo/rwx, но в отличие от обычных файлов сменить права доступа для IPC-объектов можно только вызывая специализированные функции, предназначенные для работы с такими объектами.</para>
       <mediaobject>
-         <imageobject>
-            <imagedata fileref="../images/System_V_shared_memory.png" format="PNG" align="center" width="90%"/>
+          <imageobject role="html">
+              <imagedata fileref="images/System_V_shared_memory.png" format="PNG" align="center" width="90%"/>
+          </imageobject>
+          <imageobject role="fo">
+            <imagedata fileref="../../images/System_V_shared_memory.png" format="PNG" align="center" width="90%"/>
          </imageobject>
          <textobject>
             <phrase>System V shared memory</phrase>
@@ -272,10 +275,13 @@ other::---</screen>
          </info>
          <para>Объединение кэширования файлов и разделяемой памяти позволяет реализовать такое действие, как отображение файла в память. Для простоты можно представить, что файл загружается в кэш, и страницы кэша отображаются в адресное пространство процесса, и в результате любое изменение в том фрагменте адресного пространства, которое занято отображением файла, автоматически попадает в закэшированные данные файла. Когда файл закрывается, закэшированные изменения сбрасываются на диск, изменяя сам файл. Кроме того, в свободное время ядро также постепенно сбрасывает изменившиеся кэшированные данные на диск.</para>
          <mediaobject>
-            <imageobject>
-               <imagedata fileref="../images/mapped_memory_files.png" format="PNG" align="center" width="90%"/>
+            <imageobject role="html">
+               <imagedata fileref="images/mapped_memory_files.png" format="PNG" align="center" width="90%"/>
             </imageobject>
-            <textobject>
+             <imageobject role="fo">
+                 <imagedata fileref="../../images/mapped_memory_files.png" format="PNG" align="center" width="90%"/>
+             </imageobject>
+             <textobject>
                <phrase>Files mapped in memory </phrase>
             </textobject>
          </mediaobject>
@@ -1628,8 +1634,11 @@ lo        Link encap:Local Loopback
 <prompt>#</prompt> <userinput>ifconfig eth0 mtu 296</userinput></screen>
       <para>Для управления параметрами других протоколов используются другие команды – например, ipx_config для управления параметрами, связанными с протоколом IPX. Рассмотрим также картинку, на которой приведена приблизительная схема взаимодействия различных драйверов и сетевых подсистем ядра:</para>
       <mediaobject>
-         <imageobject>
-            <imagedata fileref="../images/Gentoo_doc-1.5_html_5d185b61.gif" align="center" format="GIF" width="90%"/>
+          <imageobject role="html">
+              <imagedata fileref="images/Gentoo_doc-1.5_html_5d185b61.gif" align="center" format="GIF" width="90%"/>
+          </imageobject>
+          <imageobject role="fo">
+            <imagedata fileref="images/Gentoo_doc-1.5_html_5d185b61.gif" align="center" format="GIF" width="90%"/>
          </imageobject>
       </mediaobject>
       <para>Предположим, что приложение пытается отправить пакет. Перед отправкой через системные вызовы группы socket (bind, connect и пр.)  приложение настраивает специальный файловый дескриптор. После окончания настройки каждый записанный в этот дескриптор пакет должен быть отправлен по сети получателю. Как движется пакет в нашей системе? Прежде всего, пакет попадает в драйвер протокола. Этот драйвер определяет через какой интерфейс должна производиться отправка, дописывает к пакету необходимые заголовки и отдает пакет на обработку соответствующему интерфейсу (точнее, ставит пакет в очередь, связанную с этим интерфейсом).</para>
@@ -1944,9 +1953,12 @@ Destination   Gateway     Genmask         Flags Metric Ref    Use Iface
       <title>Управление пользователями, NSS и PAM</title>
       <para>Linux – система многопользовательская. По умолчанию, большинство дистрибутивов используют «классический» набор файлов в которых хранится информация о пользователях и группах: <filename>/etc/passwd</filename>, <filename>/etc/group</filename>, <filename>/etc/shadow</filename>, <filename>/etc/gshadow</filename>. Во многих ситуациях этого вполне достаточно, но иногда возникает необходимость в интеграции Linux в более или менее чужеродное, либо просто распределенное окружение, и именно в этот момент к нам на помощь приходят такая интересная подсистема, как NSS – Name Service Switch. Основная задача NSS – создать модульное окружение для управления пользователями. Реализовано это посредством загружаемых библиотек. Основные вызовы NSS реализованы в библиотеке libc, а libc в свою очередь загружает и вызывает бакэнды NSS:</para>
       <mediaobject>
-         <imageobject>
-            <imagedata fileref="../images/Gentoo_doc-1.5_html_6affefb5.gif" align="center" format="GIF" width="90%"/>
+         <imageobject role="html">
+            <imagedata fileref="images/Gentoo_doc-1.5_html_6affefb5.gif" align="center" format="GIF" width="90%"/>
          </imageobject>
+          <imageobject role="fo">
+              <imagedata fileref="../../images/Gentoo_doc-1.5_html_6affefb5.gif" align="center" format="GIF" width="90%"/>
+          </imageobject>
       </mediaobject>
       <para>При инициализации программы, так или иначе связанной с NSS, загружаются основная библиотека <filename>libc.so</filename>, которая считывает конфигурацию из файла <filename>/etc/nsswitch.conf</filename>, после чего также загружаются те библиотеки NSS, которые указаны в этом файле.</para>
       <para>Впоследствии при работе программы, если программе требуется работать с именованными сущностями, соответствующие вызовы функций glibc будут обращаться к функциям NSS и использовать в те источники данных, которые указаны в <filename>nsswitch.conf</filename>.</para>
@@ -2022,9 +2034,12 @@ aliases:    files nisplus</screen>
          <title>Внутри X11. Упрощенная схема</title>
          <para>X11 – система многослойная, но внутренне логичная и понятная. Схематически ее можно изобразить следующим образом:</para>
          <mediaobject>
-            <imageobject>
-               <imagedata fileref="../images/Gentoo_doc-1.5_html_58a8057c.gif" align="center" format="GIF" width="90%"/>
+            <imageobject role="html">
+               <imagedata fileref="images/Gentoo_doc-1.5_html_58a8057c.gif" align="center" format="GIF" width="90%"/>
             </imageobject>
+             <imageobject role="fo">
+                 <imagedata fileref="../../images/Gentoo_doc-1.5_html_58a8057c.gif" align="center" format="GIF" width="90%"/>
+             </imageobject>
          </mediaobject>
          <para>Когда приложение отрисовывает что-либо, оно обращается к своей базовой библиотеке, она в свою очередь переадресовывает вызов (или уже цепочку вызовов) в библиотеку libX11, которая использую X11 Core Protocol передает команды на X-сервер. X-сервер интерпретирует команды и передает их на отрисовку драйверам устройств вывода. Воздействие же пользователя на устройства ввода считываются X-сервером через драйвера устройств ввода, через X11 Core Protocol передаются X-клиенту, libX11 переводит команды протокола в события и передает события в тулкит, и уже тулкит передает события программе для того чтобы та на них отреагировала.</para>
          <para>То как приложение выглядит – то есть внешний  вид строк ввода, полос скроллинга, панелей и кнопок – за все это отвечает библиотека-тулкит (toolkit). Два наиболее распространенных на сегодняшний день тулкита, Qt и GTK, примерно равны по возможностям – они обеспечивают достаточную переносимость приложений (есть реализации GTK и Qt для основных платформ), поддержку «тем» внешнего вида, предоставляют программисту объектно-ориентированный интерфейс и некоторый набор служебных функций и возможностей.</para>

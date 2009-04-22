@@ -375,7 +375,9 @@
         <condition property="stylesheet" value="${custss}" else="${style.dir}/html.xsl">
             <available file="${custss}"/>
         </condition>
-
+		<delete>
+			<fileset dir="${html.dir}"/>
+		</delete>
         <!--
         <style basedir ="${set.dir}"
                includes="${setname}.xml"
