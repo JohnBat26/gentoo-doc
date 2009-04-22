@@ -1,148 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="power-management" xreflabel="Управление питанием компьютера">
     <info>
         <title>Управление питанием компьютера</title>
     </info>
-    <para/>
     <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/power-management-guide.xml">http://www.gentoo.org/doc/en/power-management-guide.xml</link></para>
-    <para>Автор: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:earthwings@gentoo.org">Dennis Nienhüser</link>
-    </para>
-    <para>Перевод: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://iandmyfriendgentoo.blogspot.com/2007/12/blog-post_12.html">Управление питанием компьютера</link>
-    </para>
+    <para>Автор: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:earthwings@gentoo.org">Dennis Nienhüser</link></para>
+    <para>Перевод: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://iandmyfriendgentoo.blogspot.com/2007/12/blog-post_12.html">Управление питанием компьютера</link></para>
     <para>Перевод: vah.</para>
     <para>С версии: 1.5.</para>
     <para>Дата оригинала:  21.01.2008</para>
     <para>Дата перевода: 08.02.2008</para>
     <para/>
-    <para>Перевод статьи <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/power-management-guide.xml">Power Management Guide</link>. В статье рассматриваются способы увеличения жизни ноутбука от батареи. Статья ориентирована на Gentoo, но думаю, сделав замену emerge на apt-get install/rpm -Uvh/.. и обладая общими знаниями о runlevels в вашей системе, можно всё написанное перенести и на другие дистрибутивы.</para>
-    <section>
+    <para>Перевод статьи <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/power-management-guide.xml">Power Management Guide</link>. В статье рассматриваются способы увеличения жизни ноутбука от батареи. Статья ориентирована на Gentoo, но думаю, сделав замену <command>emerge</command> на <command>apt-get install</command>/<command>rpm -Uvh ...</command>/ и обладая общими знаниями о runlevels в вашей системе, можно всё написанное перенести и на другие дистрибутивы.</para>
+    <section xml:id="power-management.intro" xreflabel="Введение">
         <info>
-            <title>1. Введение</title>
+            <title>Введение</title>
         </info>
         <para>Ёмкость и время жизни батареи ноутбуков были значительно увеличены в последние годы. Тем не менее, современные процессоры потребляют намного больше энергии, чем более старые, и каждое новое поколение ноутбуков комплектуется всё более и более жадными до энергии устройствами. Поэтому Управление Питанием становится даже более важным, чем прежде. Увеличение времени автономной жизни совсем не обязательно влечёт покупку ещё одной батареи - многое можно выжать, применяя грамотные установки Управления Питанием.</para>
         <section>
             <info>
                 <title>Краткий обзор</title>
             </info>
-            <para>Пожалуйста, учтите, что данное руководство описывает настройку Управления Питанием только для ноутбуков. Хотя некоторые разделы и могут быть также применимы к серверам, другие - не только не применимы, но могут даже нанести урон. Не стоит делать что-либо без понимания того, что вы делаете.</para>
+            <para>Пожалуйста, учтите, что данное руководство описывает настройку Управления Питанием только для ноутбуков. Хотя некоторые разделы и могут быть также применимы к серверам, другие – не только не применимы, но могут даже нанести урон. Не стоит делать что-либо без понимания того, что вы делаете.</para>
             <para>Так как это руководство стало достаточно длинным, ниже приведён краткий обзор, который поможет вам не запутаться среди стольких букв. </para>
-            <para>В главе <link xlink:href="#">Подготовка</link> говорится о некоторых общих действиях, которые необходимо выполнить перед настройкой отдельных устройств. Это включает настройку BIOS, конфигурацию ядра и некоторые изменения пользовательских настроек. Следующие три главы сфокусированы на устройствах, обычно потребляющих больше всего энергии - процессоре, дисплее и жёстком диске. Каждое из них может быть настроены независимо. Глава <link xlink:href="#">Управление питанием ЦПУ</link> показывает, как изменять частоту процессора для сохранения максимального количества энергии, не теряя слишком много в производительности. Несколько способов отучить ваш жёсткий диск работать напрасно (тем самым заодно уменьшив шум) можно найти в <link xlink:href="#">Управление питанием диска</link>. Некоторые заметки о графических картах, беспроводных сетях и USB завершают раздел об устройствах главой <link xlink:href="#">Управление питанием других устройств</link>. Отдельная глава отведена
-                (довольно не стабильным) <link xlink:href="#">Состояния спячки</link> (sleep states). Последний раздел, <link xlink:href="#">Устранение неполадок</link>, содержит список самых распространённых проблем.</para>
+            <para>В главе <xref xlink:href="#power-management.prerequisite"/> говорится о некоторых общих действиях, которые необходимо выполнить перед настройкой отдельных устройств. Это включает настройку BIOS, конфигурацию ядра и некоторые изменения пользовательских настроек. Следующие три главы сфокусированы на устройствах, обычно потребляющих больше всего энергии – процессоре, дисплее и жёстком диске. Каждое из них может быть настроены независимо. Глава <xref xlink:href="#power-management.cpu"/> показывает, как изменять частоту процессора для сохранения максимального количества энергии, не теряя слишком много в производительности. Несколько способов отучить ваш жёсткий диск работать напрасно (тем самым заодно уменьшив шум) можно найти в <xref xlink:href="#power-management.harddrive"/>. Некоторые заметки о графичесeких картах, беспроводных сетях и USB завершают раздел об устройствах главой <xref xlink:href="#power-management.other"/>. Отдельная глава отведена (довольно не
+                стабильным) <xref xlink:href="#power-management.sleepstates"/> (sleep states). Последний раздел, <xref xlink:href="#power-management.troubleshooting"/>, содержит список самых распространённых проблем.</para>
         </section>
         <section>
             <info>
                 <title>Покомпонентное распределение энергии</title>
             </info>
-            <para>Почти каждый элемент может находиться в различных положениях - выключен, спит, ждёт, активен - потребляя различное количество энергии. Наибольшие части отъедаются экраном, процессором, чипсетом и жёсткими дисками. Часто устройство может быть переведено в ОС-независимый режим управления питанием через BIOS, но интеллектуальные средства операционной системы, реагирующие на ситуацию, могут принести намного больше. </para>
+            <para>Почти каждый элемент может находиться в различных положениях – выключен, спит, ждёт, активен – потребляя различное количество энергии. Наибольшие части отъедаются экраном, процессором, чипсетом и жёсткими дисками. Часто устройство может быть переведено в ОС-независимый режим управления питанием через BIOS, но интеллектуальные средства операционной системы, реагирующие на ситуацию, могут принести намного больше. </para>
         </section>
     </section>
-    <section>
+    <section xml:id="power-management.prerequisite" xreflabel="Подготовка">
         <info>
-            <title>
-                <anchor xml:id="prerequisite"/>2. Подготовка</title>
+            <title>Подготовка</title>
         </info>
-        <para>Перед детальным обсуждением настройки Управления Питанием для отдельных устройств, стоит убедиться, что следующие требования выполнены. После проверки установок BIOS, стоит включить некоторые опции в ядре (если коротко, то это - ACPI, режимы спячки и регулирование частоты ЦП). Так как сохранение энергии в большинстве случаев влечёт потери производительности, то его стоит применять только при работе от батарей. Для этого разграничения очень полезен отдельный уровень запуска (runlevel) battery. </para>
+        <para>Перед детальным обсуждением настройки Управления Питанием для отдельных устройств, стоит убедиться, что следующие требования выполнены. После проверки установок BIOS, стоит включить некоторые опции в ядре (если коротко, то это – ACPI, режимы спячки и регулирование частоты ЦП). Так как сохранение энергии в большинстве случаев влечёт потери производительности, то его стоит применять только при работе от батарей. Для этого разграничения очень полезен отдельный уровень запуска (runlevel) battery. </para>
         <section>
             <info>
                 <title>BIOS</title>
             </info>
-            <para>Для начала стоит взглянуть на настройки управления питанием в BIOS. Наилучшее решение - совмещать возможности BIOS и операционной системы. Но чтобы быть уверенными, что BIOS не будет конфликтовать с операционной системой, лучше пока отключить бОльшую часть его настроек по управлению питанием. Не забудьте перепроверить настройки BIOS после конфигурации чего-либо ещё. </para>
+            <para>Для начала стоит взглянуть на настройки управления питанием в BIOS. Наилучшее решение – совмещать возможности BIOS и операционной системы. Но чтобы быть уверенными, что BIOS не будет конфликтовать с операционной системой, лучше пока отключить бОльшую часть его настроек по управлению питанием. Не забудьте перепроверить настройки BIOS после конфигурации чего-либо ещё. </para>
         </section>
         <section>
             <info>
                 <title>Настройка USE-флагов</title>
             </info>
-            <para>Убедитесь, что acpi USE-флаг установлен в вашем /etc/make.conf. Так же в вашей системе могут быть уместны флаги apm, lm_sensors, nforce2, nvidia, pmu. Подробно об этих флагах смотрите в /usr/portage/profiles/use*.desc. Если вы забыли выставить один из этих флагов, вы можете перекомпилировать необходимые пакеты командой emerge --deep --update --newuse world, подробности в man emerge. </para>
+            <para>Убедитесь, что acpi USE-флаг установлен в вашем <filename>/etc/make.conf</filename>. Так же в вашей системе могут быть уместны флаги <code>apm</code>, <code>lm_sensors</code>, <code>nforce2</code>, <code>nvidia</code>, <code>pmu</code>. Подробно об этих флагах смотрите в <filename>/usr/portage/profiles/use*.desc</filename>. Если вы забыли выставить один из этих флагов, вы можете перекомпилировать необходимые пакеты командой <command>emerge --deep --update --newuse world</command>, подробности в <command>man emerge</command>. </para>
         </section>
         <section>
             <info>
                 <title>Конфигурация ядра</title>
             </info>
             <para>Работа над поддержкой ACPI (Advanced Configuration and Power Interface) в ядре всё ещё не закончена. Используя последнее ядро, вы получаете самую свежую её версию. </para>
-            <para>В портэжах (portage) содержится несколько версий ядра. Я бы рекомендовал использовать gentoo-sources или suspend2-sources. Последнее содержит патчи для программной остановки 2 (Software Suspend 2), смотрите главу о <link xlink:href="#">режимах спячки</link> для более подробной информации. Во время конфигурации ядра включите хотя бы эти опции: </para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.1: Минимальные настройки ядра для Управления Питанием (приведено для ядра 2.6.23)</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Power Management Options ---&gt;</para>
-                                <para>  [*] Power Management Support</para>
-                                <para>  [ ] Software Suspend</para>
-                                <para/>
-                                <para>  ACPI( Advanced Configuration and Power Interface ) Support ---&gt;</para>
-                                <para>--- ACPI Support (Advanced Configuration and Power Interface) Support</para>
-                                <para>    [*] Deprecated /proc/acpi files </para>
-                                <para>    [*] Deprecated /proc/acpi/event support </para>
-                                <para>    [ ]   Sleep States</para>
-                                <para>    [ ]     /proc/acpi/sleep (deprecated)</para>
-                                <para>    [*]   AC Adapter</para>
-                                <para>    [*]   Battery</para>
-                                <para>    &lt;M&gt;   Button</para>
-                                <para>    &lt;M&gt;   Video</para>
-                                <para>    &lt;M&gt;   Fan</para>
-                                <para>    &lt; &gt;   Dock</para>
-                                <para>    &lt;M&gt;   Processor</para>
-                                <para>    &lt;M&gt;     Thermal Zone</para>
-                                <para>    &lt; &gt;   ASUS/Medion Laptop Extras</para>
-                                <para>    &lt; &gt;   IBM ThinkPad Laptop Extras</para>
-                                <para>    &lt; &gt;   Toshiba Laptop Extras</para>
-                                <para>    (0)   Disable ACPI for systems before Jan 1st this year</para>
-                                <para>    [ ]   Debug Statements</para>
-                                <para>    [*]   Power Management Timer Support</para>
-                                <para>    &lt; &gt;   ACPI0004,PNP0A05 and PNP0A06 Container Driver (EXPERIMENTAL)</para>
-                                <para>    &lt; &gt;   Smart Battery System (EXPERIMENTAL)</para>
-                                <para/>
-                                <para>  CPU Frequency Scaling ---&gt;</para>
-                                <para>    [*] CPU Frequency scaling</para>
-                                <para>    [ ]   Enable CPUfreq debugging</para>
-                                <para>    &lt; &gt;   CPU frequency translation statistics</para>
-                                <para>    [ ]     CPU frequency translation statistics details</para>
-                                <para>          Default CPUFreq governor (userspace)</para>
-                                <para>    &lt;*&gt;   'performance' governor</para>
-                                <para>    &lt;*&gt;   'powersave' governor</para>
-                                <para>    &lt;*&gt;   'ondemand' cpufreq policy governor</para>
-                                <para>    &lt;*&gt;   'conservative' cpufreq governor</para>
-                                <para>    &lt;*&gt;   CPU frequency table helpers</para>
-                                <para>    &lt;M&gt; ACPI Processor P-States driver</para>
-                                <para>    &lt;*&gt; CPUFreq driver for your processor</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
-            <para/>
-            <para/>
+            <para>В портэжах (portage) содержится несколько версий ядра. Я бы рекомендовал использовать gentoo-sources или suspend2-sources. Последнее содержит патчи для программной остановки 2 (Software Suspend 2), смотрите главу о <link xlink:href="#power-management.sleepstates">режимах спячки</link> для более подробной информации. Во время конфигурации ядра включите хотя бы эти опции: </para>
+            <example>
+                <title>Минимальные настройки ядра для Управления Питанием (приведено для ядра 2.6.23)</title>
+                <screen>Power Management Options ---&gt;
+  [*] Power Management Support
+  [ ] Software Suspend
+  ACPI( Advanced Configuration and Power Interface ) Support ---&gt;
+--- ACPI Support (Advanced Configuration and Power Interface) Support
+    [*] Deprecated /proc/acpi files
+    [*] Deprecated /proc/acpi/event support
+    [ ]   Sleep States
+    [ ]     /proc/acpi/sleep (deprecated)
+    [*]   AC Adapter
+    [*]   Battery
+    &lt;M&gt;   Button
+    &lt;M&gt;   Video
+    &lt;M&gt;   Fan
+    &lt; &gt;   Dock
+    &lt;M&gt;   Processor
+    &lt;M&gt;     Thermal Zone
+    &lt; &gt;   ASUS/Medion Laptop Extras
+    &lt; &gt;   IBM ThinkPad Laptop Extras
+    &lt; &gt;   Toshiba Laptop Extras
+    (0)   Disable ACPI for systems before Jan 1st this year
+    [ ]   Debug Statements
+    [*]   Power Management Timer Support
+    &lt; &gt;   ACPI0004,PNP0A05 and PNP0A06 Container Driver (EXPERIMENTAL)
+    &lt; &gt;   Smart Battery System (EXPERIMENTAL)
+
+  CPU Frequency Scaling ---&gt;
+    [*] CPU Frequency scaling
+    [ ]   Enable CPUfreq debugging
+    &lt; &gt;   CPU frequency translation statistics
+    [ ]     CPU frequency translation statistics details
+          Default CPUFreq governor (userspace)
+    &lt;*&gt;   'performance' governor
+    &lt;*&gt;   'powersave' governor
+    &lt;*&gt;   'ondemand' cpufreq policy governor
+    &lt;*&gt;   'conservative' cpufreq governor
+    &lt;*&gt;   CPU frequency table helpers
+    &lt;M&gt; ACPI Processor P-States driver
+    &lt;*&gt; CPUFreq driver for your processor</screen>
+            </example>
             <para>Примечание переводчика: поддержка '/proc/acpi' и '/proc/acpi/event' в ядре 2.6.23 была помечена не рекомендуемой (deprecated), в связи с изменением acpi-интерфейса (подробнее см. на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kernel.org/doc/menuconfig/drivers-acpi-Kconfig.html">kernel.org</link>), но она необходима для acpid, который пока "не приспособился" к /sys интерфейсу. </para>
             <para>Решите для себя, хотите ли вы включать программную остановку и состояния спячки (см. ниже). Если у вас ноутбук ASUS, Medion, IBM Thinkpad или Toshiba, но активируйте соответствующий пункт.</para>
-            <para>Ядро должно знать, как включить изменение частоты процессора. Так как разные типы ЦП имеют разные интерфейсы, стоит выбрать правильный драйвер для процессора. Будьте осторожны - включение, например, Intel Pentium 4 clock modulation на Pentium M приведёт странному поведению системы. Обратитесь к документации по ядру, если вы не знаете, что выбрать. </para>
-            <para>Скомпилируйте полученное поддерживающее ACPI ядро; убедитесь, что необходимые модули подгружаются при старте системы. Далее запустите emerge sys-power/acpid, чтобы получить acpi-демона. Он сообщает вам о событиях (event) таких, как переключение с питания от сети на батарею или закрытие крышки ноутбука. Убедившись, что модули запущены (если вы не скомпилировали их как часть ядра), запустите acpid командой /etc/init.d/acpid start. Выполните rc-update add acpid default, чтобы демон автоматически запускался при старте системы. Вы скоро узнаете, как использовать его. </para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.2: Установка acpid</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># emerge sys-power/acpid # /etc/init.d/acpid start # rc-update add acpid default </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <para>Ядро должно знать, как включить изменение частоты процессора. Так как разные типы ЦП имеют разные интерфейсы, стоит выбрать правильный драйвер для процессора. Будьте осторожны – включение, например, Intel Pentium 4 clock modulation на Pentium M приведёт странному поведению системы. Обратитесь к документации по ядру, если вы не знаете, что выбрать. </para>
+            <para>Скомпилируйте полученное поддерживающее ACPI ядро; убедитесь, что необходимые модули подгружаются при старте системы. Далее запустите <command>emerge sys-power/acpid</command>, чтобы получить acpi-демона. Он сообщает вам о событиях (event) таких, как переключение с питания от сети на батарею или закрытие крышки ноутбука. Убедившись, что модули запущены (если вы не скомпилировали их как часть ядра), запустите acpid командой <command>/etc/init.d/acpid start</command>. Выполните <command>rc-update add acpid default</command>, чтобы демон автоматически запускался при старте системы. Вы скоро узнаете, как использовать его.</para>
+            <example>
+                <title>Установка acpid</title>
+                <screen><prompt>#</prompt> <userinput>emerge sys-power/acpid</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/acpid start</userinput>
+<prompt>#</prompt> <userinput>rc-update add acpid default</userinput></screen>
+            </example>
         </section>
         <section>
             <info>
@@ -150,307 +116,143 @@
             </info>
             <para>Политики (policy) по умолчанию будут включать Управление Питанием, только когда это необходимо, т.е. при работе от батареи. Чтобы сделать переключение между питанием от сети и питанием от батарей более удобным, создайте уровень запуска battery, который будет содержать все скрипты запускающие и останавливающие управление питанием.</para>
             <para>Примечание: Вы можете пропустить эту секцию, если вы не хотите создавать ещё один уровень запуска. В последующих секции предполагается, что уровень запуска battery существует.</para>
-            <para> </para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.3: Создание уровня запуска battery</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># cd /etc/runlevels # cp -a default battery </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Создание уровня запуска battery</title>
+                <screen><prompt>#</prompt> <userinput>cd /etc/runlevels # cp -a default battery</userinput></screen>
+            </example>
             <para>Вот и всё! Новоиспечённый уровень запуска battery содержит всё, что есть в defaults, но автоматического переключения между ними нет. Пора изменить это.</para>
         </section>
         <section>
             <info>
                 <title>Реагирование на ACPI-события</title>
             </info>
-            <para>Типичные ACPI-события - это закрытие крышки, изменение источника питания и нажатие клавиши засыпания. Для нас важно события изменения источника питания - именно из-за него будут переключаться уровни запуска. Маленький скрипт позаботится об этом. </para>
-            <para>Для начала, вам нужен скрипт, который меняет уровень запуска на defaults или battery в зависимости от источника энергии. Скрипт использует команду on_ac_power из sys-power/powermgmt-base - убедитесь, что он установлен на вашей системе. </para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.4: Установка sys-power/powermgmt-base</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># emerge powermgmt-base </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
-            <para>Теперь вы может определить источник питания, запустив on_ac_power &amp;&amp; echo AC available || echo Running on batteries в консоли. Скрипт ниже отвечает за переключение уровней. Сохраните его как /etc/acpi/actions/pmg_switch_runlevel.sh. </para>
-            <para/>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.5: /etc/acpi/actions/pmg_switch_runlevel.sh</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>#!/bin/bash</para>
-                                <para/>
-                                <para># BEGIN configuration</para>
-                                <para>RUNLEVEL_AC="default"</para>
-                                <para>RUNLEVEL_BATTERY="battery"</para>
-                                <para># END configuration</para>
-                                <para/>
-                                <para/>
-                                <para>if [ ! -d "/etc/runlevels/${RUNLEVEL_AC}" ]</para>
-                                <para>then</para>
-                                <para>    logger "${0}: Runlevel ${RUNLEVEL_AC} does not exist. Aborting."</para>
-                                <para>    exit 1</para>
-                                <para>fi</para>
-                                <para/>
-                                <para>if [ ! -d "/etc/runlevels/${RUNLEVEL_BATTERY}" ]</para>
-                                <para>then</para>
-                                <para>    logger "${0}: Runlevel ${RUNLEVEL_BATTERY} does not exist. Aborting."</para>
-                                <para>    exit 1</para>
-                                <para>fi</para>
-                                <para/>
-                                <para>if on_ac_power</para>
-                                <para>then</para>
-                                <para>    if [[ "$(&lt;/var/lib/init.d/softlevel)" != "${RUNLEVEL_AC}" ]]</para>
-                                <para>    then</para>
-                                <para>        logger "Switching to ${RUNLEVEL_AC} runlevel"</para>
-                                <para>         /sbin/rc ${RUNLEVEL_AC}</para>
-                                <para>    fi</para>
-                                <para>elif [[ "$(&lt;/var/lib/init.d/softlevel)" != "${RUNLEVEL_BATTERY}" ]]</para>
-                                <para>then</para>
-                                <para>    logger "Switching to ${RUNLEVEL_BATTERY} runlevel"</para>
-                                <para>    /sbin/rc ${RUNLEVEL_BATTERY}</para>
-                                <para>fi</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para>Не забудьте сделать скрипт исполняемым, запустив chmod +x /etc/acpi/actions/pmg_switch_runlevel.sh. Последнее, что осталось сделать, - это вызов скрипта всякий раз, когда изменяется источник питания. Это можно сделать, перехватывая ACPI-события посредством acpid. Главное - знать, какое событие генерируется при изменении источника питания. События называются ac_adapter и battery на большинстве ноутбуков, но могут быть другими на вашем. </para>
-            <para/>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.6: Определение ACPI-событий для изменение источника питания</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># tail -f /var/log/messages | grep "received event" </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
+            <para>Типичные ACPI-события – это закрытие крышки, изменение источника питания и нажатие клавиши засыпания. Для нас важно события изменения источника питания – именно из-за него будут переключаться уровни запуска. Маленький скрипт позаботится об этом. </para>
+            <para>Для начала, вам нужен скрипт, который меняет уровень запуска на defaults или battery в зависимости от источника энергии. Скрипт использует команду on_ac_power из sys-power/powermgmt-base – убедитесь, что он установлен на вашей системе.</para>
+            <example>
+                <title>Установка sys-power/powermgmt-base</title>
+                <screen><prompt>#</prompt> <userinput>emerge powermgmt-base</userinput></screen>
+            </example>
+            <para>Теперь вы может определить источник питания, запустив <command>on_ac_power &amp;&amp; echo AC available || echo Running on batteries</command> в консоли. Скрипт ниже отвечает за переключение уровней. Сохраните его как /etc/acpi/actions/pmg_switch_runlevel.sh. </para>
+            <example>
+                <title><filename>/etc/acpi/actions/pmg_switch_runlevel.sh</filename></title>
+                <programlisting>#!/bin/bash
+# BEGIN configuration
+RUNLEVEL_AC="default"
+RUNLEVEL_BATTERY="battery"
+# END configuration
+if [ ! -d "/etc/runlevels/${RUNLEVEL_AC}" ]
+then
+    logger "${0}: Runlevel ${RUNLEVEL_AC} does not exist. Aborting."
+    exit 1
+fi
+if [ ! -d "/etc/runlevels/${RUNLEVEL_BATTERY}" ]
+then
+    logger "${0}: Runlevel ${RUNLEVEL_BATTERY} does not exist. Aborting."
+    exit 1
+fi
+if on_ac_power
+then
+    if [[ "$(&lt;/var/lib/init.d/softlevel)" != "${RUNLEVEL_AC}" ]]
+    then
+        logger "Switching to ${RUNLEVEL_AC} runlevel"
+         /sbin/rc ${RUNLEVEL_AC}
+    fi
+elif [[ "$(&lt;/var/lib/init.d/softlevel)" != "${RUNLEVEL_BATTERY}" ]]
+then
+    logger "Switching to ${RUNLEVEL_BATTERY} runlevel"
+    /sbin/rc ${RUNLEVEL_BATTERY}
+fi                </programlisting>
+            </example>
+            <para>Не забудьте сделать скрипт исполняемым, запустив <command>chmod +x /etc/acpi/actions/pmg_switch_runlevel.sh</command>. Последнее, что осталось сделать, – это вызов скрипта всякий раз, когда изменяется источник питания. Это можно сделать, перехватывая ACPI-события посредством acpid. Главное – знать, какое событие генерируется при изменении источника питания. События называются ac_adapter и battery на большинстве ноутбуков, но могут быть другими на вашем. </para>
+            <example>
+                <title>Определение ACPI-событий для изменение источника питания</title>
+                <screen><prompt>#</prompt> <userinput>tail -f /var/log/messages | grep "received event"</userinput></screen>
+            </example>
             <para>Запустите команду выше и отключите ноутбук от питания. Затем снова подключите его. Вы должны увидеть что-то такое:</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.7: Определение ACPI-событий для изменение источника питания</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>[Tue Sep 20 17:39:06 2015] received event "ac_adapter AC 00000080 00000000" [Tue Sep 20 17:39:06 2015] received event "battery BAT0 00000080 00000001" </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
-            <para>Интересующая часть - строки, заключенные в кавычки, после received event. Они должны совпадать с теми, что используются в файле ниже. Не беспокойтесь, если ваша система выдает много событий или всегда одни и те же. Пока хоть какое-нибудь событие генерируется, переключение уровней будет работать. </para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.8: /etc/acpi/events/pmg_ac_adapter</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># Замените "ac_adapter" ниже на реальное событие вашем ноутбуке </para>
-                                <para># Например, ac_adapter.* будет соответствовать ac_adapter AC 00000080 00000000 event=ac_adapter.* action=/etc/acpi/actions/pmg_switch_runlevel.sh %e </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.9: /etc/acpi/events/pmg_battery</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># Замените "battery" ниже на реальное событие вашем ноутбуке </para>
-                                <para># Например, battery.* будет соотвествовать battery AC 00000080 00000001 event=battery.* action=/etc/acpi/actions/pmg_switch_runlevel.sh %e </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
+            <example>
+                <title>Определение ACPI-событий для изменения источника питания</title>
+                <screen>[Tue Sep 20 17:39:06 2015] received event "ac_adapter AC 00000080 00000000" [Tue Sep 20 17:39:06 2015] received event "battery BAT0 00000080 00000001"</screen>
+            </example>
+            <para>Интересующая часть – строки, заключенные в кавычки, после received event. Они должны совпадать с теми, что используются в файле ниже. Не беспокойтесь, если ваша система выдает много событий или всегда одни и те же. Пока хоть какое-нибудь событие генерируется, переключение уровней будет работать. </para>
+            <example>
+                <title>/etc/acpi/events/pmg_ac_adapter</title>
+                <programlisting># Замените "ac_adapter" ниже на реальное событие вашем ноутбуке
+# Например, ac_adapter.* будет соответствовать ac_adapter AC 00000080 00000000
+event=ac_adapter.*
+action=/etc/acpi/actions/pmg_switch_runlevel.sh %e</programlisting>
+            </example>
+            <example>
+                <title>/etc/acpi/events/pmg_battery</title>
+                <programlisting># Замените "battery" ниже на реальное событие вашем ноутбуке
+# Например, battery.* будет соотвествовать battery AC 00000080 00000001
+event=battery.*
+action=/etc/acpi/actions/pmg_switch_runlevel.sh %e</programlisting>
+            </example>
             <para>Наконец, acpid должен быть перезапущен, чтобы изменения вступили в силу. </para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.10: Последний штрих</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># /etc/init.d/acpid restart </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para>Вы можете проверить работоспособность скриптов, отсоединив кабель питания и вставив его вновь, - в syslog должны появляться сообщения "Switching to AC mode" или "Switching to battery mode". Обратитесь к <link xlink:href="#">устранению неполадок</link>, если скрипт некорректно распознаёт источник питания. </para>
-            <para>Из-за природы механизма событий, ваш ноутбук будет загружаться в уровень запуска default не зависимо от источника питания. Это просто замечательно, если мы подключены к сети, но если нет, то нам хотелось бы загружаться в уровень запуска battery. Одно из решений - это добавить ещё один пункт в менеджер загрузки, с параметром softlevel=battery, но не сложно просто забыть его выбрать. Лучший путь - поставить ACPI-событие в конец процесса загрузки и позволить скрипту pmg_switch_runlevel.sh решать, какое изменение уровня необходимо. Откройте /etc/conf.d/local.start в вашем любимом редакторе и добавьте следующие строки: </para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.11: Изменение уровня запуска во время загрузки</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># Эмулируем acpi событие, чтобы переключить уровень запуска, если работаем от батареи /etc/acpi/actions/pmg_switch_runlevel.sh "battery/battery" </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Последний штрих</title>
+                <screen><prompt>#</prompt> <userinput>/etc/init.d/acpid restart</userinput></screen>
+            </example>
+            <para>Вы можете проверить работоспособность скриптов, отсоединив кабель питания и вставив его вновь, – в syslog должны появляться сообщения "Switching to AC mode" или "Switching to battery mode". Обратитесь к <link xlink:href="#power-management.troubleshooting">устранению неполадок</link>, если скрипт некорректно распознаёт источник питания. </para>
+            <para>Из-за природы механизма событий, ваш ноутбук будет загружаться в уровень запуска default не зависимо от источника питания. Это просто замечательно, если мы подключены к сети, но если нет, то нам хотелось бы загружаться в уровень запуска battery. Одно из решений – это добавить ещё один пункт в менеджер загрузки, с параметром <option>softlevel=battery</option>, но не сложно просто забыть его выбрать. Лучший путь – поставить ACPI-событие в конец процесса загрузки и позволить скрипту <filename>pmg_switch_runlevel.sh</filename> решать, какое изменение уровня необходимо. Откройте <filename>/etc/conf.d/local.start</filename> в вашем любимом редакторе и добавьте следующие строки: </para>
+            <example>
+                <title>Изменение уровня запуска во время загрузки</title>
+                <programlisting># Эмулируем acpi событие, чтобы переключить уровень запуска, если работаем от батареи
+/etc/acpi/actions/pmg_switch_runlevel.sh "battery/battery"</programlisting>
+            </example>
             <para>Подготовив систему таким образом, вы можете активировать политики управления питанием для отдельных устройств. </para>
         </section>
     </section>
-    <section>
-        <info>
-            <title>
-                <anchor xml:id="cpu"/>3. Управление питанием ЦПУ</title>
-        </info>
+    <section xml:id="power-management.cpu" xreflabel="Управление питанием ЦПУ">
+        <title>Управление питанием ЦПУ</title>
         <para>Мобильные процессоры могут работать на нескольких частотах, а некоторые позволяют даже менять напряжение. Максимальная производительность нужна далеко не всегда, и меняя её можно сохранить немало энергии, причём зачастую без какого-либо понижения производительности</para>
         <section>
-            <info>
-                <title>Техническая часть</title>
-            </info>
+            <title>Техническая часть</title>
             <para>Частота процессора связана с некоторыми техническими терминами, который могут быть вам незнакомы, поэтому ниже будет дано краткое введение.</para>
-            <para>Для начала, ядро должно "уметь" менять частоту процессора. <emphasis>Драйвер процессора CPUfreq</emphasis> (CPUfreq processor driver) знает как сделать это на вашем ЦП, поэтому важно указать его правильно в вашем ядре. Скорее всего, вы это уже сделали выше. Также ядро должно знать, какую частоту устанавливать. Это достигается посредством <emphasis>политик</emphasis> (policy), которые состоят из <emphasis>политики CPUfreq</emphasis> (CPUfreq policy) и <emphasis>властелина</emphasis> (governor). Первое - это пара из двух чисел, обозначающих максимальную и минимальную допустимую частоту ЦП, а второе отвечает за то, какую конкретно частоту выбрать. Так, властелин сохранения энергии (powersave governor) всегда выбирает минимальную допустимую частоту, а властелин максимальной производительностью (performance governor), наоборот, максимальную; властелин пользователя (userspace governor) использует необходимую пользователю (или его приложениям) частоту, читая её из
-                /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed.</para>
+            <para>Для начала, ядро должно "уметь" менять частоту процессора. <emphasis>Драйвер процессора CPUfreq</emphasis> (CPUfreq processor driver) знает как сделать это на вашем ЦП, поэтому важно указать его правильно в вашем ядре. Скорее всего, вы это уже сделали выше. Также ядро должно знать, какую частоту устанавливать. Это достигается посредством <emphasis>политик</emphasis> (policy), которые состоят из <emphasis>политики CPUfreq</emphasis> (CPUfreq policy) и <emphasis>властелина</emphasis> (governor). Первое – это пара из двух чисел, обозначающих максимальную и минимальную допустимую частоту ЦП, а второе отвечает за то, какую конкретно частоту выбрать. Так, властелин сохранения энергии (powersave governor) всегда выбирает минимальную допустимую частоту, а властелин максимальной производительностью (performance governor), наоборот, максимальную; властелин пользователя (userspace governor) использует необходимую пользователю (или его приложениям) частоту, читая её из
+                    <filename>/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed</filename>.</para>
             <para>Всё это не очень похоже на динамическое изменение частоты (и действительно не является таковым). Однако динамика может быть получена несколькими способами. Например, "требовательный" властелин (ondemand governor) принимает решение, основываясь на текущей загрузке ЦП. Это же может быть реализовано посредством различных пользовательских инструментов таких, как cpudn, cpufreqd, powernowd и многих других. События ACPI можно использовать для включения или выключения динамического изменения частоты в зависимости от источника питания. </para>
         </section>
         <section>
-            <info>
-                <title>Установка частоты вручную</title>
-            </info>
-            <para>Уменьшение скорости и напряжение на ЦП даёт двойной выигрыш: с одной стороны, потребляется меньше энергии, а с другой - ваша система греется не так сильно, как на полной мощности. Главный недостаток - очевидная потеря производительности. Уменьшение скорости процессора - обмен производительности на сохранение энергии.</para>
+            <title>Установка частоты вручную</title>
+            <para>Уменьшение скорости и напряжение на ЦП даёт двойной выигрыш: с одной стороны, потребляется меньше энергии, а с другой – ваша система греется не так сильно, как на полной мощности. Главный недостаток – очевидная потеря производительности. Уменьшение скорости процессора – обмен производительности на сохранение энергии.</para>
             <para>Примечание: Не все ноутбуки поддерживают изменение частоты. Если вы не уверены, посмотрите список поддерживаемых процессоров в секции <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://iandmyfriendgentoo.blogspot.com/2007/12/blog-post_12.html#troubleshooting">Устранение неполадок</link>. </para>
             <para>Самое время проверить, работает ли изменение частоты процессора. Давайте установим ещё один очень полезный при отладке инструмент: sys-power/cpufrequtils</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 3.1: Проверка частоты ЦП</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># emerge cpufrequtils # cpufreq-info </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Проверка частоты ЦП</title>
+                <screen><prompt>#</prompt> <userinput>emerge cpufrequtils</userinput>
+<prompt>#</prompt> <userinput>cpufreq-info</userinput></screen>
+            </example>
             <para>Вывод будет примерно таким: </para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 3.2: Пример вывода cpufreq-info</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>cpufrequtils 0.3: cpufreq-info (C) Dominik Brodowski 2004</para>
-                                <para>Report errors and bugs to linux@brodo.de, please.</para>
-                                <para>analyzing CPU 0:</para>
-                                <para>  driver: centrino</para>
-                                <para>  CPUs which need to switch frequency at the same time: 0</para>
-                                <para>  hardware limits: 600 MHz - 1.40 GHz</para>
-                                <para>  available frequency steps: 600 MHz, 800 MHz, 1000 MHz, 1.20 GHz, 1.40 GHz</para>
-                                <para>  available cpufreq governors: conservative, ondemand, powersave, userspace, performance</para>
-                                <para>  current policy: frequency should be within 924 MHz and 1.40 GHz.</para>
-                                <para>    The governor "performance" may decide which speed to use</para>
-                                <para>    within this range.</para>
-                                <para>  current CPU frequency is 1.40 GHz. governor "conservative" may decide which  speed to use within this range. </para>
-                                <para> current CPU frequency is 1.60 GHz. </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para>Теперь, поиграйтесь с cpufreq-set, чтобы убедиться в работоспособности переключение частоты. Например, выполните cpufreq-set -g ondemand, чтобы активировать "требовательного" властелина, и проверьте изменение с помощью cpufreq-info. Если не работает как надо, вы можете попробовать найти причину в <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://iandmyfriendgentoo.blogspot.com/2007/12/blog-post_12.html#troubleshooting">Устранении неполадок</link> в конце этого руководства.</para>
+            <example>
+                <title>Пример вывода cpufreq-info</title>
+                <screen>cpufrequtils 0.3: cpufreq-info (C) Dominik Brodowski 2004
+Report errors and bugs to linux@brodo.de, please.
+analyzing CPU 0:
+  driver: centrino
+  CPUs which need to switch frequency at the same time: 0
+  hardware limits: 600 MHz – 1.40 GHz
+  available frequency steps: 600 MHz, 800 MHz, 1000 MHz, 1.20 GHz, 1.40 GHz
+  available cpufreq governors: conservative, ondemand, powersave, userspace, performance
+  current policy: frequency should be within 924 MHz and 1.40 GHz.
+    The governor "performance" may decide which speed to use
+    within this range.
+  current CPU frequency is 1.40 GHz. governor "conservative" may decide which  speed to use within this range. 
+ current CPU frequency is 1.60 GHz.</screen>
+            </example>
+            <para>Теперь, поиграйтесь с <command>cpufreq-set</command>, чтобы убедиться в работоспособности переключение частоты. Например, выполните <command>cpufreq-set -g ondemand</command>, чтобы активировать "требовательного" властелина, и проверьте изменение с помощью cpufreq-info. Если не работает как надо, вы можете попробовать найти причину в <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://iandmyfriendgentoo.blogspot.com/2007/12/blog-post_12.html#troubleshooting">Устранении неполадок</link> в конце этого руководства.</para>
         </section>
         <section>
-            <info>
-                <title>Автоматическая настройка частоты</title>
-            </info>
-            <para>Сказанное, конечно, прекрасно, но не очень применимо в реальной жизни. Лучше поручить вашей системе автоматически подбирать подходящую частоту. Есть много способов сделать это. Следующая таблица даёт общее представление о них и поможет вам выбрать необходимый. Их можно не совсем точно разделить на три типа: ядро - для методов нуждающихся только в поддержке ядра, демон - для запускающихся в фоне программ и графический - для программ, которые предоставляют графический интерфейс для простой настройки.</para>
-            <para/>
+            <title>Автоматическая настройка частоты</title>
+            <para>Сказанное, конечно, прекрасно, но не очень применимо в реальной жизни. Лучше поручить вашей системе автоматически подбирать подходящую частоту. Есть много способов сделать это. Следующая таблица даёт общее представление о них и поможет вам выбрать необходимый. Их можно не совсем точно разделить на три типа: ядро – для методов нуждающихся только в поддержке ядра, демон – для запускающихся в фоне программ и графический – для программ, которые предоставляют графический интерфейс для простой настройки.</para>
             <informaltable frame="all">
                 <tgroup cols="6">
+                    <colspec colname="c1" colwidth="1*"/>
+                    <colspec colname="c2" colwidth="1*"/>
+                    <colspec colname="c3" colwidth="1*"/>
+                    <colspec colname="c4" colwidth="1*"/>
+                    <colspec colname="c5" colwidth="1*"/>
+                    <colspec colname="c6" colwidth="3*"/>
                     <thead>
                         <row>
                             <entry>
@@ -463,7 +265,7 @@
                                 <para>Причины для переключения (Switch decision)</para>
                             </entry>
                             <entry>
-                                <para>Используемые властелины ядра(Kernel governors)</para>
+                                <para>Используемые властелины ядра (Kernel governors)</para>
                             </entry>
                             <entry>
                                 <para>Предоставляемые режимы (Further governors)</para>
@@ -491,7 +293,7 @@
                                 <para>-</para>
                             </entry>
                             <entry>
-                                <para>Выставляет максимальную частоту при загрузке ЦП и медленно шагает вниз во время простоя ЦП. Дальнейшая настройка через /sys/devices/system/cpu/cpu0/cpufreq/ondemand/. По-прежнему требует пользовательских программ (скриптов), если переключение властелинов или подобное необходимо. </para>
+                                <para>Выставляет максимальную частоту при загрузке ЦП и медленно шагает вниз во время простоя ЦП. Дальнейшая настройка через <filename>/sys/devices/system/cpu/cpu0/cpufreq/ondemand/</filename>. По-прежнему требует пользовательских программ (скриптов), если переключение властелинов или подобное необходимо. </para>
                             </entry>
                         </row>
                         <row>
@@ -511,7 +313,7 @@
                                 <para>-</para>
                             </entry>
                             <entry>
-                                <para>В отличие от требовательного властелина, консервативный не прыгает до максимальной частоты во время высокой загрузки ЦП, а увеличивает частоту постепенно. Дальнейшая настройка через /sys/devices/system/cpu/cpu0/cpufreq/conservative/. По-прежнему требует пользовательских программ (скриптов), если переключение властелинов или подобное необходимо. </para>
+                                <para>В отличие от требовательного властелина, консервативный не прыгает до максимальной частоты во время высокой загрузки ЦП, а увеличивает частоту постепенно. Дальнейшая настройка через <filename>/sys/devices/system/cpu/cpu0/cpufreq/conservative/</filename>. По-прежнему требует пользовательских программ (скриптов), если переключение властелинов или подобное необходимо. </para>
                             </entry>
                         </row>
                         <row>
@@ -671,604 +473,302 @@
             </informaltable>
             <para>Хотя изменение частоты в зависимости от нагрузки выглядит просто на первый взгляд, это не такая уж и тривиальная задача. Плохой алгоритм может привести к постоянному переключению между двумя частотами или бессмысленному перерасходу энергии из-за неоправданно большой частоты.</para>
             <para>Что выбрать? Если вы не можете решить, попробуйте cpufreqd.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 3.3: Установка cpufreqd</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># emerge cpufreqd </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para>cpufreqd настраивается редактированием /etc/cpufreqd.conf. Конфиг, предоставляемый по умолчанию, может вас несколько смутить. Рекомендуется заменить его на конфигурационный файл, который создал бывший разработчик Gentoo - Henrik Brix Andersen. Учтите, что вам необходим cpufreqd-2.0.0 или более новая версия. Ранние версии используют другой синтаксис конфигурационного файла.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 3.4: /etc/cpufreqd.conf (cpufreqd-2.0.0 или более новый)</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>[General]</para>
-                                <para>pidfile=/var/run/cpufreqd.pid</para>
-                                <para>poll_interval=3</para>
-                                <para>enable_plugins=acpi_ac, acpi_battery</para>
-                                <para>enable_remote=1</para>
-                                <para>remote_group=wheel</para>
-                                <para>verbosity=5</para>
-                                <para>[/General]</para>
-                                <para/>
-                                <para>[Profile]</para>
-                                <para>name=ondemand</para>
-                                <para>minfreq=0%</para>
-                                <para>maxfreq=100%</para>
-                                <para>policy=ondemand</para>
-                                <para>[/Profile]</para>
-                                <para/>
-                                <para>[Profile]</para>
-                                <para>name=conservative</para>
-                                <para>minfreq=0%</para>
-                                <para>maxfreq=100%</para>
-                                <para>policy=conservative</para>
-                                <para>[/Profile]</para>
-                                <para/>
-                                <para>[Profile]</para>
-                                <para>name=powersave</para>
-                                <para>minfreq=0%</para>
-                                <para>maxfreq=100%</para>
-                                <para>policy=powersave</para>
-                                <para>[/Profile]</para>
-                                <para/>
-                                <para>[Profile]</para>
-                                <para>name=performance</para>
-                                <para>minfreq=0%</para>
-                                <para>maxfreq=100%</para>
-                                <para>policy=performance</para>
-                                <para>[/Profile]</para>
-                                <para/>
-                                <para>[Rule]</para>
-                                <para>name=battery</para>
-                                <para>ac=off</para>
-                                <para>profile=conservative</para>
-                                <para>[/Rule]</para>
-                                <para/>
-                                <para>[Rule]</para>
-                                <para>name=battery_low</para>
-                                <para>ac=off</para>
-                                <para>battery_interval=0-10</para>
-                                <para>profile=powersave</para>
-                                <para>[/Rule]</para>
-                                <para/>
-                                <para>[Rule]</para>
-                                <para>name=ac</para>
-                                <para>ac=on</para>
-                                <para>profile=ondemand</para>
-                                <para>[/Rule]</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Установка cpufreqd</title>
+                <screen><prompt>#</prompt> <userinput>emerge cpufreqd</userinput></screen>
+            </example>
+            <para>cpufreqd настраивается редактированием <filename>/etc/cpufreqd.conf</filename>. Конфиг, предоставляемый по умолчанию, может вас несколько смутить. Рекомендуется заменить его на конфигурационный файл, который создал бывший разработчик Gentoo – Henrik Brix Andersen. Учтите, что вам необходим cpufreqd-2.0.0 или более новая версия. Ранние версии используют другой синтаксис конфигурационного файла.</para>
+            <example>
+                <title>/etc/cpufreqd.conf (cpufreqd-2.0.0 или более новый)</title>
+                <programlisting>[General]
+pidfile=/var/run/cpufreqd.pid
+poll_interval=3
+enable_plugins=acpi_ac, acpi_battery
+enable_remote=1
+remote_group=wheel
+verbosity=5
+[/General]
+
+[Profile]
+name=ondemand
+minfreq=0%
+maxfreq=100%
+policy=ondemand
+[/Profile]
+
+[Profile]
+name=conservative
+minfreq=0%
+maxfreq=100%
+policy=conservative
+[/Profile]
+
+[Profile]
+name=powersave
+minfreq=0%
+maxfreq=100%
+policy=powersave
+[/Profile]
+
+[Profile]
+name=performance
+minfreq=0%
+maxfreq=100%
+policy=performance
+[/Profile]
+
+[Rule]
+name=battery
+ac=off
+profile=conservative
+[/Rule]
+
+[Rule]
+name=battery_low
+ac=off
+battery_interval=0-10
+profile=powersave
+[/Rule]
+
+[Rule]
+name=ac
+ac=on
+profile=ondemand
+[/Rule]</programlisting>
+            </example>
             <para>Теперь вы можете запустить демон cpufreqd. Добавьте его в уровни запуска default и battery.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 3.5: Запуск cpufreqd</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># rc-update add cpufreqd default battery # rc </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para>Иногда желательно установить политику отличную от той, что выбрал демон. Например, если заряд батареи низок, но вы знаете, что скоро появится питание от сети. В этом случае вы можете перевести cpufreqd в ручной режим с помощью команды cpufreqd-set manual и далее выбрать одну из сконфигурированных политик (они перечислены в cpufreqd-get). Выйти из ручного режима вы можете командой cpufreqd-set dynamic</para>
-            <para>Предупреждение: Не запускайте одновременно более одной программы, перечисленной выше. Это может привести к конфликтах таких, как постоянное переключение между двумя частотами. </para>
+            <example>
+                <title>Запуск cpufreqd</title>
+                <screen><prompt>#</prompt> <userinput>rc-update add cpufreqd default battery</userinput>
+<prompt>#</prompt> <userinput>rc</userinput></screen>
+            </example>
+            <para>Иногда желательно установить политику отличную от той, что выбрал демон. Например, если заряд батареи низок, но вы знаете, что скоро появится питание от сети. В этом случае вы можете перевести cpufreqd в ручной режим с помощью команды cpufreqd-set manual и далее выбрать одну из сконфигурированных политик (они перечислены в cpufreqd-get). Выйти из ручного режима вы можете командой <command>cpufreqd-set dynamic</command>.</para>
+            <warning>
+                <para>Не запускайте одновременно более одной программы, перечисленной выше. Это может привести к конфликтах таких, как постоянное переключение между двумя частотами. </para>
+            </warning>
         </section>
         <section>
-            <info>
-                <title>Проверка результата</title>
-            </info>
-            <para>Осталось только проверить, что ваши новые политики работают правильно. Простой способ сделать это - следить за скоростью ЦП во время работы:</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 3.6: Отслеживание скорости ЦП</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># watch grep \"cpu MHz\" /proc/cpuinfo </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para>Если /proc/cpuinfo не обновляется (см. <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://iandmyfriendgentoo.blogspot.com/2007/12/blog-post_12.html#troubleshooting">Устранение неполадок</link>), попробуйте sys-apps/x86info:</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 3.7: Альтернативное отслеживание скорочти ЦП</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># watch x86info -mhz </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <title>Проверка результата</title>
+            <para>Осталось только проверить, что ваши новые политики работают правильно. Простой способ сделать это – следить за скоростью ЦП во время работы:</para>
+            <example>
+                <title>Отслеживание скорости ЦП</title>
+                <screen><prompt>#</prompt> <userinput>watch grep \"cpu MHz\" /proc/cpuinfo</userinput></screen>
+            </example>
+            <para>Если <filename>/proc/cpuinfo</filename> не обновляется (см. <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://iandmyfriendgentoo.blogspot.com/2007/12/blog-post_12.html#troubleshooting">Устранение неполадок</link>), попробуйте sys-apps/x86info:</para>
+            <example>
+                <title>Альтернативное отслеживание скорочти ЦП</title>
+                <screen><prompt>#</prompt> <userinput>watch x86info -mhz</userinput></screen>
+            </example>
             <para>В зависимости от ваших настроек, частота должна возрастать при нагрузке, падать в спокойном состоянии, или оставаться на том же уровне. Если вы используете cpufreqd и уровень подробности (verbosity) равен 5 или больше в cpufreqd.conf, то вы можете найти дополнительную информацию о происходящем в syslog.</para>
         </section>
     </section>
-    <section>
-        <info>
-            <title>4. LCD Power Management</title>
-        </info>
+    <section xml:id="power-management.lcd" xreflabel="LCD Power Management">
+        <title>LCD Power Management</title>
         <para>Как вы видели в графике <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://iandmyfriendgentoo.blogspot.com/2007/12/blog-post_12.html#energy-budget">распределения энергии</link>, LCD экран потребляет наибольшую часть энергии (по крайней мере для мобильных ПК). Таким образом, важно не только выключать экран, когда он не нужен, но и уменьшать его яркость, если это возможно. Большинство ноутбуков предоставляют возможность контролировать яркость экрана</para>
         <section>
-            <info>
-                <title>Настройки засыпания (standby)</title>
-            </info>
-            <para>В первую очередь необходимо проверить настройки засыпания(standby), остановки(suspend), выключения дисплея. Так как это сильно зависит от вашего оконного менеджера, то вам предстоит делать это самим. Только два замечания: погасить терминал можно командой setterm -blank &lt;количество минут&gt;, setterm -powersave on и setterm -powerdown &lt;количество минут&gt;. Для X.org, необходимо исправить в /etc/X11/xorg.conf следующее (или в /etc/X11/XF86Config для XFree86):</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 4.1: Настройка засыпания дисплея в X.org и XFree86</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Section "ServerLayout"</para>
-                                <para>  Identifier  [...]</para>
-                                <para>  [...]</para>
-                                <para>  Option  "BlankTime"  "5"  # Blank the screen after 5 minutes (Fake)</para>
-                                <para>  Option  "StandbyTime"  "10"  # Turn off screen after 10 minutes (DPMS)</para>
-                                <para>  Option  "SuspendTime"  "20"  # Full suspend after 20 minutes</para>
-                                <para>  Option  "OffTime"  "30"  # Turn off after half an hour</para>
-                                <para>  [...]</para>
-                                <para>EndSection</para>
-                                <para/>
-                                <para>[...]</para>
-                                <para/>
-                                <para>Section "Monitor"</para>
-                                <para>  Identifier  [...]</para>
-                                <para>  Option  "DPMS"  "true"</para>
-                                <para>  [...]</para>
-                                <para>EndSection</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <title>Настройки засыпания (standby)</title>
+            <para>В первую очередь необходимо проверить настройки засыпания (standby), остановки (suspend), выключения дисплея. Так как это сильно зависит от вашего оконного менеджера, то вам предстоит делать это самим. Только два замечания: погасить терминал можно командой <command>setterm -blank <replaceable>&lt;количество минут&gt;</replaceable></command>, <command>setterm -powersave on</command> и <command>setterm -powerdown <replaceable>&lt;количество минут&gt;</replaceable></command>. Для X.org, необходимо исправить в <filename>/etc/X11/xorg.conf</filename> следующее (или в <filename>/etc/X11/XF86Config для XFree86</filename>):</para>
+            <example>
+                <title>Настройка засыпания дисплея в X.org и XFree86</title>
+                <programlisting>Section "ServerLayout"
+  Identifier  [...]
+  [...]
+  Option  "BlankTime"  "5"  # Blank the screen after 5 minutes (Fake)
+  Option  "StandbyTime"  "10"  # Turn off screen after 10 minutes (DPMS)
+  Option  "SuspendTime"  "20"  # Full suspend after 20 minutes
+  Option  "OffTime"  "30"  # Turn off after half an hour
+  [...]
+EndSection
+
+[...]
+
+Section "Monitor"
+  Identifier  [...]
+  Option  "DPMS"  "true"
+  [...]
+EndSection</programlisting>
+            </example>
         </section>
         <section>
-            <info>
-                <title>Уменьшение подсветки</title>
-            </info>
+            <title>Уменьшение подсветки</title>
             <para>Если вы можете управлять яркостью с помощью программы, напишите маленький скрипт, который уменьшает подсветку и поместите его в ваш уровень запуска batery. Следующий скрипт должен работать на большинстве ноутбуков IBM Thinkpad и Toshiba. Для ноутбуков IBM необходимо включить соответствующий пункт в ядре, а владельцы Toshiba могут поставить sys-power/acpitool и пропустить настройку ibm_acpi, описанную ниже.</para>
             <para>Предупреждение: Поддержка изменения яркости является экспериментальной для ibm-acpi, так как работает с оборудованием напрямую и может серьёзно поредить его. Обратитесь к <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ibm-acpi.sourceforge.net/">сайту ibm-acpi</link> за подробностями. </para>
             <para>Для поддержки изменения уровня яркости, модуль ibm_acpi должен быть запущен с параметром experimental.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 4.2: Настройка засыпания дисплея в X.org и XFree86</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>(Прочтите предупреждение выше, прежде чем делать это)</para>
-                                <para># echo "options ibm_acpi experimental=1" &gt;&gt; /etc/modules.d/ibm_acpi</para>
-                                <para># /sbin/update-modules </para>
-                                <para># echo ibm_acpi &gt;&gt; /etc/modules.autoload.d/kernel-2.6 </para>
-                                <para># modprobe ibm_acpi </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Настройка засыпания дисплея в X.org и XFree86</title>
+                <screen>(Прочтите предупреждение выше, прежде чем делать это)
+<prompt>#</prompt> <userinput>echo "options ibm_acpi experimental=1" >> /etc/modules.d/ibm_acpi</userinput>
+<prompt>#</prompt> <userinput>/sbin/update-modules</userinput>
+<prompt>#</prompt> <userinput>echo ibm_acpi >> /etc/modules.autoload.d/kernel-2.6</userinput>
+<prompt>#</prompt> <userinput>modprobe ibm_acpi</userinput></screen>
+            </example>
             <para>Это должно выполниться без ошибок, а также должен появится файл /proc/acpi/ibm/brightness. Скрипт инициализации будет принимать решение об уровне подсветки в зависимости от источника питания.</para>
-            <para/>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 4.3: /etc/conf.d/lcd-brightness</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># См. допустимые значения в /proc/acpi/ibm/brightness </para>
-                                <para># Пожалуйста, прочтите /usr/src/linux/Documentation/ibm-acpi.txt</para>
-                                <para># Уровень яркости при питании от сети. По умолчанию - 7. BRIGHTNESS_AC=7</para>
-                                <para># Уровень яркости при питании от батареи. По умолчанию - 4. BRIGHTNESS_BATTERY=4 </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 4.4: /etc/init.d/lcd-brightness</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>#!/sbin/runscript</para>
-                                <para/>
-                                <para>set_brightness() {</para>
-                                <para>    if on_ac_power</para>
-                                <para>    then</para>
-                                <para>        LEVEL=${BRIGHTNESS_AC:-7}</para>
-                                <para>    else</para>
-                                <para>        LEVEL=${BRIGHTNESS_BATTERY:-4}</para>
-                                <para>    fi</para>
-                                <para/>
-                                <para>    if [ -f /proc/acpi/ibm/brightness ]</para>
-                                <para>    then</para>
-                                <para>        ebegin "Setting LCD brightness"</para>
-                                <para>        echo "level ${LEVEL}" &gt; /proc/acpi/ibm/brightness</para>
-                                <para>        eend $?</para>
-                                <para>    elif [[ -e /usr/bin/acpitool &amp;&amp; -n $(acpitool -T | grep "LCD brightness") ]]</para>
-                                <para>    then</para>
-                                <para>        ebegin "Setting LCD brightness"</para>
-                                <para>        acpitool -l $LEVEL &gt;/dev/null || ewarn "Unable to set lcd brightness"</para>
-                                <para>        eend $?</para>
-                                <para>    else</para>
-                                <para>        ewarn "Setting LCD brightness is not supported."</para>
-                                <para>        ewarn "For IBM Thinkpads, check that ibm_acpi is loaded into the kernel"</para>
-                                <para>        ewarn "For Toshiba laptops, you've got to install sys-power/acpitool"</para>
-                                <para>    fi</para>
-                                <para>}</para>
-                                <para/>
-                                <para>start() {</para>
-                                <para>    set_brightness</para>
-                                <para>}</para>
-                                <para/>
-                                <para>stop () {</para>
-                                <para>    set_brightness</para>
-                                <para>}</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>/etc/conf.d/lcd-brightness</title>
+                <programlisting># См. допустимые значения в /proc/acpi/ibm/brightness 
+# Пожалуйста, прочтите /usr/src/linux/Documentation/ibm-acpi.txt
+
+# Уровень яркости при питании от сети. По умолчанию – 7.
+BRIGHTNESS_AC=7
+
+# Уровень яркости при питании от батареи. По умолчанию – 4.
+BRIGHTNESS_BATTERY=4</programlisting>
+            </example>
+            <example>
+                <title>/etc/init.d/lcd-brightness</title>
+                <programlisting>#!/sbin/runscript
+set_brightness() {
+    if on_ac_power
+    then
+        LEVEL=${BRIGHTNESS_AC:-7}
+    else
+        LEVEL=${BRIGHTNESS_BATTERY:-4}
+    fi
+    if [ -f /proc/acpi/ibm/brightness ]
+    then
+        ebegin "Setting LCD brightness"
+        echo "level ${LEVEL}" > /proc/acpi/ibm/brightness
+        eend $?
+    elif [[ -e /usr/bin/acpitool &amp;&amp; -n $(acpitool -T | grep "LCD brightness") ]]
+    then
+        ebegin "Setting LCD brightness"
+        acpitool -l $LEVEL >/dev/null || ewarn "Unable to set lcd brightness"
+        eend $?
+    else
+        ewarn "Setting LCD brightness is not supported."
+        ewarn "For IBM Thinkpads, check that ibm_acpi is loaded into the kernel"
+        ewarn "For Toshiba laptops, you've got to install sys-power/acpitool"
+    fi
+}
+start() {
+    set_brightness
+}
+stop () {
+    set_brightness
+}</programlisting>
+            </example>
             <para>Далее, убедитесь, что уровень яркости меняется автоматически, добавив скрипт в уровень запуска battery.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 4.5: Включаем автоматическое изменение яркости</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># chmod +x /etc/init.d/lcd-brightness </para>
-                                <para># rc-update add lcd-brightness battery </para>
-                                <para># rc </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Включаем автоматическое изменение яркости</title>
+                <screen><prompt>#</prompt> <userinput>chmod +x /etc/init.d/lcd-brightness</userinput> 
+<prompt>#</prompt> <userinput>rc-update add lcd-brightness battery</userinput>
+<prompt>#</prompt> <userinput>rc</userinput></screen>
+            </example>
         </section>
+    </section>
+    <section xml:id="power-management.harddrive" xreflabel="Управление питанием диска">
+        <title>Управление питанием диска</title>
+        <para>Жёсткий диск потребляет меньше энергии во время спящего режима (sleep mode). Поэтому разумно активировать возможности сохранения энергии, когда жёсткий диск не используется некоторое время. Есть два различных способа сделать это. Первый, (laptop-mode) будет сберегать больше всего энергии за счёт предотвращения или, по крайней мере, задержки записи на диск. Обратной стороной медали является повышенный риск потери данных при сбое питания или аварии ядра; чтобы уменьшить масштабы возможной аварии, убедитесь, что не запущенно часто пишущих на диск процессов. В качестве альтернативного, второго способа вы можете включить сохранение энергии на диске с помощью hdparm.</para>
         <section>
-            <info>
-                <title>
-                    <anchor xml:id="harddrive"/>Управление питанием диска</title>
-            </info>
-            <para>Жёсткий диск потребляет меньше энергии во время спящего режима (sleep mode). Поэтому разумно активировать возможности сохранения энергии, когда жёсткий диск не используется некоторое время. Есть два различных способа сделать это. Первый, (laptop-mode) будет сберегать больше всего энергии за счёт предотвращения или, по крайней мере, задержки записи на диск. Обратной стороной медали является повышенный риск потери данных при сбое питания или аварии ядра; чтобы уменьшить масштабы возможной аварии, убедитесь, что не запущенно часто пишущих на диск процессов. В качестве альтернативного, второго способа вы можете включить сохранение энергии на диске с помощью hdparm.</para>
-        </section>
-        <section>
-            <info>
-                <title>Увеличение времени покоя (idle time) - laptop-mode</title>
-            </info>
+            <title>Увеличение времени покоя (idle time) – laptop-mode</title>
             <para>Последние 2.6-ядра включают одноимённый laptop-mode. Когда он активирован, "грязные" буферы (dirty buffers) пишутся на диск при вызовах чтения (read calls) или после 10 минут (вместо 30 секунд). Это минимизирует время, которое тратится на раскручивание диска.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 5.1: Автоматический старт laptop-mode</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># emerge laptop-mode-tools </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para>Настройки пакета laptop-mode-tools хранятся в файле /etc/laptop-mode/laptop-mode.conf. Отредактируйте его на свой вкус - он отлично документирован. Выполните rc-update add laptop_mode battery, чтобы он запускался автоматически.</para>
-            <para>Последние версии (1.11 и позже) этого пакета включают полезный инструмент lm-profiler. Он следит за использованием диска и запущенными сетевыми сервисами и предлагает отключить ненужные. Вы можете отключить их как используя встроенную в laptop-mode-tools поддержку уровней запуска (которая будет переопределена /sbin/rc), так и через созданные вами уровни запуска default/battery (рекомендуется).</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 5.2: Пример вывода lm-profiler</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># lm-profiler</para>
-                                <para>Profiling session started.</para>
-                                <para>Time remaining: 600 seconds</para>
-                                <para>[4296896.602000] amarokapp</para>
-                                <para>Time remaining: 599 seconds</para>
-                                <para>[4296897.714000] sort</para>
-                                <para>[4296897.970000] mv</para>
-                                <para>Time remaining: 598 seconds</para>
-                                <para>Time remaining: 597 seconds</para>
-                                <para>[4296900.482000] reiserfs/0</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Автоматический старт laptop-mode</title>
+                <screen><prompt>#</prompt> <userinput>emerge laptop-mode-tools</userinput></screen>
+            </example>
+            <para>Настройки пакета laptop-mode-tools хранятся в файле <filename>/etc/laptop-mode/laptop-mode.conf</filename>. Отредактируйте его на свой вкус – он отлично документирован. Выполните rc-update add laptop_mode battery, чтобы он запускался автоматически.</para>
+            <para>Последние версии (1.11 и позже) этого пакета включают полезный инструмент lm-profiler. Он следит за использованием диска и запущенными сетевыми сервисами и предлагает отключить ненужные. Вы можете отключить их как используя встроенную в laptop-mode-tools поддержку уровней запуска (которая будет переопределена <filename>/sbin/rc</filename>), так и через созданные вами уровни запуска default/battery (рекомендуется).</para>
+            <example>
+                <title>Пример вывода lm-profiler</title>
+                <screen>
+<userinput>#</userinput> <userinput>lm-profiler</userinput>
+Profiling session started.
+Time remaining: 600 seconds
+[4296896.602000] amarokapp
+Time remaining: 599 seconds
+[4296897.714000] sort
+[4296897.970000] mv
+Time remaining: 598 seconds
+Time remaining: 597 seconds
+[4296900.482000] reiserfs/0                    
+                </screen>
+            </example>
             <para>После наблюдения за вашей системой в течении 10 минут, lm-profiler выведет список сервисов, которые могли вызвать обращения к диску за этот промежуток времени.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 5.3: lm-profiler предлагает отключить некоторые сервисы</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Program:     "atd"</para>
-                                <para>Reason:      standard recommendation (program may not be running)</para>
-                                <para>Init script: /etc/init.d/atd (GUESSED)</para>
-                                <para/>
-                                <para>Do you want to disable this service in battery mode? [y/N]: n</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para>Чтобы отключить atd, как предлагается в примере выше, выполните rc-update del atd battery. Будьте осторожны, не отключите жизенноважные сервисы - lm-profiler частенько выдает не совсем правильные данные. Не отключайте что-либо, если вы полностью не уверены в ненужности сервиса.</para>
+            <example>
+                <title>lm-profiler предлагает отключить некоторые сервисы</title>
+                <screen>
+Program:     "atd"
+Reason:      standard recommendation (program may not be running)
+Init script: /etc/init.d/atd (GUESSED)
+
+Do you want to disable this service in battery mode? [y/N]: <userinput>n</userinput>                    
+                </screen>
+            </example>
+            <para>Чтобы отключить atd, как предлагается в примере выше, выполните rc-update del atd battery. Будьте осторожны, не отключите жизенноважные сервисы – lm-profiler частенько выдает не совсем правильные данные. Не отключайте что-либо, если вы полностью не уверены в ненужности сервиса.</para>
         </section>
         <section>
-            <info>
-                <title>Ограничение доступа на запись</title>
-            </info>
-            <para>Если вы не хотите использовать laptop-mode, вы должны отключить часто пишущие на диск сервисы вручную - syslogd кандидат на выбывание, например. Возможно, вы не хотите выключать его полностью, тогда можно подправить конфиг так, чтобы писались только "необходимые вещи". Cups пишет на диск лишь время о времени, поэтому можно выключить его и включать вручную, когда необходимо.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 5.4: Выключение cups из уровня запуска battery</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># rc-update del cupsd battery </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <title>Ограничение доступа на запись</title>
+            <para>Если вы не хотите использовать laptop-mode, вы должны отключить часто пишущие на диск сервисы вручную – syslogd кандидат на выбывание, например. Возможно, вы не хотите выключать его полностью, тогда можно подправить конфиг так, чтобы писались только "необходимые вещи". Cups пишет на диск лишь время о времени, поэтому можно выключить его и включать вручную, когда необходимо.</para>
+            <example>
+                <title>Выключение cups из уровня запуска battery</title>
+                <screen><prompt>#</prompt> <userinput>rc-update del cupsd battery</userinput></screen>
+            </example>
             <para>Вы также может использовать lm-profiler из laptop-mode-tools (см. выше), чтобы найти неугодные сервисы. Если вы истребили их всех, то можно переходить к настройке hdparm.</para>
         </section>
         <section>
-            <info>
-                <title>hdparm</title>
-            </info>
-            <para>Вторая возможность - использование hdparm. Пропустите этот шаг, если вы используете laptop-mode. Иначе, откройте /etc/conf.d/hdparm и добавьте следующие строки для ваших жёстких дисков. Этот пример предполагает, что ваш диск именуется hda:</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 5.5: Использование /etc/conf.d/hdparm для засыпания диска</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>hda_args="-q -S12" </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <title>hdparm</title>
+            <para>Вторая возможность – использование hdparm. Пропустите этот шаг, если вы используете laptop-mode. Иначе, откройте /etc/conf.d/hdparm и добавьте следующие строки для ваших жёстких дисков. Этот пример предполагает, что ваш диск именуется hda:</para>
+            <example>
+                <title>Использование /etc/conf.d/hdparm для засыпания диска</title>
+                <programlisting>hda_args="-q -S12"</programlisting>
+            </example>
             <para>Это включит управление питанием для вашего жесткого диска. Если вы когда-нибудь решите отключить управление питанием, то просто измените значение в /etc/conf.d/hdparm на -q -S0 или выполните hdparm -q -S0 /dev/hda.</para>
             <para>Обратитесь к man hdparm за другими опциями. Хотя вы всегда можете запускать hdparm вручную командой /etc/init.d/hdparm start, намного проще автоматизировать её запуск и остановку. Чтобы сделать это, добавить hdparm в уровень запуска battery.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 5.6: Автоматизация засыпания диска</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>#rc-update add hdparm battery </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Автоматизация засыпания диска</title>
+                <screen><prompt>#</prompt> <userinput>rc-update add hdparm battery</userinput></screen>
+            </example>
             <para>Внимание: Будьте осторожны с настройками засыпания/остановки (sleep/spin down) вашего жёсткого диска. Установление слишком низких значений может быстро "износить" ваш диск, что приведёт к потере гарантии. (Прим. пер.: вспомните <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.opennet.ru/cgi-bin/openforum/vsluhboard.cgi?az=show_thread&amp;omm=0&amp;om=38837&amp;forum=vsluhforumID3">историю про Ubuntu</link>) </para>
         </section>
         <section>
-            <info>
-                <title>Другие "типы и трюки"</title>
-            </info>
+            <title>Другие "типы и трюки"</title>
             <para>Ещё один способ достижения светлой цели снижения энергопотребления состоит в отключении свопа (swap) в режиме питания от батареи. Перед тем, как писать переключатель swapon/swapoff, убедитесь, что у вас достаточно оперативной памяти и своп существенно не используется, иначе вы рискуете приобрести большие проблемы. </para>
-            <para>Если вы не хотите использовать laptop-mode, то можно уменьшить обращение к диску, монтируя некоторые директории как tmpfs - запись на такие разделы хранится не на диске, а в ОЗУ, и поэтому пропадает после отмонтирования. Зачастую удобно примонтировать /tmp таким образом, так как она в любом случае очищается при каждой перезагрузке. Правда, стоит убедиться, что у вас достаточно памяти и что нет программ (таких, как менеджеры закачек и архиваторы), которым требуется экстремально много места в /tmp. Чтобы сделать это, включите поддержку tmpfs в ядре и добавьте подобную следующей строку в /etc/fstab: </para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 5.7: Редактирование /etc/fstab, чтобы сделать /tmp более отрешённым от диска (volatile)</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>none /tmp tmpfs size=32m 0 0 </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para>Предупреждение: Обратите внимание на параметр (32 m), и подстройте его под вашу систему. Если вы не уверены, не пробуйте это вообще - это может сильно уменьшить производительность. Если вы хотите подмонтировать /var/log таким же образом, убедитесь, что файлы сохраняются на диск перед размонтированием. Они необходимы. Не пытайтесь примонтировать /var/tmp таким образом - он используется Portage при сборке пакетов.</para>
+            <para>Если вы не хотите использовать laptop-mode, то можно уменьшить обращение к диску, монтируя некоторые директории как tmpfs – запись на такие разделы хранится не на диске, а в ОЗУ, и поэтому пропадает после отмонтирования. Зачастую удобно примонтировать /tmp таким образом, так как она в любом случае очищается при каждой перезагрузке. Правда, стоит убедиться, что у вас достаточно памяти и что нет программ (таких, как менеджеры закачек и архиваторы), которым требуется экстремально много места в <filename>/tmp</filename>. Чтобы сделать это, включите поддержку tmpfs в ядре и добавьте подобную следующей строку в <filename>/etc/fstab</filename>: </para>
+            <example>
+                <title>Редактирование /etc/fstab, чтобы сделать /tmp более отрешённым от диска (volatile)</title>
+                <programlisting>none /tmp tmpfs size=32m 0 0</programlisting>
+            </example>
+            <para>Предупреждение: Обратите внимание на параметр (32 m), и подстройте его под вашу систему. Если вы не уверены, не пробуйте это вообще – это может сильно уменьшить производительность. Если вы хотите подмонтировать <filename>/var/log</filename> таким же образом, убедитесь, что файлы сохраняются на диск перед размонтированием. Они необходимы. Не пытайтесь примонтировать <filename>/var/tmp</filename> таким образом – он используется Portage при сборке пакетов.</para>
         </section>
     </section>
-    <section>
-        <info>
-            <title>
-                <anchor xml:id="other"/>6. Управление питанием других устройств</title>
-        </info>
+    <section xml:id="power-management.other" xreflabel="Управление питанием других устройств">
+        <title>Управление питанием других устройств</title>
         <section>
-            <info>
-                <title>Графические карты</title>
-            </info>
-            <para>Если у вас стоит карточка ATI с поддержкой PowerPlay (динамическое изменение частоты графического процессора), вы можете активировать эту возможность в X.org. Откройте /etc/X11/xorg.conf и добавьте (или включите) опцию DynamicClocks в секции Устройство (device). Учтите, что это может привести к падению на некоторых системах.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 6.1: Включение поддержки ATI PowerPlay в X.org</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Section "Device" [...] Option "DynamicClocks" "on" EndSection </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <title>Графические карты</title>
+            <para>Если у вас стоит карточка ATI с поддержкой PowerPlay (динамическое изменение частоты графического процессора), вы можете активировать эту возможность в X.org. Откройте <filename>/etc/X11/xorg.conf</filename> и добавьте (или включите) опцию DynamicClocks в секции Устройство (device). Учтите, что это может привести к падению на некоторых системах.</para>
+            <example>
+                <title>Включение поддержки ATI PowerPlay в X.org</title>
+                <screen>Section "Device"
+[...]
+Option      "DynamicClocks" "on"
+EndSection</screen>
+            </example>
         </section>
         <section>
-            <info>
-                <title>Управление питанием беспроводных соединений</title>
-            </info>
+            <title>Управление питанием беспроводных соединений</title>
             <para>Карточка беспроводного соединения потребляет немалую часть энергии. Переведите их в режим сохранения энергии так, как вы сделали это с жёсткими дисками.</para>
-            <para>Примечание: В скрипте предполагается, что ваш беспроводной интерфейс - wlan0. Если в вашей системе это не так, что просто замените его на своё. </para>
-            <para>Добавьте следующую строку в /etc/conf.d/net для автоматического включения управления питанием беспроводной карты: </para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 6.2: Автоматизированное управления питанием WLAN</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>iwconfig_wlan0="power on" </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <para>Примечание: В скрипте предполагается, что ваш беспроводной интерфейс – wlan0. Если в вашей системе это не так, что просто замените его на своё. </para>
+            <para>Добавьте следующую строку в <filename>/etc/conf.d/net</filename> для автоматического включения управления питанием беспроводной карты: </para>
+            <example>
+                <title>Автоматизированное управления питанием WLAN</title>
+                <programlisting>iwconfig_wlan0="power on"</programlisting>
+            </example>
             <para>Обратитесь к man iwconfig за деталями и другими опциями такими, как интервалы между пробуждениями или настройки тайм аута. Если ваш драйвер и точка доступа поддерживает изменение частоты сигналов, то из этого можно извлечь ещё больше сохранённой энергии.</para>
         </section>
         <section>
-            <info>
-                <title>Управление питанием USB</title>
-            </info>
+            <title>Управление питанием USB</title>
             <para>Есть две проблемы с потреблением энергии USB-устройствами. Во-первых, устройства такие, как USB мыши, цифровые камеры или флэшки потребляют энергию всё время, пока подключены, вы не можете избежать этого (кроме как отключая их, когда в них нет необходимости). Во-вторых, когда USD устройство подключено, контроллер USB хоста время от времени опрашивает шину, что не даёт CPU уйти в спящий режим. Ядро предоставляет экспериментальную опцию для включение приостановления (suspend) для USB устройств посредством вызова драйвера или одного из файлов power/state в /sys.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 6.3: Включение поддержки приостановления (suspend) USB в ядре</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Device Drivers</para>
-                                <para>  USB support</para>
-                                <para>    [*]   Support for Host-side USB</para>
-                                <para>      [*]   USB suspend/resume (EXPERIMENTAL)</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Включение поддержки приостановления (suspend) USB в ядре</title>
+                <screen>Device Drivers
+  USB support
+    [*]   Support for Host-side USB
+      [*]   USB suspend/resume (EXPERIMENTAL)</screen>
+            </example>
         </section>
     </section>
-    <section>
-        <info>
-            <title>
-                <anchor xml:id="sleepstates"/>7. Состояния спячки: sleep, standby, suspend to disk</title>
-        </info>
+    <section xml:id="power-management.sleepstates" xreflabel="Состояния спячки: sleep, standby, suspend to disk">
+        <title>Состояния спячки: sleep, standby, suspend to disk</title>
         <para>Примечание переводчика: данный раздел существенно устарел. Более свежую информацию можно найти на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-wiki.com/HOWTO_Software_Suspend_v2">gentoo-wiki.com (EN)</link>. Также в русской есть короткий пересказ: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/Suspend2">gentoo-wiki.com</link>. </para>
         <para>ACPI определяет несколько состояний спячки. Основные три из них:</para>
         <orderedlist>
@@ -1284,375 +784,230 @@
         </orderedlist>
         <para>Они могут вызываться в моменты, когда компьютер не используется, но выключение не желательно из-за долгой загрузки</para>
         <section>
-            <info>
-                <title>Sleep (S3)</title>
-            </info>
+            <title>Sleep (S3)</title>
             <para>Поддержка ACPI для этих состояний спячки помечена экспериментальной, и для этого есть достаточно оснований. Возможно, состояния спячки в APM (Advanced Power Management) несколько более стабильны, но использовать APM и ACPI одновременно нельзя.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 7.1: Конфигурация ядра для включений состояний спички</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>  Power Management Options ---&gt;</para>
-                                <para>    [*]  Power Management support</para>
-                                <para>      ACPI (Advanced Configuration and Power Interface) Support ---&gt;</para>
-                                <para>        [*]  ACPI Support</para>
-                                <para>          [*]   Sleep States</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Конфигурация ядра для включений состояний спички</title>
+                <screen>  Power Management Options --->
+    [*]  Power Management support
+      ACPI (Advanced Configuration and Power Interface) Support --->
+        [*]  ACPI Support
+          [*]   Sleep States</screen>
+            </example>
             <para>Когда ядро настроено, вы можете воспользоваться скриптом hibernate-script, чтобы активировать suspend или sleep. Для начала его надо установить.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 7.2: Установка hibernate-script</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># emerge hibernate-script </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Установка hibernate-script</title>
+                <screen><prompt>#</prompt> <userinput>emerge hibernate-script</userinput></screen>
+            </example>
             <para>Необходимо некоторые настройки в /etc/hibernate. По умолчанию пакет предоставляет несколько конфигурационных файлов для каждого состояния спячки. Общие настройки помещены в common.conf; убедитесь, что этот файл правильно сконфигурирован для вашей системы.</para>
             <para>Чтобы настроить sleep, отредактируйте sysfs-ram.conf в /etc/hibernate. Опция UseSysfsPowerState mem уже выставлена правильно, но если вы хотите произвести дальнейшие настройки в этом или любом другом состоянии спячки, то не забудьте добавить их в /etc/hibernate/hibernate.conf. Комментарии и названия опций помогут вам разобраться. Если вы используете nfs или сетевые ресурсы самбы (samba shares over the network), то необходимо завершать соответствующие скрипты инициализации, чтобы избежать тайм аутов (timeouts).</para>
-            <para/>
-            <para>Примечание: Дополнительную информацию о состояниях спячки см. в man hibernate.conf </para>
+            <note>
+                <para>Дополнительную информацию о состояниях спячки см. в man hibernate.conf</para>
+            </note>
             <para>Готовы? У вас остался последний шанс сделать backup данных прежде, чем запустить следующую команду. Обратите внимание, что вам возможно потребуется нажать специальную клавишу такую, как Fn, чтобы вернутся из спячки.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 7.3: Засыпание</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># hibernate-ram </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Засыпание</title>
+                <screen><prompt>#</prompt> <userinput>hibernate-ram</userinput></screen>
+            </example>
             <para>Если вы всё ещё читаете, то, видимо, всё работает. Вы можете таким же образом настроить standby (S1), подредактировав sysfs-ram.conf и изменив UseSysfsPowerState mem на UseSysfsPowerState standby. Режимы S3 и S4 более интересны, поскольку сохраняют больше энергии. </para>
         </section>
         <section>
-            <info>
-                <title>Hibernate (S4)</title>
-            </info>
+            <title>Hibernate (S4)</title>
             <para>Эта секция посвящена hibernation. В этом режиме снимок (snapshot) работающей системы записывается на диск, перед выключением. При включении, снимок загружается и вы можете продолжать работы с момент выключения.</para>
             <para>Предупреждение: Не заменяйте устройства не поддерживающие горячую замены во время остановки. Не пытайтесь загрузить снимок на другой машине. Отключите все сетевые ФС и клиенты/серверы самбы перед засыпанием. </para>
-            <para>Существуют две различных реализации S4. Оригинальная - swsusp, и более новая tuxonice с более приятным интерфейсом (с поддержкой fbsplash). <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://tuxonice.net/features.html#compare">Сравнение их возможностей</link> вы можете найти на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.tuxonice.net/">домашней странице tuxonice</link>. There used to be Suspend-to-Disk (pmdisk), a fork of swsusp, but it has been merged back.</para>
+            <para>Существуют две различных реализации S4. Оригинальная – swsusp, и более новая tuxonice с более приятным интерфейсом (с поддержкой fbsplash). <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://tuxonice.net/features.html#compare">Сравнение их возможностей</link> вы можете найти на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.tuxonice.net/">домашней странице tuxonice</link>. There used to be Suspend-to-Disk (pmdisk), a fork of swsusp, but it has been merged back.</para>
             <para>TuxOnIce пока не включен в основную ветку ядра (mainline kernel), поэтому вам либо надо пропатчить ядро (патчи можно найти на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.tuxonice.net/">tuxonice.net</link>), либо использовать sys-kernel/tuxonice-sources.</para>
             <para>Настройки ядра и для swsusp и для TuxOnIce следующие:</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 7.4: Настройки ядра для hibernate</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Power Management Options ---&gt;</para>
-                                <para>  (hibernate with swsusp)</para>
-                                <para>  [*] Software Suspend</para>
-                                <para>      (replace /dev/SWAP with your swap partition)</para>
-                                <para>      (/dev/SWAP)      Default resume partition</para>
-                                <para/>
-                                <para>  (hibernate with TuxOnIce)</para>
-                                <para>  Enhanced Hibernation (TuxOnIce)</para>
-                                <para>    --- Image Storage (you need at least one writer)</para>
-                                <para>    [*]     File Writer</para>
-                                <para>    [*]    Swap Writer</para>
-                                <para>    ---   General Options</para>
-                                <para>    [*]    LZF image compression</para>
-                                <para>    (replace /dev/SWAP with your swap partition)</para>
-                                <para>    (swap:/dev/SWAP)   Default resume device name</para>
-                                <para>    [ ]     Allow Keep Image Mode</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Настройки ядра для hibernate</title>
+                <screen>Power Management Options --->
+  (hibernate with swsusp)
+  [*] Software Suspend
+      (replace /dev/SWAP with your swap partition)
+      (/dev/SWAP)      Default resume partition
+  (hibernate with TuxOnIce)
+  Enhanced Hibernation (TuxOnIce)
+    --- Image Storage (you need at least one writer)
+    [*]     File Writer
+    [*]    Swap Writer
+    ---   General Options
+    [*]    LZF image compression
+    (replace /dev/SWAP with your swap partition)
+    (swap:/dev/SWAP)   Default resume device name
+    [ ]     Allow Keep Image Mode</screen>
+            </example>
             <para>Настройка swsusp много проще. Если вы не вписали имя своп-раздела в настройках ядра, вы должны передать его как параметр в директиве resume=/dev/SWAP. Если загрузка невозможна из-за сломанного образа, воспользуйтесь параметром noresume. Скрипт инициализации hibernate-cleanup чистит (invalidates) образы swsusp во время загрузки.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 7.5: Чистка образов swsusp во время загрузки</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># rc-update add hibernate-cleanup boot </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para>Для активации swsusp, используйте hibernate script, установив UseSysfsPowerState disk в /etc/hibernate/sysfs-disk.</para>
+            <example>
+                <title>Чистка образов swsusp во время загрузки</title>
+                <screen><prompt>#</prompt> <userinput>rc-update add hibernate-cleanup boot</userinput></screen>
+            </example>
+            <para>Для активации swsusp, используйте hibernate script, установив UseSysfsPowerState disk в <filename>/etc/hibernate/sysfs-disk</filename>.</para>
             <para>Предупреждение: Сделайте резервную копию данных перед остановкой. Запустите sync, чтобы записать на диск всю кэшированную информацию. Вначале, попробуйте сделать это без иксов, потом в иксах, но не логинясь. </para>
             <para>Если вы наталкиваетесь на панику ядра (kernel panic) из-за uhci или подобного, попробуйте скомпилировать поддержку usb модулем и выгрузить модули из памяти перед остановкой. Соответствующая опция есть в common.conf.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 7.6: Засыпание посредством swsusp</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># nano -w /etc/hibernate/common.conf (Час X - вы сделали резерную копию?) </para>
-                                <para># hibernate </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Засыпание посредством swsusp</title>
+                <screen><prompt>#</prompt> <userinput>nano -w /etc/hibernate/common.conf</userinput>
+(Час X – вы сделали резерную копию?)
+<prompt>#</prompt> <userinput>hibernate</userinput></screen>
+            </example>
             <para>В следующей секции обсуждается установка TunOnIce, включая поддержку fbsplash для симпатичного графического индикатора прогресса во время засыпания и просыпания.</para>
-            <para>Первая часть конфигурации похожа на настройку swsusp. Если вы не вписали имя своп-раздела в настройках ядра, вы должны передать его как параметр в директиве resume=swap:/dev/SWAP. Если загрузка невозможна из-за сломанного образа, воспользуйтесь параметром noresume. Скрипт инициализации hibernate-cleanup чистит (invalidates) образы TuxOnIce во время загрузки.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 7.7: Чистка образов TuxOnIce во время загрузки</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># rc-update add hibernate-cleanup boot </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <para>Первая часть конфигурации похожа на настройку swsusp. Если вы не вписали имя своп-раздела в настройках ядра, вы должны передать его как параметр в директиве <code>resume=swap:/dev/SWAP</code>. Если загрузка невозможна из-за сломанного образа, воспользуйтесь параметром noresume. Скрипт инициализации hibernate-cleanup чистит (invalidates) образы TuxOnIce во время загрузки.</para>
+            <example>
+                <title>Чистка образов TuxOnIce во время загрузки</title>
+                <screen><prompt>#</prompt> <userinput>rc-update add hibernate-cleanup boot</userinput></screen>
+            </example>
             <para>Теперь, отредактируйте /etc/hibernate/suspend2.conf, включите опцию TuxOnIce. Не включайте fbsplash в common.conf пока.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 7.8: Засыпание посредством TuxOnIce</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># nano -w /etc/hibernate/suspend2.conf (Час X - вы сделали резерную копию?) </para>
-                                <para># hibernate </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Засыпание посредством TuxOnIce</title>
+                <screen><prompt>#</prompt> <userinput>nano -w /etc/hibernate/suspend2.conf</userinput>
+(Час X – вы сделали резерную копию?)
+<prompt>#</prompt> <userinput>hibernate</userinput></screen>
+            </example>
             <para>Настройте fbsplash, если вы не сделали этого ранее. Чтобы задействовать поддержку fbsplash во время засыпания, необходимо поставить пакет sys-apps/tuxonice-userui. Также, вам необхожимо утсановить USE-флаг fbsplash.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 7.9: Установка tuxonice-userui</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># echo "sys-apps/tuxonice-userui fbsplash" &gt;&gt; /etc/portage/package.use</para>
-                                <para>(It may be marked ~arch, so first it must be keyworded)</para>
-                                <para># echo "sys-apps/tuxonice-userui" &gt;&gt; /etc/portage/package.keywords</para>
-                                <para># emerge tuxonice-userui</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Установка tuxonice-userui</title>
+                <screen><prompt>#</prompt> <userinput>echo "sys-apps/tuxonice-userui fbsplash" &gt;&gt; /etc/portage/package.use</userinput>
+(It may be marked ~arch, so first it must be keyworded)
+<prompt>#</prompt> <userinput>echo "sys-apps/tuxonice-userui" &gt;&gt; /etc/portage/package.keywords</userinput>
+<prompt>#</prompt> <userinput>emerge tuxonice-userui</userinput></screen>
+            </example>
             <para>Ебилд попросит вас создать символическую ссылку на тему, которю вы хотите использовать. Например, чтобы использовать тему livecd-2005.1, выполните следующую команду:</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 7.10: Использование темы livecd-2005.1 во время засыпания</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># ln -sfn /etc/splash/livecd-2005.1 /etc/splash/suspend2 </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
+            <example>
+                <title>Использование темы livecd-2005.1 во время засыпания</title>
+                <screen><prompt>#</prompt> <userinput>ln -sfn /etc/splash/livecd-2005.1 /etc/splash/suspend2</userinput></screen>
+            </example>
             <para>Если вы не хотите видеть чёрный экран в первой части процесса пробуждения, добавьте tuxoniceui_fbsplash в ваш образ initrd. Если ваш образ initrd называется splash_geninitramfs и он сохранён в /boot/fbsplash-emergence-1024x768, то вам необходимо сделать буквально следующее:</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 7.11: Добавление tuxoniceui_fbsplash в образ initrd.</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># mount /boot</para>
-                                <para># mkdir ~/initrd.d</para>
-                                <para># cp /boot/fbsplash-emergence-1024x768 ~/initrd.d/</para>
-                                <para># cd ~/initrd.d</para>
-                                <para># gunzip -c fbsplash-emergence-1024x768 | cpio -idm --quiet -H newc</para>
-                                <para># rm fbsplash-emergence-1024x768</para>
-                                <para># cp /usr/sbin/tuxoniceui_fbsplash sbin/</para>
-                                <para># find . | cpio --quiet --dereference -o -H newc | gzip -9 &gt; /boot/fbsplash-tuxonice-emergence-1024x768</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para>Далее, отрихтуйте ваш grub.conf (или lilo.conf), чтоб при загрузке вашего ядра грузился обрах /boot/fbsplash-tuxonice-emergence-1024x768. Вы теперь можете попробовать холостой прогон, чтоб убедиться, что всё работает правильно.</para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <thead>
-                        <row>
-                            <entry>
-                                <para>Листинг 7.12: Тестовый запус fbsplash hibernation</para>
-                            </entry>
-                        </row>
-                    </thead>
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para># tuxoniceui_fbsplash -t </para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para>Наконец, откройте /etc/hibernate/common.conf и включите поддержку fbsplash. Запустите hibernate и наслаждайтесь!</para>
+            <example>
+                <title>Добавление tuxoniceui_fbsplash в образ initrd</title>
+                <screen><prompt>#</prompt> <userinput>mount /boot</userinput>
+<prompt>#</prompt> <userinput>mkdir ~/initrd.d</userinput>
+<prompt>#</prompt> <userinput>cp /boot/fbsplash-emergence-1024x768 ~/initrd.d/</userinput>
+<prompt>#</prompt> <userinput>cd ~/initrd.d</userinput>
+<prompt>#</prompt> <userinput>gunzip -c fbsplash-emergence-1024x768 | cpio -idm --quiet -H newc</userinput>
+<prompt>#</prompt> <userinput>rm fbsplash-emergence-1024x768</userinput>
+<prompt>#</prompt> <userinput>cp /usr/sbin/tuxoniceui_fbsplash sbin/</userinput>
+<prompt>#</prompt> <userinput>find . | cpio --quiet --dereference -o -H newc | gzip -9 &gt; /boot/fbsplash-tuxonice-emergence-1024x768</userinput></screen>
+            </example>
+            <para>Далее, отрихтуйте ваш <filename>grub.conf</filename> (или <filename>lilo.conf</filename>), чтоб при загрузке вашего ядра грузился образ <filename>/boot/fbsplash-tuxonice-emergence-1024x768</filename>. Вы теперь можете попробовать холостой прогон, чтоб убедиться, что всё работает правильно.</para>
+            <example>
+                <title>Тестовый запус fbsplash hibernation</title>
+                <screen><prompt>#</prompt> <userinput>tuxoniceui_fbsplash -t</userinput></screen>
+            </example>
+            <para>Наконец, откройте <filename>/etc/hibernate/common.conf</filename> и включите поддержку fbsplash. Запустите hibernate и наслаждайтесь!</para>
         </section>
     </section>
-    <section>
-        <info>
-            <title>
-                <anchor xml:id="troubleshooting"/>8. Устранение неполадок</title>
-        </info>
-        <para>В: Я пытаюсь изменить частоту ЦПУ, но /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor не существует.</para>
-        <para>О: Убедитесь, что ваш процессор поддерживает изменение частоты и выберите правильный CPUFreq драйвер для вашего процессора. Список процессоров, поддерживающих изменение частоты (ядро 2.6.7): ARM Integrator, ARM-SA1100, ARM-SA1110, AMD Elan - SC400, SC410, AMD mobile K6-2+, AMD mobile K6-3+, AMD mobile Duron, AMD mobile Athlon, AMD Opteron, AMD Athlon 64, Cyrix Media GXm, Intel mobile PIII и Intel mobile PIII-M на определённых чипсетах, Intel Pentium 4, Intel Xeon, Intel Pentium M (Centrino), National Semiconductors Geode GX, Transmeta Crusoe, VIA Cyrix 3 / C3, UltraSPARC-III, SuperH SH-3, SH-4, некоторые "PowerBook" и "iBook2" и различные процессоры на совместимых с ACPI 2.0 системах (только если "ACPI Processor Performance States" доступно через интерфейс ACPI/BIOS).</para>
-        <para/>
-        <para>В: Мой ноутбук поддерживает изменение частоты, но директория /sys/devices/system/cpu/cpu0/cpufreq/ пуста.</para>
-        <para>О: Поищите связанные с ACPI ошибки в dmesg | grep ACPI. Попробуйте обновить BIOS, особенно, если обнаружены проблемы в DSDT. Вы также можете попробовать исправить это самостоятельно (что выходит за рамки этого руководства).</para>
-        <para/>
-        <para>В: Мой ноутбук поддерживает изменение частоты, но согласно /proc/cpuinfo частота никогда не изменяется.</para>
-        <para>О: Возможно, вы включили поддержку симметричной мультипроцессорной обработки (symmetric multiprocessing support) (CONFIG_SMP) в вашем ядре. Попробуйте отключить её, всё должно заработать. Также это может быть багом старых ядер. В таком случае выполните emerge x86info, обновите ваше ядро как требуется и проверьте текущую частоту через x86info -mhz.</para>
-        <para/>
-        <para>В: Я могу изменять частоты, но выбор не так широк, как на другой ОС.</para>
-        <para>О: Вы можете совместить изменение частоты с "торможением" через ACPI (ACPI throttling), чтобы добиться более низких частот. Но стоит понимать, что это не даст большого прироста в сохранении энергии и создана, по большой части, для температурного регулирования (чтобы ноутбук был холодным и тихим). Вы можете просмотреть текущее состояние "торможения" командой cat /proc/acpi/processor/CPU/throttling и изменить его, выполнив echo -n "0:x" &gt; /proc/acpi/processor/CPU/limit, где x - одно из возможных состояний, перечислены в /proc/acpi/processor/CPU/throttling.</para>
-        <para/>
-        <para>В: При конфигурировании ядра пункты powersave governor, performance governor и userspace governor есть, а ondemand governor отсутствует. В чём проблема? </para>
-        <para>О: Пункт ondemand governor появился только в последних версиях ядра. Попробуйте обновить его.</para>
-        <para/>
-        <para>В: Время жизни от батареи стало меньше, чем было.</para>
-        <para>О: Проверьте настройки BIOS. Возможно, вы забыли заново включить какие-то опции.</para>
-        <para/>
-        <para>В: Моя батарея заряжена, но КДЕ сообщает, что осталось 0%, и тут же выключается.</para>
-        <para>О: Убедитесь, что поддержка батареи выключена в вашем ядре. Если она скомпилирована модулем, то не забудьте загрузить его.</para>
-        <para/>
-        <para>В: Моя система журналирования (system logger) пишет что-то, типа "logger: ACPI group battery / action battery is not defined".</para>
-        <para>О: Это сообщение генерирует скрипт /etc/acpi/default.sh, которые прилагается к acpid. Вы можете просто игнорировать его. Если же вы всё-таки хотите его унять, закомментируйте соответствующую строку в /etc/acpi/default.sh как показано ниже: </para>
-        <informaltable frame="all">
-            <tgroup cols="1">
-                <thead>
-                    <row>
-                        <entry>
-                            <para>Листинг 8.1: Отключение предупреждения о событиях ACPI</para>
-                        </entry>
-                    </row>
-                </thead>
-                <tbody>
-                    <row>
-                        <entry>
-                            <para>*) # logger "ACPI action $action is not defined" </para>
-                        </entry>
-                    </row>
-                </tbody>
-            </tgroup>
-        </informaltable>
-        <para/>
-        <para>В: У меня Dell Inspiron 51XX, и я не получаю никаких ACPI-событий</para>
-        <para>О: Скорее всего, это баг ядра. Прочтите <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://bugme.osdl.org/show_bug.cgi?id=1752">это</link>.</para>
-        <para/>
-        <para>В: Я включил DynamicClocks в xorg.conf и теперь X.org рушится / экран остаётся чёрным / мой ноутбук не выключается корректно.</para>
-        <para>О: Такое бывает на некоторых системах. Вам придётся отключить DynamicClocks.</para>
-        <para/>
-        <para>В: Я хочу использовать TuxOnIce, но он говорит, что моя своп - партиция слишком маленькая. Изменение её размеров - не вариант.</para>
-        <para>О: Если в вашей системе достаточно свободного места, то вы можете использовать запись в файл, вместо запись в своп. Такой вариант поддерживается hibernate-script. Дополнительную информацию вы можете найти в /usr/src/linux/Documentation/power/tuxonice.txt.</para>
-        <para/>
-        <para>В: Я только купил новую фирмешную батарею, но она кончается за несколько минут. Что я делаю не так?</para>
-        <para>О: Для начала, следуйте инструкция производителя, как зарядить батарею правильно. </para>
-        <para>В: Выше написанное не помогло, что делать теперь?</para>
-        <para>О: Некоторые батареи продаются как "новые", но на самом деле уже не новы. Попробуйте следующее: </para>
-        <informaltable frame="all">
-            <tgroup cols="1">
-                <thead>
-                    <row>
-                        <entry>
-                            <para>Листинг 8.2: Запрос состояния батареи</para>
-                        </entry>
-                    </row>
-                </thead>
-                <tbody>
-                    <row>
-                        <entry>
-                            <para>$ grep capacity /proc/acpi/battery/BAT0/info</para>
-                            <para>design capacity:     47520 mWh</para>
-                            <para>last full capacity:  41830 mWh</para>
-                        </entry>
-                    </row>
-                </tbody>
-            </tgroup>
-        </informaltable>
-        <para>Если "last full capacity" кардинально отличается от design capacity, ваше батарея, скорее всего, неисправна. Попробуйте потребовать гарантию. </para>
-        <para/>
-        <para>В: Моя проблема не перечислена выше. Что мне делать теперь?</para>
-        <para>О: Не бойтесь связаться со мной, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:earthwings@gentoo.org">Dennis Nienhüser</link>, напрямую. Также вам, наверняка, помогут на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/">Форумах Gentoo</link>. Если вы предпочитается IRC, заходите в канал #gentoo-laptop на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="irc://irc.freenode.net">irc.freenode.net</link>
-        </para>
-        <para/>
-        <para>Замечания к переводу: Не удалось найти хороший перевод слову governor. Хороший означает, что оно не слишком общо (как, например, драйвер), ну и подходит по смыслу ;) . Поэтому в тексте используется слово властелин, формально подходящее под условия, но слишком уж не формальное. </para>
-        <para/>
-    </section>
+    <section xml:id="power-management.troubleshooting" xreflabel="Устранение неполадок"><title>Устранение неполадок</title>
+        <qandaset>
+            <qandaentry>
+                <question>
+                    <para>Я пытаюсь изменить частоту ЦПУ, но <filename>/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor</filename> не существует.</para>
+                </question>
+                <answer>
+                    <para>Убедитесь, что ваш процессор поддерживает изменение частоты и выберите правильный CPUFreq драйвер для вашего процессора. Список процессоров, поддерживающих изменение частоты (ядро 2.6.7): ARM Integrator, ARM-SA1100, ARM-SA1110, AMD Elan – SC400, SC410, AMD mobile K6-2+, AMD mobile K6-3+, AMD mobile Duron, AMD mobile Athlon, AMD Opteron, AMD Athlon 64, Cyrix Media GXm, Intel mobile PIII и Intel mobile PIII-M на определённых чипсетах, Intel Pentium 4, Intel Xeon, Intel Pentium M (Centrino), National Semiconductors Geode GX, Transmeta Crusoe, VIA Cyrix 3 / C3, UltraSPARC-III, SuperH SH-3, SH-4, некоторые "PowerBook" и "iBook2" и различные процессоры на совместимых с ACPI 2.0 системах (только если "ACPI Processor Performance States" доступно через интерфейс ACPI/BIOS).</para>
+                </answer>
+            </qandaentry>
+            <qandaentry>
+                <question>
+                    <para>Мой ноутбук поддерживает изменение частоты, но директория <filename>/sys/devices/system/cpu/cpu0/cpufreq/</filename> пуста.</para>
+                </question>
+                <answer>
+                    <para>Поищите связанные с ACPI ошибки в <command>dmesg | grep ACPI</command>. Попробуйте обновить BIOS, особенно, если обнаружены проблемы в DSDT. Вы также можете попробовать исправить это самостоятельно (что выходит за рамки этого руководства).</para>
+                </answer>
+            </qandaentry><qandaentry>
+                <question>
+                    <para>Мой ноутбук поддерживает изменение частоты, но согласно <filename>/proc/cpuinfo</filename> частота никогда не изменяется.</para>
+                </question>
+                <answer>
+                    <para>Возможно, вы включили поддержку симметричной мультипроцессорной обработки (symmetric multiprocessing support) (CONFIG_SMP) в вашем ядре. Попробуйте отключить её, всё должно заработать. Также это может быть багом старых ядер. В таком случае выполните <command>emerge x86info</command>, обновите ваше ядро как требуется и проверьте текущую частоту через <command>x86info -mhz</command>.</para>
+                </answer>
+            </qandaentry><qandaentry>
+                <question>
+                    <para>Я могу изменять частоты, но выбор не так широк, как на другой ОС.</para>
+                </question>
+                <answer>
+                    <para>Вы можете совместить изменение частоты с "торможением" через ACPI (ACPI throttling), чтобы добиться более низких частот. Но стоит понимать, что это не даст большого прироста в сохранении энергии и создана, по большой части, для температурного регулирования (чтобы ноутбук был холодным и тихим). Вы можете просмотреть текущее состояние "торможения" командой <command>cat /proc/acpi/processor/CPU/throttling</command> и изменить его, выполнив <command>echo -n "0:<replaceable>x</replaceable>" &gt; /proc/acpi/processor/CPU/limit</command>, где <varname>x</varname> – одно из возможных состояний, перечислены в <filename>/proc/acpi/processor/CPU/throttling</filename>.</para>
+                </answer>
+            </qandaentry><qandaentry>
+                <question>
+                    <para>При конфигурировании ядра пункты powersave governor, performance governor и userspace governor есть, а ondemand governor отсутствует. В чём проблема? </para>
+                </question>
+                <answer>
+                    <para>Пункт ondemand governor появился только в последних версиях ядра. Попробуйте обновить его.</para>
+                </answer>
+            </qandaentry><qandaentry>
+                <question>
+                    <para>Время жизни от батареи стало меньше, чем было.</para>
+                </question>
+                <answer>
+                    <para>Проверьте настройки BIOS. Возможно, вы забыли заново включить какие-то опции.</para>
+                </answer>
+            </qandaentry><qandaentry>
+                <question>
+                    <para>Моя батарея заряжена, но КДЕ сообщает, что осталось 0%, и тут же выключается.</para>
+                </question>
+                <answer>
+                    <para>Убедитесь, что поддержка батареи выключена в вашем ядре. Если она скомпилирована модулем, то не забудьте загрузить его.</para>
+                </answer>
+            </qandaentry><qandaentry>
+                <question>
+                    <para>Моя система журналирования (system logger) пишет что-то, типа "logger: ACPI group battery / action battery is not defined".</para>
+                </question>
+                <answer>
+                    <para>Это сообщение генерирует скрипт <filename>/etc/acpi/default.sh</filename>, которые прилагается к acpid. Вы можете просто игнорировать его. Если же вы всё-таки хотите его унять, закомментируйте соответствующую строку в <filename>/etc/acpi/default.sh</filename> как показано ниже: </para>
+                    <example>
+                        <title>Отключение предупреждения о событиях ACPI</title>
+                        <programlisting>*)      # logger "ACPI action $action is not defined"</programlisting>
+                    </example>
+                </answer>
+            </qandaentry>
+            <qandaentry>
+                <question>
+                    <para>У меня Dell Inspiron 51XX, и я не получаю никаких ACPI-событий</para>
+                </question>
+                <answer>
+                    <para>Скорее всего, это баг ядра. Прочтите <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://bugme.osdl.org/show_bug.cgi?id=1752">это</link>.</para>
+                </answer>
+            </qandaentry><qandaentry>
+                <question>
+                    <para>Я включил DynamicClocks в xorg.conf и теперь X.org рушится / экран остаётся чёрным / мой ноутбук не выключается корректно.</para>
+                </question>
+                <answer>
+                    <para>Такое бывает на некоторых системах. Вам придётся отключить DynamicClocks.</para>
+                </answer>
+            </qandaentry><qandaentry>
+                <question>
+                    <para>В: Я хочу использовать TuxOnIce, но он говорит, что моя своп – партиция слишком маленькая. Изменение её размеров – не вариант.</para>
+                </question>
+                <answer>
+                    <para>О: Если в вашей системе достаточно свободного места, то вы можете использовать запись в файл, вместо запись в своп. Такой вариант поддерживается hibernate-script. Дополнительную информацию вы можете найти в <filename>/usr/src/linux/Documentation/power/tuxonice.txt</filename>.</para>
+                </answer>
+            </qandaentry><qandaentry>
+                <question>
+                    <para>В: Я только купил новую фирмешную батарею, но она кончается за несколько минут. Что я делаю не так?</para>
+                </question>
+                <answer>
+                    <para>О: Для начала, следуйте инструкция производителя, как зарядить батарею правильно.</para>
+                </answer>
+            </qandaentry><qandaentry>
+                <question>
+                    <para>В: Выше написанное не помогло, что делать теперь?</para>
+                </question>
+                <answer>
+                    <para>О: Некоторые батареи продаются как "новые", но на самом деле уже не новы. Попробуйте следующее:</para>
+                    <example>
+                        <title>Запрос состояния батареи</title>
+                        <screen><prompt>$</prompt> <userinput>grep capacity /proc/acpi/battery/BAT0/info</userinput>
+design capacity:     47520 mWh
+last full capacity:  41830 mWh</screen>
+                    </example>
+                    <para>Если "last full capacity" кардинально отличается от design capacity, ваше батарея, скорее всего, неисправна. Попробуйте потребовать гарантию. </para>
+                </answer>
+            </qandaentry><qandaentry>
+                <question>
+                    <para>В: Моя проблема не перечислена выше. Что мне делать теперь?</para>
+                </question>
+                <answer>
+                    <para>О: Не бойтесь связаться со мной, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:earthwings@gentoo.org">Dennis Nienhüser</link>, напрямую. Также вам, наверняка, помогут на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/">Форумах Gentoo</link>. Если вы предпочитается IRC, заходите в канал #gentoo-laptop на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="irc://irc.freenode.net">irc.freenode.net</link></para>
+                </answer>
+            </qandaentry></qandaset><para><emphasis role="italic">Замечания к переводу:</emphasis> Не удалось найти хороший перевод слову governor. Хороший означает, что оно не слишком общо (как, например, драйвер), ну и подходит по смыслу ;) . Поэтому в тексте используется слово властелин, формально подходящее под условия, но слишком уж не формальное. </para></section>
 </article>

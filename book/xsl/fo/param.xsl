@@ -109,7 +109,7 @@ set       toc,title
   <!-- Just in case some other (future-version?) template refers to
        ulink.hyphenate, which is used in the original DocBook stylesheets: -->
   <xsl:param name="ulink.hyphenate"           select="$special-hyph.char"/>
-
+  <xsl:param name="hyphenate.verbatim"        select="1"/>
   <!-- A convenience parameter: -->
   <xsl:param name="digits" select="'0123456789'"/>
 
@@ -161,6 +161,8 @@ set       toc,title
   <xsl:attribute-set name="monospace.verbatim.properties">
     <!-- in default: uses verbatim.properties and monospace.properties, text-align=start -->
     <xsl:attribute name="font-size">0.9em</xsl:attribute>
+    <xsl:attribute name="wrap-option">wrap</xsl:attribute>
+    <xsl:attribute name="hyphenation-character">►</xsl:attribute>
   </xsl:attribute-set>
 
   <xsl:attribute-set name="shade.verbatim.style">

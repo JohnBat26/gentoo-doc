@@ -217,9 +217,12 @@
 <para/>
 <para/>
 <para/>
-<para/></section><section><info><title>Тюнинг настроек программ из семейства Mozilla</title></info>Тюнинг настроек программ из семейства Mozill<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/Тюнинг_настроек_программ_из_семейства_Mozilla">http://ru.gentoo-wiki.com/Тюнинг настроек программ из семейства Mozilla</link>
-</para>
-<para>С версии: 1.5</para>
+<para/>
+</section>
+        <section>
+                <info><title>Тюнинг настроек программ из семейства Mozilla</title></info>
+                <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/Тюнинг_настроек_программ_из_семейства_Mozilla">http://ru.gentoo-wiki.com/Тюнинг настроек программ из семейства Mozilla</link></para>
+        <para>С версии: 1.5</para>
 <para/><section><info><title>Navigator(Seamonkey/Firefox)</title></info>
 <para>Браузеры семейства Mozilla имеют большое количество настроек, все из которых легко доступны, если набрать в строке адреса вместо URL строку 'about:config'. Следующие пять настроек позволят ускорить загрузку страниц: </para>
 <orderedlist>

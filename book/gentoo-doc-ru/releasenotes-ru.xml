@@ -21,10 +21,10 @@
 			</itemizedlist>
 		</listitem>
 		<listitem>
-			<para>Добавлен перевод Power Management Guide: Управление питанием компьютера (автор перевода: vah).</para>
+		    <para>Добавлен перевод Power Management Guide: <xref xlink:href="#power-management"/> (автор перевода: vah).</para>
 		</listitem>
 		<listitem>
-			<para>Добавлена статья: <link xlink:href="#">Использование rpm-пакетов в Gentoo</link> (автор: MooSe).</para>
+		    <para>Добавлена статья: <xref xlink:href="#gentoo-rpm"/> (автор: MooSe).</para>
 		</listitem>
 		<listitem>
 			<para>Добавлена статья: <link xlink:href="#">Настройка спутникового интернета в Gentoo</link> (автор:tuxmaster).</para>
