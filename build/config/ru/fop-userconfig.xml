@@ -77,6 +77,26 @@
 	      embed-url="fonts/couri.ttf">
           <font-triplet name="Courier" style="italic" weight="normal"/>
         </font>
+
+
+	<font metrics-url="fonts/LiberationMono-Regular.xml" kerning="yes"
+	      embed-url="fonts/LiberationMono-Regular.ttf">
+          <font-triplet name="LiberationMono" style="normal" weight="normal"/>
+        </font>
+	<font metrics-url="fonts/LiberationMono-Bold.xml" kerning="yes"
+	      embed-url="fonts/LiberationMono-Bold.ttf">
+          <font-triplet name="LiberationMono" style="normal" weight="bold"/>
+        </font>
+	<font metrics-url="fonts/LiberationMono-BoldItalic.xml" kerning="yes"
+	      embed-url="fonts/LiberationMono-BoldItalic.ttf">
+          <font-triplet name="LiberationMono" style="italic" weight="bold"/>
+        </font>
+	<font metrics-url="fonts/LiberationMono-Italic.xml" kerning="yes"
+	      embed-url="fonts/LiberationMono-Italic.ttf">
+          <font-triplet name="LiberationMono" style="italic" weight="normal"/>
+        </font>
+
+
       </fonts>
 
     </renderer>
