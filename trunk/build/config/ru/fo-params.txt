@@ -14,7 +14,7 @@
 
 body.font.family=Times
 title.font.family=Verdana
-monospace.font.family=Courier
+monospace.font.family=LiberationMono
 symbol.font.family=Symbol,ZapfDingbats
 dingbat.font.family=Times
 sans.font.family=Verdana

@@ -145,7 +145,10 @@ set       toc,title
     <xsl:attribute name="font-family">
       <xsl:value-of select="$monospace.font.family"/>
     </xsl:attribute>
-    <xsl:attribute name="font-size">0.97em</xsl:attribute>
+    <xsl:attribute name="font-size">
+        <xsl:value-of select="$body.font.master * 0.8"/>
+        <xsl:text>pt</xsl:text>
+    </xsl:attribute>
   </xsl:attribute-set>
 
   <xsl:attribute-set name="verbatim.properties">
@@ -160,7 +163,6 @@ set       toc,title
 
   <xsl:attribute-set name="monospace.verbatim.properties">
     <!-- in default: uses verbatim.properties and monospace.properties, text-align=start -->
-    <xsl:attribute name="font-size">0.9em</xsl:attribute>
     <xsl:attribute name="wrap-option">wrap</xsl:attribute>
     <xsl:attribute name="hyphenation-character">►</xsl:attribute>
   </xsl:attribute-set>
@@ -184,13 +186,26 @@ set       toc,title
 
 
   <xsl:attribute-set name="table.cell.padding">
-    <xsl:attribute name="padding-left">4pt</xsl:attribute>
-    <xsl:attribute name="padding-right">4pt</xsl:attribute>
-    <xsl:attribute name="padding-top">4pt</xsl:attribute>
-    <xsl:attribute name="padding-bottom">4pt</xsl:attribute>
+    <xsl:attribute name="padding-left">2pt</xsl:attribute>
+    <xsl:attribute name="padding-right">2pt</xsl:attribute>
+    <xsl:attribute name="padding-top">2pt</xsl:attribute>
+    <xsl:attribute name="padding-bottom">2pt</xsl:attribute>
   </xsl:attribute-set>
 
 
+  <xsl:template name="table.cell.block.properties">
+      <!-- inherited from standard xsl -->
+      <xsl:if test="ancestor::thead or ancestor::tfoot">
+            <xsl:attribute name="font-weight">bold</xsl:attribute>
+      </xsl:if>
+        
+      <!-- custom -->
+      <xsl:attribute name="font-size">
+          <xsl:value-of select="$body.font.master * 0.9"/>
+          <xsl:text>pt</xsl:text>
+      </xsl:attribute>
+  </xsl:template>
+    
   <!-- CHAPTER TITLE PROPERTIES - attribute sets created by us -->
 
   <!-- The label is the line just before the title, e.g. "Chapter 9".

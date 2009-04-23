@@ -171,7 +171,8 @@ fi                </programlisting>
             <para>Запустите команду выше и отключите ноутбук от питания. Затем снова подключите его. Вы должны увидеть что-то такое:</para>
             <example>
                 <title>Определение ACPI-событий для изменения источника питания</title>
-                <screen>[Tue Sep 20 17:39:06 2015] received event "ac_adapter AC 00000080 00000000" [Tue Sep 20 17:39:06 2015] received event "battery BAT0 00000080 00000001"</screen>
+                <screen>[Tue Sep 20 17:39:06 2015] received event "ac_adapter AC 00000080 00000000"
+[Tue Sep 20 17:39:06 2015] received event "battery BAT0 00000080 00000001"</screen>
             </example>
             <para>Интересующая часть – строки, заключенные в кавычки, после received event. Они должны совпадать с теми, что используются в файле ниже. Не беспокойтесь, если ваша система выдает много событий или всегда одни и те же. Пока хоть какое-нибудь событие генерируется, переключение уровней будет работать. </para>
             <example>
@@ -237,7 +238,8 @@ analyzing CPU 0:
   current policy: frequency should be within 924 MHz and 1.40 GHz.
     The governor "performance" may decide which speed to use
     within this range.
-  current CPU frequency is 1.40 GHz. governor "conservative" may decide which  speed to use within this range. 
+  current CPU frequency is 1.40 GHz. governor "conservative" may decide which
+    speed to use within this range. 
  current CPU frequency is 1.60 GHz.</screen>
             </example>
             <para>Теперь, поиграйтесь с <command>cpufreq-set</command>, чтобы убедиться в работоспособности переключение частоты. Например, выполните <command>cpufreq-set -g ondemand</command>, чтобы активировать "требовательного" властелина, и проверьте изменение с помощью cpufreq-info. Если не работает как надо, вы можете попробовать найти причину в <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://iandmyfriendgentoo.blogspot.com/2007/12/blog-post_12.html#troubleshooting">Устранении неполадок</link> в конце этого руководства.</para>
@@ -247,7 +249,7 @@ analyzing CPU 0:
             <para>Сказанное, конечно, прекрасно, но не очень применимо в реальной жизни. Лучше поручить вашей системе автоматически подбирать подходящую частоту. Есть много способов сделать это. Следующая таблица даёт общее представление о них и поможет вам выбрать необходимый. Их можно не совсем точно разделить на три типа: ядро – для методов нуждающихся только в поддержке ядра, демон – для запускающихся в фоне программ и графический – для программ, которые предоставляют графический интерфейс для простой настройки.</para>
             <informaltable frame="all">
                 <tgroup cols="6">
-                    <colspec colname="c1" colwidth="1*"/>
+                    <colspec colname="c1" colwidth="1.5*"/>
                     <colspec colname="c2" colwidth="1*"/>
                     <colspec colname="c3" colwidth="1*"/>
                     <colspec colname="c4" colwidth="1*"/>
