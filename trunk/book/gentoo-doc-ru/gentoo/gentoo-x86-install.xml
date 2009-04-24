@@ -1,324 +1,180 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
-        xml:id="gentoo-x86-install">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="gentoo-x86-install">
+    <info>
+        <title>Краткое руководство по установке Gentoo Linux x86</title>
+    </info>
+    <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/gentoo-x86-quickinstall.xml">http://www.gentoo.org/doc/ru/gentoo-x86-quickinstall.xml</link>
+    </para>
+    <para>C версии: 1.0</para>
+    <section>
         <info>
-            <title>Краткое руководство по установке Gentoo Linux x86</title>
+            <title>Установочный диск</title>
         </info>
-        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/gentoo-x86-quickinstall.xml">http://www.gentoo.org/doc/ru/gentoo-x86-quickinstall.xml</link>
-        </para>
-        <para>C версии: 1.0</para>
+        <para>Скачайте компакт-диск с одного из наших зеркал. ISO-образы находятся в каталогах: <filename>releases/<replaceable>&lt;архитектура&gt;</replaceable>/<replaceable>&lt;выпуск&gt;</replaceable>/<replaceable>установочный-диск</replaceable></filename>. Минимальный установочный диск подходит только для установки из интернета; с универсального диска также возможна установка без обращения к сети. </para>
+        <para>Запишите компакт-диск, затем загрузитесь с него. В загрузочном окне нажмите <keycap>F2</keycap>, чтобы выяснить, какие варианты загрузки предлагаются. Если вам нужна поддержка PCMCIA, сразу после загрузки потребуется запустить сценарий инициализации pcmcia. </para>
+        <para>Установочные диски позволяют запускать сервер sshd, добавлять новых пользователей, запускать irssi (консольный чат-клиент) и просматривать веб-страницы с помощью lynx или links2. </para>
+    </section>
+    <section>
+        <info>
+            <title>Настройка сети</title>
+        </info>
+        <para>Если ваша сеть еще не работает, для ее настройки можно использовать <command>net-setup</command>. Перед настройкой вам может потребоваться загрузить поддержку свой сетевой платы с помощью modprobe. Если у вас ADSL, используйте <command>adsl-setup</command> и <command>adsl-start</command>. Для поддержки PPTP, сначала отредактируйте <filename>/etc/ppp/chap-secrets</filename> и <filename>/etc/ppp/options.pptp</filename>, а затем запустите <command>pptp <replaceable>&lt;ip сервера&gt;</replaceable></command>. </para>
+        <para>При беспроводном доступе для установки параметров соединения используйте <command>iwconfig</command>, а затем либо опять <command>net-setup</command>, либо запустите вручную <command>ifconfig</command>, <command>dhcpcd</command> и/или <command>route</command>. </para>
+        <para>Если вы находитесь за прокси-сервером, не забудьте инициализировать систему с помощью export <envar>http_proxy</envar>, <envar>ftp_proxy</envar> и <envar>RSYNC_PROXY</envar>. </para>
+    </section>
+    <section>
+        <info>
+            <title>Подготовка дисков</title>
+        </info>
+        <para>Для организации разделов запустите <command>fdisk</command> или <command>cfdisk</command>. Вам нужен хотя бы раздел подкачки (тип 82) и один раздел Linux (тип 83). </para>
+        <para>Для создания файловых систем на своих Linux-разделах используйте <command>mke2fs</command>, <command>mke2fs -j</command>, <command>mkreiserfs</command>, <command>mkfs.xfs</command>, <command>mkfs.jfs</command>. Подготовьте свой раздел подкачки командами <command>mkswap</command> и <command>swapon</command>. </para>
+        <para>Смонтируйте свеже созданные файловые системы в <filename>/mnt/gentoo</filename>. Создайте каталоги для других точек монтирования (например, <filename>/mnt/gentoo/boot</filename>), если они вам нужны. </para>
+    </section>
+    <section>
+        <info>
+            <title>Установка стадии</title>
+        </info>
+        <para>Прежде всего, установите верную дату командой <command>date <replaceable>MMDDhhmmYYYY</replaceable></command>. Далее скачайте файл стадии с одного из наших зеркал или используйте находящийся на установочном диске (в <filename>/mnt/cdrom/stages</filename>). Перейдите в <filename>/mnt/gentoo</filename> и распакуйте стадию командой <command>tar -xvjpf <replaceable>&lt;архив стадии&gt;</replaceable></command>. </para>
+        <para>В случае установки без сети установите снимок портежей: перейдите в <filename>/mnt/gentoo/usr</filename> и запустите <command>tar -xvjf /mnt/cdrom/snapshots/<replaceable>&lt;файл снимка&gt;</replaceable></command>. Другие пользователи таким же образом могут скачать снимок портежей и установить его. </para>
+        <para>При установке без сети, скопируйте файлы исходников из <filename>/mnt/cdrom/distfiles/</filename> в <filename>/mnt/gentoo/usr/portage/distfiles/</filename>. </para>
+        <para>Отредактируйте <filename>/mnt/gentoo/etc/make.conf</filename> под ваши нужды (флаги <envar>USE</envar>, <envar>CFLAGS</envar> и <envar>CXXFLAGS</envar>). Для этого можно использовать редактор nano. </para>
+    </section>
+    <section>
+        <info>
+            <title>Установка базовой системы Gentoo</title>
+        </info>
+        <para>Сначала смонтируйте файловую систему <filename>/proc</filename>, скопируйте файл /etc/resolv.conf поверх существующего, а затем смените корневой каталог (chroot) на свою среду Gentoo. </para>
+        <example>
+            <title>Подготовка и смена корневого каталога</title>
+            <screen><prompt>#</prompt> <userinput>cp /etc/resolv.conf /mnt/gentoo/etc/</userinput>
+<prompt>#</prompt> <userinput>chroot /mnt/gentoo /bin/bash</userinput>
+<prompt>#</prompt> <userinput>env-update &amp;&amp; source /etc/profile</userinput></screen>
+        </example>
+        <para>Если вы не выполняете бессетевую установку, командой <command>emerge --sync</command> обновите свое дерево портежей. </para>
+        <para>Далее убедитесь, что <filename>/etc/make.profile</filename> указывает на верный профиль. Профиль по умолчанию должен подойти большинству пользователей; имеются подпрофили для различных ядер (например, 2.4/ для профилей, основанных на ядре 2.4). Изменяйте профиль командой <command>ln -sfn</command>. </para>
+        <para>Самогенерация системы (не выполняется при бессетевой установке) запускается сценарием <command>scripts/bootstrap.sh</command> в каталоге <filename>/usr/portage</filename>. </para>
+        <para>Установка системы (не выполняется при бессетевой установке) запускается командой <command>emerge -e system</command> (или <option>-N</option>, если вы не меняли значения <envar>CFLAGS</envar>/<envar>CXXFLAGS</envar> по умолчанию). </para>
+    </section>
+    <section>
+        <info>
+            <title>Настройка ядра</title>
+        </info>
+        <para>Установите сведения о своем часовом поясе, сменив символьную ссылку <filename>/etc/localtime</filename> на указывающую на верное место в <filename>/usr/share/zoneinfo</filename> командой <command>ln -sf</command>. </para>
+        <para>Установите исходный код ядра (при установке без сети доступны gentoo-sources и vanilla-sources) и настройте его с помощью <command>make menuconfig</command>, затем <command>make &amp;&amp; make modules_install</command> внутри каталога <filename>/usr/src/linux</filename>. Скопируйте файл <filename>arch/i386/boot/bzImage</filename> в <filename>/boot</filename>, заменяя существующий. Также можно выполнить <command>emerge genkernel</command> и <command>genkernel all</command>. </para>
+        <para>Пользователям, использующим Genkernel, потребуется выполнить <command>emerge coldplug</command> и <command>rc-update add coldplug default</command>. </para>
+    </section>
+    <section>
+        <info>
+            <title>Настройка системы</title>
+        </info>
+        <para>Отредактируйте свой <filename>/etc/fstab</filename>; пример показан ниже. </para>
+        <example>
+            <title>Пример файла fstab</title>
+            <programlisting>/dev/hda1           /boot        ext2    defaults,noatime       1 2
+/dev/hda2           none         swap    sw                     0 0
+/dev/hda3           /            ext3    noatime                0 1
+none                /proc        proc    defaults               0 0
+none                /dev/shm     tmpfs   nodev,nosuid,noexec    0 0
+/dev/cdroms/cdrom0  /mnt/cdrom   auto    noauto,user            0 0</programlisting>
+        </example>
+        <para>Для настройки своей сети отредактируйте <filename>/etc/conf.d/hostname</filename> и <filename>/etc/conf.d/domainname</filename>, запустите <command>rc-update add domainname default</command>, затем отредактируйте <filename>/etc/conf.d/net</filename>. Добавьте сценарий инициализации net.eth0 к уровню запуска по умолчанию (default run level). Если у вас несколько сетевых карт (NIC), поместите символьные ссылки на них в сценарий инициализации net.eth0, и также добавьте их в уровень запуска по умолчанию. </para>
+        <para>Отредактируйте <filename>/etc/hosts</filename>; примеры приведены ниже: </para>
+        <example>
+            <title>Примеры файла <filename>/etc/hosts</filename></title>
+            <programlisting>(Для статических IP-адресов)
+127.0.0.1     localhost
+192.168.0.5   jenny.homenetwork jenny
+192.168.0.6   benny.homenetwork benny
+192.168.0.7   tux.homenetwork tux
+(Для динамических IP-адресов)
+127.0.0.1     localhost.homenetwork tux localhost</programlisting>
+        </example>
+        <para>При необходимости установите (<command>emerge</command>) pcmcia-cs и добавьте его в уровень запуска по умолчанию. </para>
+        <para>Установите пароль root с помощью passwd. </para>
+        <para>Выполните необходимую настройку в файлах: <filename>/etc/rc.conf</filename>, <filename>/etc/conf.d/rc</filename>, <filename>/etc/conf.d/keymaps</filename>, <filename>/etc/conf.d/clock</filename>. </para>
+    </section>
+    <section>
+        <info>
+            <title>Установка системных утилит</title>
+        </info>
+        <para>Пользователям ядра 2.4 нужно запустить <filename>emerge --unmerge udev</filename> и <filename>emerge devfsd</filename>. </para>
+        <para>Установите системный журнал, например syslog-ng, и добавьте его в уровень запуска по умолчанию. Сделайте то же самое для демона cron, например, vixie-cron (необязательный шаг). </para>
+        <para>Установите необходимые средства для файловых систем (xfsprogs, reiserfsprogs или jfsutils), а также для сети (dhcpcd или rp-pppoe). </para>
+    </section>
+    <section>
+        <info>
+            <title>Настройка загрузчика</title>
+        </info>
+        <para>Установите (<command>emerge</command>) grub или lilo. Отредактируйте <filename>/boot/grub/grub.conf</filename> или <filename>/etc/lilo.conf</filename>, соответственно. Ниже приведены примеры обоих. </para>
         <section>
             <info>
-                <title>Установочный диск</title>
+                <title>Grub</title>
             </info>
-            <para/>
-            <para>Скачайте компакт-диск с одного из наших зеркал. ISO-образы находятся в каталогах:
-                releases/&lt;архитектура&gt;/&lt;выпуск&gt;/установочный-диск. Минимальный
-                установочный диск подходит только для установки из интернета; с универсального диска
-                также возможна установка без обращения к сети. </para>
-            <para>Запишите компакт-диск, затем загрузитесь с него. В загрузочном окне нажмите F2,
-                чтобы выяснить, какие варианты загрузки предлагаются. Если вам нужна поддержка
-                PCMCIA, сразу после загрузки потребуется запустить сценарий инициализации pcmcia. </para>
-            <para>Установочные диски позволяют запускать сервер sshd, добавлять новых пользователей,
-                запускать irssi (консольный чат-клиент) и просматривать веб-страницы с помощью lynx
-                или links2. </para>
-            <para/>
+            <example>
+                <title>Пример <filename>grub.conf</filename></title>
+                <programlisting>default 0
+timeout 30
+splashimage=(hd0,0)/grub/splash.xpm.gz
+
+# для пользователей genkernel
+title=Gentoo Linux 2.6.11-r3
+root (hd0,0)
+kernel /kernel-genkernel-x86-2.6.11-gentoo-r3 root=/dev/ram0 init=/linuxrc ramdisk=8192 real_root=/dev/hda3 udev
+initrd /initramfs-genkernel-x86-2.6.11-gentoo-r3
+
+# для остальных пользователей (без initrd)
+title=Gentoo Linux 2.6.11 r3
+root (hd0,0)
+kernel /kernel-2.6.11-gentoo-r3 root=/dev/hda3
+
+# только если вам нужна двойная загрузка
+title=Windows XP
+root (hd0,5)
+makeactive
+chainloader +1</programlisting>
+            </example>
         </section>
         <section>
             <info>
-                <title>Настройка сети</title>
+                <title>Lilo</title>
             </info>
-            <para/>
-            <para>Если ваша сеть еще не работает, для ее настройки можно использовать net-setup.
-                Перед настройкой вам может потребоваться загрузить поддержку свой сетевой платы с
-                помощью modprobe. Если у вас ADSL, используйте adsl-setup и adsl-start. Для
-                поддержки PPTP, сначала отредактируйте /etc/ppp/chap-secrets и
-                /etc/ppp/options.pptp, а затем запустите pptp &lt;ip сервера&gt;. </para>
-            <para>При беспроводном доступе для установки параметров соединения используйте iwconfig,
-                а затем либо опять net-setup, либо запустите вручную ifconfig, dhcpcd и/или route. </para>
-            <para>Если вы находитесь за прокси-сервером, не забудьте инициализировать систему с
-                помощью export http_proxy, ftp_proxy и RSYNC_PROXY. </para>
+            <example>
+                <title>Пример файла <filename>lilo.conf</filename></title>
+                <programlisting>boot=/dev/hda
+prompt
+timeout=50
+default=gentoo
+
+# для пользователей, не использующих genkernel
+image=/boot/kernel-2.6.11-gentoo-r3
+  label=gentoo
+  read-only
+  root=/dev/hda3
+
+# для пользователей genkernel
+image=/boot/kernel-genkernel-x86-2.6.11-gentoo-r3
+  label=gentoo
+  read-only
+  root=/dev/ram0
+  append="init=/linuxrc ramdisk=8192 real_root=/dev/hda3 udev"
+  initrd=/boot/initramfs-genkernel-x86-2.6.11-gentoo-r3
+
+# Для двойной загрузки
+other=/dev/hda6
+  label=windows</programlisting>
+            </example>
+            <para>Пользователям GRUB необходимо установить GRUB в главную загрузочную запись (MBR) командой <command>grub-install /dev/hda</command> после копирования <filename>/proc/mounts</filename> в <filename>/etc/mtab</filename>. Пользователям LILO нужно запустить <command>/sbin/lilo</command>. </para>
+            <para>Выйдите из изолированной среды, размонтируйте все файловые системы и перезагрузитесь. </para>
         </section>
-        <section>
-            <info>
-                <title>Подготовка дисков</title>
-            </info>
-            <para/>
-            <para>Для организации разделов запустите fdisk или cfdisk. Вам нужен хотя бы раздел
-                подкачки (тип 82) и один раздел Linux (тип 83). </para>
-            <para>Для создания файловых систем на своих Linux-разделах используйте mke2fs, mke2fs
-                -j, mkreiserfs, mkfs.xfs mkfs.jfs. Подготовьте свой раздел подкачки командами mkswap
-                и swapon. </para>
-            <para>Смонтируйте свеже созданные файловые системы в /mnt/gentoo. Создайте каталоги для
-                других точек монтирования (например, /mnt/gentoo/boot), если они вам нужны. </para>
-            <para/>
-        </section>
-        <section>
-            <info>
-                <title>Установка стадии</title>
-            </info>
-            <para/>
-            <para>Прежде всего, установите верную дату командой date MMDDhhmmYYYY. Далее скачайте
-                файл стадии с одного из наших зеркал или используйте находящийся на установочном
-                диске (в /mnt/cdrom/stages). Перейдите в /mnt/gentoo и распакуйте стадию командой
-                tar -xvjpf &lt;архив стадии&gt;. </para>
-            <para>В случае установки без сети установите снимок портежей: перейдите в
-                /mnt/gentoo/usr и запустите tar -xvjf /mnt/cdrom/snapshots/&lt;файл снимка&gt;.
-                Другие пользователи таким же образом могут скачать снимок портежей и установить его. </para>
-            <para>При установке без сети, скопируйте файлы исходников из /mnt/cdrom/distfiles/ в
-                /mnt/gentoo/usr/portage/distfiles/. </para>
-            <para>Отредактируйте /mnt/gentoo/etc/make.conf под ваши нужды (флаги USE, CFLAGS и
-                CXXFLAGS). Для этого можно использовать редактор nano. </para>
-            <para/>
-        </section>
-        <section>
-            <info>
-                <title>Установка базовой системы Gentoo</title>
-            </info>
-            <para/>
-            <para>Сначала смонтируйте файловую систему /proc, скопируйте файл /etc/resolv.conf
-                поверх существующего, а затем смените корневой каталог (chroot) на свою среду
-                Gentoo. </para>
-            <para/>
-            <para>Листинг 1.1: Подготовка и смена корневого каталога</para>
-            <para># mount -t proc none /mnt/gentoo/proc</para>
-            <para># cp /etc/resolv.conf /mnt/gentoo/etc/</para>
-            <para># chroot /mnt/gentoo /bin/bash</para>
-            <para># env-update &amp;&amp; source /etc/profile</para>
-            <para/>
-            <para/>
-            <para>Если вы не выполняете бессетевую установку, командой emerge --sync обновите свое
-                дерево портежей. </para>
-            <para>Далее убедитесь, что /etc/make.profile указывает на верный профиль. Профиль по
-                умолчанию должен подойти большинству пользователей; имеются подпрофили для различных
-                ядер (например, 2.4/ для профилей, основанных на ядре 2.4). Изменяйте профиль
-                командой ln -sfn. </para>
-            <para>Самогенерация системы (не выполняется при бессетевой установке) запускается
-                сценарием scripts/bootstrap.sh в каталоге /usr/portage. </para>
-            <para>Установка системы (не выполняется при бессетевой установке) запускается командой
-                emerge -e system (или -N, если вы не меняли значения CFLAGS/CXXFLAGS по умолчанию). </para>
-            <para/>
-        </section>
-        <section>
-            <info>
-                <title>Настройка ядра</title>
-            </info>
-            <para/>
-            <para>Установите сведения о своем часовом поясе, сменив символьную ссылку /etc/localtime
-                на указывающую на верное место в /usr/share/zoneinfo командой ln -sf. </para>
-            <para>Установите исходный код ядра (при установке без сети доступны gentoo-sources и
-                vanilla-sources) и настройте его с помощью make menuconfig, затем make &amp;&amp;
-                make modules_install внутри каталога /usr/src/linux. Скопируйте файл
-                arch/i386/boot/bzImage в /boot, заменяя существующий. Также можно выполнить emerge
-                genkernel и genkernel all. </para>
-            <para>Пользователям, использующим Genkernel, потребуется выполнить emerge coldplug и
-                rc-update add coldplug default. </para>
-            <para/>
-        </section>
-        <section>
-            <info>
-                <title>Настройка системы</title>
-            </info>
-            <para/>
-            <para>Отредактируйте свой /etc/fstab; пример показан ниже. </para>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Листинг 1.2: Пример файла fstab</para>
-                            </entry>
-                        </row>
-                        <row>
-                            <entry>
-                                <para>/dev/hda1       /boot          ext2      defaults,noatime     
-                                                  1 2</para>
-                                <para>/dev/hda2        none         swap    sw                      
-                                                       0 0</para>
-                                <para>/dev/hda3       /                 ext3      noatime          
-                                                       0 1</para>
-                                <para>none             /proc            proc     defaults          
-                                                      0 0</para>
-                                <para>none             /dev/shm     tmpfs   nodev,nosuid,noexec     
-                                        0 0</para>
-                                <para>/dev/cdroms/cdrom0   /mnt/cdrom    auto      noauto,user      
-                                    0 0</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
-            <para>Для настройки своей сети отредактируйте /etc/conf.d/hostname и
-                /etc/conf.d/domainname, запустите rc-update add domainname default, затем
-                отредактируйте /etc/conf.d/net. Добавьте сценарий инициализации net.eth0 к уровню
-                запуска по умолчанию (default run level). Если у вас несколько сетевых карт (NIC),
-                поместите символьные ссылки на них в сценарий инициализации net.eth0, и также
-                добавьте их в уровень запуска по умолчанию. </para>
-            <para/>
-            <para>Отредактируйте /etc/hosts; примеры приведены ниже: </para>
-            <para/>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Листинг 1.3: Примеры файла /etc/hosts</para>
-                            </entry>
-                        </row>
-                        <row>
-                            <entry>
-                                <para>(Для статических IP-адресов)</para>
-                                <para>127.0.0.1     localhost</para>
-                                <para>192.168.0.5   jenny.homenetwork jenny</para>
-                                <para>192.168.0.6   benny.homenetwork benny</para>
-                                <para>192.168.0.7   tux.homenetwork tux</para>
-                                <para>(Для динамических IP-адресов)</para>
-                                <para>127.0.0.1     localhost.homenetwork tux localhost</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
-            <para/>
-            <para>При необходимости установите (emerge) pcmcia-cs и добавьте его в уровень запуска
-                по умолчанию. </para>
-            <para>Установите пароль root с помощью passwd. </para>
-            <para>Выполните необходимую настройку в файлах: /etc/rc.conf, /etc/conf.d/rc,
-                /etc/conf.d/keymaps, /etc/conf.d/clock. </para>
-            <para/>
-        </section>
-        <section>
-            <info>
-                <title>Установка системных утилит</title>
-            </info>
-            <para/>
-            <para>Пользователям ядра 2.4 нужно запустить emerge --unmerge udev и emerge devfsd. </para>
-            <para>Установите системный журнал, например syslog-ng, и добавьте его в уровень запуска
-                по умолчанию. Сделайте то же самое для демона cron, например, vixie-cron
-                (необязательный шаг). </para>
-            <para>Установите необходимые средства для файловых систем (xfsprogs, reiserfsprogs или
-                jfsutils), а также для сети (dhcpcd или rp-pppoe). </para>
-            <para/>
-        </section>
-        <section>
-            <info>
-                <title>Настройка загрузчика</title>
-            </info>
-            <para/>
-            <para>Установите (emerge) grub или lilo. Отредактируйте /boot/grub/grub.conf или
-                /etc/lilo.conf, соответственно. Ниже приведены примеры обоих. </para>
-            <section>
-                <info>
-                    <title>Grub</title>
-                </info>
-                <para/>
-                <informaltable frame="all">
-                    <tgroup cols="1">
-                        <tbody>
-                            <row>
-                                <entry>
-                                    <para>Листинг 1.4: Пример grub.conf</para>
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>
-                                    <para>default 0</para>
-                                    <para>timeout 30</para>
-                                    <para>splashimage=(hd0,0)/grub/splash.xpm.gz</para>
-                                    <para># для пользователей genkernel</para>
-                                    <para>title=Gentoo Linux 2.6.11-r3</para>
-                                    <para>root (hd0,0)</para>
-                                    <para>kernel /kernel-genkernel-x86-2.6.11-gentoo-r3
-                                        root=/dev/ram0 init=/linuxrc ramdisk=8192
-                                        real_root=/dev/hda3 udev</para>
-                                    <para>initrd /initramfs-genkernel-x86-2.6.11-gentoo-r3</para>
-                                    <para># для остальных пользователей (без initrd)</para>
-                                    <para>title=Gentoo Linux 2.6.11 r3</para>
-                                    <para>root (hd0,0)</para>
-                                    <para>kernel /kernel-2.6.11-gentoo-r3 root=/dev/hda3</para>
-                                    <para># только если вам нужна двойная загрузка</para>
-                                    <para>title=Windows XP</para>
-                                    <para>root (hd0,5)</para>
-                                    <para>makeactive</para>
-                                    <para>chainloader +1</para>
-                                </entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </informaltable>
-                <para/>
-                <para/>
-                <para/>
-            </section>
-            <section>
-                <info>
-                    <title>Lilo</title>
-                </info>
-                <para/>
-                <informaltable frame="all">
-                    <tgroup cols="1">
-                        <tbody>
-                            <row>
-                                <entry>
-                                    <para>Листинг 1.5: Пример файла lilo.conf</para>
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>
-                                    <para>boot=/dev/hda</para>
-                                    <para>prompt</para>
-                                    <para>timeout=50</para>
-                                    <para>default=gentoo</para>
-                                    <para/>
-                                    <para># для пользователей, не использующих genkernel</para>
-                                    <para>image=/boot/kernel-2.6.11-gentoo-r3</para>
-                                    <para>  label=gentoo</para>
-                                    <para>  read-only</para>
-                                    <para>  root=/dev/hda3</para>
-                                    <para/>
-                                    <para># для пользователей genkernel</para>
-                                    <para>image=/boot/kernel-genkernel-x86-2.6.11-gentoo-r3</para>
-                                    <para>  label=gentoo</para>
-                                    <para>  read-only</para>
-                                    <para>  root=/dev/ram0</para>
-                                    <para>  append="init=/linuxrc ramdisk=8192 real_root=/dev/hda3
-                                        udev"</para>
-                                    <para> 
-                                        initrd=/boot/initramfs-genkernel-x86-2.6.11-gentoo-r3</para>
-                                    <para/>
-                                    <para># Для двойной загрузки</para>
-                                    <para>other=/dev/hda6</para>
-                                    <para>  label=windows</para>
-                                </entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </informaltable>
-                <para/>
-                <para>Пользователям GRUB необходимо установить GRUB в главную загрузочную запись
-                    (MBR) командой grub-install /dev/hda после копирования /proc/mounts в /etc/mtab.
-                    Пользователям LILO нужно запустить /sbin/lilo. </para>
-                <para>Выйдите из изолированной среды, размонтируйте все файловые системы и
-                    перезагрузитесь. </para>
-            </section>
-        </section>
-        <section>
-            <info>
-                <title>Окончание установки</title>
-            </info>
-            <para/>
-            <para>Зайдите как root, затем добавьте одного или нескольких пользователей для
-                повседневного использования командой useradd -m -G &lt;группа&gt; &lt;имя
-                пользователя&gt;. </para>
-            <para>Если вы выполняли установку без сети, смонтируйте компакт-диск с пакетами в
-                /mnt/cdrom и выполните export PKGDIR="/mnt/cdrom", после чего вы сможете
-                устанавливать дополнительное ПО, например, kde, командой emerge -k &lt;имя
-                пакета&gt;. для . </para>
-            <para>Спасибо за установку Gentoo!</para>
-        </section>
+    </section>
+    <section>
+        <info>
+            <title>Окончание установки</title>
+        </info>
+        <para>Зайдите как root, затем добавьте одного или нескольких пользователей для повседневного использования командой <command>useradd -m -G <replaceable>&lt;группа&gt;</replaceable>
+                <replaceable>&lt;имя пользователя&gt;</replaceable></command>. </para>
+        <para>Если вы выполняли установку без сети, смонтируйте компакт-диск с пакетами в <filename>/mnt/cdrom</filename> и выполните <command>export PKGDIR="/mnt/cdrom"</command>, после чего вы сможете устанавливать дополнительное ПО, например, kde, командой <command>emerge -k <replaceable>&lt;имя пакета&gt;</replaceable></command>.</para>
+        <para>Спасибо за установку Gentoo!</para>
+    </section>
 </article>

@@ -1,424 +1,172 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        version="5.0"
-        xml:id="gentoo-install-advices">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="gentoo-install-advices">
+    <info>
+        <title>Полезные советы по установке Gentoo/x86</title>
+    </info>
+    <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/gentoo-x86-tipsntricks.xml">http://www.gentoo.org/doc/ru/gentoo-x86-tipsntricks.xml</link>
+    </para>
+    <para>С версии: 1.0</para>
+    <section>
         <info>
-            <title>Полезные советы по установке Gentoo/x86</title>
+            <title>1. Вступление</title>
         </info>
-        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/gentoo-x86-tipsntricks.xml">http://www.gentoo.org/doc/ru/gentoo-x86-tipsntricks.xml</link>
-        </para>
-        <para>С версии: 1.0</para>
-        <para/>
+        <para>Для начала</para>
+        <para>Этот документ содержит различные полезные советы по установке Gentoo/x86. Большинство из них описаны кратко — подразумевается, что они послужат дополнением к руководству по установке, а не заменой ему. </para>
+    </section>
+    <section>
+        <info>
+            <title>2. Расширенная установка</title>
+        </info>
+        <para>Программный RAID</para>
+        <note>
+            <para>Если вы не знакомы с программным RAID, пожалуйста, прочтите Software-RAID-HOWTO (англ.). </para>
+        </note>
+        <note>
+            <para>Более подробное описание установки приведено в руководстве по быстрой установке программного RAID и LVM2 для x86 (англ.). </para>
+        </note>
+        <para>После загрузки с установочного CD, загрузите соответствующие модули RAID. Например, если вы собираетесь использовать RAID-1: </para>
+        <example>
+            <title>Загрузка модуля RAID-1</title>
+            <screen><prompt>#</prompt> <userinput>modprobe raid1</userinput></screen>
+        </example>
+        <para>Разбивая свои диски, убедитесь, что используете тип раздела fd (Linux raid autodetect), а не 83 (Linux native). Тип раздела можно изменить, используя команду t программы fdisk. </para>
+        <para>Теперь, до начала создания массивов RAID, нам потребуется создать узлы метаустройств: </para>
+        <example>
+            <title>Создание узлов метаустройств</title>
+            <screen><prompt>#</prompt> <userinput>mknod</userinput>
+<prompt>#</prompt> <userinput>mknod /dev/md2 b 9 2</userinput>
+<prompt>#</prompt> <userinput>mknod /dev/md3 b 9 3d /dev/md1 b 9 1</userinput></screen>
+        </example>
+        <para>После разбивки на разделы, создайте файл <filename>/etc/mdadm.conf</filename> (да, именно так, в среде установочного CD), с помощью <command>mdadm</command>, расширенного средства управления RAID. Например, чтобы зеркалировать (RAID-1) разделы boot, swap и root, охватывая <filename>/dev/sda</filename> и <filename>/dev/sdb</filename>, можете использовать:</para>
+        <example>
+            <title>Создание устройств raid командой <command>mdadm</command></title>
+            <screen><prompt>#</prompt> <userinput>mdadm --create --verbose /dev/md1 --level=1 --raid-devices=2 /dev/sda1 /dev/sdb1</userinput>
+<prompt>#</prompt> <userinput>mdadm --create --verbose /dev/md2 --level=1 --raid-devices=2 /dev/sda2 /dev/sdb2</userinput>
+<prompt>#</prompt> <userinput>mdadm --create --verbose /dev/md3 --level=1 --raid-devices=2 /dev/sda3 /dev/sdb3</userinput></screen>
+        </example>
+        <important>
+            <para>На загрузочном разделе не следует использовать никаких разновидностей чередования (striping), таких как RAID-0 or RAID-5. </para>
+        </important>
+        <para>Драйвер Linux Software RAID начнет создавать метаустройства. Вы можете проследить за этим в /proc/mdstat. Перед продолжением дождитесь, пока создание метаустройств окончательно завершится.. </para>
+        <example>
+            <title>Сохранение сведений о созданных устройствах</title>
+            <screen><prompt>#</prompt> <userinput>mdadm --detail --scan &gt; /etc/mdadm.conf</userinput></screen>
+        </example>
+        <para>Теперь и далее используйте <filename>/dev/md1</filename> для загрузочного раздела, <filename>/dev/md2</filename> для раздела подкачки и <filename>/dev/md3</filename> для корневого раздела. </para>
+        <para>Прямо перед изменением корня (chroot), не забудьте скопировать <filename>/etc/mdadm.conf</filename> в <filename>/mnt/gentoo/etc</filename>. </para>
+        <para>При конфигурации ядра, обязательно включите соответствующую поддержку RAID в состав ядра, а не модулем. </para>
+        <para>При установке дополнительных утилит, также установите mdadm. Заметьте, что она есть не на всех установочных CD, поэтому у вас может не получиться бессетевая установка Gentoo на программный raid. </para>
+        <para>При настройке загрузчика не забудьте установить его в MBR обоих дисков, если используется зеркалирование. </para>
+        <para>ATA RAID c ядрами 2.4</para>
+        <para>Удостоверьтесь, что вы загрузились с установочного CD с параметром <option>doataraid</option>. После загрузки, проверьте содержимое <filename>/dev/ataraid</filename>. Там должны находиться различные каталоги <filename>disc*</filename> для каждого жесткого диска, доступного в ATA RAID. Целый диск показывается как <filename>disc</filename>, а разделы — как <filename>part*</filename>. </para>
+        <para>Выпишите различные файлы устройств <filename>/dev/ataraid/disc*/*</filename>, на которые будете устанавливать Gentoo. При установке вам потребуется указывать этот путь вместо <filename>/dev/hda</filename>, указанного в примерах. </para>
+        <para>Перед изменением корня, свяжите структуру <filename>/dev</filename> с новой средой: </para>
+        <example>
+            <title>Связывание <filename>/dev</filename></title>
+            <screen><prompt>#</prompt> <userinput>mount -o bind /dev /mnt/gentoo/dev</userinput></screen>
+        </example>
+        <para>При настройке ядра не забудьте включить поддержку вашего ATA RAID чипсета с нужными параметрами. Например, для популярной системы ATA RAID Promise FastTrack built-in RAID требуется включение в ядро Promise FastTrack Options. </para>
+        <para>При настройке GRUB сначала потребуется создать загрузочный диск GRUB. Это не так сложно, как кажется. Сначала установите GRUB как обычно, а дойдя до пункта, в котором GRUB устанавливается в MBR, следуйте этим инструкциям: </para>
+        <example>
+            <title>Создание загрузочного диска GRUB</title>
+            <screen><prompt>#</prompt> <userinput>cd /boot/grub</userinput>
+<prompt>#</prompt> <userinput>dd if=stage1 of=/dev/fd0 bs=512 count=1</userinput>
+<prompt>#</prompt> <userinput>dd if=stage2 of=/dev/fd0 bs=512 seek=1</userinput></screen>
+        </example>
+        <para>Еще вам потребуется записать файл <filename>grub.conf</filename>. Здесь нет никаких отличий от установочных инструкций, просто убедитесь, что запись <code>root=</code> указывает на ваше устройство ATA RAID. </para>
+        <para>После окончания установки, загрузитесь со своего загрузочного диска GRUB. Вы должны увидеть приглашение командной строки GRUB. Теперь настройте GRUB для загрузки с устройства ATA RAID: </para>
+        <example>
+            <title>Установка GRUB на ATA RAID</title>
+            <screen><prompt>grub></prompt> <userinput>root (hd0,x)</userinput>
+<prompt>grub></prompt> <userinput>setup (hd0)</userinput>
+<prompt>grub></prompt> <userinput>quit</userinput></screen>
+        </example>
+        <para>Теперь перезагрузитесь (вытащив загрузочную дискету GRUB из дисковода). </para>
+        <para>Пользователи LILO могут просто следовать указаниям руководства по установке. </para>
+        <para>Использование ядра с установочного CD</para>
+        <para>Если вы не хотите компилировать ядро сами, можно взять ядро с установочного компакт-диска и скопировать его в свою систему. Дойдя в процессе инсталяции Gentoo до стадии компиляции ядра, перейдите на другую виртуальную консоль (<keycap>Alt</keycap>-<keycap>F2</keycap>) и войдите в систему как ROOT, используя пароль, установленный вами в начали установки (passwd root). </para>
+        <para>Скопируйте ядро и модули в свою систему: </para>
+        <example>
+            <title>Копирование ядра с установочного CD</title>
+            <screen>(${KN} это название ядра, обычно это что-то вроде 'gentoo' или 'smp')
+<prompt>cdimage ~#</prompt> <userinput>cp /mnt/cdrom/isolinux/${KN} /mnt/cdrom/isolinux/${KN}.gz /mnt/gentoo/boot</userinput>
+<prompt>cdimage ~#</prompt> <userinput>mkdir -p /mnt/gentoo/lib/modules</userinput>
+<prompt>cdimage ~#</prompt> <userinput>cp -Rp /lib/modules/`uname -r` /mnt/gentoo/lib/modules</userinput></screen>
+        </example>
+        <para>Удостоверьтесь в том, что вы установили hotplug (emerge hotplug) и уже добавили его в загрузку. Чтобы все запущенные сейчас модули (с установочного CD) загружались на вашей машине, запустите следующие команды из среды с измененным корнем (chroot): </para>
+        <example>
+            <title>Добавление всех запущенных модулей в файл <filename>modules.conf</filename></title>
+            <screen><prompt>#</prompt> <userinput>cat /proc/modules | cut -d ' ' -f 1 >> \
+  /etc/modules.autoload.d/kernel-`uname -r | cut -d . -f -2`</userinput>
+<prompt>#</prompt> <userinput>modules-update</userinput></screen>
+        </example>
+    </section>
+    <section>
+        <info>
+            <title>3. Упрощение установки</title>
+        </info>
+        <para>Как оставить терминал без присмотра</para>
+        <para>Многим хочется отойти от своей системы, пока она компилируется. Иногда это довольно сложно, поскольку установка производится в месте, где много народу и нельзя доверять всем подряд. На этот случай пригодится возможность проводить компиляцию в фоновом режиме, выйдя изо всех терминалов. </para>
+        <para>Есть несколько возможных путей. Первый — использовать screen. После загрузки с LiveCD, установите пароль для root и запустите сеанс screen: </para>
+        <note>
+            <para>screen есть не на всех LiveCD. Если у вас его нет, придется использовать один из других способов, описанных в этом разделе. </para>
+        </note>
+        <example>
+            <title>Запуск сеанса screen</title>
+            <screen><prompt>#</prompt> <userinput>screen -S gentoo</userinput></screen>
+        </example>
+        <para>Из сеанса screen можно хоть провести полную установку. Захотев уйти от терминала, нажмите <keycap>Ctrl</keycap>-<keycap>a</keycap>, <keycap>d</keycap> (то есть <keycap>control</keycap> и <keycap>a</keycap> одновременно, затем <keycap>d</keycap>), чтобы открепить свой сеанс screen. Теперь можно с уверенностью выйти из системы. </para>
+        <para>Чтобы восстановить доступ к терминалу, опять войдите как root и прикрепитесь к запущенному сеансу screen: </para>
+        <example>
+            <title>Прикрепление к сеансу screen</title>
+            <screen><prompt>#</prompt> <userinput>screen -x gentoo</userinput></screen>
+        </example>
+        <para>Если вы не можете использовать screen, есть другой путь отойти от терминала. Следуйте инструкциям по установке, а дойдя до пункта, в котором запускается длительная компиляция (например, шаг с запуском ./scripts/bootstrap.sh), используйте команду nohup, которая позволит процессу продолжиться, даже если вы выйдете. Не забудьте добавить в конце "&amp;", иначе процесс не будет выполняться в фоновом режиме! Запомните, в каком каталоге вы находитесь (команда pwd покажет ее), так как это вам позже понадобится. </para>
+        <example>
+            <title>Использование nohup</title>
+            <screen><prompt>#</prompt> <userinput>pwd</userinput>
+/usr/portage
+<prompt>#</prompt> <userinput>nohup ./scripts/bootstrap.sh &amp;</userinput></screen>
+        </example>
+        <para>Теперь выйдите из среды измененного корня (exit) и из сеанса загрузочного CD. Компиляция продолжится в фоновом режиме. </para>
+        <para>Захотев проверить компиляцию, войдите как root (на установочный CD) и сделайте chroot обратно в свою среду, затем перейдите в оставленный каталог: </para>
+        <example>
+            <title>Chroot обратно</title>
+            <screen><prompt>#</prompt> <userinput>chroot /mnt/gentoo /bin/bash</userinput>
+<prompt>#</prompt> <userinput>env-update &amp;&amp; source /etc/profile</userinput>
+<prompt>#</prompt> <userinput>cd /usr/portage</userinput></screen>
+        </example>
+        <para>Теперь запустите команду <command>less</command> на файле <filename>nohup.out</filename>, расположенном внутри каталога. Компиляция добавляет свои сообщения в этот файл, так что при желании следить за ней запустите <command>less nohup.out</command> и нажмите <keycap>F</keycap>, чтобы наблюдать за ее ходом. Когда компиляция закончится, можно приступать к следующему пункту указаний по установке. </para>
+        <para>Если вам надоело следить за изменениями, нажмите <keycap>Ctrl</keycap>-<keycap>C</keycap>, затем <keycap>q</keycap>. Это остановит только процесс less, не затрагивая процесс компиляции. </para>
+    </section>
+    <section>
+        <info>
+            <title>4. Решение ошибок/проблем</title>
+        </info>
+        <para>Тщательное тестирование дисков</para>
+        <para>Если вы считаете, что необходимо тщательно проверить ваш диск на предмет целостности (неисправные секторы и т.д.), можете включить параметр <option>-c</option> при создании на нем файловой системы ext2 или ext3 (используя mke2fs). Это запустит проверку на чтение, которая пометит все неисправные блоки. Если вы настоящий параноик, можете включить <option>-c</option>, чтобы провести детальный тест на чтение/запись. </para>
+        <example>
+            <title>Проверка целостности диска</title>
+        </example>
+        <screen><prompt>#</prompt> <userinput>mke2fs -j -c /dev/hda3</userinput></screen>
         <section>
             <info>
-                <title>1. Вступление</title>
+                <title>Восстановление сбойной установки</title>
             </info>
-            <para>Для начала</para><para/><para>Этот документ содержит
-                различные полезные советы по установке Gentoo/x86. Большинство из них описаны кратко
-                — подразумевается, что они послужат дополнением к руководству по установке, а не
-                заменой ему. </para><para/></section>
-        <section>
-            <info>
-                <title>2. Расширенная установка</title>
-            </info>
-            <para/>
-            <para>Программный RAID</para>
-            <para>Примечание: Если вы не знакомы с программным RAID, пожалуйста, прочтите
-                Software-RAID-HOWTO (англ.). </para>
-            <para/>
-            <para>Примечание: Более подробное описание установки приведено в руководстве по быстрой
-                установке программного RAID и LVM2 для x86 (англ.). </para>
-            <para/>
-            <para>После загрузки с установочного CD, загрузите соответствующие модули RAID.
-                Например, если вы собираетесь использовать RAID-1: </para>
-            <para/>
-            <para>Листинг 2.1: Загрузка модуля RAID-1</para>
-            <para># modprobe raid1</para>
-            <para/>
-            <para/>
-            <para>Разбивая свои диски, убедитесь, что используете тип раздела fd (Linux raid
-                autodetect), а не 83 (Linux native). Тип раздела можно изменить, используя команду t
-                программы fdisk. </para>
-            <para/>
-            <para>Теперь, до начала создания массивов RAID, нам потребуется создать узлы
-                метаустройств: </para>
-            <para/>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.2: Создание узлов метаустройств</para>
-                            </entry>
-                        </row>
-                        <row>
-                            <entry>
-                                <para># mknod</para>
-                                <para># mknod /dev/md2 b 9 2</para>
-                                <para># mknod /dev/md3 b 9 3d /dev/md1 b 9 1</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
-            <para>После разбивки на разделы, создайте файл /etc/mdadm.conf (да, именно так, в среде
-                установочного CD), с помощью mdadm, расширенного средства управления RAID. Например,
-                чтобы зеркалировать (RAID-1) разделы boot, swap и root, охватывая /dev/sda и
-                /dev/sdb, можете использовать:</para>
-            <para/>
-            <para/>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.3: Создание устройств raid командой mdadm</para>
-                            </entry>
-                        </row>
-                        <row>
-                            <entry>
-                                <para># mdadm --create --verbose /dev/md1 --level=1 --raid-devices=2
-                                    /dev/sda1 /dev/sdb1</para>
-                                <para># mdadm --create --verbose /dev/md2 --level=1 --raid-devices=2
-                                    /dev/sda2 /dev/sdb2</para>
-                                <para># mdadm --create --verbose /dev/md3 --level=1 --raid-devices=2
-                                    /dev/sda3 /dev/sdb3</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
-            <para>Важно: На загрузочном разделе не следует использовать никаких разновидностей
-                чередования (striping), таких как RAID-0 or RAID-5. </para>
-            <para/>
-            <para/>
-            <para>Драйвер Linux Software RAID начнет создавать метаустройства. Вы можете проследить
-                за этим в /proc/mdstat. Перед продолжением дождитесь, пока создание метаустройств
-                окончательно завершится.. </para>
-            <para/>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.4: Сохранение сведений о созданных
-                                    устройствах</para>
-                            </entry>
-                        </row>
-                        <row>
-                            <entry>
-                                <para># mdadm --detail --scan &gt; /etc/mdadm.conf</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
-            <para>Теперь и далее используйте /dev/md1 для загрузочного раздела, /dev/md2 для раздела
-                подкачки и /dev/md3 для корневого раздела. </para>
-            <para/>
-            <para>Прямо перед изменением корня (chroot), не забудьте скопировать /etc/mdadm.conf в
-                /mnt/gentoo/etc. </para>
-            <para/>
-            <para>При конфигурации ядра, обязательно включите соответствующую поддержку RAID в
-                состав ядра, а не модулем. </para>
-            <para/>
-            <para>При установке дополнительных утилит, также установите mdadm. Заметьте, что она
-                есть не на всех установочных CD, поэтому у вас может не получиться бессетевая
-                установка Gentoo на программный raid. </para>
-            <para/>
-            <para>При настройке загрузчика не забудьте установить его в MBR обоих дисков, если
-                используется зеркалирование. </para>
-            <para/>
-            <para>ATA RAID c ядрами 2.4</para>
-            <para/>
-            <para>Удостоверьтесь, что вы загрузились с установочного CD с параметром doataraid.
-                После загрузки, проверьте содержимое /dev/ataraid. Там должны находиться различные
-                каталоги disc* для каждого жесткого диска, доступного в ATA RAID. Целый диск
-                показывается как disc, а разделы — как part*. </para>
-            <para/>
-            <para>Выпишите различные файлы устройств /dev/ataraid/disc*/*, на которые будете
-                устанавливать Gentoo. При установке вам потребуется указывать этот путь вместо
-                /dev/hda, указанного в примерах. </para>
-            <para/>
-            <para>Перед изменением корня, свяжите структуру /dev с новой средой: </para>
-            <para/>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.5: Связывание /dev</para>
-                            </entry>
-                        </row>
-                        <row>
-                            <entry>
-                                <para># mount -o bind /dev /mnt/gentoo/dev</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
-            <para>При настройке ядра не забудьте включить поддержку вашего ATA RAID чипсета с
-                нужными параметрами. Например, для популярной системы ATA RAID Promise FastTrack
-                built-in RAID требуется включение в ядро Promise FastTrack Options. </para>
-            <para/>
-            <para>При настройке GRUB сначала потребуется создать загрузочный диск GRUB. Это не так
-                сложно, как кажется. Сначала установите GRUB как обычно, а дойдя до пункта, в
-                котором GRUB устанавливается в MBR, следуйте этим инструкциям: </para>
-            <para/>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.6: Создание загрузочного диска GRUB</para>
-                            </entry>
-                        </row>
-                        <row>
-                            <entry>
-                                <para># cd /boot/grub</para>
-                                <para># dd if=stage1 of=/dev/fd0 bs=512 count=1</para>
-                                <para># dd if=stage2 of=/dev/fd0 bs=512 seek=1</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
-            <para>Еще вам потребуется записать файл grub.conf. Здесь нет никаких отличий от
-                установочных инструкций, просто убедитесь, что запись root= указывает на ваше
-                устройство ATA RAID. </para>
-            <para/>
-            <para>После окончания установки, загрузитесь со своего загрузочного диска GRUB. Вы
-                должны увидеть приглашение командной строки GRUB. Теперь настройте GRUB для загрузки
-                с устройства ATA RAID: </para>
-            <para/>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.7: Установка GRUB на ATA RAID</para>
-                            </entry>
-                        </row>
-                        <row>
-                            <entry>
-                                <para>grub&gt; root (hd0,x)</para>
-                                <para>grub&gt; setup (hd0)</para>
-                                <para>grub&gt; quit</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
-            <para>Теперь перезагрузитесь (вытащив загрузочную дискету GRUB из дисковода). </para>
-            <para/>
-            <para>Пользователи LILO могут просто следовать указаниям руководства по установке. </para>
-            <para/>
-            <para>Использование ядра с установочного CD</para>
-            <para/>
-            <para>Если вы не хотите компилировать ядро сами, можно взять ядро с установочного
-                компакт-диска и скопировать его в свою систему. Дойдя в процессе инсталяции Gentoo
-                до стадии компиляции ядра, перейдите на другую виртуальную консоль (Alt-F2) и
-                войдите в систему как ROOT, используя пароль, установленный вами в начали установки
-                (passwd root). </para>
-            <para/>
-            <para>Скопируйте ядро и модули в свою систему: </para>
-            <para/>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.8: Копирование ядра с установочного CD</para>
-                            </entry>
-                        </row>
-                        <row>
-                            <entry>
-                                <para>(${KN} это название ядра, обычно это что-то вроде 'gentoo' или
-                                    'smp')</para>
-                                <para>cdimage ~# cp /mnt/cdrom/isolinux/${KN}
-                                    /mnt/cdrom/isolinux/${KN}.gz /mnt/gentoo/boot</para>
-                                <para>cdimage ~# mkdir -p /mnt/gentoo/lib/modules</para>
-                                <para>cdiamge ~# cp -Rp /lib/modules/`uname -r`
-                                    /mnt/gentoo/lib/modules</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
-            <para>Удостоверьтесь в том, что вы установили hotplug (emerge hotplug) и уже добавили
-                его в загрузку. Чтобы все запущенные сейчас модули (с установочного CD) загружались
-                на вашей машине, запустите следующие команды из среды с измененным корнем (chroot): </para>
-            <para/>
-            <informaltable frame="all">
-                <tgroup cols="1">
-                    <tbody>
-                        <row>
-                            <entry>
-                                <para>Листинг 2.9: Добавление всех запущенных модулей в файл
-                                    modules.conf</para>
-                            </entry>
-                        </row>
-                        <row>
-                            <entry>
-                                <para># cat /proc/modules | cut -d ' ' -f 1 &gt;&gt; \</para>
-                                <para>  /etc/modules.autoload.d/kernel-`uname -r | cut -d . -f
-                                    -2`</para>
-                                <para># modules-update</para>
-                            </entry>
-                        </row>
-                    </tbody>
-                </tgroup>
-            </informaltable>
-            <para/>
+            <para>Если по какой-то причине ваша установка Gentoo дает сбой, вам не придется повторять ее раз за разом с самого начала. Вместо этого можно спокойно вернуться к моменту, в который вы, как вам кажется, ошиблись (или где, как вы считаете, есть ошибка в инструкции), и попробовать другой подход. </para>
+            <para>Прежде всего, вам потребуется перейти обратно в свою среду Gentoo Linux командой <command>chroot</command>. Снова следуйте указаниям, пропуская шаги по разбивке диска, так как ваши разделы уже созданы и даже заполнены. Таким образом, вы можете сразу монтировать эти разделы в <filename>/mnt/gentoo</filename>. Следует также пропустить шаги, связанные с извлечением файла стадии и изменением <filename>make.conf</filename> — вы же не хотите перезаписывать существующие файлы, не так ли? </para>
+            <para>Изменив корень на свою среду Gentoo Linux, сразу переходите к шагу, где, как вам кажется, следует попробовать действовать по-другому. Не повторяйте все шаги, такие как самогенерация, если не считаете, что именно там что-то пошло не так. </para>
+            <para>Например, если вы считаете, что неверно настроили <filename>grub.conf</filename>, можно сразу запустить свой редактор, чтобы изменить <filename>/boot/grub/grub.conf</filename>. </para>
+            <para>Попробовав другой подход в своей ситуации, вы, скорее всего, сможете представить, сколько последующих шагов потребуется выполнить снова. Если последующие действия зависели от вашего изменения, их потребуется повторить. </para>
+            <para>Например: </para>
+            <para>изменив переменную в <filename>make.conf</filename>, вам потребуется выполнить всю последующую компиляцию, поскольку ее результаты зависят от настройки <filename>make.conf</filename>
+            </para>
+            <para>изменив <filename>/boot/grub/grub.conf</filename>, можно сразу выходить из среды измененного корня и перезагружаться, так как никакие последующие шаги не зависят от <filename>grub.conf</filename>
+            </para>
+            <para>перекомпилировав свое ядро, вам нужно лишь убедиться, что конфигурация вашего начального загрузчика указывает на верный образ ядра (убедитесь, что вы смонтировали свой <filename>/boot</filename>!), затем можно выйти из среды измененного корня и перезагрузиться </para>
+            <para>изменив <filename>/etc/fstab</filename>, можно выходить из среды измененного корня и перезагружаться </para>
+            <para>Как видите, после большинства действий по восстановлению можно сразу перезагружаться. Лишь изредка вам потребуется повторять последующие шаги установки.</para>
         </section>
-        <section>
-            <info>
-                <title>3. Упрощение установки</title>
-            </info>
-            <para/>
-            <para>Как оставить терминал без присмотра</para>
-            <para/>
-            <para>Многим хочется отойти от своей системы, пока она компилируется. Иногда это
-                довольно сложно, поскольку установка производится в месте, где много народу и нельзя
-                доверять всем подряд. На этот случай пригодится возможность проводить компиляцию в
-                фоновом режиме, выйдя изо всех терминалов. </para>
-            <para/>
-            <para>Есть несколько возможных путей. Первый — использовать screen. После загрузки с
-                LiveCD, установите пароль для root и запустите сеанс screen: </para>
-            <para>Примечание: screen есть не на всех LiveCD. Если у вас его нет, придется
-                использовать один из других способов, описанных в этом разделе. </para>
-            <para/>
-            <para/>
-            <para>Листинг 3.1: Запуск сеанса screen</para>
-            <para># screen -S gentoo</para>
-            <para/>
-            <para/>
-            <para>Из сеанса screen можно хоть провести полную установку. Захотев уйти от терминала,
-                нажмите Ctrl-a, d (то есть control и a одновременно, затем d), чтобы открепить свой
-                сеанс screen. Теперь можно с уверенностью выйти из системы. </para>
-            <para/>
-            <para>Чтобы восстановить доступ к терминалу, опять войдите как root и прикрепитесь к
-                запущенному сеансу screen: </para>
-            <para/>
-            <para>Листинг 3.2: Прикрепление к сеансу screen</para>
-            <para># screen -x gentoo</para>
-            <para/>
-            <para/>
-            <para>Если вы не можете использовать screen, есть другой путь отойти от терминала.
-                Следуйте инструкциям по установке, а дойдя до пункта, в котором запускается
-                длительная компиляция (например, шаг с запуском ./scripts/bootstrap.sh), используйте
-                команду nohup, которая позволит процессу продолжиться, даже если вы выйдете. Не
-                забудьте добавить в конце "&amp;", иначе процесс не будет выполняться в фоновом
-                режиме! Запомните, в каком каталоге вы находитесь (команда pwd покажет ее), так как
-                это вам позже понадобится. </para>
-            <para/>
-            <para/>
-            <para/>
-            <para/>
-            <para/>
-            <para>Листинг 3.3: Использование nohup</para>
-            <para># pwd</para>
-            <para>/usr/portage</para>
-            <para># nohup ./scripts/bootstrap.sh &amp;</para>
-            <para/>
-            <para/>
-            <para>Теперь выйдите из среды измененного корня (exit) и из сеанса загрузочного CD.
-                Компиляция продолжится в фоновом режиме. </para>
-            <para/>
-            <para>Захотев проверить компиляцию, войдите как root (на установочный CD) и сделайте
-                chroot обратно в свою среду, затем перейдите в оставленный каталог: </para>
-            <para/>
-            <para/>
-            <para/>
-            <para>Листинг 3.4: Chroot обратно</para>
-            <para># chroot /mnt/gentoo /bin/bash</para>
-            <para># env-update &amp;&amp; source /etc/profile</para>
-            <para># cd /usr/portage</para>
-            <para/>
-            <para/>
-            <para>Теперь запустите команду less на файле nohup.out, расположенном внутри каталога.
-                Компиляция добавляет свои сообщения в этот файл, так что при желании следить за ней
-                запустите less nohup.out и нажмите F, чтобы наблюдать за ее ходом. Когда компиляция
-                закончится, можно приступать к следующему пункту указаний по установке. </para>
-            <para/>
-            <para>Если вам надоело следить за изменениями, нажмите Ctrl-C, затем q. Это остановит
-                только процесс less, не затрагивая процесс компиляции. </para>
-            <para/>
-        </section>
-        <section>
-            <info>
-                <title>4. Решение ошибок/проблем</title>
-            </info>
-            <para/>
-            <para>Тщательное тестирование дисков</para>
-            <para/>
-            <para>Если вы считаете, что необходимо тщательно проверить ваш диск на предмет
-                целостности (неисправные секторы и т.д.), можете включить параметр -c при создании
-                на нем файловой системы ext2 или ext3 (используя mke2fs). Это запустит проверку на
-                чтение, которая пометит все неисправные блоки. Если вы настоящий параноик, можете
-                включить -c -c, чтобы провести детальный тест на чтение/запись. </para>
-            <para/>
-            <para>Листинг 4.1: Проверка целостности диска</para>
-            <para># mke2fs -j -c /dev/hda3</para>
-            <para/>
-            <para/>
-            <section>
-                <info>
-                    <title>Восстановление сбойной установки</title>
-                </info>
-                <para/>
-                <para>Если по какой-то причине ваша установка Gentoo дает сбой, вам не придется
-                    повторять ее раз за разом с самого начала. Вместо этого можно спокойно вернуться
-                    к моменту, в который вы, как вам кажется, ошиблись (или где, как вы считаете,
-                    есть ошибка в инструкции), и попробовать другой подход. </para>
-                <para/>
-                <para>Прежде всего, вам потребуется перейти обратно в свою среду Gentoo Linux
-                    командой chroot. Снова следуйте указаниям, пропуская шаги по разбивке диска, так
-                    как ваши разделы уже созданы и даже заполнены. Таким образом, вы можете сразу
-                    монтировать эти разделы в /mnt/gentoo. Следует также пропустить шаги, связанные
-                    с извлечением файла стадии и изменением make.conf — вы же не хотите
-                    перезаписывать существующие файлы, не так ли? </para>
-                <para/>
-                <para>Изменив корень на свою среду Gentoo Linux, сразу переходите к шагу, где, как
-                    вам кажется, следует попробовать действовать по-другому. Не повторяйте все шаги,
-                    такие как самогенерация, если не считаете, что именно там что-то пошло не так. </para>
-                <para/>
-                <para>Например, если вы считаете, что неверно настроили grub.conf, можно сразу
-                    запустить свой редактор, чтобы изменить /boot/grub/grub.conf. </para>
-                <para/>
-                <para>Попробовав другой подход в своей ситуации, вы, скорее всего, сможете
-                    представить, сколько последующих шагов потребуется выполнить снова. Если
-                    последующие действия зависели от вашего изменения, их потребуется повторить. </para>
-                <para/>
-                <para>Например: </para>
-                <para>изменив переменную в make.conf, вам потребуется выполнить всю последующую
-                    компиляцию, поскольку ее результаты зависят от настройки make.conf </para>
-                <para>изменив /boot/grub/grub.conf, можно сразу выходить из среды измененного корня
-                    и перезагружаться, так как никакие последующие шаги не зависят от grub.conf </para>
-                <para>перекомпилировав свое ядро, вам нужно лишь убедиться, что конфигурация вашего
-                    начального загрузчика указывает на верный образ ядра (убедитесь, что вы
-                    смонтировали свой /boot!), затем можно выйти из среды измененного корня и
-                    перезагрузиться </para>
-                <para>изменив /etc/fstab, можно выходить из среды измененного корня и
-                    перезагружаться </para>
-                <para/>
-                <para>Как видите, после большинства действий по восстановлению можно сразу
-                    перезагружаться. Лишь изредка вам потребуется повторять последующие шаги
-                    установки.</para>
-                <para/>
-                <para/>
-                <para/>
-            </section>
-        </section>
+    </section>
 </article>
