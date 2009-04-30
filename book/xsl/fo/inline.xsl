@@ -51,6 +51,13 @@
     </xsl:choose>
   </xsl:template>
 
+    <xsl:template match="prompt">
+        <fo:inline color="#000066">
+            <xsl:call-template name="inline.boldmonoseq"/>
+        </fo:inline>
+    </xsl:template>
+    
+
   <!--
      In the above template, the wrapping of the content in a fo:block forces a line break both before
      and after the content. This will probably never become a problem in practice, but if it does,
