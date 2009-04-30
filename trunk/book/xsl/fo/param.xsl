@@ -64,7 +64,7 @@
 article/appendix  nop
 /article  toc,title
 article   toc
-book      toc,title,figure,table,example,equation
+book      toc,title
 /chapter  toc,title
 part      toc,title
 /preface  toc,title

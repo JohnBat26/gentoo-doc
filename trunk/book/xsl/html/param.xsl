@@ -37,6 +37,28 @@
 -->
   <xsl:param name="nav-up-to-docindex" select="false()"/>
 
+
+    <xsl:param name="generate.toc">
+        /appendix toc,title
+        article/appendix  nop
+        /article  toc,title
+        article   toc
+        book      toc,title
+        /chapter  toc,title
+        part      toc,title
+        /preface  toc,title
+        qandadiv  toc
+        qandaset  toc
+        reference toc,title
+        /sect1    toc
+        /sect2    toc
+        /sect3    toc
+        /sect4    toc
+        /sect5    toc
+        /section  toc
+        set       toc,title
+    </xsl:param>
+
   <!-- Cells with our logo etc., linking to home page. Used by html and monohtml.
 -->
   <xsl:variable name="fb-home-logo">
