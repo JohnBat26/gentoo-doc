@@ -148,8 +148,8 @@
         <para>Если вы считаете, что необходимо тщательно проверить ваш диск на предмет целостности (неисправные секторы и т.д.), можете включить параметр <option>-c</option> при создании на нем файловой системы ext2 или ext3 (используя mke2fs). Это запустит проверку на чтение, которая пометит все неисправные блоки. Если вы настоящий параноик, можете включить <option>-c</option>, чтобы провести детальный тест на чтение/запись. </para>
         <example>
             <title>Проверка целостности диска</title>
+            <screen><prompt>#</prompt> <userinput>mke2fs -j -c /dev/hda3</userinput></screen>
         </example>
-        <screen><prompt>#</prompt> <userinput>mke2fs -j -c /dev/hda3</userinput></screen>
         <section>
             <info>
                 <title>Восстановление сбойной установки</title>
