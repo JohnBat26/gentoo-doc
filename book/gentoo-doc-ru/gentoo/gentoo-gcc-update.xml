@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Руководство Gentoo Linux по обновлению GCC</title>
+    </info>
+    <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/gcc-upgrading.xml">http://www.gentoo.org/doc/ru/gcc-upgrading.xml</link>
+    </para>
+    <para>С версии: 1.0</para>
+    <section>
+        <info>
+            <title>Введение</title>
+        </info>
+        <section>
+            <title>Обновление GCC</title>
+            <para>Зачем нужно обновлять? Ну, GCC довольно похож на любой другой пакет в вашей системе, но чуточку более важен. GCC следует обновлять всякий раз, когда в новой версии исправляются какие-нибудь раздражающие вас ошибки, добавляется новые нужные функции, или если вы хотите держать свою систему обновленной. Если ни один из этих случаев к вам не относится, обновление можно спокойно откладывать, пока ваша версия GCC поддерживается разработчиками Gentoo. </para>
+            <para>Если вы устанавливаете новую версию GCC, система не переключается на ее использование автоматически. Вам необходимо явно запросить изменение, потому что в процессе перехода может потребоваться несколько дополнительных шагов. Если вы решите не переключаться, система Portage продолжит использовать более старую версию компилятора, пока вы не передумаете или пока не удалите старый компилятор из своей системы. </para>
+            <para>В этом руководстве описываются необходимые шаги, нужные для полноценного обновления компилятора, используемого вашей системой Gentoo. Отдельный раздел посвящен переходу с GCC 3.3 на 3.4 или более новые версии и проблемам с libstdc++. Другой частный раздел предназначен пользователям, впервые устанавливающим Gentoo из архива третьей стадии (stage3), после выхода новой версии GCC. </para>
+            <note>
+                <para>Необходимо заметить, что обновление с GCC-3.4 до GCC-4.0 или более нового не требует существенных изменений от пользователя, так как GCC-3.4 и GCC-4.0 используют одинаковый двоичный прикладной интерфейс (ABI). Все что нужно, это использовать gcc-config, чтобы выбрать желаемый компилятор. </para>
+            </note>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>Общие указания по обновлению</title>
+        </info>
+        <section>
+            <title>Введение</title>
+            <important>
+                <para>Если вы ищете подробные указания по обновлению с GCC-3.3 на GCC-3.4 или более новый, обратитесь к соответствующему разделу. </para>
+            </important>
+            <important>
+                <para>Если вы ищете подробные указания по обновлению GCC на вновь установленных системах, обратитесь к соответствующему разделу. </para>
+            </important>
+            <para>Вообще говоря, переход на версии с исправленными ошибками (bugfix release), как с 3.3.5 на 3.3.6, должен быть довольно безопасен: надо только установить новую версию, переключиться на нее и пересобрать единственный затрагиваемый пакет — libtool. Однако, при некоторых обновлениях GCC нарушается двоичная совместимость, в таких случаях может потребоваться пересборка не только затрагиваемых пакетов, но и даже всего системного набора и пакетов, необходимых для компиляции. </para>
+            <para>Говоря о необходимости ручного переключения на новую версию компилятора, мы сказали, что оно не происходит автоматически. Тем не менее, есть одно исключение — переход на версию с исправленными ошибками (как с 3.3.5 на 3.3.6), если не используется режим «multislot», позволяющий обеим версиям сосуществовать в одной системе. По умолчанию этот режим выключен, ведь большинству пользователей он ничего не даcт. </para>
+            <example>
+                <title>Обновление GCC</title>
+                <screen><prompt>#</prompt> <userinput>emerge -uav gcc</userinput>
+
+<lineannotation>(Вместо "i686-pc-linux-gnu-3.4.5" укажите обновленную
+ версию GCC и настройки CHOST)</lineannotation>
+<prompt>#</prompt> <userinput>gcc-config i686-pc-linux-gnu-3.4.5</userinput>
+<prompt>#</prompt> <userinput>source /etc/profile</userinput>
+
+<lineannotation>(Пересборка libtool)</lineannotation>
+<prompt>#</prompt> <userinput>emerge --oneshot -av libtool</userinput></screen>
+            </example>
+            <para>Теперь пересоберите набор программ для компиляции, затем world, используя новый компилятор. </para>
+            <para>
+                <example>
+                    <title>Пересборка системы</title>
+                    <screen><prompt>#</prompt> <userinput>emerge -eav system</userinput>
+<prompt>#</prompt> <userinput>emerge -eav world</userinput></screen>
+                </example>
+            </para>
+            <para>Теперь можно без опасений удалить старую версию GCC. Если вы чувствуете такую необходимость, введите следующую команду (как обычно, вместо =sys-devel/gcc-3.3* укажите версию, которую собираетесь удалить): </para>
+            <para>
+                <example>
+                    <title>Удаление более старой версии GCC</title>
+                    <screen><prompt>#</prompt> <userinput>emerge -aC =sys-devel/gcc-3.3*</userinput></screen>
+                </example>
+            </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>Переход с GCC-3.3 на 3.4 или более новый</title>
+        </info>
+        <section>
+            <title>Введение</title>
+            <para>Переход с GCC-3.3 на 3.4 или более новую версию не так гладок, ведь между этими версиями изменился двоичный прикладной интерфейс C++ (ABI). Также придется позаботиться о существующей проблеме с библиотекой libstdc++. </para>
+        </section>
+        <section>
+            <title>Варианты</title>
+            <note>
+                <para>Если вы обновляете GCC на машине SPARC, вам придется выбрать путь полной пересборки системы из-за некоторых внутренних изменений двоичного интерфейса (ABI) GCC в области передачи параметров функций. </para>
+            </note>
+            <para>У вас есть два варианта обновления системы. Первый способ быстрее и требует использования программы revdep-rebuild из пакета gentoolkit, а во втором вся система пересобирается с нуля, чтобы задействовать новые возможности GCC. Ваше дело, какой из способов выбрать. В большинстве случаев первого способа достаточно. </para>
+        </section>
+        <section>
+            <title>Использование revdep-rebuild</title>
+            <para>Если вы выбрали этот способ, нужно сначала установить gentoolkit, если вы еще этого не сделали. Затем обновите GCC и переключите систему на новый компилятор. Также пересоберите пакет libtool, чтобы обеспечить пригодность программ для компиляции. </para>
+            <para>
+                <example>
+                    <title>Установка gentoolkit и обновление GCC</title>
+                    <screen><prompt>#</prompt> <userinput>emerge -an gentoolkit</userinput>
+<prompt>#</prompt> <userinput>emerge -uav gcc</userinput>
+<lineannotation>(вместо "i686-pc-linux-gnu-3.4.5" укажите обновленную
+ версию GCC и настройки CHOST)</lineannotation>
+<prompt>#</prompt> <userinput>gcc-config i686-pc-linux-gnu-3.4.5</userinput>
+<prompt>#</prompt> <userinput>source /etc/profile</userinput>
+
+<lineannotation>(пересборка libtool)</lineannotation>
+<prompt>#</prompt> <prompt>emerge --oneshot -av libtool</prompt></screen>
+                </example>
+            </para>
+            <para>Теперь посмотрите, какие пакеты собирается пересобирать revdep-rebuild. Затем запустите revdep-rebuild на собственно пересборку. Это займет некоторое время, так что потерпите. </para>
+            <example>
+                <title>Использование revdep-rebuild</title>
+                <screen><prompt>#</prompt> <userinput>revdep-rebuild --library libstdc++.so.5 -- -p -v</userinput>
+<prompt>#</prompt> <userinput>revdep-rebuild --library libstdc++.so.5</userinput></screen>
+            </example>
+            <note>
+                <para>Возможно, у вас появятся проблемы с несуществующими версиями пакетов из-за того, что они устарели или замаскированы. В этом случае можно при запуске <command>revdep-rebuild</command> указать параметр <parameter>--package-names</parameter>. Это заставит пакеты пересобираться, основываясь на именах пакетов, вместо точного имени и версии. </para>
+            </note>
+            <para>Для обеспечения совместимости с более старыми двоичными приложениями C++ и любыми пакетами, которые revdep-rebuild мог пропустить, надо установить пакет sys-libs/libstdc++-v3 до того, как удалять GCC 3.3 из своей системы. </para>
+            <example>
+                <title>Установка libstdc++-v3 и удаление GCC</title>
+                <screen><prompt>#</prompt> <userinput>emerge --oneshot sys-libs/libstdc++-v3</userinput>
+<prompt>#</prompt> <userinput>emerge -aC =sys-devel/gcc-3.3*</userinput></screen>
+            </example>
+        </section>
+        <section>
+            <title>Использование <command>emerge -e</command></title>
+            <para>Этот гораздо более медленный способ пересобирает всю систему, гарантируя, что все пересобирается новым компилятором, и, таким образом, он безопаснее. Сперва потребуется обновить GCC и libtool, и переключить систему на новый компилятор. </para>
+            <para>
+                <example>
+                    <title>Обновление GCC</title>
+                    <screen><prompt>#</prompt> <userinput>emerge -uav gcc</userinput>
+<lineannotation>(вместо "i686-pc-linux-gnu-3.4.5" укажите обновленную
+ версию GCC и настройки CHOST)</lineannotation>
+<prompt>#</prompt> <userinput>gcc-config i686-pc-linux-gnu-3.4.5</userinput>
+<prompt>#</prompt> <userinput>source /etc/profile</userinput>
+
+<lineannotation>(пересборка libtool)</lineannotation>
+<prompt>#</prompt> <userinput>emerge --oneshot -av libtool</userinput></screen>
+                </example>
+            </para>
+            <para>Для обеспечения совместимости с более старыми двоичными приложениями C++, надо установить в систему пакет sys-libs/libstdc++-v3. </para>
+            <para>
+                <example>
+                    <title>Установка libstdc++-v3</title>
+                    <screen><prompt>#</prompt> <userinput>emerge --oneshot sys-libs/libstdc++-v3</userinput></screen>
+                </example>
+            </para>
+            <para>Теперь займемся пересборкой сначала пакетов system, а затем world. Это займет очень длительное время, зависящее от количества установленных пакетов: ведь будут пересобираться все средства компиляции и поддерживающие системные файлы, а затем каждый пакет, находящийся в вашей системе. Это необходимо, чтобы все пакеты были гарантированно скомпилированы уже с новыми средствами компиляции, включая сами эти средства. </para>
+            <para>
+                <example>
+                    <title>Пересборка system и world</title>
+                    <screen><prompt>#</prompt> <userinput>emerge -e system</userinput>
+<prompt>#</prompt> <userinput>emerge -e world</userinput></screen>
+                </example>
+            </para>
+            <para>Теперь можно удалить старые версии GCC, не вызывая проблем: </para>
+            <example>
+                <title>Очистка</title>
+                <screen><prompt>#</prompt> <userinput>emerge -aC =sys-devel/gcc-3.3*</userinput></screen>
+            </example>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>Обновление GCC на новой установке</title>
+        </info>
+        <section>
+            <title>Введение</title>
+            <para>Обновление GCC в системе после установки из архива третьей стадии (stage3)  — дело простое. Отсутствие изобилия установленных программ, которые ссылаются на старую версию GCC — это преимущество пользователей, только что установивших систему. В следующем примере показывается обновление с GCC-3.3 на 3.4 или более новые версии. При обновлении с других версий GCC будут кое-какие отличия. Например, имена библиотек, используемые ниже для revdep-rebuild, относятся к версии GCC 3.3, также, как и необходимость установки libstdc++-v3. </para>
+            <para>Пока пользователь не внес каких-либо изменений в систему, для получения системы с новой версией GCC нужно всего несколько шагов. Также, как и при обновлении с GCC-3.3 до 3.4, у пользователя есть две возможности. Но, в отличие от обновления с GCC-3.3 до 3.4, здесь обновление проще, так как различий между способами меньше. Первый способ быстрее, и задействует программу revdep-rebuild из пакета gentoolkit, подобно вышеописанной процедуре обновления. Использование revdep-rebuild предполагает пересборку только тех пакетов, которые действительно ссылаются на библиотеки GCC, тогда как при втором способе система полностью перекомпилируется с новой версией GCC, что занимает намного больше времени. Второй способ никогда не потребуется, и описан только для полноты картины. </para>
+            <para>Приведенные первые шаги одинаковы для обоих способов, и должны делаться в любом случае. </para>
+            <para>
+                <example>
+                    <title>Обновление GCC</title>
+                    <screen><prompt>#</prompt> <userinput>emerge -uav gcc</userinput>
+<lineannotation>(вместо "i686-pc-linux-gnu-3.4.5" укажите обновленную
+ версию GCC и настройки CHOST)</lineannotation>
+<prompt>#</prompt> <userinput>gcc-config i686-pc-linux-gnu-3.4.5</userinput>
+<prompt>#</prompt> <userinput>source /etc/profile</userinput>
+
+<lineannotation>(пересборка libtool)</lineannotation>
+<prompt>#</prompt> <userinput>emerge --oneshot -av libtool</userinput></screen>
+                </example>
+            </para>
+            <para>Для обеспечения совместимости с более старыми двоичными приложениями C++, надо установить в систему пакет sys-libs/libstdc++-v3. </para>
+            <example>
+                <title>Установка libstdc++-v3</title>
+                <screen><prompt>#</prompt> <userinput>emerge --oneshot sys-libs/libstdc++-v3</userinput></screen>
+            </example>
+        </section>
+        <section>
+            <title>Использование revdep-rebuild</title>
+            <para>Этот способ требует, чтобы вы сначала установили пакет gentoolkit, если это еще не сделано. Затем запустите программу revdep-rebuild, чтобы просканировать установленные пакеты, найти и пересобрать нужные. </para>
+            <example>
+                <title>Установка gentoolkit и запуск revdep-rebuild</title>
+                <screen><prompt>#</prompt> <userinput>emerge -an gentoolkit</userinput>
+<prompt>#</prompt> <userinput>revdep-rebuild --library libstdc++.so.5 -- -p -v</userinput>
+<prompt>#</prompt> <userinput>revdep-rebuild --library libstdc++.so.5</userinput></screen>
+            </example>
+            <note>
+                <para>Возможно, у вас появятся проблемы с несуществующими версиями пакетов из-за того, что они устарели или замаскированы. В этом случае можно при запуске <command>revdep-rebuild</command> указать параметр <parameter>--package-names</parameter>. Это заставит пакеты пересобираться, основываясь на именах пакетов, вместо точного имени и версии. </para>
+            </note>
+        </section>
+        <section>
+            <title>Использование <command>emerge -e</command></title>
+            <para>Этот способ, будучи гораздо медленнее, пересобирает всю систему, гарантируя, что все пересобрано новым компилятором. Это необязательно, но допустимо, если вы также изменяете переменную среды <envar>CFLAGS</envar> или другие переменные <filename>make.conf</filename>, которые влияют на компиляцию системы. </para>
+            <para>Так как эти действия выполняются сразу после первоначальной установки, не потребуется перекомпилировать world, как мы поступили бы для обновления компилятора в ранее установленной системе. Однако, для пущей уверенности в том, что обновлены все пакеты, можно запустить обновление цели world вместо system. </para>
+            <example>
+                <title>Пересборка system</title>
+                <screen><prompt>#</prompt> <userinput>emerge -e system</userinput></screen>
+            </example>
+        </section>
+        <section>
+            <title>Очистка</title>
+            <para>Теперь можно удалить старые версии GCC, не вызывая проблем. Выражение <code><replaceable>ВАША-НОВАЯ-ВЕРСИЯ-GCC</replaceable></code> замените номером версии, на которую вы перешли: </para>
+            <example>
+                <title>Очистка</title>
+                <screen><prompt>#</prompt> <userinput>emerge -aC "&lt;sys-devel/gcc-<replaceable>ВАША-НОВАЯ-ВЕРСИЯ-GCC</replaceable>"</userinput></screen>
+            </example>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>Обычные грабли</title>
+        </info>
+        <para>Важно на время обновления отключить distcc. Смешение версий компилятора на разных узлах вызовет проблемы при сборке. Это не относится к ccache, так как объекты кэша будут в любом случае сделаны недействительными. </para>
+        <para>Всегда используйте одну и ту же версию GCC для своего ядра и дополнительных модулей ядра. Как только вы пересоберете world с новым GCC, внешние модули (например, app-emulation/qemu-softmmu) не смогут загрузиться. Пожалуйста, чтобы это исправить, пересоберите свое ядро новой версией GCC. </para>
+        <para>Если вы обновляете GCC на машине SPARC, обязательно еще раз запустите <command>silo -f</command> после пересборки world, чтобы избежать возможных проблем. </para>
+        <section>
+            <title>Распространенные сообщения об ошибках</title>
+            <para>Если ваша система жалуется на что-то вроде <code>libtool: link: `/usr/lib/gcc-lib/i686-pc-linux-gnu/3.3.6/libstdc++.la' is not a valid libtool archive</code>, запустите <command>/sbin/fix_libtool_files.sh 3.3.6</command> (замените «3.3.6» на номер версии из сообщения об ошибке). </para>
+            <para>Если вы увидели <code>error: /usr/bin/gcc-config: line 632: /etc/env.d/gcc/i686-pc-linux-gnu-3.3.5: No such file or directory</code>, тогда попробуйте удалить <filename>/etc/env.d/gcc/config-i686-pc-linux-gnu</filename> и снова запустить <command>gcc-config</command>, следом указав <command>source /etc/profile</command>. Делайте это только тогда, когда у вас не настроены никакие кросс-компиляторы. </para>
+            <para>Если при <command>emerge -e system</command> или <command>emerge -e world</command> не собирается пакет, выполнение можно продолжить командой <command>emerge --resume</command>. Если ошибка появляется снова и снова, пропустите пакет, указав <command>emerge --resume --skipfirst</command>. Не запускайте параллельно другие экземпляры emerge, чтобы не потерять информацию, нужную для возобновления. </para>
+            <para>Если во время обновления компиляторв встретится ошибка <code>spec failure: unrecognized spec option</code>, попробуйте откатиться на свой компилятор по умолчанию, убрать переменную <envar>GCC_SPECS</envar> и снова обновить компилятор: </para>
+            <para>
+                <example>
+                    <title>Восстановление первичной настройки компилятора</title>
+                    <screen><prompt>#</prompt> <userinput>gcc-config 1</userinput>
+<prompt>#</prompt> <userinput>source /etc/profile</userinput>
+<prompt>#</prompt> <userinput>unset GCC_SPECS</userinput>
+<prompt>#</prompt> <userinput>emerge -uav gcc</userinput></screen>
+                </example>
+            </para>
+        </section>
+    </section>
+</article>
