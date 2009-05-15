@@ -1,406 +1,207 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
     <info>
-        <title>HOWTO Полное обновление системы</title></info>
-<para>Ссылка на оригинал:</para>
-<para>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/HOWTO_Полное_обновление_системы">http://ru.gentoo-wiki.com/HOWTO_Полное_обновление_системы</link>
-</para>
-<para>С версии: 1.2</para><section><info><title/></info><section><info><title>Приведение в порядок /var/lib/portage/world </title></info>
-<para/>
-<para>В world должен быть список программ, которые нужно доустановить к тем, которые уже входят в "system" (т.е. в текущий профайл). </para>
-<orderedlist>
-<listitem>
-<para>в world не должно быть никаких библиотек, и т.д., которые не нужны сами по себе, а нужны только для удовлетворения чьих-то зависимостей (чтобы не продолжать устанавливать/обновлять их, если они уже станут не нужны по какой-то причине) ;</para>
-</listitem>
-<listitem>
-<para>программ, которые уже входят в "system", не должно быть в world </para>
-</listitem>
-<listitem>
-<para>в world нельзя указывать определенную версию софта, это лучше делать в /etc/portage/package.mask ;</para>
-</listitem>
-<listitem>
-<para>скрипт regenworld может помочь восстановить world путем анализа /var/log/emerge.log и генерации на его базе файла world (он перезапишет текущий world!) ;</para>
-</listitem>
-<listitem>
-<para>скрипт dep -p -w (входящий в состав пакета udept) поможет найти избыточные записи в world(которые всё-равно нужны другим записям в world или входят в system);</para>
-</listitem>
-<listitem>
-<para>перед серьёзными обновлениями желательно просмотреть /etc/portage/*, т.к. там могут быть уже не актуальные записи мешающие текущему обновлению. </para>
-</listitem>
-</orderedlist></section></section><section><info><title/></info><section><info><title>Обновление profile </title></info>
-<orderedlist>
-<listitem>
-<para>Не каждый Gentoo release включает в себя новый profile (например, 2004.1 был без profile). </para>
-</listitem>
-<listitem>
-<para>Даже если новый profile есть, то переходить на него не обязательно (если это будет обязательно, то старый профайл будет "протестующий" (deprecated) и emerge об этом должен будет громко кричать). </para>
-</listitem>
-<listitem>
-<para>Инструкции по обновлению profile будут выкладываться здесь: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/gentoo-upgrading.xml">http://www.gentoo.org/doc/ru/gentoo-upgrading.xml</link> и как правило сводиться к изменению симлинка /etc/make.profile </para>
-</listitem>
-</orderedlist></section></section><section><info><title/></info><section><info><title> USE-флаги </title></info>
-<orderedlist>
-<listitem>
-<para>Запустить emerge -uDpv --newuse world и проверить что USE-флаги для всех пакетов выставлены корректно, и при необходимости скорректировать </para>
-</listitem>
-</orderedlist>
-<para>USE-флаги выставляются в /etc/make.conf и /etc/portage/package.use </para></section></section><section><info><title/></info><section><info><title>Запуск обновления системы (если не нужно обновлять toolchain) </title></info>
-<orderedlist>
-<listitem>
-<para>Если </para>
-</listitem>
-</orderedlist>
-<para>        emerge -puDav --newuse world </para>
-<para>показывает что будет обновляться пакет входящий в toolchain (linux-headers, glibc, binutils или gcc), то крайне рекомендуется полностью перекомпилировать всю систему - см. следующий пункт - а иначе можно вместо следующего пункта просто запустить: </para>
-<para>        emerge -uDav --newuse world </para></section></section><section><info><title/></info><section><info><title>Некоторые причины не использовать emerge -U вместо -u </title></info>
-<orderedlist>
-<listitem>
-<para>Причина 1: Проблемы со SLOT </para>
-</listitem>
-</orderedlist>
-<para>Это, к примеру, происходит потому, что некоторые люди хотели gimp-2 вместо gimp-1.2. Представьте ситуацию, где gimp-1.2 помечен stable и находится в SLOT 1, gimp-2 помечен unstable и находится в SLOT 2. Теперь при выполнении ACCEPT_KEYWORDS=~x86 emerge gimp получите gimp-2. </para>
-<para>Позже, когда вы посчитаете, что наступило время обновить свою систему чем-либо похожим на "emerge -U world", эта команда установит gimp-1.2, потому, что gimp находится в world-файле, и флаг "-U" не обрабатывает SLOT должным образом. </para>
-<orderedlist>
-<listitem>
-<para>Причина 2: Проблемы, в случае удаления ebuild-ов с Portage-дерева. </para>
-</listitem>
-</orderedlist>
-<para>Допустим, в Portage находятся 2 версии пакетов foo, foo-1.4 (помеченный как stable) и foo-1.6 (помеченный как unstable). Вы хотите вариант unstable и делаете emerge, как с вышеуказанным gimp. Позже обновляете world как было сказано выше, но в промежутке этого времени вышло критическое обновление для foo-1.6 - foo-1.6.1. Теперь появляется несколько возможностей обработки. </para>
-<orderedlist>
-<listitem>
-<para>foo-1.6 был удален из Portage. Будет установлен foo-1.4, несмотря на "снижение" версии вместо флага "-U" </para>
-</listitem>
-<listitem>
-<para>Ситуация будет еще хуже, если foo-1.6 не был удалён из Portage по какой-либо причине: foo-1.6 (тот, что с критической уязвимостью) будет оставаться на вашей системе до тех пор, пока не будет помечено stable что-либо выше чем foo-1.6. </para>
-</listitem>
-</orderedlist>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Предупреждение: Не рекомендуется использовать ACCEPT_KEYWORDS=~x86 emerge foo о чем можно почитать здесь http://www.gentoo.org/doc/ru/gentoo-amd64-faq.xml#keyword </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable></section></section><section><info><title/></info><section><info><title>Обновление одного из пакетов входящих в toolchain </title></info>
-<orderedlist>
-<listitem>
-<para>Если обновляется хотя-бы один из linux-headers, glibc, binutils или gcc, то рекомендуется пересобрать их дважды, после чего весь system, после чего весь world. </para>
-</listitem>
-</orderedlist>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Примечание: Цель двойной компиляции toolchain - получить гарантированно стабильный и корректный toolchain не зависящий от предыдущего. Перекомпилировать system/world после этого жёсткой необходимости нет, по крайней мере если остальной софт продолжает работать (возможно даже используя библиотеки из старого toolchain - см. предыдущие пункты об апгрейде). </para>
-<para>Цель перекомпиляции system/world - чтобы весь софт получил потенциальное преимущество от установки нового toolchain. system перекомпилируется перед world из тех-же соображений, т.к. при компиляции программ из world используются утилиты из system. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<orderedlist>
-<listitem>
-<para>Если увеличивается первая или вторая цифра версии gcc, то перед второй сборкой нужно переключиться на новую версию через gcc-config - иначе новый gcc просто установится параллельно со старым в "новый слот", но по умолчанию использоваться будет старый. </para>
-</listitem>
-<listitem>
-<para>При сборке system после двойной перекомпиляции toolchain нет необходимости опять компилировать toolchain как часть system. Аналогично при сборке world после system нет небходимости опять компилировать пакеты из system как часть world. Это можно попробовать обойти либо вручную, либо используя скрипты <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?t=282474">[1]</link>, либо через бинарные пакеты и `emerge -k` (я предпочитаю последний вариант). </para>
-</listitem>
-<listitem>
-<para>Итак, рекомендованный набор команд: </para>
-</listitem>
-</orderedlist>
-<para/>
-<para>Листинг 1. Рекомендованный набор команд</para>
-<para># для того, чтобы безопасно использовать `emerge -k` нужно очистить</para>
-<para># каталог с текущими бинарными пакетами</para>
-<para># (напр., переместить его в /tmp/portage-packages)</para>
-<para/>
-<para>pkgdir=$(portageq pkgdir)</para>
-<para>mv $pkgdir /tmp/portage-packages1</para>
-<para>install -d -o portage -g portage $pkgdir</para>
-<para/>
-<para># первая сборка toolchain</para>
-<para>emerge linux-headers glibc binutils gcc-config gcc</para>
-<para/>
-<para># выбрать новый gcc если он установился в новый слот</para>
-<para>gcc-config имя_или_номер_нового_gcc</para>
-<para># см. `gcc-config -l`</para>
-<para>source /etc/profile</para>
-<para/>
-<para># компиляция toolchain с созданием бинарных пакетов</para>
-<para>emerge -b glibc binutils gcc portage</para>
-<para/>
-<para># не компилить glibc, binutils и gcc</para>
-<para>emerge -bke system </para>
-<para/>
-<para># не компилить предыдущие пакеты (включая system)</para>
-<para>emerge -bke world</para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Примечание: Чисто теоретически существует пакет binutils-config, который когда-нибудь может потребоваться использовать аналогично gcc-config. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable></section></section><section><info><title/></info><section><info><title>Обновление безопасности. </title></info>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Примечание: Даже после `emerge -uDav --newuse world` в системе могут оставаться устаревшие пакеты с дырами в безопасности - в слотах! </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>glsa-check -l | grep '\[N\]'</para>
-<para>emerge ... # если нужно</para></section></section><section><info><title/></info><section><info><title> Удаление неиспользуемых пакетов. </title></info>
-<para>После обновления системы в ней могут оказаться пакеты, которые никто не использует. Эти пакеты желательно удалить, т.к. они не будут в дальнейшем обновляться при `emerge -uDav --newuse world`. </para>
-<para>emerge -a depclean # очень осторожно!!!</para>
-<orderedlist>
-<listitem>
-<para>После обновления библиотек может потребоваться перекомпилировать программы, которые эти библиотеки используют: </para>
-</listitem>
-</orderedlist>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Примечание: Для glsa-check, revdep-rebuild необходимо установить пакет gentoolkit </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>rm /root/.revdep-rebuild*.?_*</para>
-<para>revdep-rebuild -p</para>
-<para>revdep-rebuild</para></section></section><section><info><title/></info><section><info><title> Обновление конфигов. </title></info>
-<para>dispatch-conf</para>
-<orderedlist>
-<listitem>
-<para>Если используется runit-init и обновлялся пакет baselayout, то нужно восстановить /sbin/init: </para>
-</listitem>
-</orderedlist>
-<para>ls -l /sbin/*init*</para>
-<para>if (/sbin/init это бинарник, а не симлинк) {</para>
-<para>mv /sbin/init /sbin/init-sysv</para>
-<para>ln -s runit-init /sbin/init</para>
-<para>}</para>
-<orderedlist>
-<listitem>
-<para>Отслеживание важных сообщений при установке пакетов. </para>
-</listitem>
-</orderedlist>
-<para>В процессе emerge world выдаётся очень много сообщений, причём важные комментарии перемешаны с командами компиляции, и отследить их при сборке нескольких пакетов одновременно невозможно. </para>
-<para>Но все эти сообщения можно получить из log-файлов после окончания установки emerge world. Для этого нужно использовать либо enotice, либо portlog-info. </para>
-<para/></section></section><section><info><title>Руководство Gentoo Linux по обновлению GCC</title></info>
-<para/>
-<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/gcc-upgrading.xml">http://www.gentoo.org/doc/ru/gcc-upgrading.xml</link>
-</para>
-<para>С версии: 1.0</para><section><info><title>1. Введение</title></info>
-<para/>
-<para>Обновление GCC</para>
-<para/>
-<para>Зачем нужно обновлять? Ну, GCC довольно похож на любой другой пакет в вашей системе, но чуточку более важен. GCC следует обновлять всякий раз, когда в новой версии исправляются какие-нибудь раздражающие вас ошибки, добавляется новые нужные функции, или если вы хотите держать свою систему обновленной. Если ни один из этих случаев к вам не относится, обновление можно спокойно откладывать, пока ваша версия GCC поддерживается разработчиками Gentoo. </para>
-<para/>
-<para>Если вы устанавливаете новую версию GCC, система не переключается на ее использование автоматически. Вам необходимо явно запросить изменение, потому что в процессе перехода может потребоваться несколько дополнительных шагов. Если вы решите не переключаться, система Portage продолжит использовать более старую версию компилятора, пока вы не передумаете или пока не удалите старый компилятор из своей системы. </para>
-<para/>
-<para>В этом руководстве описываются необходимые шаги, нужные для полноценного обновления компилятора, используемого вашей системой Gentoo. Отдельный раздел посвящен переходу с GCC 3.3 на 3.4 или более новые версии и проблемам с libstdc++. Другой частный раздел предназначен пользователям, впервые устанавливающим Gentoo из архива третьей стадии (stage3), после выхода новой версии GCC. </para>
-<para>Примечание: Необходимо заметить, что обновление с GCC-3.4 до GCC-4.0 или более нового не требует существенных изменений от пользователя, так как GCC-3.4 и GCC-4.0 используют одинаковый двоичный прикладной интерфейс (ABI). Все что нужно, это использовать gcc-config, чтобы выбрать желаемый компилятор. </para>
-<para/>
-<para/></section><section><info><title>2. Общие указания по обновлению</title></info>
-<para/>
-<para>Введение</para>
-<para/>
-<para>Важно: Если вы ищете подробные указания по обновлению с GCC-3.3 на GCC-3.4 или более новый, обратитесь к соответствующему разделу. </para>
-<para/>
-<para/>
-<para>Важно: Если вы ищете подробные указания по обновлению GCC на вновь установленных системах, обратитесь к соответствующему разделу. </para>
-<para/>
-<para/>
-<para>Вообще говоря, переход на версии с исправленными ошибками (bugfix release), как с 3.3.5 на 3.3.6, должен быть довольно безопасен: надо только установить новую версию, переключиться на нее и пересобрать единственный затрагиваемый пакет — libtool. Однако, при некоторых обновлениях GCC нарушается двоичная совместимость, в таких случаях может потребоваться пересборка не только затрагиваемых пакетов, но и даже всего системного набора и пакетов, необходимых для компиляции. </para>
-<para/>
-<para>Говоря о необходимости ручного переключения на новую версию компилятора, мы сказали, что оно не происходит автоматически. Тем не менее, есть одно исключение — переход на версию с исправленными ошибками (как с 3.3.5 на 3.3.6), если не используется режим «multislot», позволяющий обеим версиям сосуществовать в одной системе. По умолчанию этот режим выключен, ведь большинству пользователей он ничего не даcт. </para>
-<para/>
-<para>Листинг 2.1: Обновление GCC</para>
-<para># emerge -uav gcc</para>
-<para/>
-<para>(Вместо "i686-pc-linux-gnu-3.4.5" укажите обновленную</para>
-<para> версию GCC и настройки CHOST)</para>
-<para># gcc-config i686-pc-linux-gnu-3.4.5</para>
-<para># source /etc/profile</para>
-<para/>
-<para>(Пересборка libtool)</para>
-<para># emerge --oneshot -av libtool</para>
-<para/>
-<para/>
-<para>Теперь пересоберите набор программ для компиляции, затем world, используя новый компилятор. </para>
-<para/>
-<para>Листинг 2.2: Пересборка системы</para>
-<para># emerge -eav system</para>
-<para># emerge -eav world</para>
-<para/>
-<para/>
-<para>Теперь можно без опасений удалить старую версию GCC. Если вы чувствуете такую необходимость, введите следующую команду (как обычно, вместо =sys-devel/gcc-3.3* укажите версию, которую собираетесь удалить): </para>
-<para/>
-<para>Листинг 2.3: Удаление более старой версии GCC</para>
-<para># emerge -aC =sys-devel/gcc-3.3*</para>
-<para/>
-<para/></section><section><info><title>3. Переход с GCC-3.3 на 3.4 или более новый</title></info>
-<para/>
-<para>Введение</para>
-<para/>
-<para>Переход с GCC-3.3 на 3.4 или более новую версию не так гладок, ведь между этими версиями изменился двоичный прикладной интерфейс C++ (ABI). Также придется позаботиться о существующей проблеме с библиотекой libstdc++. </para>
-<para/>
-<para>Варианты</para>
-<para/>
-<para>Важно: Если вы обновляете GCC на машине SPARC, вам придется выбрать путь полной пересборки системы из-за некоторых внутренних изменений двоичного интерфейса (ABI) GCC в области передачи параметров функций. </para>
-<para/>
-<para/>
-<para>У вас есть два варианта обновления системы. Первый способ быстрее и требует использования программы revdep-rebuild из пакета gentoolkit, а во втором вся система пересобирается с нуля, чтобы задействовать новые возможности GCC. Ваше дело, какой из способов выбрать. В большинстве случаев первого способа достаточно. </para>
-<para/>
-<para>Использование revdep-rebuild</para>
-<para/>
-<para>Если вы выбрали этот способ, нужно сначала установить gentoolkit, если вы еще этого не сделали. Затем обновите GCC и переключите систему на новый компилятор. Также пересоберите пакет libtool, чтобы обеспечить пригодность программ для компиляции. </para>
-<para/>
-<para>Листинг 3.1: Установка gentoolkit и обновление GCC</para>
-<para># emerge -an gentoolkit</para>
-<para># emerge -uav gcc</para>
-<para>(вместо "i686-pc-linux-gnu-3.4.5" укажите обновленную</para>
-<para> версию GCC и настройки CHOST)</para>
-<para># gcc-config i686-pc-linux-gnu-3.4.5</para>
-<para># source /etc/profile</para>
-<para/>
-<para>(пересборка libtool)</para>
-<para># emerge --oneshot -av libtool</para>
-<para/>
-<para/>
-<para>Теперь посмотрите, какие пакеты собирается пересобирать revdep-rebuild. Затем запустите revdep-rebuild на собственно пересборку. Это займет некоторое время, так что потерпите. </para>
-<para/>
-<para>Листинг 3.2: Использование revdep-rebuild</para>
-<para># revdep-rebuild --library libstdc++.so.5 -- -p -v</para>
-<para># revdep-rebuild --library libstdc++.so.5</para>
-<para/>
-<para>Примечание: Возможно, у вас появятся проблемы с несуществующими версиями пакетов из-за того, что они устарели или замаскированы. В этом случае можно при запуске revdep-rebuild указать параметр --package-names. Это заставит пакеты пересобираться, основываясь на именах пакетов, вместо точного имени и версии. </para>
-<para/>
-<para/>
-<para>Для обеспечения совместимости с более старыми двоичными приложениями C++ и любыми пакетами, которые revdep-rebuild мог пропустить, надо установить пакет sys-libs/libstdc++-v3 до того, как удалять GCC 3.3 из своей системы. </para>
-<para/>
-<para>Листинг 3.3: Установка libstdc++-v3 и удаление GCC</para>
-<para># emerge --oneshot sys-libs/libstdc++-v3</para>
-<para># emerge -aC =sys-devel/gcc-3.3*</para>
-<para/>
-<para/>
-<para>Использование emerge -e</para>
-<para/>
-<para>Этот гораздо более медленный способ пересобирает всю систему, гарантируя, что все пересобирается новым компилятором, и, таким образом, он безопаснее. Сперва потребуется обновить GCC и libtool, и переключить систему на новый компилятор. </para>
-<para/>
-<para>Листинг 3.4: Обновление GCC</para>
-<para># emerge -uav gcc</para>
-<para>(вместо "i686-pc-linux-gnu-3.4.5" укажите обновленную</para>
-<para> версию GCC и настройки CHOST)</para>
-<para># gcc-config i686-pc-linux-gnu-3.4.5</para>
-<para># source /etc/profile</para>
-<para/>
-<para>(пересборка libtool)</para>
-<para># emerge --oneshot -av libtool</para>
-<para/>
-<para/>
-<para>Для обеспечения совместимости с более старыми двоичными приложениями C++, надо установить в систему пакет sys-libs/libstdc++-v3. </para>
-<para/>
-<para>Листинг 3.5: Установка libstdc++-v3</para>
-<para># emerge --oneshot sys-libs/libstdc++-v3</para>
-<para/>
-<para/>
-<para>Теперь займемся пересборкой сначала пакетов system, а затем world. Это займет очень длительное время, зависящее от количества установленных пакетов: ведь будут пересобираться все средства компиляции и поддерживающие системные файлы, а затем каждый пакет, находящийся в вашей системе. Это необходимо, чтобы все пакеты были гарантированно скомпилированы уже с новыми средствами компиляции, включая сами эти средства. </para>
-<para/>
-<para>Листинг 3.6: Пересборка system и world</para>
-<para># emerge -e system</para>
-<para># emerge -e world</para>
-<para/>
-<para/>
-<para>Теперь можно удалить старые версии GCC, не вызывая проблем: </para>
-<para/>
-<para>Листинг 3.7: Очистка</para>
-<para># emerge -aC =sys-devel/gcc-3.3*</para>
-<para/>
-<para/></section><section><info><title>4. Обновление GCC на новой установке</title></info>
-<para/>
-<para>Введение</para>
-<para/>
-<para>Обновление GCC в системе после установки из архива третьей стадии (stage3)  — дело простое. Отсутствие изобилия установленных программ, которые ссылаются на старую версию GCC — это преимущество пользователей, только что установивших систему. В следующем примере показывается обновление с GCC-3.3 на 3.4 или более новые версии. При обновлении с других версий GCC будут кое-какие отличия. Например, имена библиотек, используемые ниже для revdep-rebuild, относятся к версии GCC 3.3, также, как и необходимость установки libstdc++-v3. </para>
-<para/>
-<para>Пока пользователь не внес каких-либо изменений в систему, для получения системы с новой версией GCC нужно всего несколько шагов. Также, как и при обновлении с GCC-3.3 до 3.4, у пользователя есть две возможности. Но, в отличие от обновления с GCC-3.3 до 3.4, здесь обновление проще, так как различий между способами меньше. Первый способ быстрее, и задействует программу revdep-rebuild из пакета gentoolkit, подобно вышеописанной процедуре обновления. Использование revdep-rebuild предполагает пересборку только тех пакетов, которые действительно ссылаются на библиотеки GCC, тогда как при втором способе система полностью перекомпилируется с новой версией GCC, что занимает намного больше времени. Второй способ никогда не потребуется, и описан только для полноты картины. </para>
-<para/>
-<para>Приведенные первые шаги одинаковы для обоих способов, и должны делаться в любом случае. </para>
-<para/>
-<para>Листинг 4.1: Обновление GCC</para>
-<para># emerge -uav gcc</para>
-<para>(вместо "i686-pc-linux-gnu-3.4.5" укажите обновленную</para>
-<para> версию GCC и настройки CHOST)</para>
-<para># gcc-config i686-pc-linux-gnu-3.4.5</para>
-<para># source /etc/profile</para>
-<para/>
-<para>(пересборка libtool)</para>
-<para># emerge --oneshot -av libtool</para>
-<para/>
-<para/>
-<para>Для обеспечения совместимости с более старыми двоичными приложениями C++, надо установить в систему пакет sys-libs/libstdc++-v3. </para>
-<para/>
-<para>Листинг 4.2: Установка libstdc++-v3</para>
-<para># emerge --oneshot sys-libs/libstdc++-v3</para>
-<para/>
-<para/>
-<para>Использование revdep-rebuild</para>
-<para/>
-<para>Этот способ требует, чтобы вы сначала установили пакет gentoolkit, если это еще не сделано. Затем запустите программу revdep-rebuild, чтобы просканировать установленные пакеты, найти и пересобрать нужные. </para>
-<para/>
-<para>Листинг 4.3: Установка gentoolkit и запуск revdep-rebuild</para>
-<para># emerge -an gentoolkit</para>
-<para># revdep-rebuild --library libstdc++.so.5 -- -p -v</para>
-<para># revdep-rebuild --library libstdc++.so.5</para>
-<para/>
-<para>Примечание: Возможно, у вас появятся проблемы с несуществующими версиями пакетов из-за того, что они устарели или замаскированы. В этом случае можно при запуске revdep-rebuild указать параметр --package-names. Это заставит пакеты пересобираться, основываясь на именах пакетов, вместо точного имени и версии. </para>
-<para/>
-<para/>
-<para>Использование emerge -e</para>
-<para/>
-<para>Этот способ, будучи гораздо медленнее, пересобирает всю систему, гарантируя, что все пересобрано новым компилятором. Это необязательно, но допустимо, если вы также изменяете переменную среды CFLAGS или другие переменные make.conf, которые влияют на компиляцию системы. </para>
-<para/>
-<para>Так как эти действия выполняются сразу после первоначальной установки, не потребуется перекомпилировать world, как мы поступили бы для обновления компилятора в ранее установленной системе. Однако, для пущей уверенности в том, что обновлены все пакеты, можно запустить обновление цели world вместо system. </para>
-<para/>
-<para>Листинг 4.4: Пересборка system</para>
-<para># emerge -e system</para>
-<para/>
-<para/>
-<para>Очистка</para>
-<para/>
-<para>Теперь можно удалить старые версии GCC, не вызывая проблем. Выражение ВАША-НОВАЯ-ВЕРСИЯ-GCC замените номером версии, на которую вы перешли: </para>
-<para/>
-<para>Листинг 4.5: Очистка</para>
-<para># emerge -aC "&lt;sys-devel/gcc-ВАША-НОВАЯ-ВЕРСИЯ-GCC"</para>
-<para/>
-<para/></section><section><info><title>5. Обычные грабли</title></info>
-<para/>
-<para>Важно на время обновления отключить distcc. Смешение версий компилятора на разных узлах вызовет проблемы при сборке. Это не относится к ccache, так как объекты кэша будут в любом случае сделаны недействительными. </para>
-<para/>
-<para>Всегда используйте одну и ту же версию GCC для своего ядра и дополнительных модулей ядра. Как только вы пересоберете world с новым GCC, внешние модули (например, app-emulation/qemu-softmmu) не смогут загрузиться. Пожалуйста, чтобы это исправить, пересоберите свое ядро новой версией GCC. </para>
-<para/>
-<para>Если вы обновляете GCC на машине SPARC, обязательно еще раз запустите silo -f после пересборки world, чтобы избежать возможных проблем. </para>
-<para/>
-<para>Распространенные сообщения об ошибках</para>
-<para/>
-<para>Если ваша система жалуется на что-то вроде libtool: link: `/usr/lib/gcc-lib/i686-pc-linux-gnu/3.3.6/libstdc++.la' is not a valid libtool archive, запустите /sbin/fix_libtool_files.sh 3.3.6 (замените «3.3.6» на номер версии из сообщения об ошибке). </para>
-<para/>
-<para>Если вы увидели error: /usr/bin/gcc-config: line 632: /etc/env.d/gcc/i686-pc-linux-gnu-3.3.5: No such file or directory, тогда попробуйте удалить /etc/env.d/gcc/config-i686-pc-linux-gnu и снова запустить gcc-config, следом указав source /etc/profile. Делайте это только тогда, когда у вас не настроены никакие кросс-компиляторы. </para>
-<para/>
-<para>Если при emerge -e system или emerge -e world не собирается пакет, выполнение можно продолжить командой emerge --resume. Если ошибка появляется снова и снова, пропустите пакет, указав emerge --resume --skipfirst. Не запускайте параллельно другие экземпляры emerge, чтобы не потерять информацию, нужную для возобновления. </para>
-<para/>
-<para>Если во время обновления компиляторв встретится ошибка spec failure: unrecognized spec option, попробуйте откатиться на свой компилятор по умолчанию, убрать переменную GCC_SPECS и снова обновить компилятор: </para>
-<para/>
-<para>Листинг 5.1: Восстановление первичной настройки компилятора</para>
-<para># gcc-config 1</para>
-<para># source /etc/profile</para>
-<para># unset GCC_SPECS</para>
-<para># emerge -uav gcc</para>
-<para/></section></section>
+        <title>HOWTO Полное обновление системы</title>
+    </info>
+    <para>Ссылка на оригинал:</para>
+    <para>
+        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/HOWTO_Полное_обновление_системы">http://ru.gentoo-wiki.com/HOWTO_Полное_обновление_системы</link>
+    </para>
+    <para>С версии: 1.2</para>
+    <section>
+        <info>
+            <title>Приведение в порядок /var/lib/portage/world </title>
+        </info>
+        <para>В world должен быть список программ, которые нужно доустановить к тем, которые уже входят в "system" (т.е. в текущий профайл). </para>
+        <orderedlist>
+            <listitem>
+                <para>в world не должно быть никаких библиотек, и т.д., которые не нужны сами по себе, а нужны только для удовлетворения чьих-то зависимостей (чтобы не продолжать устанавливать/обновлять их, если они уже станут не нужны по какой-то причине) ;</para>
+            </listitem>
+            <listitem>
+                <para>программ, которые уже входят в "system", не должно быть в world </para>
+            </listitem>
+            <listitem>
+                <para>в world нельзя указывать определенную версию софта, это лучше делать в <filename>/etc/portage/package.mask</filename>;</para>
+            </listitem>
+            <listitem>
+                <para>скрипт regenworld может помочь восстановить world путем анализа <filename>/var/log/emerge.log</filename> и генерации на его базе файла world (он перезапишет текущий world!) ;</para>
+            </listitem>
+            <listitem>
+                <para>скрипт <command>dep -p -w</command> (входящий в состав пакета udept) поможет найти избыточные записи в world (которые всё равно нужны другим записям в world или входят в system);</para>
+            </listitem>
+            <listitem>
+                <para>перед серьёзными обновлениями желательно просмотреть <filename>/etc/portage/*</filename>, т.к. там могут быть уже не актуальные записи мешающие текущему обновлению. </para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <info>
+            <title>Обновление profile </title>
+        </info>
+        <orderedlist>
+            <listitem>
+                <para>Не каждый Gentoo release включает в себя новый profile (например, 2004.1 был без profile). </para>
+            </listitem>
+            <listitem>
+                <para>Даже если новый profile есть, то переходить на него не обязательно (если это будет обязательно, то старый профайл будет "протестующий" (deprecated) и emerge об этом должен будет громко кричать). </para>
+            </listitem>
+            <listitem>
+                <para>Инструкции по обновлению profile будут выкладываться здесь: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/gentoo-upgrading.xml">http://www.gentoo.org/doc/ru/gentoo-upgrading.xml</link> и как правило сводиться к изменению симлинка <filename>/etc/make.profile</filename>.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <info>
+            <title> USE-флаги </title>
+        </info>
+        <orderedlist>
+            <listitem>
+                <para>Запустить <command>emerge -uDpv --newuse world</command> и проверить что USE-флаги для всех пакетов выставлены корректно, и при необходимости скорректировать </para>
+            </listitem>
+        </orderedlist>
+        <para>USE-флаги выставляются в /etc/make.conf и <filename>/etc/portage/package.use</filename>.</para>
+    </section>
+    <section>
+        <info>
+            <title>Запуск обновления системы (если не нужно обновлять toolchain) </title>
+        </info>
+        <orderedlist>
+            <listitem>
+                <para>Если </para>
+            </listitem>
+        </orderedlist>
+        <para>        <command>emerge -puDav --newuse world</command>
+        </para>
+        <para>показывает что будет обновляться пакет входящий в toolchain (linux-headers, glibc, binutils или gcc), то крайне рекомендуется полностью перекомпилировать всю систему  — см. следующий пункт  — а иначе можно вместо следующего пункта просто запустить: </para>
+        <para>        <command>emerge -uDav --newuse world</command>
+        </para>
+    </section>
+    <section>
+        <info>
+            <title>Некоторые причины не использовать emerge -U вместо -u </title>
+        </info>
+        <para>Причина 1: Проблемы со SLOT</para>
+        <para>Это, к примеру, происходит потому, что некоторые люди хотели gimp-2 вместо gimp-1.2. Представьте ситуацию, где gimp-1.2 помечен stable и находится в SLOT 1, gimp-2 помечен unstable и находится в SLOT 2. Теперь при выполнении <command>ACCEPT_KEYWORDS=~x86 emerge gimp</command> получите gimp-2. </para>
+        <para>Позже, когда вы посчитаете, что наступило время обновить свою систему чем-либо похожим на "emerge -U world", эта команда установит gimp-1.2, потому, что gimp находится в world-файле, и флаг "-U" не обрабатывает SLOT должным образом. </para>
+        <para>Причина 2: Проблемы, в случае удаления ebuild-ов с Portage-дерева. </para>
+        <para>Допустим, в Portage находятся 2 версии пакетов foo, foo-1.4 (помеченный как stable) и foo-1.6 (помеченный как unstable). Вы хотите вариант unstable и делаете emerge, как с вышеуказанным gimp. Позже обновляете world как было сказано выше, но в промежутке этого времени вышло критическое обновление для foo-1.6  — foo-1.6.1. Теперь появляется несколько возможностей обработки. </para>
+        <orderedlist>
+            <listitem>
+                <para>foo-1.6 был удален из Portage. Будет установлен foo-1.4, несмотря на "снижение" версии вместо флага "-U" </para>
+            </listitem>
+            <listitem>
+                <para>Ситуация будет еще хуже, если foo-1.6 не был удалён из Portage по какой-либо причине: foo-1.6 (тот, что с критической уязвимостью) будет оставаться на вашей системе до тех пор, пока не будет помечено stable что-либо выше чем foo-1.6. </para>
+            </listitem>
+        </orderedlist>
+        <warning>
+            <para>Предупреждение: Не рекомендуется использовать <command>ACCEPT_KEYWORDS=~x86 emerge foo</command> о чем можно почитать здесь <link xlink:href="http://www.gentoo.org/doc/ru/gentoo-amd64-faq.xml#keyword">http://www.gentoo.org/doc/ru/gentoo-amd64-faq.xml#keyword</link>.</para>
+        </warning>
+    </section>
+    <section>
+        <info>
+            <title>Обновление одного из пакетов входящих в toolchain </title>
+        </info>
+        <orderedlist>
+            <listitem>
+                <para>Если обновляется хотя-бы один из linux-headers, glibc, binutils или gcc, то рекомендуется пересобрать их дважды, после чего весь system, после чего весь world. </para>
+            </listitem>
+        </orderedlist>
+        <note>
+            <para>Цель двойной компиляции toolchain  — получить гарантированно стабильный и корректный toolchain не зависящий от предыдущего. Перекомпилировать system/world после этого жёсткой необходимости нет, по крайней мере если остальной софт продолжает работать (возможно даже используя библиотеки из старого toolchain  — см. предыдущие пункты об апгрейде). </para>
+            <para>Цель перекомпиляции system/world  — чтобы весь софт получил потенциальное преимущество от установки нового toolchain. system перекомпилируется перед world из тех-же соображений, т.к. при компиляции программ из world используются утилиты из system. </para>
+        </note>
+        <orderedlist>
+            <listitem>
+                <para>Если увеличивается первая или вторая цифра версии gcc, то перед второй сборкой нужно переключиться на новую версию через gcc-config  — иначе новый gcc просто установится параллельно со старым в "новый слот", но по умолчанию использоваться будет старый. </para>
+            </listitem>
+            <listitem>
+                <para>При сборке system после двойной перекомпиляции toolchain нет необходимости опять компилировать toolchain как часть system. Аналогично при сборке world после system нет небходимости опять компилировать пакеты из system как часть world. Это можно попробовать обойти либо вручную, либо используя скрипты <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic.php?t=282474">[1]</link>, либо через бинарные пакеты и `<command>emerge -k</command>` (я предпочитаю последний вариант). </para>
+            </listitem>
+            <listitem>
+                <para>Итак, рекомендованный набор команд: </para>
+            </listitem>
+        </orderedlist>
+        <example>
+            <title>Рекомендованный набор команд</title>
+            <screen><lineannotation># для того, чтобы безопасно использовать `emerge -k` нужно очистить
+# каталог с текущими бинарными пакетами
+# (напр., переместить его в /tmp/portage-packages)</lineannotation>
+
+pkgdir=$(portageq pkgdir)
+mv $pkgdir /tmp/portage-packages1
+install -d -o portage -g portage $pkgdir
+
+<lineannotation># первая сборка toolchain</lineannotation>
+emerge linux-headers glibc binutils gcc-config gcc
+
+<lineannotation># выбрать новый gcc если он установился в новый слот</lineannotation>
+gcc-config имя_или_номер_нового_gcc
+<lineannotation># см. `gcc-config -l`</lineannotation>
+source /etc/profile
+
+<lineannotation># компиляция toolchain с созданием бинарных пакетов</lineannotation>
+emerge -b glibc binutils gcc portage
+
+<lineannotation># не компилить glibc, binutils и gcc</lineannotation>
+emerge -bke system 
+
+<lineannotation># не компилить предыдущие пакеты (включая system)</lineannotation>
+emerge -bke world</screen>
+        </example>
+        <note>
+            <para>Примечание: Чисто теоретически существует пакет binutils-config, который когда-нибудь может потребоваться использовать аналогично gcc-config.</para>
+        </note>
+    </section>
+    <section>
+        <info>
+            <title>Обновление безопасности. </title>
+        </info>
+        <note>
+            <para>Примечание: Даже после <command>emerge -uDav --newuse world</command> в системе могут оставаться устаревшие пакеты с дырами в безопасности  — в слотах! </para>
+        </note>
+        <screen>glsa-check -l | grep '\[N\]'
+emerge ... <lineannotation># если нужно</lineannotation></screen>
+    </section>
+    <section>
+        <info>
+            <title> Удаление неиспользуемых пакетов. </title>
+        </info>
+        <para>После обновления системы в ней могут оказаться пакеты, которые никто не использует. Эти пакеты желательно удалить, т.к. они не будут в дальнейшем обновляться при <command>emerge -uDav --newuse world</command>. </para>
+        <screen>emerge -a depclean <lineannotation># очень осторожно!!!</lineannotation></screen>
+        <orderedlist>
+            <listitem>
+                <para>После обновления библиотек может потребоваться перекомпилировать программы, которые эти библиотеки используют: </para>
+            </listitem>
+        </orderedlist>
+        <note>
+            <para>Примечание: Для glsa-check, revdep-rebuild необходимо установить пакет gentoolkit </para>
+        </note>
+        <screen>rm /root/.revdep-rebuild*.?_*
+revdep-rebuild -p
+revdep-rebuild</screen>
+    </section>
+    <section>
+        <info>
+            <title> Обновление конфигов. </title>
+        </info>
+        <para>dispatch-conf</para>
+        <orderedlist>
+            <listitem>
+                <para>Если используется runit-init и обновлялся пакет baselayout, то нужно восстановить <filename>/sbin/init</filename>: </para>
+            </listitem>
+        </orderedlist>
+        <programlisting>ls -l /sbin/*init*
+if (/sbin/init это бинарник, а не симлинк) {
+  mv /sbin/init /sbin/init-sysv
+  ln -s runit-init /sbin/init
+}</programlisting>
+        <orderedlist>
+            <listitem>
+                <para>Отслеживание важных сообщений при установке пакетов. </para>
+            </listitem>
+        </orderedlist>
+        <para>В процессе <command>emerge world</command> выдаётся очень много сообщений, причём важные комментарии перемешаны с командами компиляции, и отследить их при сборке нескольких пакетов одновременно невозможно. </para>
+        <para>Но все эти сообщения можно получить из log-файлов после окончания установки emerge world. Для этого нужно использовать либо enotice, либо portlog-info. </para>
+    </section>
 </article>

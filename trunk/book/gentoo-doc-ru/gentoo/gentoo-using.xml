@@ -6,6 +6,7 @@
     <title>Использование Gentoo</title>
     <xi:include href="gentoo-update.xml"/>
     <xi:include href="gentoo-full-update.xml"/>
+    <xi:include href="gentoo-gcc-update.xml"/>
     <xi:include href="gentoo-advices-v2.xml"/>
     <xi:include href="gentoo-after-install.xml"/>
     <xi:include href="gentoo-ruwiki.xml"/>
