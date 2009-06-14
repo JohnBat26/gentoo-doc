@@ -1,72 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
-    <info><title>Руководство по настройке GNOME</title></info>
-        <para/>
-        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/kde-config.xml">http://www.gentoo.org/doc/ru/gnome-config.xml</link>
-        </para>
-        <para>С версии: 1.2</para><section><info><title/></info><section><info><title>1. Что такое GNOME?</title></info>
-            <para>О проекте</para>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Руководство по настройке GNOME</title>
+    </info>
+    <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/kde-config.xml">http://www.gentoo.org/doc/ru/gnome-config.xml</link>
+    </para>
+    <para>С версии: 1.2</para>
+    <section>
+        <title>Что такое GNOME?</title>
+        <section>
+            <title>О проекте</title>
             <para>
-                <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/">GNOME</link> - это свободное ПО. Проект посвящен разработке GNOME - рабочего стола и пакет разработчика для Unix/Linux систем. <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://foundation.gnome.org/">GNOME Foundation</link> координирует разработку и другие аспекты проекта GNOME. </para>
-            <para>О Програмном обеспечении</para>
+                <indexterm><primary>GNOME</primary></indexterm><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/">GNOME</link> - это свободное ПО. Проект посвящен разработке GNOME - рабочего стола и пакет разработчика для Unix/Linux систем. <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://foundation.gnome.org/">GNOME Foundation</link> координирует разработку и другие аспекты проекта GNOME. </para>
+        </section>
+        <section>
+            <title>О Програмном обеспечении</title>
             <para>GNOME представляет собой рабочую среду а также платформу для разработчиков. Это "открытое ПО" используется в качестве рабочей среды для рабочих станций, некоторыми промышленными лидерами. Эта среда представляет интерес, как для бизнес пользователей, домашних пользователей так и разработчиков. </para>
-            <para>Сообщество</para>
-            <para>Как и любого большого открытого проекта, у Gnome очень большое количество разработчиков, а также большая пользовательская база. <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnomedesktop.org/">Footnotes</link> содержит новости для пользователей GNOME Desktop; <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://planet.gnome.org/">GnomePlanet</link> предназначена для хакеров/помощников, а <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://developer.gnome.org/">Developer.Gnome.Org</link> для разработчиков. </para></section></section><section><info><title/></info><section><info><title>2. Установка GNOME</title></info>
-                <para>Что вам понадобится?</para>
-                <para>Перед тем как устанавливать GNOME, вы может быть захотите отредактировать переменные USE. Убедитесь что gtk и gnome прописаны как переменные USE в /etc/make.conf. Если вы не планируете использовать KDE (другая подобная рабочая среда) тогда, удалите qt и kde. </para>
-                <para>Листинг 2.1: Пример использования переменных USE в /etc/make.conf</para>
-                <para>USE="-qt -kde gtk gnome"</para>
-                <para/>
-                <para/>
-                <para>После этого, начните установку GNOME с помощью emerging gnome и xscreensaver: </para>
-                <para>Листинг 2.2: Установка GNOME</para>
-                <para># emerge gnome xscreensaver</para>
-                <para/>
-                <para/>
-                <para/>
-                <para>Это займет какое-то время, за это время вы можете прочитать все те книги которые для вас приготовила мам, и которые вы никогда в жизни не открывали. Готово? Отлично, теперь вы должны обновить переменные рабочей среды. </para>
-                <para>Листинг 2.3: Обновление зависимостей рабочей среды</para>
-                <para># env-update &amp;&amp; source /etc/profile</para>
-                <para/>
-                <para/>
-                <para>Если вы были внимательны, то после завершения выполнения команды emerge, вам предлагают добавить famd по умолчанию, чтобы nautilus и gnome-vfs могли отслеживать изменения файлов: </para>
-                <para>Листинг 2.4: Добавление famd по умолчанию</para>
-                <para># /etc/init.d/famd start</para>
-                <para># rc-update add famd default</para>
-                <para/>
-                <para/>
-                <para>Первые впечатления</para>
-                <para>Давай для начала посмотрим что у нас получилось. Выйдите из root shell и зайдите в систему как обычный пользователь. Сейчас мы сконфигурируем сессию GNOME с помощью команды startx: </para>
-                <para>Листинг 2.5: Использование рабочей среды GNOME по умолчанию</para>
-                <para>$ echo "exec gnome-session" &gt; ~/.xinitrc</para>
-                <para/>
-                <para/>
-                <para>Запускаем графическую среду, набрав команду startx: </para>
-                <para/>
-                <para>Листинг 2.6: Запуск GNOME</para>
-                <para>$ startx</para>
-                <para/>
-                <para/>
-                <para>Если все сделано правильно, GNOME приветствует вас. Поздравляем. Теперь давайте попробуем сконфигурировать рабочую среду GNOME. </para>
-                <para>3. Настройка GNOME</para>
-                <para>Графический менеджеры GNOME входа в систему</para>
-                <para>Если вы хотите, чтобы GNOME Display Manager (GDM) запускался автоматически при загрузке (таким образом вы сможете зайти в систему с помощью графического интерфейса), то вы должны установить xdm в default runlevel. </para>
-                <para>Листинг 3.1: Установка запуска xdm по умолчанию </para>
-                <para># rc-update add xdm default</para>
-                <para/>
-                <para/>
-                <para>Проверьте содержание /etc/X11/Sessions: </para>
-                <para>Листинг 3.2: Проверка содержания /etc/X11/Sessions /etc/X11/Sessions</para>
-                <para># ls /etc/X11/Sessions</para>
-                <para>Xsession Gnome</para>
-                <para/>
-                <para>Как видите, теперь доступна сессия gnome. Теперь отредактируйте /etc/rc.conf и измените 2 переменные: DISPLAYMANAGER (должно быть gdm) и XSESSION (должно быть Gnome): </para>
-                <para>Листинг 3.3: Редактирование /etc/rc.conf</para>
-                <para>DISPLAYMANAGER="gdm"</para>
-                <para>XSESSION="Gnome"</para>
-                <para/>
-                <para>После перезагрузки, GNOME Display Manager спросит имя пользователя и пароль. GNOME будет рабочей средой по умолчанию (конечно же здесь есть возможность выбора). </para></section></section>
+        </section>
+        <section>
+            <title>Сообщество</title>
+            <para>Как и любого большого открытого проекта, у Gnome очень большое количество разработчиков, а также большая пользовательская база. <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnomedesktop.org/">Footnotes</link> содержит новости для пользователей GNOME Desktop; <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://planet.gnome.org/">GnomePlanet</link> предназначена для хакеров/помощников, а <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://developer.gnome.org/">Developer.Gnome.Org</link> для разработчиков. </para>
+        </section>
+    </section>
+    <section>
+        <title>Установка GNOME</title>
+        <section>
+            <title>Что вам понадобится?</title>
+            <para>Перед тем как устанавливать GNOME, вы может быть захотите отредактировать переменные <envar>USE</envar>. Убедитесь что gtk и gnome прописаны как переменные <envar>USE</envar> в <filename>/etc/make.conf</filename>. Если вы не планируете использовать KDE (другая подобная рабочая среда) тогда, удалите qt и kde. </para>
+            <example>
+                <title>Пример использования переменных USE в <filename>/etc/make.conf</filename></title>
+                <programlisting>USE="-qt -kde gtk gnome"</programlisting>
+            </example>
+            <para>После этого, начните установку GNOME с помощью emerging gnome и xscreensaver: </para>
+            <para>
+                <example>
+                    <title>Установка GNOME</title>
+                    <screen><prompt>#</prompt> <userinput>emerge gnome xscreensaver</userinput></screen>
+                </example>
+            </para>
+            <para>Это займет какое-то время, за это время вы можете прочитать все те книги которые для вас приготовила мам, и которые вы никогда в жизни не открывали. Готово? Отлично, теперь вы должны обновить переменные рабочей среды. </para>
+            <example>
+                <title>Обновление зависимостей рабочей среды</title>
+                <screen><prompt>#</prompt> <userinput>env-update &amp;&amp; source /etc/profile</userinput></screen>
+            </example>
+            <para>Если вы были внимательны, то после завершения выполнения команды emerge, вам предлагают добавить <systemitem class="daemon">famd</systemitem> по умолчанию, чтобы nautilus и gnome-vfs могли отслеживать изменения файлов: </para>
+            <example>
+                <title>Добавление <systemitem class="daemon">famd</systemitem> по умолчанию</title>
+                <screen><prompt>#</prompt> <userinput>/etc/init.d/famd start</userinput>
+<prompt>#</prompt> <userinput>rc-update add famd default</userinput></screen>
+            </example>
+        </section>
+        <section>
+            <title>Первые впечатления</title>
+            <para>Давай для начала посмотрим что у нас получилось. Выйдите из root shell и зайдите в систему как обычный пользователь. Сейчас мы сконфигурируем сессию GNOME с помощью команды <command>startx</command>:</para>
+            <example>
+                <title>Использование рабочей среды GNOME по умолчанию</title>
+                <screen><prompt>$</prompt> <userinput>echo "exec gnome-session" &gt; ~/.xinitrc</userinput></screen>
+            </example>
+            <para>Запускаем графическую среду, набрав команду <command>startx</command>:</para>
+            <example>
+                <title>Запуск GNOME</title>
+                <screen><prompt>$</prompt> <userinput>startx</userinput></screen>
+            </example>
+            <para>Если все сделано правильно, GNOME приветствует вас. Поздравляем. Теперь давайте попробуем сконфигурировать рабочую среду GNOME. </para>
+        </section>
+    </section>
+    <section>
+        <title>Настройка GNOME</title>
+        <section>
+            <title>Графический менеджер GNOME входа в систему</title>
+            <para>Если вы хотите, чтобы <indexterm><primary>GNOME Display Manager</primary></indexterm><indexterm><primary>GDM</primary></indexterm>GNOME Display Manager (GDM) запускался автоматически при загрузке (таким образом вы сможете зайти в систему с помощью графического интерфейса), то вы должны установить xdm в default runlevel. </para>
+            <example>
+                <title>Установка запуска xdm по умолчанию </title>
+                <screen><prompt>#</prompt> <userinput>rc-update add xdm default</userinput></screen>
+            </example>
+            <para>Проверьте содержание <filename>/etc/X11/Sessions</filename>: </para>
+            <example>
+                <title>Проверка содержания <filename>/etc/X11/Sessions</filename></title>
+                <screen><prompt>#</prompt> <userinput>ls /etc/X11/Sessions</userinput>
+Xsession Gnome</screen>
+            </example>
+            <para>Как видите, теперь доступна сессия gnome. Теперь отредактируйте <filename>/etc/rc.conf</filename> и измените 2 переменные: <varname>DISPLAYMANAGER</varname> (должно быть <code>gdm</code>) и <varname>XSESSION</varname> (должно быть <code>Gnome</code>): </para>
+            <example>
+                <title>Редактирование <filename>/etc/rc.conf</filename></title>
+                <programlisting>DISPLAYMANAGER="gdm"
+XSESSION="Gnome"</programlisting>
+            </example>
+            <para>После перезагрузки, GNOME Display Manager спросит имя пользователя и пароль. GNOME будет рабочей средой по умолчанию (конечно же здесь есть возможность выбора). </para>
+        </section>
+    </section>
 </article>
