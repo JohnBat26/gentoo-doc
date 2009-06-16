@@ -1,255 +1,289 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
-<info><title>Создание LiveCD дистрибутива на базе Gentoo Linux</title></info>
-        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://linuxportal.vrn.ru/?q=node/58">http://linuxportal.vrn.ru/?q=node/58</link>
-        </para>
-        <para>Автор: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:pizgin?subject=pizgin@gmail.com">Pizgin</link>
-        </para>
-        <para>С версии: 1.5</para>
-        <para>Версия статьи: 1.4 от 23.03.2008</para>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Создание LiveCD дистрибутива на базе Gentoo Linux</title>
+    </info>
+    <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://linuxportal.vrn.ru/?q=node/58">http://linuxportal.vrn.ru/?q=node/58</link>
+    </para>
+    <para>Автор: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:pizgin?subject=pizgin@gmail.com">Pizgin</link>
+    </para>
+    <para>С версии: 1.5</para>
+    <para>Версия статьи: 1.4 от 23.03.2008</para>
     <section>
-        <info><title>Введение</title></info>
+        <info>
+            <title>Введение</title>
+        </info>
         <para>В руководстве рассказывается о том как создать свой LiveCD диск на основе Gentoo Linux. Диск будет полностью русифицирован, произведена установка KDE и обеспечено автоматическое монтирование flash накопителей. В качестве загрузчика рассматривается ISOLINUX. Раньше был GRUB, но пришлось от него отказаться, так как он не работает на некоторых ноутбуках. Созданный по этой инструкции диск можно будет постоянно совершенствовать, устанавливать новые пакеты, вообщем можно делать все то что можно делать с обычным дистрибутивом установленным на вашем ПК.</para>
     </section>
     <section>
-        <info><title>Подготовительные действия</title></info>
+        <info>
+            <title>Подготовительные действия</title>
+        </info>
         <para>Для сборки необходимо создать определенную структуру каталогов, где создавать- в принципе без разницы. Я создавал в домашней директории. Структураследующая: </para>
-            <para>livecd</para>
-            <para> conf           // набор конфигурационных файлов</para>
-            <para> source         // создаваемый дистрибутив</para>
-            <para> scripts        // набор вспомогательных скриптов</para>
-            <para> distr          // исходники: portage, stage, может картинки какие-то и пр.</para>
-            <para> target         // здесь сборочный скрипт будет создавать squashfs образ</para>
-            <para>Создаем: </para>
-            <para>$ cd ~</para>
-            <para>$ mkdir -p livecd/{conf,distrib,scripts,source,target}</para>
-            <para/>
-            <para>Теперь из прикрепленного к статье файла, берем его содержимое и распихиваем поуказанным директориям.</para>
-            <para>Собирать livecd будем из второй стадии. Скачиваем ее из сети и копируем в distr и распаковываем в каталог сборки. Распаковывать следует с root правами, иначе будут проблемы с созданием устройств в каталоге /dev.</para>
-            <para># tar -C source/ -pxjvf distrib/stage2-i686-2007.0.tar.bz2</para>
-            <para>Архив с портежами и дистфайлами распаковывать в каталог сборки не будем. Вместо этого скрипты будут автоматически монтировать эти каталоги от основной системы. </para>
-            <para>Для того чтобы легко отличать консоль в chroot окружении от консоли основной системы, рекомендую для первой изменить приглашение коммандной строки и вместо просто "#"написать например "(LIVECD) #". Для этого копируем заготовленный в conf директории файл root/bashrc в каталог source/root/ (добавив в начало названия точку).</para>
-            <para>Для сборки образа, на ПК предварительно должны быть установлены пакеты squashfs-tools и cdrtools. Первый для работы с файловой системой SquashFS, второй для записи CD дисков. </para>
-            <para># emerge -av squashfs-tools cdrtools</para>
+        <programlisting>livecd
+  conf           // набор конфигурационных файлов
+  source         // создаваемый дистрибутив
+  scripts        // набор вспомогательных скриптов
+  distr          // исходники: portage, stage, может картинки какие-то и пр.
+  target         // здесь сборочный скрипт будет создавать squashfs образ</programlisting>
+        <para>Создаем: </para>
+        <screen><prompt>$</prompt> <userinput>cd ~</userinput>
+<prompt>$</prompt> <userinput>mkdir -p livecd/{conf,distrib,scripts,source,target}</userinput></screen>
+        <para>Теперь из <link xlink:href="http://linuxportal.vrn.ru/files/livecd.tar.gz">прикрепленного к статье файла</link>, берем его содержимое и распихиваем поуказанным директориям.</para>
+        <para>Собирать livecd будем из второй стадии. Скачиваем ее из сети и копируем в <filename>distr</filename> и распаковываем в каталог сборки. Распаковывать следует с root правами, иначе будут проблемы с созданием устройств в каталоге <filename>/dev</filename>.</para>
+        <screen><prompt>#</prompt> <userinput>tar -C source/ -pxjvf distrib/stage2-i686-2007.0.tar.bz2</userinput></screen>
+        <para>Архив с портежами и дистфайлами распаковывать в каталог сборки не будем. Вместо этого скрипты будут автоматически монтировать эти каталоги от основной системы. </para>
+        <para>Для того чтобы легко отличать консоль в chroot окружении от консоли основной системы, рекомендую для первой изменить приглашение коммандной строки и вместо просто "<code>#</code>" написать например "<code>(LIVECD) #</code>". Для этого копируем заготовленный в <filename>conf</filename> директории файл <filename>root/bashrc</filename> в каталог <filename>source/root/</filename> (добавив в начало названия точку).</para>
+        <para>Для сборки образа, на ПК предварительно должны быть установлены пакеты squashfs-tools и cdrtools. Первый для работы с файловой системой SquashFS, второй для записи CD дисков. </para>
+        <screen><prompt>#</prompt> <userinput>emerge -av squashfs-tools cdrtools</userinput></screen>
     </section>
     <section>
-        <info><title>Собираем базовую систему</title></info>
+        <info>
+            <title>Собираем базовую систему</title>
+        </info>
         <para>Сейчас можно входить (chroot'иться как еще говорят) в собираемую систему и начинать подгонять ее под свои потребности.</para>
-                <para># cd scripts </para>
-                <para># ./enter.sh</para>
-                <para>Если все прошло нормально - на экране не должно быть никаких ругательных сообщений, а приглашение командной строки выглядеть вот так: "(LIVECD) #". Сейчас мы находимся в только-что распакованной из stage2 системе.</para>
-                <para>Общий план работ таков: </para>
-                <orderedlist>
-                    <listitem>
-                        <para>Установить имя машины/домена, профиль, дописать USE флагов в make.conf,создать /etc/fstab.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Установить часовой пояс, перевести часы в режим Local, сгенерировать русские локали, установить русскую расскладку клавиатуры и экранный шрифт.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Выполнить emerge -e system и emerge -e world для получения Stage3.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Не забыть установить пароль root'у.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Собрать ядро, настроить загрузчик и попробовать перезагрузиться.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Установить свои приложения.</para>
-                        <para>Создать ISO образ и записать его на диск.</para>
-                        <para/>
-                    </listitem>
-                </orderedlist>
-                <para>Первые два пункта за вас может выполнить подготовленный скрипт "_prepare.sh". Написан он был потому как собрать livecd получилось не с первого раза, и делать одно и тоже на только-что распакованных stage-2 порядком надоело. Его нужно скопировать куда нибудь в source директорию и выполнить один раз для свеже распакованного stage-2. Скопировать можно например в /root или пря мо в корень (важно не забыть перед созданием ISO образа его оттуда удалить).</para>
-                <para>Итак начинаем: </para>
-                <para>Напомню что все действия происходят в chroot окружении.</para>
-                <orderedlist>
-                    <listitem>
-                        <para>Подготавливаем и русифицируем систему. </para>
-                        <para>(LIVECD) # ./_prepare.sh</para>
-                        <para> (LIVECD) # rm _prepare.sh</para>
-                    </listitem>
-                    <listitem>
-                        <para>Устанавливаем основные утилиты для управления пакетами</para>
-                        <para>(LIVECD) # emerge -av gentoolkit</para>
-                    </listitem>
-                    <listitem>
-                        <para> Собираем Stage3 </para>
-                        <para>(LIVECD) # emerge -e system </para>
-                        <para>Обновляем конфигурационные файлы обновленных приложений </para>
-                        <para>(LIVECD) # dispatch-conf</para>
-                        <para>Здесь нужно быть внимательным и не затереть те конфигурационные файлы которые</para>
-                        <para>мы сами изменяли (или их изменил скрипт _prepare.sh). Это касается русского шрифта, раскладки клавиатуры и прочее. Вообщем прежде чем в ответ на вопрос dispatch-conf'a жать 'u', внимательно посмотрите какой файл он хочет обновить. Если это файлы: clock, consolefont, hostname или keymaps - жмите 'z' (не обновлять).</para>
-                        <para>Проверяем целостность зависимостей системы </para>
-                    </listitem>
-                </orderedlist>
-                <para>        (LIVECD) # revdep-rebuild</para>
-                <para>        Тоже самое про мир, пересобираем, обновляем конфигурационные файлы         и проверяем целостность зависимостей. </para>
-                <para>        (LIVECD) # emerge -e world</para>
-                <para>        (LIVECD) # dispatch-conf</para>
-                <para>        (LIVECD) # revdep-rebuild</para>
-                <para>Пересборка system на Turion64X2 заняла приблизительно 2.5 часа, world - 3 ч.</para>
-                <para>При emerge -e system могут быть проблемы с perl. Если такое случиться </para>
-                <para>-делать так (ставиться будет примерно минут 15):</para>
-                <para>(LIVECD) # emerge --oneshot gdbm db</para>
-                <para>(LIVECD) # emerge -N --oneshot --nodeps perl</para>
-                <para/>
-                <para>После можно снова пробовать emerge -e system.</para>
-                <para>Возможно где-то в середине сборка system прервется с ошибкой на пакете sys-apps/attr. Ошибка будет выглядеть так: "libexpat.so.0: cannot open shared objects file: No such file or directory". Если это случилось - создаем сиволическую ссылку с libexpat.so на libexpat.so.0, и затем пробуем продолжить сборку, т.е. делаем</para>
-                <para>(LIVECD) # ln -s /usr/lib/libexpat.so /usr/lib/libexpat.so.0  </para>
-                <para>(LIVECD) # emerge --resume</para>
-                <para>Обнаружил небольшой недочет при сборке с использованием portage от 05.03.2008. emerge -e system прерывается на пакете 'which-2.19' с ошибкой "error: readline/rlstdc.h: No such file or directory". На момент сборки этого пакета уже должна стоять библиотека readline, но ее нет. Устанавливаем ее сами и продолжаем сборку system. Если подробно, то:</para>
-                <para>(LIVECD) # emerge -av readline</para>
-                <para>(LIVECD) # emerge --resume</para>
-                <para>Если будут еще какие-либо проблемы - скачайте или обновитесь до самого свежего архива портежей. Не поможет - идите на bugzilla.gentoo.org. </para>
-                <para>     4.Устанавливаем пароль root'у</para>
-                <para>        (LIVECD) # passwd </para>
-                <orderedlist>
-                    <listitem>
-                        <para>Создаем пользователя livecd</para>
-                        <para>(LIVECD) # useradd -m -G users,wheel,audio,video,cdrom,cdrw,usb -s /bin/bash livecd</para>
-                        <para>(LIVECD) # passwd livecd</para>
-                    </listitem>
-                    <listitem>
-                        <para>Устанавливаем splash темы для красивой графической загрузки </para>
-                        <para>(LIVECD) # emerge -av splash-themes-livecd</para>
-                    </listitem>
-                </orderedlist>
-                <orderedlist>
-                    <listitem>
-                        <para>Устанавливаем и компилируем ядро</para>
-                        <para>(LIVECD) # emerge -av gentoo-sources</para>
-                    </listitem>
-                </orderedlist>
-                <para>genkernel должен быть не старее чем 3.4.10_pre4. На момент написания этого руководства такой версии в стабильной ветке небыло. Если у вас тоже-самое -разрешаем устанавливать его из тестовой (~x86), для этого выполним</para>
-                <para>           (LIVECD) # echo 'sys-kernel/genkernel ~x86' &gt;&gt;         /etc/portage/package.keywords</para>
-                <para>        (LIVECD) # emerge -av genkernel</para>
-                <para>        (LIVECD) # genkernel all —gensplash=livecd-2007.0</para>
-                <para/>
-                <orderedlist>
-                    <listitem>
-                        <para>Устанавливаем и добавляем в автозагрузку Gentoo LiveCD скрипты</para>
-                        <para>Снимаем маскировку (установлена разработчиками для того чтобы предупредить о том, что скрипты предназначены только для использования вместе с livecd)</para>
-                        <para>(LIVECD) # echo 'app-misc/livecd-tools' &gt;&gt; /etc/portage/package.unmask</para>
-                        <para>(LIVECD) # echo 'x11-misc/mkxf86config' &gt;&gt; /etc/portage/package.unmask</para>
-                        <para>(LIVECD) # echo 'sys-apps/hwsetup' &gt;&gt; /etc/portage/package.unmask</para>
-                    </listitem>
-                </orderedlist>
-                <para>livecd-tools нужен версии не ниже 1.0.40_pre1. На момент написания этого руководства такой версии в стабильной ветке небыло. Если у вас тоже-самое - разрешаем устанавливать его из тестовой (~x86), для этого выполним </para>
-                <para>        (LIVECD) # echo 'app-misc/livecd-tools ~x86' &gt;&gt;                 /etc/portage/package.keywords</para>
-                <para>        (LIVECD) # emerge -av livecd-tools</para>
-                <para>libkudzu нужен не ниже чем 1.2.57.1, если будет устанавливаться более старая версия - отвечаем 'no' и разрешаем libkudzu из тестовой ветки.</para>
-                <para>        (LIVECD) # echo 'sys-libs/libkudzu ~x86' &gt;&gt; /etc/portage/package.keywords</para>
-                <para>        (LIVECD) # rc-update add autoconfig default</para>
-                <orderedlist>
-                    <listitem>
-                        <para>Устанавливаем загрузчик</para>
-                        <para>(LIVECD) # emerge -av syslinux</para>
-                        <para>(LIVECD) # mkdir /boot/isolinux</para>
-                        <para>(LIVECD) # cp /usr/lib/syslinux/isolinux.bin /boot/isolinux</para>
-                        <para>(LIVECD) # cp /boot/kernel-genkernel-x86-2.6.23-gentoo-r6/boot/isolinux/vmlinuz</para>
-                        <para>(LIVECD) # cp /boot/initramfs-genkernel-x86-2.6.23-gentoo-r6 /boot/isolinux/initrd</para>
-                        <para>Из директории с конфиг. файлами копируем в /boot/isolinux файл isolinux.cfg.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Создаем образ и пробуем его загрузить. Выходим из chroot окружения и запускаем скрипт "build.sh"</para>
-                        <para>(LIVECD) # exit</para>
-                        <para># ./build.sh</para>
-                        <para>Процесс сборки образа длиться примерно минут 5. После него забираем iso файл в директории livecd. Можно записать его на болванку, но лучше для этих целей поставить например VirtualBox или VMWare, потому как удобнее и быстрее. </para>
-                    </listitem>
-                </orderedlist>
-                <para>Записать на CD можно так:</para>
-                <para># cdrecord -v -eject speed=10 fs=8m dev=/dev/cdrw image.iso</para>
-                <para>или если это DVD то так:</para>
-                <para># growisofs -dvd-compat -Z /dev/dvd=image.iso</para>
-                <para>Образ должен загрузиться, когда дойдет до приглашения - введите root и ваш пароль. Если все так - пол дела сделано. LiveCD грузиться. Сейчас желательно создать архив с каталогом livecd на случай если при дальнейших манипуляциях что нибудь пойдет не так - можно будет откатиться.</para>
-    </section>
-    <section>
-        <info><title>Установка KDE</title></info>
+        <screen><prompt>#</prompt> <userinput>cd scripts</userinput>
+<prompt>#</prompt> <userinput>./enter.sh</userinput></screen>
+        <para>Если все прошло нормально — на экране не должно быть никаких ругательных сообщений, а приглашение командной строки выглядеть вот так: "<code>(LIVECD) #</code>". Сейчас мы находимся в только-что распакованной из stage2 системе.</para>
+        <para>Общий план работ таков: </para>
         <orderedlist>
-                    <listitem>
-                        <para>Устанавливаем Xorg </para>
-                        <para>(LIVECD) # emerge -av xorg-server</para>
-                    </listitem>
-                    <listitem>
-                        <para>Устанавливаем оригинальный драйвера nVidia </para>
-                    </listitem>
-                </orderedlist>
-                    <para>        (LIVECD) # emerge -av nvidia-drivers</para>
-                    <orderedlist>
-                        <listitem>
-                            <para>Правим таблицу соответсвия устройство - драйвер для nVidia карт. Открываем файл /usr/share/hwdata/Cards.</para>
-                            <para>3.1. Находим строку NAME NVIDIA Legacy и меняем название драйвера 'vesa' на 'nv'. </para>
-                            <para>3.2. Находим строку NAME NVIDIA GeForce и меняем название драйвера с 'vesa' на 'nvidia'.</para>
-                        </listitem>
-                        <listitem>
-                            <para>Устанавливаем минимальный набор KDE(LIVECD) # emerge -av kdm kdebase-startkde kde-i18n</para>
-                        </listitem>
-                        <listitem>
-                            <para>Добавляем в автозапуск xdm и указываем в нем запускемый оконный менеджер В файле /etc/conf.d/xdm переменной DISPLAYMANAGER присваиваем значение "kdm" </para>
-                            <para>(LIVECD) # rc-update add xdm default</para>
-                        </listitem>
-                    </orderedlist>
-                    <orderedlist>
-                        <listitem>
-                            <para>Настройка автомонтирования съемных устройств</para>
-                            <para>(LIVECD) # emerge -auv dbus hal pmount</para>
-                            <para>(LIVECD) # rc-update add dbus default</para>
-                            <para>(LIVECD) # rc-update add hald default</para>
-                            <para>(LIVECD) # gpasswd -a livecd plugdev</para>
-                        </listitem>
-                    </orderedlist>
-                    <orderedlist>
-                        <listitem>
-                            <para>Включаем русскую раскладку и переключатель en/ru</para>
-                            <para>7.1. Открываем файл /usr/sbin/mkxf86config.sh и удаляем строку вида</para>
-                            <para>"-e 's|"XkbLayout" *"[^"]*"|"XkbLayout" "'"${XKEYBOARD}"'"|g;'"${DEADKEYS}" \"</para>
-                            <para>7.2. Открываем файл /etc/X11/xorg.conf.in и в секции InputDevice, Keyboard0 меняем последние три строчки на следующие:</para>
-                        </listitem>
-                    </orderedlist>
-                    <para>Option "XkbLayout" "us,ru(winkeys)" </para>
-                    <para>Option "XkbVariant" "us"</para>
-                    <para>Option "XkbOptions" "grp:alt_shift_toggle,grp_led:scroll"</para>
+            <listitem>
+                <para>Установить имя машины/домена, профиль, дописать <envar>USE</envar> флагов в <filename>make.conf</filename>,создать <filename>/etc/fstab</filename>.</para>
+            </listitem>
+            <listitem>
+                <para>Установить часовой пояс, перевести часы в режим Local, сгенерировать русские локали, установить русскую расскладку клавиатуры и экранный шрифт.</para>
+            </listitem>
+            <listitem>
+                <para>Выполнить <command>emerge -e system</command> и <command>emerge -e world</command> для получения Stage3.</para>
+            </listitem>
+            <listitem>
+                <para>Не забыть установить пароль root'у.</para>
+            </listitem>
+            <listitem>
+                <para>Собрать ядро, настроить загрузчик и попробовать перезагрузиться.</para>
+            </listitem>
+            <listitem>
+                <para>Установить свои приложения.</para>
+                <para>Создать ISO образ и записать его на диск.</para>
+            </listitem>
+        </orderedlist>
+        <para>Первые два пункта за вас может выполнить подготовленный скрипт "<filename>_prepare.sh</filename>". Написан он был потому как собрать livecd получилось не с первого раза, и делать одно и тоже на только-что распакованных stage-2 порядком надоело. Его нужно скопировать куда нибудь в source директорию и выполнить один раз для свеже распакованного stage-2. Скопировать можно например в /root или пря мо в корень (важно не забыть перед созданием ISO образа его оттуда удалить).</para>
+        <para>Итак начинаем: </para>
+        <para>Напомню что все действия происходят в chroot окружении.</para>
+        <orderedlist>
+            <listitem>
+                <para>Подготавливаем и русифицируем систему. </para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>./_prepare.sh</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>rm _prepare.sh</userinput></screen>
+            </listitem>
+            <listitem>
+                <para>Устанавливаем основные утилиты для управления пакетами</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>emerge -av gentoolkit</userinput></screen>
+            </listitem>
+            <listitem>
+                <para> Собираем Stage3 </para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>emerge -e system</userinput></screen>
+                <para>Обновляем конфигурационные файлы обновленных приложений </para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>dispatch-conf</userinput></screen>
+                <para>Здесь нужно быть внимательным и не затереть те конфигурационные файлы которые</para>
+                <para>мы сами изменяли (или их изменил скрипт <filename>_prepare.sh</filename>). Это касается русского шрифта, раскладки клавиатуры и прочее. Вообщем прежде чем в ответ на вопрос dispatch-conf'a жать 'u', внимательно посмотрите какой файл он хочет обновить. Если это файлы: <filename>clock</filename>, <filename>consolefont</filename>, <filename>hostname</filename> или <filename>keymaps</filename> — жмите 'z' (не обновлять).</para>
+                <para>Проверяем целостность зависимостей системы </para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>revdep-rebuild</userinput></screen>
+                <para>Тоже самое про мир, пересобираем, обновляем конфигурационные файлы и проверяем целостность зависимостей.</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>emerge -e world</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>dispatch-conf</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>revdep-rebuild</userinput></screen>
+                <para>Пересборка system на Turion64X2 заняла приблизительно 2.5 часа, world — 3 ч.</para>
+                <para>При <command>emerge -e system</command> могут быть проблемы с perl. Если такое случиться — делать так (ставиться будет примерно минут 15):</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>emerge --oneshot gdbm db</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>emerge -N --oneshot --nodeps perl</userinput></screen>
+                <para>После можно снова пробовать <command>emerge -e system</command>.</para>
+                <para>Возможно где-то в середине сборка system прервется с ошибкой на пакете sys-apps/attr. Ошибка будет выглядеть так: "<code>libexpat.so.0: cannot open shared objects file: No such file or directory</code>". Если это случилось — создаем сиволическую ссылку с <filename>libexpat.so</filename> на <filename>libexpat.so.0</filename>, и затем пробуем продолжить сборку, т.е. делаем</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>ln -s /usr/lib/libexpat.so /usr/lib/libexpat.so.0</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>emerge --resume</userinput></screen>
+                <para>Обнаружил небольшой недочет при сборке с использованием portage от 05.03.2008. <command>emerge -e system</command> прерывается на пакете 'which-2.19' с ошибкой "<code>error: readline/rlstdc.h: No such file or directory</code>". На момент сборки этого пакета уже должна стоять библиотека readline, но ее нет. Устанавливаем ее сами и продолжаем сборку system. Если подробно, то:</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>emerge -av readline</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>emerge --resume</userinput></screen>
+                <para>Если будут еще какие-либо проблемы - скачайте или обновитесь до самого свежего архива портежей. Не поможет — идите на <link xlink:href="http://bugzilla.gentoo.org">bugzilla.gentoo.org</link>. </para>
+            </listitem>
+            <listitem>
+                <para>Устанавливаем пароль root'у</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>passwd</userinput></screen>
+            </listitem>
+            <listitem>
+                <para>Создаем пользователя livecd</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>useradd -m -G users,wheel,audio,video,cdrom,cdrw,usb -s /bin/bash livecd</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>passwd livecd</userinput></screen>
+            </listitem>
+            <listitem>
+                <para>Устанавливаем splash темы для красивой графической загрузки </para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>emerge -av splash-themes-livecd</userinput></screen>
+            </listitem>
+            <listitem>
+                <para>Устанавливаем и компилируем ядро</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>emerge -av gentoo-sources</userinput></screen>
+                <para>genkernel должен быть не старее чем 3.4.10_pre4. На момент написания этого руководства такой версии в стабильной ветке небыло. Если у вас тоже-самое -разрешаем устанавливать его из тестовой (~x86), для этого выполним</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>echo 'sys-kernel/genkernel ~x86' &gt;&gt; /etc/portage/package.keywords</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>emerge -av genkernel</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>genkernel all —gensplash=livecd-2007.0</userinput></screen>
+            </listitem>
+            <listitem>
+                <para>Устанавливаем и добавляем в автозагрузку Gentoo LiveCD скрипты</para>
+                <para>Снимаем маскировку (установлена разработчиками для того чтобы предупредить о том, что скрипты предназначены только для использования вместе с livecd)</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>echo 'app-misc/livecd-tools' &gt;&gt; /etc/portage/package.unmask</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>echo 'x11-misc/mkxf86config' &gt;&gt; /etc/portage/package.unmask</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>echo 'sys-apps/hwsetup' &gt;&gt; /etc/portage/package.unmask</userinput></screen>
+                <para>livecd-tools нужен версии не ниже 1.0.40_pre1. На момент написания этого руководства такой версии в стабильной ветке небыло. Если у вас тоже-самое — разрешаем устанавливать его из тестовой (~x86), для этого выполним </para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>echo 'app-misc/livecd-tools ~x86' &gt;&gt; /etc/portage/package.keywords</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>emerge -av livecd-tools</userinput></screen>
+                <para>libkudzu нужен не ниже чем 1.2.57.1, если будет устанавливаться более старая версия — отвечаем 'no' и разрешаем libkudzu из тестовой ветки.</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>echo 'sys-libs/libkudzu ~x86' &gt;&gt; /etc/portage/package.keywords</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>rc-update add autoconfig default</userinput></screen>
+            </listitem>
+            <listitem>
+                <para>Устанавливаем загрузчик</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>emerge -av syslinux</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>mkdir /boot/isolinux</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>cp /usr/lib/syslinux/isolinux.bin /boot/isolinux</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>cp /boot/kernel-genkernel-x86-2.6.23-gentoo-r6/boot/isolinux/vmlinuz</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>cp /boot/initramfs-genkernel-x86-2.6.23-gentoo-r6 /boot/isolinux/initrd</userinput></screen>
+                <para>Из директории с конфиг. файлами копируем в /boot/isolinux файл isolinux.cfg.</para>
+            </listitem>
+            <listitem>
+                <para>Создаем образ и пробуем его загрузить. Выходим из chroot окружения и запускаем скрипт "<filename>build.sh</filename>"</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>exit</userinput>
+<prompt>#</prompt> <userinput>./build.sh</userinput></screen>
+                <para>Процесс сборки образа длиться примерно минут 5. После него забираем iso файл в директории livecd. Можно записать его на болванку, но лучше для этих целей поставить например VirtualBox или VMWare, потому как удобнее и быстрее. </para>
+                <para>Записать на CD можно так:</para>
+                <screen><prompt>#</prompt> <userinput>cdrecord -v -eject speed=10 fs=8m dev=/dev/cdrw image.iso</userinput></screen>
+                <para>или если это DVD то так:</para>
+                <screen><prompt>#</prompt> <userinput>growisofs -dvd-compat -Z /dev/dvd=image.iso</userinput></screen>
+                <para>Образ должен загрузиться, когда дойдет до приглашения — введите root и ваш пароль. Если все так — пол дела сделано. LiveCD грузиться. Сейчас желательно создать архив с каталогом livecd на случай если при дальнейших манипуляциях что нибудь пойдет не так — можно будет откатиться.</para>
+            </listitem>
+        </orderedlist>
     </section>
     <section>
-        <info><title>Что еще можно сделать</title></info>
-        <para>* Автологин в текстовой консоли не под root'ом</para>
-                        <orderedlist>
-                            <listitem>
-                                <para>Устанавливаем mingetty</para>
-                                <para>(LIVECD) # emerge -av mingetty</para>
-                            </listitem>
-                        </orderedlist>
-                        <orderedlist>
-                            <listitem>
-                                <para>Прописываем его в /etc/inittab вместо agetty.</para>
-                                <para>Как было:</para>
-                                <para>c1:12345:respawn:/sbin/agetty 38400 tty1 linux</para>
-                                <para>Как нужно исправить:</para>
-                                <para>c1:12345:respawn:/sbin/mingetty --autologin root --noclear tty1</para>
-                                <para>Естественно что вместо root можно вписать любого пользователя.</para>
-                            </listitem>
-                            <listitem>
-                                <para>Правим файл /sbin/rc</para>
-                                <para>Находим вот такую секцию (приблизительно это строка N 500)</para>
-                                <para>if [ -f "/sbin/livecd-functions.sh" -a -n "${CDBOOT}" ] </para>
-                                <para>then ebegin "Updating inittab" livecd_fix_inittab eend $? /sbin/telinit q &amp;&gt;/dev/null fi</para>
-                                <para>и делаем ее такой</para>
-                                <para>if [ -f "/sbin/livecd-functions.sh" -a -n "${CDBOOT}" ] </para>
-                                <para>then ebegin "Updating inittab" /bin/true #livecd_fix_inittab eend $? /bin/true #/sbin/telinit q &amp;&gt;/dev/null </para>
-                                <para>fi</para>
-                            </listitem>
-                        </orderedlist><section><info><title/></info><section><info><title>Свое сообщение после init'a</title></info>
-                            <para>Открываем файл /sbin/rc, ищем строку вида 'echo -e " Copyright' и добавляемниже нее свое сообщение.</para></section></section><section><info><title/></info><section><info><title>Автологин в KDE</title></info>
-                                <para>Открываем файл /usr/kde/3.5/share/config/kdm/kdmrc и прописываем пользователяв строки 'DefaultUser' и 'AutoLoginUser'.</para></section></section><section><info><title/></info><section><info><title>Красивый, настроенный и подогнанный под себя рабочий стол</title></info>
-                                    <para>Запускаем созданный LiveCD, загружаемся в KDE и настраиваем его под себя. Все, шрифты, поведение окон, курсор занятости, панели и пр. Затем сжимаем свой домашний каталог (/home/livecd) и копируем его на флешку. Выходим из LiveCD, chroot'имся в source и распаковываем в каталог /home/livecd/ сохраненные на флешке настройки.</para>
-                                    <para>Приложение</para>
-                                    <para>Версии основных используемых пакетов</para>
-                                    <para>sys-fs/squashfs-tools-3.1_p2app-misc/livecd-tools-1.0.40_pre1sys-kernel/genkernel-3.4.10_pre4sys-kernel/gentoo-sources-2.6.23-r9sys-apps/hwdata-gentoo-0.3sys-apps/hwsetup-1.2x11-misc/mkxf86config-0.9.9</para>
-                                    <para>stage2-i686-2007.0.tar.bz2portage-20080305.tar.bz2</para>
-                                    <para/></section></section></section>
+        <info>
+            <title>Установка KDE</title>
+        </info>
+        <orderedlist>
+            <listitem>
+                <para>Устанавливаем Xorg </para>
+                <screen>(LIVECD) # emerge -av xorg-server</screen>
+            </listitem>
+            <listitem>
+                <para>Устанавливаем оригинальный драйвера nVidia </para>
+                <screen>(LIVECD) # emerge -av nvidia-drivers</screen>
+            </listitem>
+            <listitem>
+                <para>Правим таблицу соответсвия устройство — драйвер для nVidia карт. Открываем файл <filename>/usr/share/hwdata/Cards</filename>.</para>
+                <orderedlist inheritnum="inherit">
+                    <listitem>
+                        <para>Находим строку <code>NAME NVIDIA Legacy</code> и меняем название драйвера '<code>vesa</code>' на '<code>nv</code>'.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Находим строку <code>NAME NVIDIA GeForce</code> и меняем название драйвера с '<code>vesa</code>' на '<code>nvidia</code>'.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>Устанавливаем минимальный набор</para>
+                <screen><prompt>KDE(LIVECD) #</prompt> <userinput>emerge -av kdm kdebase-startkde kde-i18n</userinput></screen>
+            </listitem>
+            <listitem>
+                <para>Добавляем в автозапуск xdm и указываем в нем запускемый оконный менеджер В файле <filename>/etc/conf.d/xdm</filename> переменной <envar>DISPLAYMANAGER</envar> присваиваем значение "<code>kdm</code>" </para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>rc-update add xdm default</userinput></screen>
+            </listitem>
+            <listitem>
+                <para>Настройка автомонтирования съемных устройств</para>
+                <screen><prompt>(LIVECD) #</prompt> <userinput>emerge -auv dbus hal pmount</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>rc-update add dbus default</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>rc-update add hald default</userinput>
+<prompt>(LIVECD) #</prompt> <userinput>gpasswd -a livecd plugdev</userinput></screen>
+            </listitem>
+            <listitem>
+                <para>Включаем русскую раскладку и переключатель en/ru</para>
+                <orderedlist inheritnum="inherit">
+                    <listitem>
+                        <para>Открываем файл <filename>/usr/sbin/mkxf86config.sh</filename> и удаляем строку вида</para>
+                        <programlisting>"-e 's|"XkbLayout" *"[^"]*"|"XkbLayout" "'"${XKEYBOARD}"'"|g;'"${DEADKEYS}" \"</programlisting>
+                    </listitem>
+                    <listitem>
+                        <para>Открываем файл <filename>/etc/X11/xorg.conf.in</filename> и в секции InputDevice, Keyboard0 меняем последние три строчки на следующие:</para>
+                        <programlisting>Option "XkbLayout" "us,ru(winkeys)"
+Option "XkbVariant" "us"
+Option "XkbOptions" "grp:alt_shift_toggle,grp_led:scroll"</programlisting>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <info>
+            <title>Что еще можно сделать</title>
+        </info>
+        <section>
+            <title>Автологин в текстовой консоли не под root'ом</title>
+            <orderedlist>
+                <listitem>
+                    <para>Устанавливаем mingetty</para>
+                    <screen><prompt>(LIVECD) #</prompt> <userinput>emerge -av mingetty</userinput></screen>
+                </listitem>
+                <listitem>
+                    <para>Прописываем его в <filename>/etc/inittab</filename> вместо agetty.</para>
+                    <para>Как было:</para>
+                    <programlisting>c1:12345:respawn:/sbin/agetty 38400 tty1 linux</programlisting>
+                    <para>Как нужно исправить:</para>
+                    <programlisting>c1:12345:respawn:/sbin/mingetty --autologin root --noclear tty1</programlisting>
+                    <para>Естественно что вместо root можно вписать любого пользователя.</para>
+                </listitem>
+                <listitem>
+                    <para>Правим файл <filename>/sbin/rc</filename></para>
+                    <para>Находим вот такую секцию (приблизительно это строка N 500)</para>
+                    <programlisting>if [ -f "/sbin/livecd-functions.sh" -a -n "${CDBOOT}" ]
+then
+ ebegin "Updating inittab"
+ livecd_fix_inittab
+ eend $?
+ /sbin/telinit q &amp;&gt;/dev/null
+fi</programlisting>
+                    <para>и делаем ее такой</para>
+                    <programlisting>if [ -f "/sbin/livecd-functions.sh" -a -n "${CDBOOT}" ]
+then
+ ebegin "Updating inittab"
+ /bin/true #livecd_fix_inittab
+ eend $?
+ /bin/true #/sbin/telinit q &amp;&gt;/dev/null
+fi</programlisting>
+                </listitem>
+            </orderedlist>
+        </section>
+        <section>
+            <title>Свое сообщение после init'a</title>
+            <para>Открываем файл <filename>/sbin/rc</filename>, ищем строку вида '<code>echo -e " Copyright</code>' и добавляемниже нее свое сообщение.</para>
+        </section>
+        <section>
+            <title>Автологин в KDE</title>
+            <para>Открываем файл <filename>/usr/kde/3.5/share/config/kdm/kdmrc</filename> и прописываем пользователяв строки '<code>DefaultUser</code>' и '<code>AutoLoginUser</code>'.</para>
+        </section>
+        <section>
+            <title>Красивый, настроенный и подогнанный под себя рабочий стол</title>
+            <para>Запускаем созданный LiveCD, загружаемся в KDE и настраиваем его под себя. Все, шрифты, поведение окон, курсор занятости, панели и пр. Затем сжимаем свой домашний каталог (<filename>/home/livecd</filename>) и копируем его на флешку. Выходим из LiveCD, chroot'имся в source и распаковываем в каталог <filename>/home/livecd/</filename> сохраненные на флешке настройки.</para>
+        </section>
+    </section>
+    <section>
+        <title>Приложение</title>
+        <para>Версии основных используемых пакетов</para>
+        <para>sys-fs/squashfs-tools-3.1_p2</para>
+        <para>app-misc/livecd-tools-1.0.40_pre1</para>
+        <para>sys-kernel/genkernel-3.4.10_pre4</para>
+        <para>sys-kernel/gentoo-sources-2.6.23-r9</para>
+        <para>sys-apps/hwdata-gentoo-0.3</para>
+        <para>sys-apps/hwsetup-1.2</para>
+        <para>x11-misc/mkxf86config-0.9.9</para>
+        <para/>
+        <para>stage2-i686-2007.0.tar.bz2</para>
+        <para>portage-20080305.tar.bz2</para>
+    </section>
 </article>

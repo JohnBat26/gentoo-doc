@@ -1,2121 +1,1628 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
-<info><title>Ebuild HOWTO (Англ.)</title></info>
-<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/devrel/handbook/handbook.xml?part=2&amp;chap=1">http://www.gentoo.org/proj/en/devrel/handbook/handbook.xml?part=2&amp;chap=1</link>
-</para>
-<para>С версии: 1.4</para>
-<para/><section><info><title>1.a. The Portage tree</title></info>
-<para>Introduction</para>
-<para>The Portage tree is typically found at /usr/portage and is organized in a hierarchical structure consisting of category directories, followed by specific package directories. Here's an example; you can find the util-linux-2.11y.ebuild file in the /usr/portage/sys-apps/util-linux directory. There may be several other versions of util-linux ebuilds alongside util-linux-2.11y.ebuild. This is because all ebuilds for a particular package (regardless of version), share the same mycat/mypkg directory in /usr/portage. </para>
-<para/>
-<para>Checking Out the Portage Tree from CVS</para>
-<para/>
-<para>If you are unfamiliar with the CVS system, please read the <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/cvs-tutorial.xml">CVS Tutorial</link> for more information. </para>
-<para>The Portage tree can be found in the gentoo-x86 module of the Gentoo Linux tree. To check out the module (about 350 megabytes) you would first set up CVS via the above guide, then check out the gentoo-x86 module. </para>
-<para/>
-<para>What (not) to put in the Portage tree</para>
-<para/>
-<para>Before writing a new ebuild, check <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://bugs.gentoo.org/">bugs.gentoo.org</link> to see if an ebuild has already been written for the package, but has not yet been added to the Portage tree. Go to <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://bugs.gentoo.org/">bugs.gentoo.org</link>, choose query and select Advanced Search; as product select Gentoo Linux, as component select ebuilds. In the search field put the name of the ebuild and as status select NEW, ASSIGNED, REOPENED and RESOLVED (RESOLVED is important), then submit the query. For you lazy people, click <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://bugs.gentoo.org/query.cgi?product=Gentoo%20Linux&amp;component=Ebuilds&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;bug_status=RESOLVED">here</link>. </para>
-<para>In general, the Portage tree should only be used for storing .ebuild files, as well as any relatively small companion files, such as patches or sample configuration files. These types of files should be placed in the /usr/portage/mycat/mypkg/files directory to keep the main mycat/mypkg directory uncluttered. Exceptions to this rule are for larger patch files (we recommend this for patches above 20KB) which should be put onto the Gentoo mirrors so that people do not waste excessive amounts of bandwidth and hard drive space. Also, you should not add binary (non-ASCII) files to the Portage CVS tree. If you need to do this in another CVS tree, for example, if you need to add a small PNG graphic for whatever reason, be sure to add it to CVS by using the -kb option, like so: </para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Code Listing 1.1: Adding binary files to CVS</para>
-</entry>
-</row>
-<row>
-<entry>
-<para># cvs add -kb myphoto.png</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>The -kb option tells CVS that myphoto.png is a binary file and should be treated specially. For example, merging the differences between two different versions of this file should not be allowed to happen, for obvious reasons. Also, speaking of merging changes, any patches you add to Portage should generally not be compressed. This will allow CVS to merge changes and correctly inform developers of conflicts. </para>
-<para>Remember, the packages that you commit must be ready out of the box for end users when committed as stable. Make sure that you have a good set of default settings that will satisfy the majority of systems and users that will use your package. If your package is broken, and you are not sure how to get it to work, check some other distributions that have done their own versions of the package. You can check <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://cvs.mandriva.com/cgi-bin/viewvc.cgi/SPECS/">Mandriva</link> or <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.debian.org/distrib/packages">Debian</link> or <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://cvs.fedora.redhat.com/">Fedora</link> for some examples. </para>
-<para>When committing to CVS, all developers should use repoman commit instead of cvs commit to submit their ebuilds. Before committing, please run repoman full to make sure you didn't forget something. </para>
-<para>CVS Commit Policy</para>
-<orderedlist>
-<listitem>
-<para>Always run repoman scan before you commit. </para>
-</listitem>
-<listitem>
-<para>Please run repoman full before you commit. </para>
-</listitem>
-<listitem>
-<para>Always test that package.mask is okay by doing emerge --pretend mypkg before you commit and check that it doesn't contain any conflicts. </para>
-</listitem>
-<listitem>
-<para>Always update the ChangeLog before you commit. </para>
-</listitem>
-<listitem>
-<para>Always commit the updated package.mask before the updated package, in case conflicts occur while you commit package.mask. </para>
-</listitem>
-<listitem>
-<para>Always do atomic commits; if you commit a package with a new license, or that is masked, then first commit the revised package.mask and/or license, then commit the ebuild, ChangeLog, patches and <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/devrel/handbook/handbook.xml?part=2&amp;chap=4">metadata.xml</link> all in one go to avoid breaking users' installations. </para>
-</listitem>
-</orderedlist>
-<para>The files Directory</para>
-<para>As noted earlier, under each package subdirectory is a files/ directory. Any patches, configuration files, or other ancillary files your package might require should be added to this directory; any files bigger than 20KB-or-so should go to the mirrors to lower the amount of (unneeded) files our users have to download. You may want to consider naming patches you create yourself just to get your package to build with a version-specific name, such as mypkg-1.0-gentoo.diff, or more simply, 1.0-gentoo.diff. Also note that the gentoo extension informs people that this patch was created by us, the Gentoo Linux developers, rather than having been grabbed from a mailing list or somewhere else. Again, you should not compress these patches because CVS does not play well with binary files. </para>
-<para>Consider prefixing or suffixing (such as mypkg-1.0) every file you put into the files/ directory, so that the files used for each individual version on an ebuild are distinguishable from one another, and so that the changes between different revisions are visible. This is generally a really good idea :). You may want to use a different suffix if you wish to convey more meaning with the patch name. </para>
-<para>If you have many files that should go into the files/ directory, consider creating subdirectories such as files/1.0/ and putting the relevant files in the appropriate subdirectory. If you use this method, you do not need to add version information to the names of the files, which is often more convenient. </para></section><section><info><title>1.b. Ebuild scripts</title></info>
-<para>Introduction</para>
-<para>Ebuild scripts are the basis for the entire portage system. They contain all the information required to download, unpack, compile and install a set of sources, as well as how to perform any optional pre/post install/removal or configuration steps. While most of Portage is written in Python, the ebuild scripts themselves are written in bash, since using bash allows us to call commands as we would from the command-line. One of the important design principles behind ebuild scripts is to have the commands therein be analogs of those one would type on the command-line if installing the package manually. For this purpose, using bash syntax is a very good thing. </para>
-<para>Ebuild scripts are interpreted by the ebuild and emerge commands. Think of the ebuild command as a low-level building tool. It can build and install a single ebuild, but no more. It will check to see if dependencies are satisfied, but it will not attempt to auto-resolve them. On the other hand emerge is a high level engine for ebuild, and has the ability to auto-merge dependencies if needed, perform pretend merges so that user can see what ebuilds would be merged, and more. Generally, emerge blows ebuild out of the water except in one area. With ebuild, you can incrementally step through the various parts of a package emerge (fetching, unpacking, compiling, installing and merging) one at a time. For developers, this is an invaluable debugging tool, because it allows you to isolate ebuild problems to a specific portion of the ebuild. </para>
-<para>Naming ebuild files</para>
-<para>Ebuild file names consist of four logical subsections:</para>
-<para>pkg-ver{_suf{#}}{-r#}.ebuild</para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Note: The brackets ({}) delineate optional fields and do not appear in the literal package name. # represents any non-zero positive integer.</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>The first subsection, pkg, is the package name, which should only contain lowercase letters, the digits 0-9, and any number of single hyphen (-), underscore (_) or plus (+) characters. Examples: util-linux, sysklogd and gtk+. We have some packages in Portage that don't follow these rules, but your packages should. </para>
-<para>The second subsection, ver, is the version of the package, which should normally be same as the version on the main source tarball. The version is normally made up of two or three (or more) numbers separated by periods, such as 1.2 or 4.5.2, and may have a single letter immediately following the last digit; e.g., 1.4b or 2.6h. The package version is joined to the package name with a hyphen. For example: foo-1.0, bar-2.4.6. </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Important: If you're thinking of using a trailing letter in your version string, note that the trailing letter should not be used to signify alpha or beta status for the package, since alphas and betas are prereleases and letter revisions are newer versions. This is an important distinction because Portage uses an ebuild's version number to determine if it is newer or older than other packages with the same category and name. It's very important that version numbers faithfully represent the version of the package so that Portage properly performs its dependency checking duties. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>The third subsection, {_suf{#}}, is optional may contain one of these predefined suffixes, listed in least-recent to most-recent order: </para>
-<informaltable frame="all">
-<tgroup cols="2"><tbody>
-<row>
-<entry>
-<para>Suffix</para>
-</entry>
-<entry>
-<para>Meaning</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>_alpha</para>
-</entry>
-<entry>
-<para>Alpha release</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>_beta</para>
-</entry>
-<entry>
-<para>Beta release</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>_pre</para>
-</entry>
-<entry>
-<para>Prerelease</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>_rc</para>
-</entry>
-<entry>
-<para>Release candidate</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>(none)</para>
-</entry>
-<entry>
-<para>Normal release</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>_p</para>
-</entry>
-<entry>
-<para>Patch level (normally accompanied by trailing integer)</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para/>
-<para>Any of these suffixes may be immediately followed by a non-zero positive integer, e.g., linux-2.4.0_pre10. Assuming identical version parts, the suffixes are ordered as follows (lower means older): _alpha &lt; _beta &lt; _pre &lt; _rc &lt; (no suffix) &lt; _p. </para>
-<para>When comparing identical suffixes with trailing integers, the one with the larger integer will be considered most recent. Example: foo-1.0_alpha4 is more recent than foo-1.0_alpha3. </para>
-<para>The fourth subsection of the package name is the Gentoo Linux-specific revision number ({-r#}). This subsection, like the suffix, is also optional. # is a non-zero positive integer; e.g., package-4.5.3-r3. </para>
-<para>This revision number is independent of the version of the source tarball and is used to inform people that a new and improved Gentoo Linux revision of a particular package is available. Initial releases of ebuilds must have no revision number; e.g., package-4.5.3 and are considered by Portage to have a revision number of zero. This means that counting goes as follows: 1.0 (initial version), 1.0-r1, 1.0-r2, etc. </para>
-<para>If you make non-trivial improvements to an existing ebuild file, you should copy the ebuild file to a new file with the revision number incremented by 1. Remember to always make mentions of your changes in the ChangeLog when you bump a revision and in your CVS commit message; not doing so is against policy. </para>
-<para>... and I suppose that we actually have a fifth section of the ebuild name as well -- the .ebuild extension itself. </para>
-<para>Contents of an ebuild file</para>
-<para>This section is an introduction to ebuilds. For the full listing of everything possible in an ebuild, there is a manpage which talks about the internal format, variables, and functions in an ebuild script: man 5 ebuild. </para>
-<para>Headers</para>
-<para>When you submit your ebuilds, the header should be exactly the same as the one in /usr/portage/header.txt. Most importantly, do not modify it in anyway and make sure that the $Header: $ line is intact. </para>
-<para>The first three lines should look something like this: </para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Code Listing 2.1: Valid Header</para>
-</entry>
-</row>
-<row>
-<entry>
-<para># Copyright 1999-2005 Gentoo Foundation</para>
-<para># Distributed under the terms of the GNU General Public License v2</para>
-<para># $Header: $</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>Variables</para>
-<para>The first part of every ebuild file is made up of a number of variables. They fall under 3 categories (and are marked below): </para>
-<orderedlist>
-<listitem>
-<para>READ: variables you can utilize but never set </para>
-</listitem>
-<listitem>
-<para>MUST: variables you must always set </para>
-</listitem>
-<listitem>
-<para>OPT: variables that you should set </para>
-</listitem>
-</orderedlist>
-<informaltable frame="all">
-<tgroup cols="3"><tbody>
-<row>
-<entry>
-<para>Variable</para>
-</entry>
-<entry>
-<para>Usage</para>
-</entry>
-<entry>
-<para>Description</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>P</para>
-</entry>
-<entry>
-<para>READ</para>
-</entry>
-<entry>
-<para>The name and version of the package.</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>PN</para>
-</entry>
-<entry>
-<para>READ</para>
-</entry>
-<entry>
-<para>The name of the package.</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>PV</para>
-</entry>
-<entry>
-<para>READ</para>
-</entry>
-<entry>
-<para>The version of the package.</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>PR</para>
-</entry>
-<entry>
-<para>READ</para>
-</entry>
-<entry>
-<para>Contains the revision number or r0 if no revision number exists.</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>PVR</para>
-</entry>
-<entry>
-<para>READ</para>
-</entry>
-<entry>
-<para>Contains the version number with the revision.</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>PF</para>
-</entry>
-<entry>
-<para>READ</para>
-</entry>
-<entry>
-<para>Contains the full package name ${PN}-${PVR}.</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>A</para>
-</entry>
-<entry>
-<para>READ</para>
-</entry>
-<entry>
-<para>Space delimited list of the filenames in SRC_URI. This does not contain the URL paths, just the filename. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>DISTDIR</para>
-</entry>
-<entry>
-<para>READ</para>
-</entry>
-<entry>
-<para>Contains the path to the distfiles directory where all the files fetched for a package are stored. Typically, this is /usr/portage/distfiles. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>FILESDIR</para>
-</entry>
-<entry>
-<para>READ</para>
-</entry>
-<entry>
-<para>Contains the path to the files sub folder in the package specific location in the portage tree. Do not modify this variable. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>WORKDIR</para>
-</entry>
-<entry>
-<para>READ</para>
-</entry>
-<entry>
-<para>Base of the build root for the ebuild. Nothing should be built outside of this directory. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>S</para>
-</entry>
-<entry>
-<para>OPT</para>
-</entry>
-<entry>
-<para>The source directory for your package; commonly ${WORKDIR}/${P}. Portage will default to this value so you may not have to set it! </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>T</para>
-</entry>
-<entry>
-<para>READ</para>
-</entry>
-<entry>
-<para>The temporary directory for your package. It is used as a virtual /tmp directory while processing the ebuild. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>D</para>
-</entry>
-<entry>
-<para>READ</para>
-</entry>
-<entry>
-<para>The root directory that the package is installed to, treat it as the virtual /. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>SLOT</para>
-</entry>
-<entry>
-<para>MUST</para>
-</entry>
-<entry>
-<para>Portage handles different versions of the same installed programs. If you would want, say GCC 2.95 and GCC 3.2 installed at the same time, you would specify the SLOT in each ebuild. Here we would set the SLOT of GCC 2.95 to 2 while we would set the SLOT of GCC 3.2 to 3. Note: Using 0 as the SLOT value signifies that this package only has 1 SLOT setting (in other words, this package is not SLOTable). </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>LICENSE</para>
-</entry>
-<entry>
-<para>MUST</para>
-</entry>
-<entry>
-<para>This variable specifies what license the program is covered under, i.e. GPL-2, BSD, etc... This field must be set to a valid license (which is any license found in /usr/portage/license/). If the license does not already exist there, it must be added before the ebuild can be added to the portage tree. If the license does not allow redistribution, make sure you place RESTRICT="nomirror" in the ebuild. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>KEYWORDS</para>
-</entry>
-<entry>
-<para>MUST</para>
-</entry>
-<entry>
-<para>This variable now supports a couple of different functions. First of all, this variable specifies what architecture the ebuild is meant for. Some example keywords include: x86, ppc, sparc, mips, alpha, arm, hppa, amd64 and ia64. See the profiles/arch.list file in the Portage tree for more details. Obviously, you would set this to reflect the architecture of the target machine. Portage will not allow an x86 machine to build anything but x86, as specified by the KEYWORDS variable. Packages that do not support the native architecture are automatically masked by Portage. If the KEYWORDS flag has a preceding ~, then that indicates that the particular ebuild works, but needs to be tested in several environments before being moved to the stable profile with the given keyword. If the KEYWORDS flag has a preceding -, then the package does not work with the given keyword. If there is nothing leading KEYWORDS, then the package is considered stable. You can allow installation of these different types of packages through the ACCEPT_KEYWORDS variable in make.conf. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>DESCRIPTION</para>
-</entry>
-<entry>
-<para>MUST</para>
-</entry>
-<entry>
-<para>A short, one line description of your package.</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>SRC_URI</para>
-</entry>
-<entry>
-<para>MUST</para>
-</entry>
-<entry>
-<para>The URLs for every source file in your package, separated by whitespace. You should try not to include version numbers in the SRC_URI and S. Always try to use ${PV} or ${P}, and if a version number is not consistent with the name of the source package, make a ${MY_P} variable and use that instead. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>HOMEPAGE</para>
-</entry>
-<entry>
-<para>MUST</para>
-</entry>
-<entry>
-<para>The homepage of the package. If you are unable to locate an official one, try to provide a link from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://freshmeat.net/">freshmeat.net</link> or a similar package tracking site. Never refer to a variable name in the string; include only raw text. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>IUSE</para>
-</entry>
-<entry>
-<para>MUST</para>
-</entry>
-<entry>
-<para>This is set to whatever USE variables your package utilizes. Remember that KEYWORDS should not be listed in here! </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>DEPEND</para>
-</entry>
-<entry>
-<para>OPT</para>
-</entry>
-<entry>
-<para>The package's build dependencies are listed here. See the section <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/devrel/handbook/handbook.xml?part=2&amp;chap=1#doc_chap5">Package Dependencies</link> for more details on proper syntax. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>RDEPEND</para>
-</entry>
-<entry>
-<para>OPT</para>
-</entry>
-<entry>
-<para>The package's runtime dependencies are listed here. Once again, see <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/devrel/handbook/handbook.xml?part=2&amp;chap=1#doc_chap5">Package Dependencies</link> for more details. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para/>
-<para>Functions</para>
-<para>There are a number of different functions that you can define in ebuild files that control the building and installation process of your package. </para>
-<informaltable frame="all">
-<tgroup cols="2"><tbody>
-<row>
-<entry>
-<para>Function</para>
-</entry>
-<entry>
-<para>Purpose</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>pkg_setup</para>
-</entry>
-<entry>
-<para>Use this function to perform any miscellaneous prerequisite tasks. This might include checking for an existing configuration file. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>pkg_nofetch</para>
-</entry>
-<entry>
-<para>Inform the user about required actions if for some reason (such as licensing issues) the sources may not be downloaded by Portage automatically. Use this in conjunction with RESTRICT="fetch". You only should display messages in this function, never call die. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>src_unpack</para>
-</entry>
-<entry>
-<para>Use this function to unpack your sources, apply patches, and run auxiliary programs such as the autotools. By default, this function unpacks the packages listed in A. The initial working directory is defined by WORKDIR. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>src_compile</para>
-</entry>
-<entry>
-<para>Use this function to configure and build the package. The initial working directory is S. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>src_install</para>
-</entry>
-<entry>
-<para>Use this function to install the package to an image in D. If your package uses automake, you can do this simply with emake DESTDIR="${D}" install. Make sure your package installs all its files using D as the root! The initial working directory is S. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>src_test</para>
-</entry>
-<entry>
-<para>Executed only when FEATURES="test" is set and RESTRICT="test" is unset, the default of this function executes an available testing function from any Makefiles in the ${S} directory, running either "make test" or "make check" depending on what is provided. It can be overriden to create a custom test setup. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>pkg_preinst</para>
-</entry>
-<entry>
-<para>The commands in this function are run just prior to merging a package image into the file system. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>pkg_postinst</para>
-</entry>
-<entry>
-<para>The commands in this function are run just following merging a package image into the file system. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>pkg_prerm</para>
-</entry>
-<entry>
-<para>The commands in this function are run just prior to unmerging a package image from the file system. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>pkg_postrm</para>
-</entry>
-<entry>
-<para>The commands in this function are run just following unmerging a package image from the file system. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>pkg_config</para>
-</entry>
-<entry>
-<para>You use this function to setup an initial configuration for the package after it's installed. All paths in this function should be prefixed with ROOT which points to user-specified install root which may not happen to be /. This function is only executed if and when the user runs: emerge --config =${PF}. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para/>
-<para>Helper Functions</para>
-<para>You can also use the following helper functions in your ebuilds. </para>
-<informaltable frame="all">
-<tgroup cols="2"><tbody>
-<row>
-<entry>
-<para>Function</para>
-</entry>
-<entry>
-<para>Purpose</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>use</para>
-</entry>
-<entry>
-<para>Check if one or more given USE-flags are defined. If so, the function will return shell true. In either case, nothing is echoed to standard output. For a verbose version, please use usev which will echo the USE flag if it is defined. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>has_version</para>
-</entry>
-<entry>
-<para>Returns 1 if the system has the requested version of a certain package. For instance has_version &gt;=sys-libs/glibc-2.3.0. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>best_version</para>
-</entry>
-<entry>
-<para>Returns category/package-version of the requested category/package. For instance best_version x11-libs/gtk+extra. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>use_with</para>
-</entry>
-<entry>
-<para>This function checks if a use-flag has been defined and returns "--with-foobar" or "--without-foobar" accordingly. If you only use one argument, that argument is both use-flag and with(out)-string. Otherwise the first argument is the use-flag and the second argument the with(out)-string. For instance use_with truetype freetype will echo "--with-freetype" if truetype is in USE. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>use_enable</para>
-</entry>
-<entry>
-<para>The same as use_with, but returns "--enable-foobar" or "--disable-foobar" accordingly. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>check_KV</para>
-</entry>
-<entry>
-<para>Checks if Portage knows kernel version. If not, display an error and die. If you need the kernel version in your script, use the KV variable which is automatically defined by Portage. On a system running gentoo-sources-2.4.20-r6, KV would have the value "2.4.20". </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>keepdir</para>
-</entry>
-<entry>
-<para>Creates (if necessary) a .keep file in the given directory so that it isn't auto-cleaned. Never create a .keep file yourself. If portage changes how keepdir works, then creating the file yourself will break the package. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>econf</para>
-</entry>
-<entry>
-<para>Issues ./configure with the necessary path-changes (prefix, host, mandir, infodir, datadir, sysconfdir, localstatedir). You can optionally pass extra arguments to ./configure by specifying them when you call econf, and users can set the environment variable EXTRA_ECONF if they need to. Options passed to configure take precedence in the reverse order that they were given. In other words, the first argument passed will always be overridden by the last. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>einstall</para>
-</entry>
-<entry>
-<para>Issues make install with the necessary path-changes (prefix, datadir, mandir, infodir, datadir, sysconfdir, localstatedir). Again, you can pass extra arguments to the make command by specifying them when you call einstall. Please note that the preferred way to install a package is via the emake install DESTDIR="${D}" command and not via einstall. This command is only a fall back to override broken make files. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>die</para>
-</entry>
-<entry>
-<para>Causes the current process to be aborted. It will notify the user using the given arguments as a reason. Do not neglect to pass a message to die if you have more than one call to it in a single function. It is harder to track down a failure if you're not sure where the package failed. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>elog</para>
-</entry>
-<entry>
-<para>Inform the user about something important. The argument given to elog is the message that the user will see. Do not use elog to display banners such as "*************************************". The fact that you're using elog is enough to get the user's attention. The message is also logged using portages ELOG system. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>einfo</para>
-</entry>
-<entry>
-<para>Display informative but non-important messages that don't need to be logged. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para/>
-<para>Helper Functions provided by eutils.eclass</para>
-<para>You can use the following helper functions that are provided by the "eutils" eclass in your ebuilds. You must make sure that inherit eutils is present for these functions to work. </para>
-<informaltable frame="all">
-<tgroup cols="2"><tbody>
-<row>
-<entry>
-<para>Function</para>
-</entry>
-<entry>
-<para>Purpose</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>epatch</para>
-</entry>
-<entry>
-<para>This function acts as a friendlier replacement to the patch command and epatch works with .bz2, .gz, .zip and plain text patches. You do not need to specify a "-p" option, any options that do need to be explicitly specified should be set in EPATCH_OPTS. The function expects either a file or a directory as an argument - if you specify a directory, all patches in the form of "??_${ARCH}_..." will be applied: for a patch to be applied, it needs to match the running architecture, have "_all_" in the name, or EPATCH_FORCE must be set to "yes". </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>gen_usr_ldscript</para>
-</entry>
-<entry>
-<para>This function generates linker scripts in /usr/lib for dynamic libraries in /lib. This fixes linking problems when a .so is in /lib while a .a is in /usr/lib. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>edos2unix</para>
-</entry>
-<entry>
-<para>This function performs the same action as the dos2unix binary. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>egetent</para>
-</entry>
-<entry>
-<para>egetent acts as a wrapper for getent for Linux or nidump for Mac OS X (R). </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>enewuser</para>
-</entry>
-<entry>
-<para>Creates a new user. This function expects a mandatory argument with the username, and several optional arguments can be specified: $2 contains a UID, pass -1 for the next available ID; $3 contains the shell, pass -1 for the default; $4 contains a home directory with /dev/null being the default, $5 contains any groups to which the user should be added, empty by default and $6 contains any extra options that you may wish to pass to useradd. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>enewgroup</para>
-</entry>
-<entry>
-<para>Adds a new group. This function expects a mandatory argument with the group name - an optional second argument makes the group have a specific GID. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>make_desktop_entry</para>
-</entry>
-<entry>
-<para>Makes a desktop entry: the first argument contains the path to the binary. Optionally, the second contains a name for the icon - the default is ${PN}; the third can contain a path to the icon relative to /usr/share/pixmaps or a full path - the default is ${PN}.png; the fourth can contain an <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://standards.freedesktop.org/menu-spec/latest/apa.html">application category</link>, and the fifth argument contains an optional application startup path. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>check_license</para>
-</entry>
-<entry>
-<para>Displays a license for the user to accept, if no arguments are specified then the license specified by ${LICENSE} is used. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>unpack_pdv</para>
-</entry>
-<entry>
-<para>Unpacks a pdv generated archive, the first argument must contain the file to unpack and the second should contain "off_t" which has to be manually generated: strace -elseek ${file} and for something like "lseek(3, -4, SEEK_END)" you would pass the value "4". </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>unpack_makeself</para>
-</entry>
-<entry>
-<para>Unpacks a makeself generated archive, requires a file to unpack as the argument. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>cdrom_get_cds</para>
-</entry>
-<entry>
-<para>Attempts to get a CD, present with files specified by the arguments present on the system and mounted at ${CDROM_ROOT}. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>cdrom_load_next_cd</para>
-</entry>
-<entry>
-<para>Loads the next CD once you are done with the first CD. If the function returns, ${CDROM_ROOT} would point to the next CD. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>strip-linguas</para>
-</entry>
-<entry>
-<para>This function makes sure that LINGUAS contains only the languages that a package can support specified by the arguments to the function. If the first argument is -i, then a list of .po files in the specified directories is built and the intersection of the lists is used. If the first argument is -u, then a list of .po files in the specified directories is built and the union of the lists is used. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para/>
-<para>Helper Functions provided by flag-o-matic.eclass</para>
-<para>You can use the following helper functions that are provided by the "flag-o-matic" eclass in your ebuilds. You must make sure that inherit flag-o-matic is present for these functions to work. You should never modify any compiler settings directly, instead please use flag-o-matic to perform any actions such as filtering flags that cause trouble. </para>
-<informaltable frame="all">
-<tgroup cols="2"><tbody>
-<row>
-<entry>
-<para>Function</para>
-</entry>
-<entry>
-<para>Purpose</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>filter-flags</para>
-</entry>
-<entry>
-<para>This function removes particular flags from C[XX]FLAGS - only complete flags are matched. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>append-flags</para>
-</entry>
-<entry>
-<para>This function adds extra flags to the existing C[XX]FLAGS variables. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>replace-flags</para>
-</entry>
-<entry>
-<para>This replaces the flag specified by the first argument with the one in the second argument in the current C[XX]FLAGS. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>replace-cpu-flags</para>
-</entry>
-<entry>
-<para>Needs two arguments. Replace a given mtune/mcpu/mtune value with the new one (maybe like this: replace-cpu-flags 'i686' 'i586' will replace -mtune/-march/-mcpu=i686 with -mtune/-march/-mcpu=i586). </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>strip-flags</para>
-</entry>
-<entry>
-<para>Strips all flags, except those specified in ALLOWED_FLAGS. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>strip-unsupported-flags</para>
-</entry>
-<entry>
-<para>Strips C[XX]FLAGS of any flags not supported by the running version of GCC. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>get-flag</para>
-</entry>
-<entry>
-<para>Finds a flag and outputs its value. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>is-flag</para>
-</entry>
-<entry>
-<para>This returns true if the flag is set in the current C[XX]FLAGS; only complete matches are performed. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>append-ldflags</para>
-</entry>
-<entry>
-<para>This function adds extra flags to the existing LDFLAGS variable. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>filter-ldflags</para>
-</entry>
-<entry>
-<para>Removes the specified flags from LDFLAGS, only complete flags are matched. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>fstack-flags</para>
-</entry>
-<entry>
-<para>Appends -fno-stack-protector which suppresses -fstack-protector and -fstack-protector-all. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>Helper Functions provided by toolchain-funcs.eclass</para>
-<para>You can use the following helper functions that are provided by the "toolchain-funcs" eclass in your ebuilds. You must make sure that inherit toolchain-funcs is present for these functions to work. You should never explicitly specify any compiler or binutils settings directly, instead please use toolchain-funcs to specify compilers and binutils. </para>
-<para>The purpose of using the below functions is to support cross-compiling and the icc compiler. These should be used whenever a package explicitly uses gcc, g++, ld, ranlib or any of the below tools. In general packages that use autoconfiguration tools detect cross compiling automatically and do not need the following functions. </para>
-<informaltable frame="all">
-<tgroup cols="2"><tbody>
-<row>
-<entry>
-<para>Function</para>
-</entry>
-<entry>
-<para>Purpose</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>tc-getAR </para>
-</entry>
-<entry>
-<para>Returns the name of the archiver </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>tc-getAS </para>
-</entry>
-<entry>
-<para>Returns the name of the assembler</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>tc-getCC </para>
-</entry>
-<entry>
-<para>Returns the name of the C compiler</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>tc-getCXX </para>
-</entry>
-<entry>
-<para>Returns the name of the C++ compiler</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>tc-getLD </para>
-</entry>
-<entry>
-<para>Returns the name of the linker</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>tc-getNM </para>
-</entry>
-<entry>
-<para>Returns the name of the symbol/object inspection tool</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>tc-getRANLIB </para>
-</entry>
-<entry>
-<para>Returns the name of the archiver indexer</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>tc-getF77 </para>
-</entry>
-<entry>
-<para>Returns the name of the fortran compiler</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>tc-getGCJ </para>
-</entry>
-<entry>
-<para>Returns the name of the java compiler</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>tc-getBUILD_CC </para>
-</entry>
-<entry>
-<para>Returns the name of the C compiler for build</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>tc-is-cross-compiler </para>
-</entry>
-<entry>
-<para>A simple way to see if we're using a cross-compiler</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>gcc-fullversion </para>
-</entry>
-<entry>
-<para>Returns the version as by $($CC -dumpversion)</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>gcc-version </para>
-</entry>
-<entry>
-<para>Returns the version, but only the &lt;major&gt;.&lt;minor&gt;</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>gcc-major-version </para>
-</entry>
-<entry>
-<para>Returns the Major version</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>gcc-minor-version </para>
-</entry>
-<entry>
-<para>Returns the Minor version</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>gcc-micro-version </para>
-</entry>
-<entry>
-<para>Returns the Micro version</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>Rules for writing an ebuild file</para>
-<para>Since ebuild files are really just shell scripts, you should use your editor's shell-script mode for editing them. You should use proper indentation, using only tab characters -- no spaces. Make sure you set up your editor to put tab stops at 4 spaces. Always make sure you use braces around your environment variables; e.g. ${P} instead of just $P. </para>
-<para>Long lines are wrapped with ' \', thus: </para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Code Listing 2.2: Wrapping lines in ebuilds</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>./configure \</para>
-<para>--prefix=/usr || die "configure failed"</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>For further details, refer to skel.ebuild (usually residing in /usr/portage). </para>
-<para>If you use Vim for ebuild/eclass editing, the default Gentoo vimrc file, /etc/vim/vimrc, already ensures that correct indentation and filetype settings are used for ebuild and eclass files. For better results, including special syntax highlighting for ebuild keywords, emerge app-vim/gentoo-syntax. </para>
-<para>On non-Gentoo systems, you can obtain similar results by using the following lines in your vimrc, or better yet by installing the gentoo-syntax scripts which can be downloaded from Gentoo mirrors. </para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Code Listing 2.3: Configuring vimrc for ebuild-editing</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>au BufRead,BufNewFile *.e{build,class} let is_bash=1|setfiletype sh</para>
-<para>au BufRead,BufNewFile *.e{build,class} set ts=4 sw=4 noexpandtab</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>If you're using Emacs, you should emerge app-emacs/gentoo-syntax (for GNU Emacs) or app-xemacs/gentoo-syntax (for XEmacs). These packages provide Emacs major modes for automatic indentation and syntax highlighting of ebuilds and other Gentoo specific file types. </para>
-<para>If you're using nano, then you're in luck! Just edit /etc/nanorc and uncomment the section referring to ebuild's. </para>
-<para>USE Variables</para>
-<para>The purpose of USE variables is to allow you to configure Portage to globally and automatically enable or disable certain optional build-time features. Here's an example. Let's say you're a GNOME fan, and you'd like any ebuild that has the option of compiling-in optional GNOME support to do so. In this case, you'd add gnome to the USE variable in /etc/make.conf, and then Portage will automatically add optional GNOME functionality to packages if it is available. Likewise, if you don't want optional GNOME features to be added to your ebuilds if they are available, simply edit /etc/make.conf and make sure that gnome is not set in the USE variable. Gentoo Linux has an almost overwhelming number of USE options, allowing you to have your system configured exactly the way you want it. </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Note: If you unset a USE variable (for example, removing gnome from USE), this will only instruct Portage to disable optional build-time support for GNOME. However, if you emerge an ebuild that requires GNOME, the package will obviously have GNOME support enabled, as you would expect. This also means that GNOME will be automatically installed (as a dependency) if it hasn't been already. That's why it's always a good idea to do an emerge --pretend before doing the "real" emerge; that way, you'll always know exactly what you're going to get! </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>In your own ebuilds, you can check whether a USE variable is set by using the use &lt;variable&gt; command. You would normally use this command as follows: </para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Code Listing 2.4: Finding out if a USE-flag is set</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>if use X; then</para>
-<para>  # Commands specific to X...</para>
-<para>fi</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>USE variables can also be used to set dependencies. For example, you may only want to require a package if a certain USE variable is set. This is done by using the syntax flag? ( mycat/mypackage ) in the DEPEND variable for your ebuild. In this example, mycat/mypackage will only be required if flag is present in USE. It is also possible to specify what dependency should be used if some USE flag is set, and what dependency to use if it is not set: flag? ( mycat/mypackage) and !flag? ( othercat/otherpackage ). In this case, if flag is not set, othercat/otherpackage is used instead of mycat/mypackage. Make sure that your ebuilds use this syntax and not Bash IFS. Bash conditionals interfere with Portage's dependency caching, and the use of them will break your ebuild. </para>
-<para>Here's an important tip about how to use USE. Most of the time, a package will have a ./configure script used to perform configuration steps. Generally, if your ebuild uses ./configure, any optional build-time functionality will be enabled or disabled by passing the appropriate arguments to the ./configure command. Here's the best way to handle this: </para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Code Listing 2.5: Conditionals based on USE-settings</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>DEPEND="X? ( &gt;=x11-base/xfree-4.3 )</para>
-<para>mysql? ( &gt;=dev-db/mysql-3.23.49 )</para>
-<para>apache2? ( &gt;=net-www/apache-2 )</para>
-<para>!apache2? ( =net-www/apache-1* )"</para>
-<para/>
-<para>src_compile() {</para>
-<para>  econf \</para>
-<para>    $(use_enable X x11) \</para>
-<para>    $(use_enable mysql) \</para>
-<para>    || die "Error: econf failed!"</para>
-<para>  emake || die "Error: emake failed!"</para>
-<para>}</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>This approach has a very nice result. We don't have to worry about what the default setting is for mysql or X (enable/disabled), we explicitly tell econf what we want it to do based upon the USE variable. Not to mention it's quite clean in terms of readability :). </para>
-<para>Occasionally, ebuilds will have conflicting optional features. Checking for these conflicts and returning an error is not a viable solution. Instead, you must favor one of the features over the others. As to which, consult upstream (what they use as typical default), or consider which option provides more common functionality, or just flip a coin. One example comes from the msmtp ebuilds. The package can use either SSL with GnuTLS, SSL with OpenSSL, or no SSL at all. Because GnuTLS has a lot more features compared to OpenSSL, it is favoured: </para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Code Listing 2.6: Handling conflicting features</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>src_compile() {</para>
-<para>    local myconf</para>
-<para/>
-<para>    if use gnutls ; then</para>
-<para>        myconf="${myconf} --enable-ssl --with-ssl=gnutls"</para>
-<para>    elif use ssl ; then</para>
-<para>        myconf="${myconf} --enable-ssl --with-ssl=openssl"</para>
-<para>    else</para>
-<para>        myconf="${myconf} --disable-ssl"</para>
-<para>    fi</para>
-<para/>
-<para>    econf \</para>
-<para>        # Other stuff</para>
-<para>        ${myconf} \</para>
-<para>        || die "configure failed"</para>
-<para/>
-<para>    emake || die "make failed"</para>
-<para>}</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>To view a continuously updated table of USE variables, please go <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/dyn/use-index.xml">here</link>. </para></section><section><info><title>1.c. File system Locations</title></info>
-<para>Introduction to the FHS</para>
-<para>The file system layout standards used in Gentoo Linux closely follow the FHS, short for File system Hierarchy Standard. A simplified description of the standard is given here; for a complete specification go to <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.pathname.com/fhs/">http://www.pathname.com/fhs/</link>. </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Note: The /opt hierarchy is addressed in section 3.12 of the FHS. Section 4.4 deals with the /usr/X11R6 directory. KDE and GNOME are not specifically addressed, and are in fact not even mentioned in the current version of the FHS. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para/>
-<para>How to fit your packages into the file system</para>
-<para>Usually, if the package uses autoconf and automake, the default installation destinations are mostly correct, with a few exceptions: </para>
-<orderedlist>
-<listitem>
-<para>If you're installing a program into /bin, /sbin, /usr/bin, or /usr/sbin, then the program's corresponding man page should be installed into the /usr/share/man tree. This can often be accomplished by specifying a ./configure --mandir=/usr/share/man in the ebuild. </para>
-</listitem>
-<listitem>
-<para>GNU info files should always be installed to /usr/share/info, even if the info files are about X11, GNOME or KDE-specific programs or tools. Make a note: /usr/share/info is the only official location for GNU info files. Since many ./configure scripts default to installing GNU info files in /usr/info, it's often necessary to call ./configure with the --infodir=/usr/share/info argument. </para>
-</listitem>
-<listitem>
-<para>Documentation files are installed in /usr/share/doc, into a subdirectory reflecting the name, version, and revision of the particular program. This applies to all programs: GNOME, KDE, X11 and console alike. However, some programs may install additional documentation and support files into a /usr/share hierarchy for their own purposes. </para>
-</listitem>
-<listitem>
-<para>X11-specific programs and libraries should always be installed into /usr, not directly into /usr/X11R6. We reserve the /usr/X11R6 hierarchy for the X Window System, Version 11 Release 6 itself. This is perhaps a more to-the-letter interpretation of the FHS than some other distributions have made. </para>
-</listitem>
-<listitem>
-<para>GNOME and KDE programs, similarly, should always be installed into /usr. </para>
-</listitem>
-</orderedlist>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Important: Some distributions choose to install GNOME and KDE into /opt. There exists no standard for these desktop environments in terms of where to actually install their files. In the interests of simplicity and consistency, we elect to install all KDE and GNOME packages into the /usr hierarchy. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>In general, you should have ebuilds install their files into the /usr tree. Some programs can be compiled and linked with or without GNOME, KDE, and X11 libraries, which can cause confusion. Our solution is to install everything into /usr which avoids ambiguity and needless complexity for ebuild authors. The location in which to install a program's files should not depend on the presence or absence of specific USE variables. Therefore, the ebuilds in the portage tree almost always install into the /usr hierarchy exclusively. </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Note: The /opt directory is reserved in Gentoo Linux for binary-only packages. Examples include mozilla-bin, acroread, netscape and realplayer. Packages that get installed here will usually require a /etc/env.d/foo stub file. This is so that paths and additional variables can be included into the environment. For more information on /etc/env.d, please visit <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/handbook/handbook-x86.xml?part=2&amp;chap=5">this</link> document. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable></section><section><info><title>1.d. The Portage scripts and utilities</title></info>
-<para>Public scripts</para>
-<para>These are scripts used by the system-administrator to install and remove packages, and maintain the package database. </para>
-<para>ebuild is the main engine of the Portage system; it performs all major tasks such as unpacking, compiling, installing, merging, and unmerging packages. It is called using the command: ebuild path/to/package.ebuild command. The commands available are: </para>
-<informaltable frame="all">
-<tgroup cols="3"><tbody>
-<row>
-<entry>
-<para>Command</para>
-</entry>
-<entry>
-<para>Description</para>
-</entry>
-<entry>
-<para>Related ebuild Function</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>setup*</para>
-</entry>
-<entry>
-<para>Performs any miscellaneous commands required before the ebuild can proceed </para>
-</entry>
-<entry>
-<para>pkg_setup</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>depend</para>
-</entry>
-<entry>
-<para>Displays the dependencies required to build the package</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>merge*</para>
-</entry>
-<entry>
-<para>Unpacks, compiles, installs, and merges the package into your file system </para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>qmerge*</para>
-</entry>
-<entry>
-<para>Merges the package into your file system, assuming that the unpack, compile, and install stages have already been executed </para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>unpack*</para>
-</entry>
-<entry>
-<para>Unpacks the source tarballs into the work directory </para>
-</entry>
-<entry>
-<para>src_unpack</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>compile*</para>
-</entry>
-<entry>
-<para>Compiles the package</para>
-</entry>
-<entry>
-<para>src_compile</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>rpm</para>
-</entry>
-<entry>
-<para>Creates an RPM from the package</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>package</para>
-</entry>
-<entry>
-<para>Creates a Gentoo tbz2 package</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>prerm*</para>
-</entry>
-<entry>
-<para>Executes the pre-removal stage of the package</para>
-</entry>
-<entry>
-<para>pkg_prerm</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>postrm*</para>
-</entry>
-<entry>
-<para>Executes the post-removal stage of the package</para>
-</entry>
-<entry>
-<para>pkg_postrm</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>preinst*</para>
-</entry>
-<entry>
-<para>Executes the pre-installation stage of the package</para>
-</entry>
-<entry>
-<para>pkg_preinst</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>postinst*</para>
-</entry>
-<entry>
-<para>Executes the post-installation stage of the package</para>
-</entry>
-<entry>
-<para>pkg_postinst</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>config</para>
-</entry>
-<entry>
-<para>Sets up a default configuration once the package is merged</para>
-</entry>
-<entry>
-<para>pkg_config</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>touch*</para>
-</entry>
-<entry>
-<para>Updates the mtimes for each source archive in the package</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>clean*</para>
-</entry>
-<entry>
-<para>Cleans the work directory for the package</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>fetch*</para>
-</entry>
-<entry>
-<para>Fetches the package source tarballs</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>digest*</para>
-</entry>
-<entry>
-<para>Creates a digest file for the package</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>test*</para>
-</entry>
-<entry>
-<para>Runs the self-test routine for the package</para>
-</entry>
-<entry>
-<para>src_test</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>install*</para>
-</entry>
-<entry>
-<para>Installs the package into the image directory</para>
-</entry>
-<entry>
-<para>src_install</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>unmerge</para>
-</entry>
-<entry>
-<para>Unmerges the package from your file system</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Note: Commands with an asterisk (*) are normally only used by the developer. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>emerge recursively merges a package and all of its dependencies into your file system. This command has many options, try emerge --help for a list of them. </para>
-<para>env-update updates the configuration files (including, but not limited to /etc/ld.so.conf and /etc/profile.env) to include changes made by installed packages. </para>
-<para>Private Scripts and Commands</para>
-<para>These are scripts you can use in your ebuild files to perform common tasks. </para>
-<para>For you down and dirty people, look at the scripts themselves in /usr/lib/portage/bin. </para>
-<informaltable frame="all">
-<tgroup cols="4"><tbody>
-<row>
-<entry>
-<para>Command</para>
-</entry>
-<entry>
-<para>Default Value</para>
-</entry>
-<entry>
-<para>Description</para>
-</entry>
-<entry>
-<para>Example</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>diropts</para>
-</entry>
-<entry>
-<para>-m0755</para>
-</entry>
-<entry>
-<para>Sets the options used when running dodir </para>
-</entry>
-<entry>
-<para>diropts -m0750</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>dobin</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Installs the specified binaries into DESTTREE/bin </para>
-</entry>
-<entry>
-<para>dobin wmacpi</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>docinto</para>
-</entry>
-<entry>
-<para>""</para>
-</entry>
-<entry>
-<para>Sets the relative subdir used by dodoc </para>
-</entry>
-<entry>
-<para>docinto examples</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>dodir</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Creates a directory, handling ${D} transparently</para>
-</entry>
-<entry>
-<para>dodir /usr/lib/newpackage</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>dodoc</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Installs the specified files into the package's documentation directory (/usr/share/doc/${PF}/DOCDESTTREE) (see docinto) </para>
-</entry>
-<entry>
-<para>dodoc README *.txt</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>doexe</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Installs the specified files with mode EXEOPTIONS (see exeopts) into PATH defined by EXEINTO (see exeinto). </para>
-</entry>
-<entry>
-<para>doexe ${FILESDIR}/quake3</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>dohard</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Creates a hard link, handling ${D} transparently</para>
-</entry>
-<entry>
-<para>dohard ls /bin/dir</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>dohtml</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Installs the specified files and directories into /usr/share/doc/${PF}/html </para>
-</entry>
-<entry>
-<para>dohtml -r doc/html/*</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>doinfo</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Installs the specified files into /usr/share/info, then compresses them with gzip </para>
-</entry>
-<entry>
-<para>doinfo doc/*.info</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>doins</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Installs the specified files with mode INSOPTIONS (see insopts) into INSDESTTREE (see insinto) </para>
-</entry>
-<entry>
-<para>doins *.png icon.xpm</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>dolib</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Installs the specified libraries into DESTTREE/lib with mode 0644 </para>
-</entry>
-<entry>
-<para>dolib *.a *.so</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>dolib.a</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Installs the specified libraries into DESTTREE/lib with mode 0644 </para>
-</entry>
-<entry>
-<para>dolib.a *.a</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>dolib.so</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Installs the specified libraries into DESTTREE/lib with mode 0755 </para>
-</entry>
-<entry>
-<para>dolib.so *.so</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>doman</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Installs the specified files into /usr/share/man/manX, according to the suffix of the file (file.1 will go into man1) </para>
-</entry>
-<entry>
-<para>doman *.1 *.5</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>dosbin</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Installs the files into DESTTREE/sbin, making sure they are executable </para>
-</entry>
-<entry>
-<para>dosbin ksymoops</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>dosym</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Creates a symlink, handles ${D} transparently</para>
-</entry>
-<entry>
-<para>dosym gzip /bin/zcat</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>emake</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Runs make with MAKEOPTS. Some packages cannot be made in parallel; use emake -j1 instead. If you need to pass any extra arguments to make, simply append them onto the emake command. Users can set the EXTRA_EMAKE environment variable to pass extra flags to emake. </para>
-</entry>
-<entry>
-<para>emake</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>exeinto</para>
-</entry>
-<entry>
-<para>/</para>
-</entry>
-<entry>
-<para>Sets the root (EXEDESTTREE) for the doexe command</para>
-</entry>
-<entry>
-<para>exeinto /usr/lib/${PN}</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>exeopts</para>
-</entry>
-<entry>
-<para>-m0755</para>
-</entry>
-<entry>
-<para>Sets the options used when running doexe </para>
-</entry>
-<entry>
-<para>exeopts -m1770</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>fowners</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Applies the specified ownership to the specified file via the chown command, handles ${D} transparently </para>
-</entry>
-<entry>
-<para>fowners root:root /sbin/functions.sh</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>fperms</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Applies the specified permissions to the specified file via the chmod command, handles ${D} transparently </para>
-</entry>
-<entry>
-<para>fperms 700 /var/consoles</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>insinto</para>
-</entry>
-<entry>
-<para>/usr</para>
-</entry>
-<entry>
-<para>Sets the root (INSDESTTREE) for the doins command</para>
-</entry>
-<entry>
-<para>insinto /usr/include</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>insopts</para>
-</entry>
-<entry>
-<para>-m0644</para>
-</entry>
-<entry>
-<para>Sets the options used when running doins </para>
-</entry>
-<entry>
-<para>insopts -m0444</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>into</para>
-</entry>
-<entry>
-<para>/usr</para>
-</entry>
-<entry>
-<para>Sets the target prefix (DESTTREE) for all the 'do' commands (like dobin, dolib, dolib.a, dolib.so, domo, dosbin) </para>
-</entry>
-<entry>
-<para>into /</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>libopts</para>
-</entry>
-<entry>
-<para>-m0644</para>
-</entry>
-<entry>
-<para>Sets the options used when running dolib </para>
-</entry>
-<entry>
-<para>libopts -m0555</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>newbin</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Wrapper around dobin which installs the specified binary transparently renaming to the second argument </para>
-</entry>
-<entry>
-<para>newbin ${FILESDIR}/vmware.sh vmware</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>newdoc</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Wrapper around dodoc which installs the specified file transparently renaming to the second argument </para>
-</entry>
-<entry>
-<para>newdoc README README.opengl</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>newexe</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Wrapper around doexe which installs the specified file transparently renaming to the second argument </para>
-</entry>
-<entry>
-<para>newexe ${FILESDIR}/xinetd.rc xinetd</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>newins</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Wrapper around doins which installs the specified file transparently renaming to the second argument </para>
-</entry>
-<entry>
-<para>newins ntp.conf.example ntp.conf</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>newman</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Wrapper around doman which installs the specified file transparently renaming to the second argument </para>
-</entry>
-<entry>
-<para>newman xboing.man xboing.6</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>newsbin</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Wrapper around dosbin which installs the specified file transparently renaming to the second argument </para>
-</entry>
-<entry>
-<para>newsbin strings strings-static</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>prepall</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Runs prepallman, prepallinfo and prepallstrip. Also ensures all libraries in /opt/*/lib, /lib, /usr/lib and /usr/X11R6/lib are executable. also moves any stray aclocal macros into /usr/share/aclocal </para>
-</entry>
-<entry>
-<para>prepall</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>prepalldocs</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Recursively gzips all doc files in /usr/share/doc, transparently fixing up any symlink paths </para>
-</entry>
-<entry>
-<para>prepalldocs</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>prepallinfo</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Recursively gzips all info files in /usr/share/info </para>
-</entry>
-<entry>
-<para>prepallinfo</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>prepallman</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Recursively gzips all man pages in /opt/*/man/*, /usr/share/man/*, /usr/local/man/*, /usr/X11R6/share/man/* and transparently fixes up any symlink paths </para>
-</entry>
-<entry>
-<para>prepallman</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable></section><section><info><title>1.e. Package Dependencies</title></info>
-<para>Why dependencies are important</para>
-<para>Portage is more than just a convenience script that gives you a unified way to build any one project (program, library) from source. It will also fetch and install any necessary dependencies if you take care to specify these in your ebuild. </para>
-<para>In the official ebuilds, all dependencies have already been specified, so when you issue emerge net-www/mozilla/mozilla-1.0, Portage will insure that all libraries necessary for Mozilla to build and run are properly installed before Mozilla itself is built. </para>
-<para>Portage even distinguishes between build-time dependencies and run-time dependencies. (Caveat: Currently, Portage installs all build-time and run-time dependencies and leaves it at that. At a later stage, it will be possible to trim your installation so that only the run-time dependencies are left installed). </para>
-<para>How to Specify Dependencies in Your ebuild Files (a.k.a. DEPEND Atoms)</para>
-<para>The DEPEND variable inside your foo-x.y.z.ebuild tells Portage about which packages are needed to build foo. The RDEPEND variable specifies which packages are needed for foo to run. RDEPEND should be set explicitly even if it's the same as DEPEND because in the future it defaulting to DEPEND is planned to be removed from Portage. </para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Code Listing 5.1: Depend example</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>DEPEND="virtual/opengl</para>
-<para>        dev-libs/libxml2"</para>
-<para>RDEPEND="${DEPEND}"</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>This tells Portage that to build foo-x.y.z, the packages virtual/opengl (more on virtuals in a bit) and dev-lib/libxml2 are needed. It does not say anything about which version of opengl or libxml2 that are needed, which means "anything goes". </para>
-<para>The "anything goes" is of course a bit scary, and will not work in the general case. But for libraries, which strive very hard to be 100% binary compatible all the time, it actually works. For other libraries, we can of course specify version dependencies. </para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Code Listing 5.2: Version example</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>&gt;=sys-apps/bar-1.2</para>
-<para>=sys-apps/baz-1.0</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>&gt;= and = do what you would expect; sys-apps/bar version 1.2 or newer is okay (this means that sys-apps/bar-2.0 is okay), while sys-apps/baz version 1.0 is the only version that is accepted. For more information on the version schema of packages, see the section above on <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/devrel/handbook/handbook.xml?part=2&amp;chap=1#doc_chap2_sect2">Naming ebuild Files</link>. </para>
-<para>Other methods of specifying version dependencies are as follows: </para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Code Listing 5.3: Specifying version dependencies</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>~sys-apps/qux-1.0</para>
-<para>=sys-apps/foo-1.2*</para>
-<para>!sys-libs/gdbm</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>~sys-apps/qux-1.0 will select the newest portage revision of qux-1.0. </para>
-<para>=sys-apps/foo-1.2* will select the newest member of the 1.2 series, but will ignore 1.3 and later/earlier series. That is, foo-1.2.3 and foo-1.2.0 are both valid, while foo-1.3.3, foo-1.3.0, and foo-1.1.0 are not. </para>
-<para>!sys-libs/gdbm will prevent this package from being emerged while gdbm is already emerged. </para>
-<para>Important Notes</para>
-<para>There are many things that go wrong with the DEPEND and RDEPEND variables. Here are some important points to follow when you write the dependencies. </para>
-<orderedlist>
-<listitem>
-<para>Always include the CATEGORY.For example, use &gt;=x11-libs/gtk+-2 and not &gt;=gtk+-2. </para>
-</listitem>
-<listitem>
-<para>Do not put an asterisk (*) for &gt;= dependencies.For example, it should be &gt;=x11-libs/gtk+-2 rather than &gt;=x11-libs/gtk+-2*. </para>
-</listitem>
-<listitem>
-<para>Never depend on a meta-package.So don't depend on gnome-base/gnome, always depend on the specific libraries like libgnome. </para>
-</listitem>
-<listitem>
-<para>One dependency per line.Don't put multiple dependencies on the same line. It makes it ugly to read and hard to follow. </para>
-</listitem>
-<listitem>
-<para>GTK: Always use =x11-libs/gtk+-1.2* for GTK+1 apps. </para>
-</listitem>
-</orderedlist>
-<para>Additionally, it is important to ensure that all the dependencies are complete for your package: </para>
-<orderedlist>
-<listitem>
-<para>Look in configure.in or configure.acLook for checks for packages in here. Things to look out for are pkg-config checks or AM_* functions that check for a specific version. </para>
-</listitem>
-<listitem>
-<para>Look at included .spec filesA good indication of dependencies is to look at the included .spec files for relevant deps. However, do not trust them to be the definitive complete list of dependencies. </para>
-</listitem>
-<listitem>
-<para>Look at the application/library websiteCheck the application website for possible dependencies that they suggest are needed. </para>
-</listitem>
-<listitem>
-<para>Read the README and INSTALL for the packageThey usually also contain useful information about building and installing packages. </para>
-</listitem>
-<listitem>
-<para>Remember non-binary dependencies such as pkg-config, doc generation programs, etc.Usually the build process requires some dependencies such as intltool, libtool, pkg-config, doxygen, scrollkeeper, gtk-doc, etc. Make sure those are clearly stated. </para>
-</listitem>
-</orderedlist>
-<para>For all the latest details about these DEPEND Atoms, please see the section 5 manpage on ebuilds: man 5 ebuild. </para></section><section><info><title>1.f. Testing and deploying</title></info>
-<para>ChangeLog</para>
-<para>Whenever you update (or write a new) an ebuild, you must also update its (or create a new) ChangeLog. The skel.ChangeLog contains a sample ChangeLog that you can use as a basis. </para>
-<para>The purpose of the ChangeLog is to document what is being done, why it is being done, and by whom. This allows both developers and users to trace the changes made in an easy way. </para>
-<para>The ChangeLog is primarily targeted at users, so be sure to keep your writing short, to the point, and avoid getting verbose about the internal technical details. </para>
-<para>Storing your own ebuilds locally</para>
-<para>In order to be able to test your ebuilds and let Portage know about them, you must place those in a known directory. Portage will use the PORTDIR_OVERLAY variable which you can define in /etc/make.conf. You should set this variable to your directory (e.g. /usr/local/portage). </para>
-<para>In that directory, you must use the same structure (and categories) as in /usr/portage. </para>
-<para>Using this PORTDIR_OVERLAY, your ebuilds remain on your system, even after an emerge sync, and they are still known to Portage. </para>
-<para>Testing the package</para>
-<para>Have a think about how you will test whether this package works. Sometimes the developers have already included a make test or make check routine that will test the basic functionality of the package. If so, then running env FEATURES=test ebuild foo-x.y.z.ebuild test will execute it. If it is broken try to fix it so that it works (and submit the patch to the upstream developers). </para>
-<para>If this is not the case consider adding a src_test routine to your ebuild. This is executed before the src_install routine and can be very helpful for testing the program works across various architectures. The architecture developers will appreciate if you add a routine here so that they do not require knowledge of the package's functionality. </para>
-<para>Please keep in mind the general requirements of an ebuild here. The src_test routine must not be interactive. If the test routine depends on other packages use the test USE flag to specify the optional compile time DEPENDancies. Also, please note that src_test routines are not recommended for graphical X applications as the user running portage often cannot run them successfully. </para>
-<para>Useful testing tools</para>
-<para>We have a few useful tools to help you with writing and maintaining your ebuilds. </para>
-<informaltable frame="all">
-<tgroup cols="3"><tbody>
-<row>
-<entry>
-<para>Tool</para>
-</entry>
-<entry>
-<para>Package</para>
-</entry>
-<entry>
-<para>Description</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>repoman</para>
-</entry>
-<entry>
-<para>sys-apps/portage</para>
-</entry>
-<entry>
-<para>Developer-only tool to assist with the CVS check in procedure. It does a lot of common QA and tries to make sure that files added to cvs will not break the portage tree. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>ccache</para>
-</entry>
-<entry>
-<para>dev-util/ccache</para>
-</entry>
-<entry>
-<para>Tool that keeps pre-processed files so that recompilation gets done much faster. Be sure to add ccache to the FEATURES variable in /etc/make.conf! </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>sandboxshell</para>
-</entry>
-<entry>
-<para>app-shells/sandboxshell</para>
-</entry>
-<entry>
-<para>Launch a shell that creates a sandbox environment. Useful for entering the same environment that portage builds packages inside of and debugging things by hand. </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>echangelog</para>
-</entry>
-<entry>
-<para>app-portage/gentoolkit-dev</para>
-</entry>
-<entry>
-<para>Can create a new ChangeLog or add an entry to an existing one.</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para/></section>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Ebuild HOWTO (Англ.)</title>
+    </info>
+    <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/devrel/handbook/handbook.xml?part=2&amp;chap=1">http://www.gentoo.org/proj/en/devrel/handbook/handbook.xml?part=2&amp;chap=1</link>
+    </para>
+    <para>С версии: 1.4</para>
+    <section>
+        <title>The Portage tree</title>
+        <section>
+            <title>Introduction</title>
+            <para>The Portage tree is typically found at <filename>/usr/portage</filename> and is organized in a hierarchical structure consisting of category directories, followed by specific package directories. Here's an example; you can find the <filename>util-linux-2.11y.ebuild</filename> file in the <filename>/usr/portage/sys-apps/util-linux</filename> directory. There may be several other versions of util-linux ebuilds alongside <filename>util-linux-2.11y.ebuild</filename>. This is because all ebuilds for a particular package (regardless of version), share the same mycat/mypkg directory in /usr/portage. </para>
+        </section>
+        <section>
+            <title>Checking Out the Portage Tree from CVS</title>
+            <para>If you are unfamiliar with the CVS system, please read the <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/cvs-tutorial.xml">CVS Tutorial</link> for more information. </para>
+            <para>The Portage tree can be found in the gentoo-x86 module of the Gentoo Linux tree. To check out the module (about 350 megabytes) you would first set up CVS via the above guide, then check out the gentoo-x86 module. </para>
+        </section>
+        <section>
+            <title>What (not) to put in the Portage tree</title>
+            <para>Before writing a new ebuild, check <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://bugs.gentoo.org/">bugs.gentoo.org</link> to see if an ebuild has already been written for the package, but has not yet been added to the Portage tree. Go to <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://bugs.gentoo.org/">bugs.gentoo.org</link>, choose query and select Advanced Search; as product select Gentoo Linux, as component select ebuilds. In the search field put the name of the ebuild and as status select NEW, ASSIGNED, REOPENED and RESOLVED (RESOLVED is important), then submit the query. For you lazy people, click <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://bugs.gentoo.org/query.cgi?product=Gentoo%20Linux&amp;component=Ebuilds&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;bug_status=RESOLVED">here</link>. </para>
+            <para>In general, the Portage tree should only be used for storing <filename>.ebuild</filename> files, as well as any relatively small companion files, such as patches or sample configuration files. These types of files should be placed in the <filename>/usr/portage/mycat/mypkg/files</filename> directory to keep the main <filename>mycat/mypkg</filename> directory uncluttered. Exceptions to this rule are for larger patch files (we recommend this for patches above 20KB) which should be put onto the Gentoo mirrors so that people do not waste excessive amounts of bandwidth and hard drive space. Also, you should not add binary (non-ASCII) files to the Portage CVS tree. If you need to do this in another CVS tree, for example, if you need to add a small PNG graphic for whatever reason, be sure to add it to CVS by using the -kb option, like so: </para>
+            <example>
+                <title>Adding binary files to CVS</title>
+                <screen><prompt>#</prompt> <userinput>cvs add -kb myphoto.png</userinput></screen>
+            </example>
+            <para>The <option>-kb</option> option tells CVS that myphoto.png is a binary file and should be treated specially. For example, merging the differences between two different versions of this file should not be allowed to happen, for obvious reasons. Also, speaking of merging changes, any patches you add to Portage should generally not be compressed. This will allow CVS to merge changes and correctly inform developers of conflicts. </para>
+            <para>Remember, the packages that you commit must be ready out of the box for end users when committed as stable. Make sure that you have a good set of default settings that will satisfy the majority of systems and users that will use your package. If your package is broken, and you are not sure how to get it to work, check some other distributions that have done their own versions of the package. You can check <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://cvs.mandriva.com/cgi-bin/viewvc.cgi/SPECS/">Mandriva</link> or <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.debian.org/distrib/packages">Debian</link> or <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://cvs.fedora.redhat.com/">Fedora</link> for some examples. </para>
+            <para>When committing to CVS, all developers should use <command>repoman commit</command> instead of <command>cvs commit</command> to submit their ebuilds. Before committing, please run <command>repoman full</command> to make sure you didn't forget something. </para>
+        </section>
+        <section>
+            <title>CVS Commit Policy</title>
+            <itemizedlist>
+                <listitem>
+                    <para>Always run <command>repoman scan</command> before you commit. </para>
+                </listitem>
+                <listitem>
+                    <para>Please run <command>repoman full</command> before you commit. </para>
+                </listitem>
+                <listitem>
+                    <para>Always test that <filename>package.mask</filename> is okay by doing <command>emerge --pretend mypkg</command> before you commit and check that it doesn't contain any conflicts. </para>
+                </listitem>
+                <listitem>
+                    <para>Always update the <filename>ChangeLog</filename> before you commit. </para>
+                </listitem>
+                <listitem>
+                    <para>Always commit the updated <filename>package.mask</filename> before the updated package, in case conflicts occur while you commit <filename>package.mask</filename>. </para>
+                </listitem>
+                <listitem>
+                    <para>Always do atomic commits; if you commit a package with a new license, or that is masked, then first commit the revised <filename>package.mask</filename> and/or license, then commit the ebuild, <filename>ChangeLog</filename>, patches and <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/devrel/handbook/handbook.xml?part=2&amp;chap=4">metadata.xml</link> all in one go to avoid breaking users' installations. </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+        <section>
+            <title>The files Directory</title>
+            <para>As noted earlier, under each package subdirectory is a <filename>files/</filename> directory. Any patches, configuration files, or other ancillary files your package might require should be added to this directory; any files bigger than 20KB-or-so should go to the mirrors to lower the amount of (unneeded) files our users have to download. You may want to consider naming patches you create yourself just to get your package to build with a version-specific name, such as <filename>mypkg-1.0-gentoo.diff</filename>, or more simply, <filename>1.0-gentoo.diff</filename>. Also note that the gentoo extension informs people that this patch was created by us, the Gentoo Linux developers, rather than having been grabbed from a mailing list or somewhere else. Again, you should not compress these patches because CVS does not play well with binary files. </para>
+            <para>Consider prefixing or suffixing (such as <filename>mypkg-1.0</filename>) every file you put into the <filename>files/</filename> directory, so that the files used for each individual version on an ebuild are distinguishable from one another, and so that the changes between different revisions are visible. This is generally a really good idea :). You may want to use a different suffix if you wish to convey more meaning with the patch name. </para>
+            <para>If you have many files that should go into the files/ directory, consider creating subdirectories such as <filename>files/1.0/</filename> and putting the relevant files in the appropriate subdirectory. If you use this method, you do not need to add version information to the names of the files, which is often more convenient. </para>
+        </section>
+    </section>
+    <section>
+        <title>Ebuild scripts</title>
+        <section>
+            <title>Introduction</title>
+            <para>Ebuild scripts are the basis for the entire portage system. They contain all the information required to download, unpack, compile and install a set of sources, as well as how to perform any optional pre/post install/removal or configuration steps. While most of Portage is written in Python, the ebuild scripts themselves are written in bash, since using bash allows us to call commands as we would from the command-line. One of the important design principles behind ebuild scripts is to have the commands therein be analogs of those one would type on the command-line if installing the package manually. For this purpose, using bash syntax is a very good thing. </para>
+            <para>Ebuild scripts are interpreted by the ebuild and emerge commands. Think of the ebuild command as a low-level building tool. It can build and install a single ebuild, but no more. It will check to see if dependencies are satisfied, but it will not attempt to auto-resolve them. On the other hand emerge is a high level engine for ebuild, and has the ability to auto-merge dependencies if needed, perform pretend merges so that user can see what ebuilds would be merged, and more. Generally, emerge blows ebuild out of the water except in one area. With ebuild, you can incrementally step through the various parts of a package emerge (fetching, unpacking, compiling, installing and merging) one at a time. For developers, this is an invaluable debugging tool, because it allows you to isolate ebuild problems to a specific portion of the ebuild. </para>
+        </section>
+        <section>
+            <title>Naming ebuild files</title>
+            <para>Ebuild file names consist of four logical subsections:</para>
+            <programlisting>pkg-ver{_suf{#}}{-r#}.ebuild</programlisting>
+            <note>
+                <para>The brackets (<code>{}</code>) delineate optional fields and do not appear in the literal package name. <code>#</code> represents any non-zero positive integer.</para>
+            </note>
+            <para>The first subsection, <code>pkg</code>, is the package name, which should only contain lowercase letters, the digits 0-9, and any number of single hyphen (<code>-</code>), underscore (<code>_</code>) or plus (<code>+</code>) characters. Examples: <code>util-linux</code>, <code>sysklogd</code> and <code>gtk+</code>. We have some packages in Portage that don't follow these rules, but your packages should. </para>
+            <para>The second subsection, <code>ver</code>, is the version of the package, which should normally be same as the version on the main source tarball. The version is normally made up of two or three (or more) numbers separated by periods, such as <code>1.2</code> or <code>4.5.2</code>, and may have a single letter immediately following the last digit; e.g., <code>1.4b</code> or <code>2.6h</code>. The package version is joined to the package name with a hyphen. For example: <code>foo-1.0</code>, <code>bar-2.4.6</code>.</para>
+            <important>
+                <para>If you're thinking of using a trailing letter in your version string, note that the trailing letter should <emphasis role="italic">not</emphasis> be used to signify alpha or beta status for the package, since alphas and betas are <emphasis role="italic">prereleases</emphasis> and letter revisions are <emphasis role="italic">newer versions</emphasis>. This is an important distinction because Portage uses an ebuild's version number to determine if it is newer or older than other packages with the same category and name. It's very important that version numbers faithfully represent the version of the package so that Portage properly performs its dependency checking duties. </para>
+            </important>
+            <para>The third subsection, <code>{_suf{#}}</code>, is optional may contain one of these predefined suffixes, listed in least-recent to most-recent order: </para>
+            <informaltable frame="all">
+                <tgroup cols="2">
+                    <colspec colname="c1" colnum="1" colwidth="1*"/>
+                    <colspec colname="c2" colnum="2" colwidth="2*"/>
+                    <thead>
+                        <row>
+                            <entry>Suffix</entry>
+                            <entry>Meaning</entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        <row>
+                            <entry><code>_alpha</code></entry>
+                            <entry>Alpha release</entry>
+                        </row>
+                        <row>
+                            <entry><code>_beta</code></entry>
+                            <entry>Beta release</entry>
+                        </row>
+                        <row>
+                            <entry><code>_pre</code></entry>
+                            <entry>Prerelease</entry>
+                        </row>
+                        <row>
+                            <entry><code>_rc</code></entry>
+                            <entry>Release candidate</entry>
+                        </row>
+                        <row>
+                            <entry>(none)</entry>
+                            <entry>Normal release</entry>
+                        </row>
+                        <row>
+                            <entry><code>_p</code></entry>
+                            <entry>Patch level (normally accompanied by trailing integer)</entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <para>Any of these suffixes may be immediately followed by a non-zero positive integer, e.g., <code>linux-2.4.0_pre10</code>. Assuming identical version parts, the suffixes are ordered as follows (lower means older): <code>_alpha</code> &lt; <code>_beta</code> &lt; <code>_pre</code> &lt; <code>_rc</code> &lt; (no suffix) &lt; <code>_p</code>.</para>
+            <para>When comparing identical suffixes with trailing integers, the one with the larger integer will be considered most recent. Example: <code>foo-1.0_alpha4</code> is more recent than <code>foo-1.0_alpha3</code>.</para>
+            <para>The fourth subsection of the package name is the Gentoo Linux-specific revision number (<code>{-r#}</code>). This subsection, like the suffix, is also optional. <code>#</code> is a non-zero positive integer; e.g., <code>package-4.5.3-r3</code>. </para>
+            <para>This revision number is independent of the version of the source tarball and is used to inform people that a new and improved Gentoo Linux revision of a particular package is available. Initial releases of ebuilds must have no revision number; e.g., <code>package-4.5.3</code> and are considered by Portage to have a revision number of zero. This means that counting goes as follows: <code>1.0</code> (initial version), <code>1.0-r1</code>, <code>1.0-r2</code>, etc. </para>
+            <para>If you make non-trivial improvements to an existing ebuild file, you should copy the ebuild file to a new file with the revision number incremented by 1. Remember to always make mentions of your changes in the <filename>ChangeLog</filename> when you bump a revision and in your CVS commit message; not doing so is against policy. </para>
+            <para>... and I suppose that we actually have a <emphasis role="italic">fifth</emphasis> section of the ebuild name as well – the <filename>.ebuild</filename> extension itself. </para>
+        </section>
+        <section>
+            <title>Contents of an ebuild file</title>
+            <para>This section is an introduction to ebuilds. For the full listing of everything possible in an ebuild, there is a manpage which talks about the internal format, variables, and functions in an ebuild script: <command>man 5 ebuild</command>. </para>
+            <section>
+                <title>Headers</title>
+                <para>When you submit your ebuilds, the header should be exactly the same as the one in /usr/portage/header.txt. Most importantly, do not modify it in anyway and make sure that the <code>$Header: $</code> line is intact. </para>
+                <para>The first three lines should look something like this: </para>
+                <example>
+                    <title>Valid Header</title>
+                    <programlisting># Copyright 1999-2005 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: $</programlisting>
+                </example>
+            </section>
+            <section>
+                <title>Variables</title>
+                <para>The first part of every ebuild file is made up of a number of variables. They fall under 3 categories (and are marked below):</para>
+                <orderedlist>
+                    <listitem>
+                        <para>READ: variables you can utilize but never set </para>
+                    </listitem>
+                    <listitem>
+                        <para>MUST: variables you must always set </para>
+                    </listitem>
+                    <listitem>
+                        <para>OPT: variables that you should set </para>
+                    </listitem>
+                </orderedlist>
+                <informaltable frame="all">
+                    <tgroup cols="3">
+                        <colspec colname="c1" colnum="1" colwidth="1*"/>
+                        <colspec colname="c2" colnum="2" colwidth="1*"/>
+                        <colspec colname="c3" colnum="3" colwidth="3*"/>
+                        <thead>
+                            <row>
+                                <entry>Variable</entry>
+                                <entry>Usage</entry>
+                                <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry><varname>P</varname></entry>
+                                <entry>READ</entry>
+                                <entry>The name and version of the package.</entry>
+                            </row>
+                            <row>
+                                <entry><varname>PN</varname></entry>
+                                <entry>READ</entry>
+                                <entry>The name of the package.</entry>
+                            </row>
+                            <row>
+                                <entry><varname>PV</varname></entry>
+                                <entry>READ</entry>
+                                <entry>The version of the package.</entry>
+                            </row>
+                            <row>
+                                <entry><varname>PR</varname></entry>
+                                <entry>READ</entry>
+                                <entry>Contains the revision number or r0 if no revision number exists.</entry>
+                            </row>
+                            <row>
+                                <entry><varname>PVR</varname></entry>
+                                <entry>READ</entry>
+                                <entry>Contains the version number with the revision.</entry>
+                            </row>
+                            <row>
+                                <entry><varname>PF</varname></entry>
+                                <entry>READ</entry>
+                                <entry>Contains the full package name <code>${PN}-${PVR}</code>.</entry>
+                            </row>
+                            <row>
+                                <entry><varname>A</varname></entry>
+                                <entry>READ</entry>
+                                <entry>Space delimited list of the filenames in SRC_URI. This does not contain the URL paths, just the filename.</entry>
+                            </row>
+                            <row>
+                                <entry><varname>DISTDIR</varname></entry>
+                                <entry>READ</entry>
+                                <entry>Contains the path to the distfiles directory where all the files fetched for a package are stored. Typically, this is <filename>/usr/portage/distfiles</filename>.</entry>
+                            </row>
+                            <row>
+                                <entry><varname>FILESDIR</varname></entry>
+                                <entry>READ</entry>
+                                <entry>Contains the path to the files sub folder in the package specific location in the portage tree. Do not modify this variable.</entry>
+                            </row>
+                            <row>
+                                <entry><varname>WORKDIR</varname></entry>
+                                <entry>READ</entry>
+                                <entry>Base of the build root for the ebuild. Nothing should be built outside of this directory.</entry>
+                            </row>
+                            <row>
+                                <entry><varname>S</varname></entry>
+                                <entry>OPT</entry>
+                                <entry>The source directory for your package; commonly <filename>${WORKDIR}/${P}</filename>. Portage will default to this value so you may not have to set it!</entry>
+                            </row>
+                            <row>
+                                <entry><varname>T</varname></entry>
+                                <entry>READ</entry>
+                                <entry>The temporary directory for your package. It is used as a virtual <filename>/tmp</filename> directory while processing the ebuild.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <varname>D</varname>
+                                </entry>
+                                <entry>READ</entry>
+                                <entry>The root directory that the package is installed to, treat it as the virtual <filename>/</filename>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <varname>SLOT</varname>
+                                </entry>
+                                <entry>MUST</entry>
+                                <entry>Portage handles different versions of the same installed programs. If you would want, say GCC 2.95 and GCC 3.2 installed at the same time, you would specify the SLOT in each ebuild. Here we would set the SLOT of GCC 2.95 to 2 while we would set the SLOT of GCC 3.2 to 3. Note: Using 0 as the SLOT value signifies that this package only has 1 SLOT setting (in other words, this package is not SLOTable).</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <varname>LICENSE</varname>
+                                </entry>
+                                <entry>MUST</entry>
+                                <entry>This variable specifies what license the program is covered under, i.e. GPL-2, BSD, etc... This field must be set to a valid license (which is any license found in /usr/portage/license/). If the license does not already exist there, it must be added before the ebuild can be added to the portage tree. If the license does not allow redistribution, make sure you place <code>RESTRICT="nomirror"</code> in the ebuild.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <varname>KEYWORDS</varname>
+                                </entry>
+                                <entry>MUST</entry>
+                                <entry>This variable now supports a couple of different functions. First of all, this variable specifies what architecture the ebuild is meant for. Some example keywords include: x86, ppc, sparc, mips, alpha, arm, hppa, amd64 and ia64. See the profiles/arch.list file in the Portage tree for more details. Obviously, you would set this to reflect the architecture of the target machine. Portage will not allow an x86 machine to build anything but x86, as specified by the <varname>KEYWORDS</varname> variable. Packages that do not support the native architecture are automatically masked by Portage. If the <varname>KEYWORDS</varname> flag has a preceding ~, then that indicates that the particular ebuild works, but needs to be tested in several environments before being moved to the stable profile with the given keyword. If the <varname>KEYWORDS</varname> flag has a preceding <code>-</code>, then the package does not work with the given keyword. If there is
+                                    nothing leading <varname>KEYWORDS</varname>, then the package is considered stable. You can allow installation of these different types of packages through the <varname>ACCEPT_KEYWORDS</varname> variable in <filename>make.conf</filename>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <varname>DESCRIPTION</varname>
+                                </entry>
+                                <entry>MUST</entry>
+                                <entry>A short, one line description of your package.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <varname>SRC_URI</varname>
+                                </entry>
+                                <entry>MUST</entry>
+                                <entry>The URLs for every source file in your package, separated by whitespace. You should try not to include version numbers in the <varname>SRC_URI</varname> and <varname>S</varname>. Always try to use <code>${PV}</code> or <code>${P}</code>, and if a version number is not consistent with the name of the source package, make a <code>${MY_P}</code> variable and use that instead.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <varname>HOMEPAGE</varname>
+                                </entry>
+                                <entry>MUST</entry>
+                                <entry>The homepage of the package. If you are unable to locate an official one, try to provide a link from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://freshmeat.net/">freshmeat.net</link> or a similar package tracking site. Never refer to a variable name in the string; include only raw text.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <varname>IUSE</varname>
+                                </entry>
+                                <entry>MUST</entry>
+                                <entry>This is set to whatever USE variables your package utilizes. Remember that <varname>KEYWORDS</varname> should not be listed in here!</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <varname>DEPEND</varname>
+                                </entry>
+                                <entry>OPT</entry>
+                                <entry>The package's build dependencies are listed here. See the section <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/devrel/handbook/handbook.xml?part=2&amp;chap=1#doc_chap5">Package Dependencies</link> for more details on proper syntax.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <varname>RDEPEND</varname>
+                                </entry>
+                                <entry>OPT</entry>
+                                <entry>The package's runtime dependencies are listed here. Once again, see <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/devrel/handbook/handbook.xml?part=2&amp;chap=1#doc_chap5">Package Dependencies</link> for more details.</entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </informaltable>
+            </section>
+            <section>
+                <title>Functions</title>
+                <para>There are a number of different functions that you can define in ebuild files that control the building and installation process of your package. </para>
+                <informaltable frame="all">
+                    <tgroup cols="2">
+                        <colspec colnum="1" colwidth="1*"/>
+                        <colspec colnum="2" colwidth="3*"/>
+                        <thead>
+                            <row>
+                                <entry>
+                                    <para>Function</para>
+                                </entry>
+                                <entry>
+                                    <para>Purpose</para>
+                                </entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>
+                                    <function>pkg_setup</function>
+                                </entry>
+                                <entry>Use this function to perform any miscellaneous prerequisite tasks. This might include checking for an existing configuration file.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>pkg_nofetch</function>
+                                </entry>
+                                <entry>Inform the user about required actions if for some reason (such as licensing issues) the sources may not be downloaded by Portage automatically. Use this in conjunction with <code>RESTRICT="fetch"</code>. You only should display messages in this function, never call <code>die</code>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>src_unpack</function>
+                                </entry>
+                                <entry>Use this function to unpack your sources, apply patches, and run auxiliary programs such as the autotools. By default, this function unpacks the packages listed in A. The initial working directory is defined by <envar>WORKDIR</envar>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>src_compile</function>
+                                </entry>
+                                <entry>Use this function to configure and build the package. The initial working directory is <varname>S</varname>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>src_install</function>
+                                </entry>
+                                <entry>Use this function to install the package to an image in <varname>D</varname>. If your package uses automake, you can do this simply with <command>emake DESTDIR="${D}" install</command>. <emphasis role="italic">Make sure your package installs all its files using <varname>D</varname> as the root!</emphasis> The initial working directory is <varname>S</varname>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>src_test</function>
+                                </entry>
+                                <entry>Executed only when <code>FEATURES="test"</code> is set and <code>RESTRICT="test"</code> is unset, the default of this function executes an available testing function from any Makefiles in the <filename>${S}</filename> directory, running either "make test" or "make check" depending on what is provided. It can be overriden to create a custom test setup.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>pkg_preinst</function>
+                                </entry>
+                                <entry>The commands in this function are run just <emphasis role="italic">prior to merging</emphasis> a package image into the file system.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>pkg_postinst</function>
+                                </entry>
+                                <entry>The commands in this function are run just <emphasis role="italic">following merging</emphasis> a package image into the file system.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>pkg_prerm</function>
+                                </entry>
+                                <entry>The commands in this function are run just <emphasis role="italic">prior to unmerging</emphasis> a package image from the file system.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>pkg_postrm</function>
+                                </entry>
+                                <entry>The commands in this function are run just <emphasis role="italic">following unmerging</emphasis> a package image from the file system.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>pkg_config</function>
+                                </entry>
+                                <entry>You use this function to setup an initial configuration for the package after it's installed. All paths in this function should be prefixed with <code>ROOT</code> which points to user-specified install root which may not happen to be <filename>/</filename>. This function is only executed if and when the user runs: <command>emerge --config =${PF}</command>.</entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </informaltable>
+            </section>
+            <section>
+                <title>Helper Functions</title>
+                <para>You can also use the following helper functions in your ebuilds. </para>
+                <informaltable frame="all">
+                    <tgroup cols="2">
+                        <colspec colnum="1" colwidth="1*"/>
+                        <colspec colnum="2" colwidth="3*"/>
+                        <thead>
+                            <row>
+                                <entry>Function</entry>
+                                <entry>Purpose</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>
+                                    <function>use</function>
+                                </entry>
+                                <entry>Check if one or more given USE-flags are defined. If so, the function will return shell true. In either case, nothing is echoed to standard output. For a verbose version, please use <function>usev</function> which will echo the <envar>USE</envar> flag if it is defined.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>has_version</function>
+                                </entry>
+                                <entry>Returns 1 if the system has the requested version of a certain package. For instance <code>has_version &gt;=sys-libs/glibc-2.3.0</code>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>best_version</function>
+                                </entry>
+                                <entry>Returns <package>category/package-version</package> of the requested category/package. For instance <code>best_version x11-libs/gtk+extra</code>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>use_with</function>
+                                </entry>
+                                <entry>This function checks if a use-flag has been defined and returns "--with-foobar" or "--without-foobar" accordingly. If you only use one argument, that argument is both use-flag and with(out)-string. Otherwise the first argument is the use-flag and the second argument the with(out)-string. For instance <code>use_with truetype freetype</code> will echo "--with-freetype" if truetype is in <envar>USE</envar>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>use_enable</function>
+                                </entry>
+                                <entry>The same as <function>use_with</function>, but returns "--enable-foobar" or "--disable-foobar" accordingly.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>check_KV</function>
+                                </entry>
+                                <entry>Checks if Portage knows kernel version. If not, display an error and die. If you need the kernel version in your script, use the <varname>KV</varname> variable which is automatically defined by Portage. On a system running gentoo-sources-2.4.20-r6, <varname>KV</varname> would have the value "2.4.20".</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>keepdir</function>
+                                </entry>
+                                <entry>Creates (if necessary) a <filename>.keep</filename> file in the given directory so that it isn't auto-cleaned. Never create a <filename>.keep</filename> file yourself. If portage changes how <function>keepdir</function> works, then creating the file yourself will break the package.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>econf</function>
+                                </entry>
+                                <entry>Issues <filename>./configure</filename> with the necessary path-changes (prefix, host, mandir, infodir, datadir, sysconfdir, localstatedir). You can optionally pass extra arguments to <filename>./configure</filename> by specifying them when you call <function>econf</function>, and users can set the environment variable <varname>EXTRA_ECONF</varname> if they need to. Options passed to configure take precedence in the reverse order that they were given. In other words, the first argument passed will always be overridden by the last.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>einstall</function>
+                                </entry>
+                                <entry>Issues <command>make install</command> with the necessary path-changes (prefix, datadir, mandir, infodir, datadir, sysconfdir, localstatedir). Again, you can pass extra arguments to the make command by specifying them when you call <function>einstall</function>. Please note that the preferred way to install a package is via the <command>emake install DESTDIR="${D}"</command> command and not via <function>einstall</function>. This command is only a fall back to override broken make files.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>die</function>
+                                </entry>
+                                <entry>Causes the current process to be aborted. It will notify the user using the given arguments as a reason. Do not neglect to pass a message to <function>die</function> if you have more than one call to it in a single function. It is harder to track down a failure if you're not sure <emphasis role="italic">where</emphasis> the package failed.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>elog</function>
+                                </entry>
+                                <entry>Inform the user about something important. The argument given to <function>elog</function> is the message that the user will see. Do not use <function>elog</function> to display banners such as "*************************************". The fact that you're using <function>elog</function> is enough to get the user's attention. The message is also logged using portages ELOG system.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>einfo</function>
+                                </entry>
+                                <entry>Display informative but non-important messages that don't need to be logged.</entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </informaltable>
+            </section>
+            <section>
+                <title>Helper Functions provided by eutils.eclass</title>
+                <para>You can use the following helper functions that are provided by the "eutils" eclass in your ebuilds. You must make sure that inherit eutils is present for these functions to work. </para>
+                <informaltable frame="all">
+                    <tgroup cols="2">
+                        <colspec colnum="1" colwidth="1*"/>
+                        <colspec colnum="2" colwidth="3*"/>
+                        <thead>
+                            <row>
+                                <entry>Function</entry>
+                                <entry>Purpose</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>
+                                    <function>epatch</function>
+                                </entry>
+                                <entry>This function acts as a friendlier replacement to the <command>patch</command> command and epatch works with .bz2, .gz, .zip and plain text patches. You do not need to specify a "-p" option, any options that do need to be explicitly specified should be set in <varname>EPATCH_OPTS</varname>. The function expects either a file or a directory as an argument – if you specify a directory, all patches in the form of "<code>??_${ARCH}_...</code>" will be applied: for a patch to be applied, it needs to match the running architecture, have "_all_" in the name, or <varname>EPATCH_FORCE</varname> must be set to "yes".</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>gen_usr_ldscript</function>
+                                </entry>
+                                <entry>This function generates linker scripts in <filename>/usr/lib</filename> for dynamic libraries in <filename>/lib</filename>. This fixes linking problems when a <filename>.so</filename> is in <filename>/lib</filename> while a <filename>.a</filename> is in <filename>/usr/lib</filename>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>edos2unix</function>
+                                </entry>
+                                <entry>This function performs the same action as the <command>dos2unix</command> binary.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>egetent</function>
+                                </entry>
+                                <entry><function>egetent</function> acts as a wrapper for <command>getent</command> for Linux or <command>nidump</command> for Mac OS X (R).</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>enewuser</function>
+                                </entry>
+                                <entry>Creates a new user. This function expects a mandatory argument with the username, and several optional arguments can be specified: <parameter>$2</parameter> contains a UID, pass -1 for the next available ID; <parameter>$3</parameter> contains the shell, pass -1 for the default; <parameter>$4</parameter> contains a home directory with <filename>/dev/null</filename> being the default, <varname>$5</varname> contains any groups to which the user should be added, empty by default and <varname>$6</varname> contains any extra options that you may wish to pass to useradd.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>enewgroup</function>
+                                </entry>
+                                <entry>Adds a new group. This function expects a mandatory argument with the group name – an optional second argument makes the group have a specific GID.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>make_desktop_entry</function>
+                                </entry>
+                                <entry>Makes a desktop entry: the first argument contains the path to the binary. Optionally, the second contains a name for the icon – the default is <code>${PN}</code>; the third can contain a path to the icon relative to <filename>/usr/share/pixmaps</filename> or a full path – the default is ${PN}.png; the fourth can contain an <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://standards.freedesktop.org/menu-spec/latest/apa.html">application category</link>, and the fifth argument contains an optional application startup path.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>check_license</function>
+                                </entry>
+                                <entry>Displays a license for the user to accept, if no arguments are specified then the license specified by <code>${LICENSE}</code> is used.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>unpack_pdv</function>
+                                </entry>
+                                <entry>Unpacks a pdv generated archive, the first argument must contain the file to unpack and the second should contain "off_t" which has to be manually generated: <command>strace -elseek ${file}</command> and for something like "lseek(3, -4, SEEK_END)" you would pass the value "4".</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>unpack_makeself</function>
+                                </entry>
+                                <entry>Unpacks a makeself generated archive, requires a file to unpack as the argument.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>cdrom_get_cds</function>
+                                </entry>
+                                <entry>Attempts to get a CD, present with files specified by the arguments present on the system and mounted at <filename>${CDROM_ROOT}</filename>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>cdrom_load_next_cd</function>
+                                </entry>
+                                <entry>Loads the next CD once you are done with the first CD. If the function returns, <filename>${CDROM_ROOT}</filename> would point to the next CD.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>strip-linguas</function>
+                                </entry>
+                                <entry>This function makes sure that <envar>LINGUAS</envar> contains only the languages that a package can support specified by the arguments to the function. If the first argument is <option>-i</option>, then a list of <filename>.po</filename> files in the specified directories is built and the intersection of the lists is used. If the first argument is <option>-u</option>, then a list of <filename>.po</filename> files in the specified directories is built and the union of the lists is used.</entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </informaltable>
+            </section>
+            <section>
+                <title>Helper Functions provided by flag-o-matic.eclass</title>
+                <para>You can use the following helper functions that are provided by the "flag-o-matic" eclass in your ebuilds. You must make sure that inherit flag-o-matic is present for these functions to work. You should never modify any compiler settings directly, instead please use flag-o-matic to perform any actions such as filtering flags that cause trouble. </para>
+                <informaltable frame="all">
+                    <tgroup cols="2">
+                        <colspec colnum="1" colwidth="1*"/>
+                        <colspec colnum="2" colwidth="3*"/>
+                        <thead>
+                            <row>
+                                <entry>
+                                    <para>Function</para>
+                                </entry>
+                                <entry>
+                                    <para>Purpose</para>
+                                </entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>
+                                    <function>filter-flags</function>
+                                </entry>
+                                <entry>This function removes particular flags from <envar>C[XX]FLAGS</envar> – only complete flags are matched.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>append-flags</function>
+                                </entry>
+                                <entry>This function adds extra flags to the existing <envar>C[XX]FLAGS</envar> variables.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>replace-flags</function>
+                                </entry>
+                                <entry>This replaces the flag specified by the first argument with the one in the second argument in the current <envar>C[XX]FLAGS</envar>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>replace-cpu-flags</function>
+                                </entry>
+                                <entry>Needs two arguments. Replace a given mtune/mcpu/mtune value with the new one (maybe like this: replace-cpu-flags 'i686' 'i586' will replace -mtune/-march/-mcpu=i686 with -mtune/-march/-mcpu=i586).</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>strip-flags</function>
+                                </entry>
+                                <entry>Strips all flags, except those specified in <varname>ALLOWED_FLAGS</varname>.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>strip-unsupported-flags</function>
+                                </entry>
+                                <entry>Strips <envar>C[XX]FLAGS</envar> of any flags not supported by the running version of GCC.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>get-flag</function>
+                                </entry>
+                                <entry>Finds a flag and outputs its value.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>is-flag</function>
+                                </entry>
+                                <entry>This returns true if the flag is set in the current <envar>C[XX]FLAGS</envar>; only complete matches are performed.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>append-ldflags</function>
+                                </entry>
+                                <entry>This function adds extra flags to the existing <varname>LDFLAGS</varname> variable.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>filter-ldflags</function>
+                                </entry>
+                                <entry>Removes the specified flags from <varname>LDFLAGS</varname>, only complete flags are matched.</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>fstack-flags</function>
+                                </entry>
+                                <entry>Appends <option>-fno-stack-protector</option> which suppresses <option>-fstack-protector</option> and <option>-fstack-protector-all</option>.</entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </informaltable>
+            </section>
+            <section>
+                <title>Helper Functions provided by toolchain-funcs.eclass</title>
+                <para>You can use the following helper functions that are provided by the "toolchain-funcs" eclass in your ebuilds. You must make sure that inherit toolchain-funcs is present for these functions to work. You should never explicitly specify any compiler or binutils settings directly, instead please use toolchain-funcs to specify compilers and binutils. </para>
+                <para>The purpose of using the below functions is to support cross-compiling and the icc compiler. These should be used whenever a package explicitly uses gcc, g++, ld, ranlib or any of the below tools. In general packages that use autoconfiguration tools detect cross compiling automatically and do not need the following functions. </para>
+                <informaltable frame="all">
+                    <tgroup cols="2">
+                        <colspec colnum="1" colwidth="1*"/>
+                        <colspec colnum="2" colwidth="3*"/>
+                        <thead>
+                            <row>
+                                <entry>
+                                    <para>Function</para>
+                                </entry>
+                                <entry>
+                                    <para>Purpose</para>
+                                </entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>
+                                    <function>tc-getAR</function>
+                                </entry>
+                                <entry>Returns the name of the archiver</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>tc-getAS</function>
+                                </entry>
+                                <entry>Returns the name of the assembler</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>tc-getCC</function>
+                                </entry>
+                                <entry>Returns the name of the C compiler</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>tc-getCXX</function>
+                                </entry>
+                                <entry>Returns the name of the C++ compiler</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>tc-getLD</function>
+                                </entry>
+                                <entry>Returns the name of the linker</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>tc-getNM</function>
+                                </entry>
+                                <entry>Returns the name of the symbol/object inspection tool</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>tc-getRANLIB</function>
+                                </entry>
+                                <entry>Returns the name of the archiver indexer</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>tc-getF77</function>
+                                </entry>
+                                <entry>Returns the name of the fortran compiler</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>tc-getGCJ</function>
+                                </entry>
+                                <entry>Returns the name of the java compiler</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>tc-getBUILD_CC</function>
+                                </entry>
+                                <entry>Returns the name of the C compiler for build</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>tc-is-cross-compiler</function>
+                                </entry>
+                                <entry>A simple way to see if we're using a cross-compiler</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>gcc-fullversion</function>
+                                </entry>
+                                <entry>Returns the version as by $($CC -dumpversion)</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>gcc-version</function>
+                                </entry>
+                                <entry>Returns the version, but only the &lt;major&gt;.&lt;minor&gt;</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>gcc-major-version</function>
+                                </entry>
+                                <entry>Returns the Major version</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>gcc-minor-version</function>
+                                </entry>
+                                <entry>Returns the Minor version</entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <function>gcc-micro-version</function>
+                                </entry>
+                                <entry>Returns the Micro version</entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </informaltable>
+            </section>
+        </section>
+        <section>
+            <title>Rules for writing an ebuild file</title>
+            <para>Since ebuild files are really just shell scripts, you should use your editor's shell-script mode for editing them. You should use proper indentation, using only tab characters – no spaces. Make sure you set up your editor to put tab stops at 4 spaces. Always make sure you use braces around your environment variables; e.g. <code>${P}</code> instead of just <code>$P</code>. </para>
+            <para>Long lines are wrapped with ' <code>\</code>', thus: </para>
+            <example>
+                <title>Wrapping lines in ebuilds</title>
+                <programlisting>./configure \
+--prefix=/usr || die "configure failed"</programlisting>
+            </example>
+            <para>For further details, refer to <filename>skel.ebuild</filename> (usually residing in <filename>/usr/portage</filename>). </para>
+            <para>If you use Vim for ebuild/eclass editing, the default Gentoo vimrc file, <filename>/etc/vim/vimrc</filename>, already ensures that correct indentation and filetype settings are used for ebuild and eclass files. For better results, including special syntax highlighting for ebuild keywords, emerge app-vim/gentoo-syntax. </para>
+            <para>On non-Gentoo systems, you can obtain similar results by using the following lines in your vimrc, or better yet by installing the gentoo-syntax scripts which can be downloaded from Gentoo mirrors. </para>
+            <example>
+                <title>Configuring vimrc for ebuild-editing</title>
+                <programlisting>au BufRead,BufNewFile *.e{build,class} let is_bash=1|setfiletype sh
+au BufRead,BufNewFile *.e{build,class} set ts=4 sw=4 noexpandtab</programlisting>
+            </example>
+            <para>If you're using Emacs, you should emerge <package>app-emacs/gentoo-syntax</package> (for GNU Emacs) or <package>app-xemacs/gentoo-syntax</package> (for XEmacs). These packages provide Emacs major modes for automatic indentation and syntax highlighting of ebuilds and other Gentoo specific file types. </para>
+            <para>If you're using nano, then you're in luck! Just edit <filename>/etc/nanorc</filename> and uncomment the section referring to ebuild's. </para>
+        </section>
+        <section>
+            <title>USE Variables</title>
+            <para>The purpose of USE variables is to allow you to configure Portage to globally and automatically enable or disable certain <emphasis role="italic">optional build-time</emphasis> features. Here's an example. Let's say you're a GNOME fan, and you'd like any ebuild that has the option of compiling-in optional GNOME support to do so. In this case, you'd add <code>gnome</code> to the <envar>USE</envar> variable in <filename>/etc/make.conf</filename>, and then Portage will automatically add optional GNOME functionality to packages if it is available. Likewise, if you don't want optional GNOME features to be added to your ebuilds if they are available, simply edit <filename>/etc/make.conf</filename> and make sure that <code>gnome</code> is not set in the <envar>USE</envar> variable. Gentoo Linux has an almost overwhelming number of USE options, allowing you to have your system configured exactly the way you want it. </para>
+            <note>
+                <para>Note: If you unset a USE variable (for example, removing <code>gnome</code> from <envar>USE</envar>), this will only instruct Portage to disable optional build-time support for GNOME. However, if you <command>emerge</command> an ebuild that requires GNOME, the package will obviously have GNOME support enabled, as you would expect. This also means that GNOME will be automatically installed (as a dependency) if it hasn't been already. That's why it's always a good idea to do an <command>emerge --pretend</command> before doing the "real" <command>emerge</command>; that way, you'll always know exactly what you're going to get! </para>
+            </note>
+            <para>In your own ebuilds, you can check whether a USE variable is set by using the <command>use <replaceable>&lt;variable&gt;</replaceable></command> command. You would normally use this command as follows: </para>
+            <example>
+                <title>Finding out if a USE-flag is set</title>
+                <programlisting>if use X; then
+  # Commands specific to X...
+fi</programlisting>
+            </example>
+            <para>USE variables can also be used to set dependencies. For example, you may only want to require a package if a certain USE variable is set. This is done by using the syntax <code>flag? ( mycat/mypackage )</code> in the <varname>DEPEND</varname> variable for your ebuild. In this example, <code>mycat/mypackage</code> will only be required if flag is present in <envar>USE</envar>. It is also possible to specify what dependency should be used if some USE flag <emphasis role="italic">is</emphasis> set, and what dependency to use if it is <emphasis role="italic">not</emphasis> set: <code>flag? ( mycat/mypackage)</code> and <code>!flag? ( othercat/otherpackage )</code>. In this case, if flag is not set, othercat/otherpackage is used instead of mycat/mypackage. Make sure that your ebuilds use this syntax and not Bash IFS. Bash conditionals interfere with Portage's dependency caching, and the use of them will break your ebuild. </para>
+            <para>Here's an important tip about how to use <envar>USE</envar>. Most of the time, a package will have a <filename>./configure</filename> script used to perform configuration steps. Generally, if your ebuild uses <filename>./configure</filename>, any optional build-time functionality will be enabled or disabled by passing the appropriate arguments to the <command>./configure</command> command. Here's the best way to handle this: </para>
+            <example>
+                <title>Conditionals based on USE-settings</title>
+                <programlisting>DEPEND="X? ( >=x11-base/xfree-4.3 )
+mysql? ( >=dev-db/mysql-3.23.49 )
+apache2? ( >=net-www/apache-2 )
+!apache2? ( =net-www/apache-1* )"
+
+src_compile() {
+  econf \
+    $(use_enable X x11) \
+    $(use_enable mysql) \
+    || die "Error: econf failed!"
+  emake || die "Error: emake failed!"
+}</programlisting>
+            </example>
+            <para>This approach has a very nice result. We don't have to worry about what the default setting is for mysql or X (enable/disabled), we explicitly tell <function>econf</function> what we want it to do based upon the <envar>USE</envar> variable. Not to mention it's quite clean in terms of readability :). </para>
+            <para>Occasionally, ebuilds will have conflicting optional features. Checking for these conflicts and returning an error is <emphasis role="italic">not</emphasis> a viable solution. Instead, you must favor one of the features over the others. As to which, consult upstream (what they use as typical default), or consider which option provides more common functionality, or just flip a coin. One example comes from the msmtp ebuilds. The package can use either SSL with GnuTLS, SSL with OpenSSL, or no SSL at all. Because GnuTLS has a lot more features compared to OpenSSL, it is favoured: </para>
+            <example>
+                <title>Handling conflicting features</title>
+                <programlisting>src_compile() {
+    local myconf
+
+    if use gnutls ; then
+        myconf="${myconf} --enable-ssl --with-ssl=gnutls"
+    elif use ssl ; then
+        myconf="${myconf} --enable-ssl --with-ssl=openssl"
+    else
+        myconf="${myconf} --disable-ssl"
+    fi
+
+    econf \
+        # Other stuff
+        ${myconf} \
+        || die "configure failed"
+
+    emake || die "make failed"
+}</programlisting>
+            </example>
+            <para>To view a continuously updated table of USE variables, please go <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/dyn/use-index.xml">here</link>. </para>
+        </section>
+    </section>
+    <section>
+        <title>File system Locations</title>
+        <section>
+            <title>Introduction to the FHS</title>
+            <para>The file system layout standards used in Gentoo Linux closely follow the FHS, short for <emphasis role="italic">File system Hierarchy Standard</emphasis>. A simplified description of the standard is given here; for a complete specification go to <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.pathname.com/fhs/">http://www.pathname.com/fhs/</link>. </para>
+            <note>
+                <para>The <filename>/opt</filename> hierarchy is addressed in section 3.12 of the FHS. Section 4.4 deals with the <filename>/usr/X11R6</filename> directory. KDE and GNOME are not specifically addressed, and are in fact not even mentioned in the current version of the FHS. </para>
+            </note>
+        </section>
+        <section>
+            <title>How to fit your packages into the file system</title>
+            <para>Usually, if the package uses autoconf and automake, the default installation destinations are mostly correct, with a few exceptions: </para>
+            <itemizedlist>
+                <listitem>
+                    <para>If you're installing a program into <filename>/bin</filename>, <filename>/sbin</filename>, <filename>/usr/bin</filename>, or <filename>/usr/sbin</filename>, then the program's corresponding man page should be installed into the <filename>/usr/share/man</filename> tree. This can often be accomplished by specifying a <command>./configure --mandir=/usr/share/man</command> in the ebuild. </para>
+                </listitem>
+                <listitem>
+                    <para>GNU info files should always be installed to <filename>/usr/share/info</filename>, <emphasis role="italic">even if the info files are about X11, GNOME or KDE-specific programs or tools</emphasis>. Make a note: <filename>/usr/share/info</filename> is the only official location for GNU info files. Since many <filename>./configure</filename> scripts default to installing GNU info files in <filename>/usr/info</filename>, it's often necessary to call <command>./configure</command> with the <option>--infodir=/usr/share/info</option> argument. </para>
+                </listitem>
+                <listitem>
+                    <para>Documentation files are installed in <filename>/usr/share/doc</filename>, into a subdirectory reflecting the name, version, and revision of the particular program. This applies to all programs: GNOME, KDE, X11 and console alike. However, some programs may install additional documentation and support files into a <filename>/usr/share</filename> hierarchy for their own purposes. </para>
+                </listitem>
+                <listitem>
+                    <para>X11-specific programs and libraries should always be installed into <filename>/usr</filename>, not directly into <filename>/usr/X11R6</filename>. We reserve the <filename>/usr/X11R6</filename> hierarchy for the X Window System, Version 11 Release 6 <emphasis role="italic">itself</emphasis>. This is perhaps a more to-the-letter interpretation of the FHS than some other distributions have made. </para>
+                </listitem>
+                <listitem>
+                    <para>GNOME and KDE programs, similarly, should always be installed into <filename>/usr</filename>. </para>
+                </listitem>
+            </itemizedlist>
+            <important>
+                <para>Some distributions choose to install GNOME and KDE into <filename>/opt</filename>. There exists no standard for these desktop environments in terms of where to actually install their files. In the interests of simplicity and consistency, we elect to install all KDE and GNOME packages into the <filename>/usr</filename> hierarchy. </para>
+            </important>
+            <para>In general, you should have ebuilds install their files into the <filename>/usr</filename> tree. Some programs can be compiled and linked with or without GNOME, KDE, and X11 libraries, which can cause confusion. Our solution is to install everything into <filename>/usr</filename> which avoids ambiguity and needless complexity for ebuild authors. The location in which to install a program's files should not depend on the presence or absence of specific <envar>USE</envar> variables. Therefore, the ebuilds in the portage tree <emphasis role="italic">almost always</emphasis> install into the <filename>/usr</filename> hierarchy exclusively. </para>
+            <note>
+                <para>The <filename>/opt</filename> directory is reserved in Gentoo Linux for binary-only packages. Examples include mozilla-bin, acroread, netscape and realplayer. Packages that get installed here will usually require a <filename>/etc/env.d/foo</filename> stub file. This is so that paths and additional variables can be included into the environment. For more information on <filename>/etc/env.d</filename>, please visit <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/handbook/handbook-x86.xml?part=2&amp;chap=5">this</link> document. </para>
+            </note>
+        </section>
+    </section>
+    <section>
+        <title>The Portage scripts and utilities</title>
+        <section>
+            <title>Public scripts</title>
+            <para>These are scripts used by the system-administrator to install and remove packages, and maintain the package database. </para>
+            <para>ebuild is the main engine of the Portage system; it performs all major tasks such as unpacking, compiling, installing, merging, and unmerging packages. It is called using the command: ebuild path/to/package.ebuild command. The commands available are: </para>
+            <informaltable frame="all">
+                <tgroup cols="3">
+                    <colspec colnum="1" colwidth="1*"/>
+                    <colspec colnum="2" colwidth="3*"/>
+                    <colspec colnum="3" colwidth="1*"/>
+                    <thead>
+                        <row>
+                            <entry>Command</entry>
+                            <entry>Description</entry>
+                            <entry>Related ebuild Function</entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        <row>
+                            <entry>
+                                <command>setup</command>* </entry>
+                            <entry>Performs any miscellaneous commands required before the ebuild can proceed</entry>
+                            <entry>
+                                <function>pkg_setup</function>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>depend</command>
+                            </entry>
+                            <entry>Displays the dependencies required to build the package</entry>
+                            <entry>N/A</entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>merge</command> *</entry>
+                            <entry>Unpacks, compiles, installs, and merges the package into your file system</entry>
+                            <entry>N/A</entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>qmerge</command>* </entry>
+                            <entry>Merges the package into your file system, assuming that the unpack, compile, and install stages have already been executed</entry>
+                            <entry>N/A</entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>unpack</command>* </entry>
+                            <entry>Unpacks the source tarballs into the work directory</entry>
+                            <entry>
+                                <function>src_unpack</function>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>compile</command> *</entry>
+                            <entry>Compiles the package</entry>
+                            <entry>
+                                <function>src_compile</function>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>rpm</command>
+                            </entry>
+                            <entry>Creates an RPM from the package</entry>
+                            <entry>N/A</entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>package</command>
+                            </entry>
+                            <entry>Creates a Gentoo tbz2 package</entry>
+                            <entry>N/A</entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>prerm</command> *</entry>
+                            <entry>Executes the pre-removal stage of the package</entry>
+                            <entry>
+                                <function>pkg_prerm</function>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>postrm</command> *</entry>
+                            <entry>Executes the post-removal stage of the package</entry>
+                            <entry>
+                                <function>pkg_postrm</function>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>preinst</command> *</entry>
+                            <entry>Executes the pre-installation stage of the package</entry>
+                            <entry>
+                                <function>pkg_preinst</function>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>postinst</command> *</entry>
+                            <entry>Executes the post-installation stage of the package</entry>
+                            <entry>
+                                <function>pkg_postinst</function>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>config</command>
+                            </entry>
+                            <entry>Sets up a default configuration once the package is merged</entry>
+                            <entry>
+                                <function>pkg_config</function>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>touch</command> *</entry>
+                            <entry>Updates the mtimes for each source archive in the package</entry>
+                            <entry>N/A</entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>clean</command> *</entry>
+                            <entry>Cleans the work directory for the package</entry>
+                            <entry>N/A</entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>fetch</command> *</entry>
+                            <entry>Fetches the package source tarballs</entry>
+                            <entry>N/A</entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>digest</command> *</entry>
+                            <entry>Creates a digest file for the package</entry>
+                            <entry>N/A</entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>test</command> *</entry>
+                            <entry>Runs the self-test routine for the package</entry>
+                            <entry>
+                                <function>src_test</function>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>install</command>* </entry>
+                            <entry>Installs the package into the image directory</entry>
+                            <entry>
+                                <function>src_install</function>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>unmerge</command>
+                            </entry>
+                            <entry>Unmerges the package from your file system</entry>
+                            <entry>N/A</entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+            <note>
+                <para>Commands with an asterisk (*) are normally only used by the developer. </para>
+            </note>
+            <para><command>emerge</command> recursively merges a package and all of its dependencies into your file system. This command has many options, try <command>emerge --help</command> for a list of them. </para>
+            <para><command>env-update</command> updates the configuration files (including, but not limited to <filename>/etc/ld.so.conf</filename> and <filename>/etc/profile.env</filename>) to include changes made by installed packages. </para>
+        </section>
+        <section>
+            <title>Private Scripts and Commands</title>
+            <para>These are scripts you can use in your ebuild files to perform common tasks. </para>
+            <para>For you down and dirty people, look at the scripts themselves in /usr/lib/portage/bin. </para>
+            <informaltable frame="all">
+                <tgroup cols="4">
+                    <colspec colnum="1" colwidth="1*"/>
+                    <colspec colnum="2" colwidth="1*"/>
+                    <colspec colnum="3" colwidth="3*"/>
+                    <colspec colnum="4" colwidth="2*"/>
+                    <thead>
+                        <row>
+                            <entry>Command</entry>
+                            <entry>Default Value</entry>
+                            <entry>Description</entry>
+                            <entry>Example</entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        <row>
+                            <entry>
+                                <command>diropts</command>
+                            </entry>
+                            <entry>
+                                <parameter>-m0755</parameter>
+                            </entry>
+                            <entry>Sets the options used when running <command>dodir</command></entry>
+                            <entry>
+                                <command>diropts -m0750</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>dobin</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Installs the specified binaries into <filename>DESTTREE/bin</filename></entry>
+                            <entry>
+                                <command>dobin wmacpi</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>docinto</command>
+                            </entry>
+                            <entry>
+                                <parameter>""</parameter>
+                            </entry>
+                            <entry>Sets the relative subdir used by <command>dodoc</command></entry>
+                            <entry>
+                                <command>docinto examples</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>dodir</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Creates a directory, handling ${D} transparently</entry>
+                            <entry>
+                                <command>dodir /usr/lib/newpackage</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>dodoc</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Installs the specified files into the package's documentation directory (<filename>/usr/share/doc/${PF}/DOCDESTTREE</filename>) (see <command>docinto</command>)</entry>
+                            <entry>
+                                <command>dodoc README *.txt</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>doexe</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Installs the specified files with mode <code>EXEOPTIONS</code> (see <command>exeopts</command>) into <code>PATH</code> defined by <code>EXEINTO</code> (see <command>exeinto</command>).</entry>
+                            <entry>
+                                <command>doexe ${FILESDIR}/quake3</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>dohard</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Creates a hard link, handling ${D} transparently</entry>
+                            <entry>
+                                <command>dohard ls /bin/dir</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>dohtml</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Installs the specified files and directories into <filename>/usr/share/doc/${PF}/html</filename></entry>
+                            <entry>
+                                <command>dohtml -r doc/html/*</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>doinfo</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Installs the specified files into <filename>/usr/share/info</filename>, then compresses them with gzip</entry>
+                            <entry>
+                                <command>doinfo doc/*.info</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>doins</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Installs the specified files with mode <code>INSOPTIONS</code> (see <command>insopts</command>) into <code>INSDESTTREE</code> (see <command>insinto</command>)</entry>
+                            <entry>
+                                <command>doins *.png icon.xpm</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>dolib</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Installs the specified libraries into <filename>DESTTREE/lib</filename> with mode 0644</entry>
+                            <entry>
+                                <command>dolib *.a *.so</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>dolib.a</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Installs the specified libraries into <filename>DESTTREE/lib</filename> with mode 0644</entry>
+                            <entry>
+                                <command>dolib.a *.a</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>dolib.so</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Installs the specified libraries into <filename>DESTTREE/lib</filename> with mode 0755</entry>
+                            <entry>
+                                <command>dolib.so *.so</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>doman</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Installs the specified files into <filename>/usr/share/man/man<replaceable>X</replaceable></filename>, according to the suffix of the file (<filename>file.1</filename> will go into <filename>man1</filename>)</entry>
+                            <entry>
+                                <command>doman *.1 *.5</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>dosbin</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Installs the files into <filename>DESTTREE/sbin</filename>, making sure they are executable</entry>
+                            <entry>
+                                <command>dosbin ksymoops</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>dosym</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Creates a symlink, handles ${D} transparently</entry>
+                            <entry>
+                                <command>dosym gzip /bin/zcat</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>emake</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Runs make with <envar>MAKEOPTS</envar>. Some packages cannot be made in parallel; use <command>emake -j1</command> instead. If you need to pass any extra arguments to make, simply append them onto the emake command. Users can set the <envar>EXTRA_EMAKE</envar> environment variable to pass extra flags to emake.</entry>
+                            <entry>
+                                <command>emake</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>exeinto</command>
+                            </entry>
+                            <entry>
+                                <parameter>/</parameter>
+                            </entry>
+                            <entry>Sets the root (<code>EXEDESTTREE</code>) for the <command>doexe</command> command</entry>
+                            <entry>
+                                <command>exeinto /usr/lib/${PN}</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>exeopts</command>
+                            </entry>
+                            <entry>
+                                <parameter>-m0755</parameter>
+                            </entry>
+                            <entry>Sets the options used when running <command>doexe</command></entry>
+                            <entry>
+                                <command>exeopts -m1770</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>fowners</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Applies the specified ownership to the specified file via the chown command, handles ${D} transparently</entry>
+                            <entry>
+                                <command>fowners root:root /sbin/functions.sh</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>fperms</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Applies the specified permissions to the specified file via the chmod command, handles ${D} transparently</entry>
+                            <entry>
+                                <command>fperms 700 /var/consoles</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>insinto</command>
+                            </entry>
+                            <entry>
+                                <parameter>/usr</parameter>
+                            </entry>
+                            <entry>Sets the root (<code>INSDESTTREE</code>) for the <command>doins</command> command</entry>
+                            <entry>
+                                <command>insinto /usr/include</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>insopts</command>
+                            </entry>
+                            <entry>
+                                <parameter>-m0644</parameter>
+                            </entry>
+                            <entry>Sets the options used when running <command>doins</command></entry>
+                            <entry>
+                                <command>insopts -m0444</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>into</command>
+                            </entry>
+                            <entry>
+                                <parameter>/usr</parameter>
+                            </entry>
+                            <entry>Sets the target prefix (<code>DESTTREE</code>) for all the 'do' commands (like <command>dobin</command>, <command>dolib</command>, <command>dolib.a</command>, <command>dolib.so</command>, <command>domo</command>, <command>dosbin</command>)</entry>
+                            <entry>
+                                <command>into /</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>libopts</command>
+                            </entry>
+                            <entry>
+                                <parameter>-m0644</parameter>
+                            </entry>
+                            <entry>Sets the options used when running <command>dolib</command></entry>
+                            <entry>
+                                <command>libopts -m0555</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>newbin</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Wrapper around <command>dobin</command> which installs the specified binary transparently renaming to the second argument</entry>
+                            <entry>
+                                <command>newbin ${FILESDIR}/vmware.sh vmware</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>newdoc</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Wrapper around <command>dodoc</command> which installs the specified file transparently renaming to the second argument</entry>
+                            <entry>
+                                <command>newdoc README README.opengl</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>newexe</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Wrapper around <command>doexe</command> which installs the specified file transparently renaming to the second argument</entry>
+                            <entry>
+                                <command>newexe ${FILESDIR}/xinetd.rc xinetd</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>newins</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Wrapper around <command>doins</command> which installs the specified file transparently renaming to the second argument</entry>
+                            <entry>
+                                <command>newins ntp.conf.example ntp.conf</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>newman</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Wrapper around <command>doman</command> which installs the specified file transparently renaming to the second argument</entry>
+                            <entry>
+                                <command>newman xboing.man xboing.6</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>newsbin</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Wrapper around <command>dosbin</command> which installs the specified file transparently renaming to the second argument</entry>
+                            <entry>
+                                <command>newsbin strings strings-static</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>prepall</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Runs <command>prepallman</command>, <command>prepallinfo</command> and <command>prepallstrip</command>. Also ensures all libraries in <filename>/opt/*/lib</filename>, <filename>/lib</filename>, <filename>/usr/lib</filename> and <filename>/usr/X11R6/lib</filename> are executable; also moves any stray aclocal macros into <filename>/usr/share/aclocal</filename></entry>
+                            <entry>
+                                <command>prepall</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>prepalldocs</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Recursively gzips all doc files in /usr/share/doc, transparently fixing up any symlink paths</entry>
+                            <entry>
+                                <command>prepalldocs</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>prepallinfo</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Recursively gzips all info files in <filename>/usr/share/info</filename></entry>
+                            <entry>
+                                <command>prepallinfo</command>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>prepallman</command>
+                            </entry>
+                            <entry>N/A</entry>
+                            <entry>Recursively gzips all man pages in <filename>/opt/*/man/*</filename>, <filename>/usr/share/man/*</filename>, <filename>/usr/local/man/*</filename>, <filename>/usr/X11R6/share/man/*</filename> and transparently fixes up any symlink paths</entry>
+                            <entry>
+                                <command>prepallman</command>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+        </section>
+    </section>
+    <section>
+        <title>Package Dependencies</title>
+        <section>
+            <title>Why dependencies are important</title>
+            <para>Portage is more than just a convenience script that gives you a unified way to build any one project (program, library) from source. It will also fetch and install any necessary dependencies if you take care to specify these in your ebuild. </para>
+            <para>In the official ebuilds, all dependencies have already been specified, so when you issue <command>emerge net-www/mozilla/mozilla-1.0</command>, Portage will insure that all libraries necessary for Mozilla to build and run are properly installed before Mozilla itself is built. </para>
+            <para>Portage even distinguishes between build-time dependencies and run-time dependencies. (Caveat: Currently, Portage installs all build-time and run-time dependencies and leaves it at that. At a later stage, it will be possible to trim your installation so that only the run-time dependencies are left installed). </para>
+        </section>
+        <section>
+            <title>How to Specify Dependencies in Your ebuild Files (a.k.a. DEPEND Atoms)</title>
+            <para>The <varname>DEPEND</varname> variable inside your <filename>foo-x.y.z.ebuild</filename> tells Portage about which packages are needed to build <package>foo</package>. The <varname>RDEPEND</varname> variable specifies which packages are needed for <package>foo</package> to run. <varname>RDEPEND</varname> should be set explicitly even if it's the same as <varname>DEPEND</varname> because in the future it defaulting to <varname>DEPEND</varname> is planned to be removed from Portage. </para>
+            <example>
+                <title>Depend example</title>
+                <programlisting>DEPEND="virtual/opengl
+       dev-libs/libxml2"
+RDEPEND="${DEPEND}</programlisting>
+            </example>
+            <para>This tells Portage that to build <package>foo-x.y.z</package>, the packages <package>virtual/opengl</package> (more on virtuals in a bit) and <package>dev-lib/libxml2</package> are needed. It does not say anything about which version of opengl or libxml2 that are needed, which means "anything goes". </para>
+            <para>The "anything goes" is of course a bit scary, and will not work in the general case. But for libraries, which strive very hard to be 100% binary compatible all the time, it actually works. For other libraries, we can of course specify version dependencies. </para>
+            <example>
+                <title>Version example</title>
+                <programlisting>>=sys-apps/bar-1.2
+=sys-apps/baz-1.0</programlisting>
+            </example>
+            <para>&gt;= and = do what you would expect; sys-apps/bar version 1.2 or newer is okay (this means that sys-apps/bar-2.0 is okay), while sys-apps/baz version 1.0 is the only version that is accepted. For more information on the version schema of packages, see the section above on <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#">Naming ebuild Files</link>. </para>
+            <para>Other methods of specifying version dependencies are as follows: </para>
+            <example>
+                <title>Specifying version dependencies</title>
+                <programlisting>~sys-apps/qux-1.0
+=sys-apps/foo-1.2*
+!sys-libs/gdbm</programlisting>
+            </example>
+            <para><code>~sys-apps/qux-1.0</code> will select the newest portage revision of qux-1.0. </para>
+            <para><code>=sys-apps/foo-1.2*</code> will select the newest member of the 1.2 series, but will ignore 1.3 and later/earlier series. That is, foo-1.2.3 and foo-1.2.0 are both valid, while foo-1.3.3, foo-1.3.0, and foo-1.1.0 are not. </para>
+            <para><code>!sys-libs/gdbm</code> will prevent this package from being emerged while gdbm is already emerged. </para>
+        </section>
+        <section>
+            <title>Important Notes</title>
+            <para>There are many things that go wrong with the DEPEND and RDEPEND variables. Here are some important points to follow when you write the dependencies. </para>
+            <itemizedlist>
+                <listitem>
+                    <para><emphasis role="italic">Always include the CATEGORY</emphasis>.</para>
+                    <para>For example, use <code>&gt;=x11-libs/gtk+-2</code> and not <code>&gt;=gtk+-2</code>.</para>
+                </listitem>
+                <listitem>
+                    <para><emphasis role="italic">Do not put an asterisk (*) for &gt;= dependencies.</emphasis></para>
+                    <para>For example, it should be <code>&gt;=x11-libs/gtk+-2</code> rather than <code>&gt;=x11-libs/gtk+-2*</code>. </para>
+                </listitem>
+                <listitem>
+                    <para><emphasis role="italic">Never depend on a meta-package.</emphasis></para>
+                    <para>So don't depend on gnome-base/gnome, always depend on the specific libraries like libgnome. </para>
+                </listitem>
+                <listitem>
+                    <para><emphasis role="italic">One dependency per line.</emphasis></para>
+                    <para>Don't put multiple dependencies on the same line. It makes it ugly to read and hard to follow. </para>
+                </listitem>
+                <listitem>
+                    <para><emphasis role="italic">GTK: Always use =x11-libs/gtk+-1.2* for GTK+1 apps.</emphasis></para>
+                </listitem>
+            </itemizedlist>
+            <para>Additionally, it is important to ensure that all the dependencies are complete for your package: </para>
+            <itemizedlist>
+                <listitem>
+                    <para><emphasis role="italic">Look in configure.in or configure.ac</emphasis></para>
+                    <para>Look for checks for packages in here. Things to look out for are pkg-config checks or AM_* functions that check for a specific version. </para>
+                </listitem>
+                <listitem>
+                    <para><emphasis role="italic">Look at included .spec files</emphasis></para>
+                    <para>A good indication of dependencies is to look at the included .spec files for relevant deps. However, do not trust them to be the definitive complete list of dependencies. </para>
+                </listitem>
+                <listitem>
+                    <para><emphasis role="italic">Look at the application/library website</emphasis></para>
+                    <para>Check the application website for possible dependencies that they suggest are needed. </para>
+                </listitem>
+                <listitem>
+                    <para><emphasis role="italic">Read the README and INSTALL for the package</emphasis></para>
+                    <para>They usually also contain useful information about building and installing packages. </para>
+                </listitem>
+                <listitem>
+                    <para><emphasis role="italic">Remember non-binary dependencies such as pkg-config, doc generation programs, etc.</emphasis></para>
+                    <para>Usually the build process requires some dependencies such as intltool, libtool, pkg-config, doxygen, scrollkeeper, gtk-doc, etc. Make sure those are clearly stated. </para>
+                </listitem>
+            </itemizedlist>
+            <para>For all the latest details about these DEPEND Atoms, please see the section 5 manpage on ebuilds: <command>man 5 ebuild</command>. </para>
+        </section>
+    </section>
+    <section>
+        <title>Testing and deploying</title>
+        <section>
+            <title>ChangeLog</title>
+            <para>Whenever you update (or write a new) an ebuild, you must also update its (or create a new) ChangeLog. The <filename>skel.ChangeLog</filename> contains a sample ChangeLog that you can use as a basis. </para>
+            <para>The purpose of the ChangeLog is to document <emphasis role="italic">what</emphasis> is being done, <emphasis role="italic">why</emphasis> it is being done, and by <emphasis role="italic">whom</emphasis>. This allows both developers and users to trace the changes made in an easy way. </para>
+            <para>The ChangeLog is primarily targeted at users, so be sure to keep your writing short, to the point, and avoid getting verbose about the internal technical details. </para>
+        </section>
+        <section>
+            <title>Storing your own ebuilds locally</title>
+            <para>In order to be able to test your ebuilds and let Portage know about them, you must place those in a known directory. Portage will use the <envar>PORTDIR_OVERLAY</envar> variable which you can define in <filename>/etc/make.conf</filename>. You should set this variable to your directory (e.g. <filename>/usr/local/portage</filename>). </para>
+            <para>In that directory, you must use the same structure (and categories) as in <filename>/usr/portage</filename>. </para>
+            <para>Using this <envar>PORTDIR_OVERLAY</envar>, your ebuilds remain on your system, even after an <command>emerge sync</command>, and they are still known to Portage. </para>
+        </section>
+        <section>
+            <title>Testing the package</title>
+            <para>Have a think about how you will test whether this package works. Sometimes the developers have already included a<command> make test</command> or <command>make check</command> routine that will test the basic functionality of the package. If so, then running <command>FEATURES=test ebuild foo-x.y.z.ebuild</command> test will execute it. If it is broken try to fix it so that it works (and submit the patch to the upstream developers). </para>
+            <para>If this is not the case consider adding a <function>src_test</function> routine to your ebuild. This is executed before the <function>src_install</function> routine and can be very helpful for testing the program works across various architectures. The architecture developers will appreciate if you add a routine here so that they do not require knowledge of the package's functionality. </para>
+            <para>Please keep in mind the general requirements of an ebuild here. The <function>src_test</function> routine must not be interactive. If the test routine depends on other packages use the <code>test</code> USE flag to specify the optional compile time<varname> DEPEND</varname>ancies. Also, please note that <function>src_test</function> routines are not recommended for graphical X applications as the user running portage often cannot run them successfully. </para>
+        </section>
+        <section>
+            <title>Useful testing tools</title>
+            <para>We have a few useful tools to help you with writing and maintaining your ebuilds. </para>
+            <informaltable frame="all">
+                <tgroup cols="3">
+                    <colspec colnum="1" colwidth="1*"/>
+                    <colspec colnum="2" colwidth="2*"/>
+                    <colspec colnum="3" colwidth="4*"/>
+                    <thead>
+                        <row>
+                            <entry>Tool</entry>
+                            <entry>Package</entry>
+                            <entry>Description</entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        <row>
+                            <entry>
+                                <command>repoman</command>
+                            </entry>
+                            <entry>
+                                <package>sys-apps/portage</package>
+                            </entry>
+                            <entry>Developer-only tool to assist with the CVS check in procedure. It does a lot of common QA and tries to make sure that files added to cvs will not break the portage tree.</entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>ccache</command>
+                            </entry>
+                            <entry>
+                                <package>dev-util/ccache</package>
+                            </entry>
+                            <entry>Tool that keeps pre-processed files so that recompilation gets done much faster. Be sure to add <code>ccache</code> to the <envar>FEATURES</envar> variable in <filename>/etc/make.conf</filename>!</entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>sandboxshell</command>
+                            </entry>
+                            <entry>
+                                <package>app-shells/sandboxshell</package>
+                            </entry>
+                            <entry>Launch a shell that creates a sandbox environment. Useful for entering the same environment that portage builds packages inside of and debugging things by hand.</entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <command>echangelog</command>
+                            </entry>
+                            <entry>
+                                <package>app-portage/gentoolkit-dev</package>
+                            </entry>
+                            <entry>
+                                <para>Can create a new <filename>ChangeLog</filename> or add an entry to an existing one.</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+        </section>
+    </section>
 </article>
