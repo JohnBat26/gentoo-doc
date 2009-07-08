@@ -5,6 +5,8 @@
   <xsl:param name="local.l10n.xml" select="document('')"/>
   <l:i18n xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0">
         <l:l10n language="ru">
+            <l:gentext key="Note" text="Примечание"/>
+            <l:gentext key="note" text="Примечание"/>
             <l:gentext key="Example" text="Листинг"/>
             <l:gentext key="example" text="Листинг"/>
             <l:gentext key="ListofExamples" text="Список листингов"/>
