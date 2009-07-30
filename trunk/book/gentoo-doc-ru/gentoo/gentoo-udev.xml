@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
-<info><title>Руководство по udev в Gentoo</title></info>
-        <para/>
-        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/udev-guide.xml">http://www.gentoo.org/doc/ru/udev-guide.xml</link>
-        </para>
-        <para>C версии: 1.0</para><section><info><title>1. Что такое udev?</title></info>
-            <para>Каталог /dev</para>
-            <para/>
-            <para>Когда пользователи Linux разговаривают о начинке своих систем среди людей, полагающих, что Linux — это какой-то вид вируса или марка кофе, пользуясь оборотами вроде «слэш дев слэш что—нибудь» (/dev/foo), на них наверняка смотрят косо. Но для счастливчиков (естественно, включая вас), /dev/hda1 — просто быстрый способ упоминания первого раздела ведущего диска IDE на первичном канале. Разве нет? </para>
-            <para/>
-            <para>Все мы знаем, что такое файл устройства. Некоторые даже знают, почему рядом с ними видны специальные числа, если посмотреть на результат ls -l, запущенной в каталоге /dev. Но мы принимаем за данность, что первичный ведущий диск IDE называется /dev/hda. У вас может быть и не так, но это всего лишь пример. </para>
-            <para/>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Руководство по udev в Gentoo</title>
+    </info>
+    <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/udev-guide.xml">http://www.gentoo.org/doc/ru/udev-guide.xml</link>
+    </para>
+    <para>C версии: 1.0</para>
+    <section>
+        <title> Что такое udev?</title>
+        <section>
+            <title>Каталог <filename>/dev</filename></title>
+            <para>Когда пользователи Linux разговаривают о начинке своих систем среди людей, полагающих, что Linux — это какой-то вид вируса или марка кофе, пользуясь оборотами вроде «слэш дев слэш что—нибудь» (<filename>/dev/foo</filename>), на них наверняка смотрят косо. Но для счастливчиков (естественно, включая вас), <filename>/dev/hda1</filename> — просто быстрый способ упоминания первого раздела ведущего диска IDE на первичном канале. Разве нет? </para>
+            <para>Все мы знаем, что такое файл устройства. Некоторые даже знают, почему рядом с ними видны специальные числа, если посмотреть на результат <command>ls -l</command>, запущенной в каталоге <filename>/dev</filename>. Но мы принимаем за данность, что первичный ведущий диск IDE называется <filename>/dev/hda</filename>. У вас может быть и не так, но это всего лишь пример. </para>
             <para>Представим себе устройства «горячей замены» вроде USB, IEEE1394, заменяемой PCI и т.д. Какое из них является первым по счету? Надолго ли? Как изменятся названия других устройств, если первое отключить? Как это повлияет на текущие операции? Было бы забавно, если бы задание печати вдруг переключалось с вашего супер навороченного лазерного принтера на старый полудохлый матричный из-за того, что ваша мама решила выдернуть разъем лазерного принтера, а тот оказался первым в списке, не так ли? </para>
-            <para/>
             <para>Перейдем к udev. Цели проекта udev как занимательны, так и актуальны: </para>
-            <para>запуск драйверов в режиме пользователя</para>
-            <para>динамическое создание и удаление файлов устройств</para>
-            <para>согласованное назначение имен устройств</para>
-            <para>предоставление интерфейса программирования (API) для режима пользователя </para>
-            <para/>
-            <para>Разработка udev состоит из трех отдельных проектов: namedev, libsysfs и, конечно, udev. </para>
-            <para/>
-            <para>namedev</para>
-            <para/>
+            <para>
+                <itemizedlist>
+                    <listitem>
+                        <para>запуск драйверов в режиме пользователя</para>
+                    </listitem>
+                    <listitem>
+                        <para>динамическое создание и удаление файлов устройств</para>
+                    </listitem>
+                    <listitem>
+                        <para>согласованное назначение имен устройств</para>
+                    </listitem>
+                    <listitem>
+                        <para>предоставление интерфейса программирования (API) для режима пользователя </para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+            <para>Разработка udev состоит из трех отдельных проектов: namedev, libsysfs и, конечно, udev.</para>
+        </section>
+        <section>
+            <title>namedev</title>
             <para>Namedev позволяет отделить именование устройств от программы udev. Это дает возможность гибкого использования правил и схем именования, разработанныых отдельно. Подсистема именования предоставляет стандартный интерфейс, который может использоваться udev. </para>
-            <para/>
             <para>Сейчас, через namedev представлена только одна схема именования, предоставляемая LANANA. Она используется на большинстве Linux—систем, и поэтому хорошо подходит основной массе пользователей Linux. </para>
-            <para/>
             <para>В namedev для определения имени конкретного устройства используется последовательность из пяти шагов. Если на одном из шагов имя установлено, оно и используется. Вот эти шаги: </para>
             <orderedlist>
                 <listitem>
@@ -48,180 +55,167 @@
                     <para>имя, назначенное в ядре</para>
                 </listitem>
             </orderedlist>
-            <para/>
             <para>По метке или серийному номеру — проверяется, есть ли у устройства уникальный идентификатор. Например, у устройств USB есть уникальный серийный номер USB, а у устройств SCSI — уникальный UUID. Если namedev находит соответствие уникального номера и определенного конфигурационного файла, используется имя, указанное в конфигурационном файле. </para>
-            <para/>
             <para>По номеру устройства шины — проверяется номер устройства, подключаемого к шине. В среде, где нет возможности «горячей замены», этого шага достаточно для идентификации устройства (например, номер на шине PCI редко меняется за время существования системы). Опять же, если namedev находит соответствие номера устройства шины и определенного конфигурационного файла, используется имя, указанное в конфигурационном файле. </para>
-            <para/>
             <para>Подобным образом, по топологии шины — это, скорее, статический способ идентификации устройств, подходящий до тех пор, пока пользователь не начинает их переключать. Когда позиция устройства совпадает со значением, заданным пользователем, используется указанное имя. </para>
-            <para/>
             <para>Четвёртый шаг, статическое имя — это простая подстановка строки. Замененное имя присваивается, когда имя, назначенное в ядре (по умолчанию) совпадает с заданной строкой замены. </para>
-            <para/>
             <para>Последний шаг (имя, назначенное в ядре) покрывает все остальные случаи: при этом берётся имя по умолчанию, присвоенное в ядре. В большинстве случаев этого достаточно, поскольку имя соответствует принятому в современных Linux-системах. </para>
-            <para/>
-            <para>libsysfs</para>
-            <para/>
+        </section>
+        <section>
+            <title>libsysfs</title>
             <para>udev взаимодействует с ядром через псевдофайловую систему sysfs. Проект libsysfs предлагает обобщенный интерфейс программирования для доступа к сведениям, предоставляемым файловой системой sysfs. Это даёт возможность опроса разнородных устройств без необходимости знания их типа. </para>
-            <para/>
-            <para>udev</para>
-            <para/>
-            <para>Каждый раз, когда ядро обнаруживает обновление структуры устройств, оно вызывает программу /sbin/hotplug. Hotplug, в свою очередь, запускает приложения, указанные в каталоге /etc/hotplug.d/default, где также находится символическая ссылка на приложение udev. Hotplug направляет сведения, данные ядром, в программу udev, которая производит необходимые действия над структурой /dev (создавая или удаляя файлы устройств). </para>
-            <para/></section><section><info><title>2. Как использовать udev в Gentoo</title></info>
-                <para/>
-                <para>Требования к системе</para>
-                <para/>
-                <para>Файловая система udev должна использоваться вместе с ядром версии 2.6 (пакеты vanilla-sources или gentoo-sources, и профилем 2005.0). Если вы используете такое ядро, убедитесь, что у вас есть самая последняя версия sys-apps/baselayout. Вот и всё, что потребуется. </para>
-                <para/>
-                <para>Листинг 2.1: Установка udev</para>
-                <para># emerge udev</para>
-                <para/>
-                <para/>
-                <para>udev установит пакет hotplug-base, как одну из зависимостей. Не нужно устанавливать пакет hotplug до тех пор, пока вы хотите, чтобы модули автоматически загружались при подключении устройств. hotplug также управляет автоматическим включением сетевых устройств и загрузкой встроенного ПО. </para>
-                <para/>
-                <para>Листинг 2.2: Установка дополнительных сценариев hotplug</para>
-                <para># emerge hotplug</para>
-                <para/>
-                <para/>
-                <para>Если хотите, чтобы загружались модули для устройств, подключаемых до загрузки, используйте пакет coldplug: </para>
-                <para/>
-                <para>Листинг 2.3: Установка пакета coldplug</para>
-                <para># emerge coldplug</para>
-                <para/>
-                <para/>
-                <para>И не забудьте добавить coldplug на загрузочный уровень запуска (boot): </para>
-                <para/>
-                <para>Листинг 2.4: Добавление coldplug на загрузочный уровень запуска</para>
-                <para># rc-update add coldplug boot</para>
-                <para/>
-                <para/>
-                <para>Что же касается ядра, не забудьте выбрать следующие параметры: </para>
-                <para/>
-                <para>Листинг 2.5: Требуемые параметры ядра</para>
-                <para>General setup ---&gt;</para>
-                <para>  [*] Support for hot-pluggable devices</para>
-                <para/>
-                <para>File systems ---&gt;</para>
-                <para>  Pseudo filesystems ---&gt;</para>
-                <para>    [*] /proc file system support</para>
-                <para>    [*] Virtual memory file system support (former shm fs)</para>
-                <para/>
-                <para/>
-                <para>По вашему усмотрению, можете оставить поддержку файловой системы /dev file system support (OBSOLETE) активной, но обязательно убедитесь в том, что параметр «Automatically mount at boot» выключен: </para>
-                <para/>
-                <para>Листинг 2.6: Автоматически не монтировать devfsd</para>
-                <para>File systems ---&gt;</para>
-                <para>  Pseudo Filesystems ---&gt;</para>
-                <para>    [*] /dev file system support (OBSOLETE)</para>
-                <para>      [ ]   Automatically mount at boot</para>
-                <para/>
-                <para/>
-                <para>Если вы используете genkernel, не забудьте запустить её с параметром --udev, для включения всех необходимых параметров конфигурации ядра. Конфигурация по умолчанию, даваемая этим обращением к genkernel, достаточна. </para>
-                <para/>
-                <para>Конфигурация</para>
-                <para/>
-                <para>Если вы хотите использовать улучшения udev, добавленные Gentoo для более удобного использования, не читайте дальше. Gentoo будет использовать udev, сохраняя неизменной структуру /dev, так что вы никогда не потеряете специальные файлы устройств. Сценарии инициализации Gentoo не будут запускать демон devfsd и деактивируют devfs при загрузке. </para>
-                <para/>
-                <para>Но если вы «крепкий орешек» и хотите запустить любыми средствами систему только с udev и без улучшений, к чему и стремится разработка udev (включая сложности в отсутствии узлов устройств, потому, что udev их ещё не поддерживает), тогда читайте дальше :) </para>
-                <para/>
-                <para>Мы деактивируем правила, которые сохраняют специальные файлы устройств: отредактируйте переменную RC_DEVICE_TARBALL в /etc/conf.d/rc и устанавите её значение на no: </para>
-                <para/>
-                <para>Листинг 2.7: /etc/conf.d/rc</para>
-                <para>RC_DEVICE_TARBALL="no"</para>
-                <para/>
-                <para/>
-                <para>Если вы включили поддержку devfs в вашем ядре, вы можете деактивировать её в конфигурации загрузчика: добавьте gentoo=nodevfs как параметр ядра. Если вы хотите использовать devfs и деактивировать udev, добавьте gentoo=noudev. </para>
-                <para/></section><section><info><title>3. Известные проблемы</title></info>
-                    <para/>
-                    <para>Отсутствие специальных файлов устройств при загрузке</para>
-                    <para/>
-                    <para>Если ваша машина не может успешно загрузится и выдаётся ошибка о том, что путь /dev/null не найден или отсутствует первоначальная консоль, то проблема в том, что отсутствуют некоторые файлы устройств, которые должны быть доступны до того, как /dev смонтирован и обработан udev. Это часто встречается на машинах, где Gentoo установлен со старых носителей. </para>
-                    <para/>
-                    <para>Если вы используете sys-apps/baselayout-1.8.12 или более позднюю версию, эта проблема облегчается, так как процесс загрузки должен управлять до полного завершения. Однако, чтобы избавится от этих раздражающих предупреждений, вам следует создать отсутствующие специальные файлы, как описано далее. </para>
-                    <para/>
-                    <para>Выполните следующие команды для того, чтобы увидеть, какие специальные файлы присутствуют до обработки udev в /dev: </para>
-                    <para/>
-                    <para>Листинг 3.1: Вывод списка специальных файлов устройств, доступных при загрузке</para>
-                    <para># mkdir test</para>
-                    <para># mount --bind / test</para>
-                    <para># cd test/dev</para>
-                    <para># ls</para>
-                    <para/>
-                    <para/>
-                    <para>Устройства /dev/null и /dev/console необходимымы для успешной загрузки. Если они не были показаны в предыдущем тесте, вы должны создать их самостоятельно. Выполните следующие команды в каталоге test/dev/: </para>
-                    <para/>
-                    <para>Листинг 3.2: Создание необходимых специальных файлов устройств</para>
-                    <para># mknod -m 660 console c 5 1</para>
-                    <para># mknod -m 660 null c 1 3</para>
-                    <para/>
-                    <para/>
-                    <para>Когда закончите, не забудьте отмонтировать каталог test/: </para>
-                    <para/>
-                    <para>Листинг 3.3: Отмонтирование каталога test/</para>
-                    <para># cd ../..</para>
-                    <para># umount test</para>
-                    <para># rmdir test</para>
-                    <para/>
-                    <para/>
-                    <para>udev и nvidia</para>
-                    <para/>
-                    <para>Если вы используете коммерческий драйвер от nVidia и сервер X не запускается только в системе с udev, убедитесь что у вас: </para>
-                    <para>название модуля nvidia указано в файле /etc/modules.autoload.d/kernel-2.6 </para>
-                    <para>версия nvidia-kernel больше или равна media-video/nvidia-kernel-1.0.5336-r2 </para>
-                    <para>версия baselayout как минимум sys-apps/baselayout-1.8.12 </para>
-                    <para/>
-                    <para>Если xorg-x11 отказывается запускаться, возможно, отсутствует файл устройства /dev/nvidia. В этом случае запустите /sbin/NVmakedevices.sh, чтобы его создать или пересоздать. </para>
-                    <para/>
-                    <para>Не появляются имена LVM2</para>
-                    <para/>
-                    <para>Если вы используете вместе udev и Logical Volume Manager 2 (LVM—менеджер логических разделов), вы можете заметить, что созданные вами группы разделов и логические разделы исчезли. Что ж, на самом деле нет, но они, к несчастью, названы /dev/dm-#, где #—это 0,1, ... и т.д. </para>
-                    <para/>
-                    <para>Чтобы это исправить, отредактируйте файл /etc/udev/rules.d/50-udev.rules и уберите комментарий со следующей строки: </para>
-                    <para/>
-                    <para>Листинг 3.4: Как убрать комментарий со строки из файла /etc/udev/rules.d/50-udev.rules</para>
-                    <para>KERNEL="dm-[0-9]*",     PROGRAM="/sbin/devmap_name %M %m", NAME="%k",</para>
-                    <para>SYMLINK="%c"</para>
-                    <para/>
-                    <para/>
-                    <para>Далее, установите пакет sys-fs/multipath-tools, который содержит программу devmap_name. </para>
-                    <para/>
-                    <para>Листинг 3.5: Установка пакета multipath-tools</para>
-                    <para>(На момент написания, пакет multipath-tools был доступен только в</para>
-                    <para>тестовой ветке дерева Portage)</para>
-                    <para># echo "=sys-fs/multipath-tools-0.4.2 ~x86" &gt;&gt;</para>
-                    <para>/etc/portage/package.keywords</para>
-                    <para># emerge multipath-tools</para>
-                    <para/>
-                    <para/>
-                    <para>Отличающиеся названия в DevFS и udev</para>
-                    <para/>
-                    <para>Даже если наша цель—иметь совместимую схему именований между этими динамическими системами управления устройствами, иногда случаются различия в именовании. </para>
-                    <para/>
-                    <para>Сообщалось о коллизии в работе контроллера HP Smart Array 5i (более точно - модуль ядра cciss). При использовании udev, устройства именовались как /dev/cciss/cXdYpZ, где X, Y и Z - числа. При использовании devfs, устройства именовались /dev/hostX/targetY/partZ или являлись символическими ссылками на /dev/ccisss/cXdY. </para>
-                    <para/>
-                    <para>В этом случае, не забудьте обновить файл /etc/fstab и конфигурационные файлы загрузчика соответственно. </para>
-                    <para/>
-                    <para>То же самое происходит со всеми символическими ссылками, которые существуют в каталоге /dev, такими как /dev/mouse, которые udev больше не создаёт. Обязательно проверьте настройку графического сервера X и посмотрите секцию Device, указывает ли там строка настройки на существующий файл устройства. </para>
-                    <para/>
-                    <para>Другая проблема заключается в различном именовании терминалов между devfs и udev. Если в devfs терминалы называются tty, то в udev они называются vc. Это может привести к проблемам если возможность входа root с консоли ограничивается с помощью /etc/securetty. Чтобы обеспечить возможность входа root с консоли, нужно обязательно изменить tty1 на vc/1 в /etc/securetty. </para>
-                    <para/>
-                    <para>Другие проблемы</para>
-                    <para/>
-                    <para>Если файлы устройств не создаются, когда соответствующий модуль загружается из /etc/modules.autoload.d/kernel-2.6, но появляются когда вы загружаете этот модуль вручную при помощи modprobe, тогда вам стоит произвести обновление до sys-apps/baselayout-1.8.12 или более поздней версии. </para>
-                    <para/>
-                    <para>Поддержка устройств кадрового буфера (/dev/fb/*) включена в ядро с версии 2.6.6-rc2. </para>
-                    <para/>
-                    <para>В ядрах старше, чем 2.6.4, вам следует явно включить поддержку для файловой системы /dev/pts. </para>
-                    <para/>
-                    <para>Листинг 3.6: Включение поддержки файловой системы /dev/pts</para>
-                    <para>File systems ---&gt;</para>
-                    <para>  Pseudo filesystems ---&gt;</para>
-                    <para>    [*] /dev/pts file system for Unix98 PTYs</para>
-                    <para/>
-                    <para/></section><section><info><title>4. Ссылки на ресурсы и благодарности</title></info>
-                        <para/>
-                        <para>Разговор об udev начался на симпозиуме по Linux в Оттаве в 2003 году (Linux Symposium, Ottawa, Ontario Canada - 2003) Грегом Кроа-Хартманом (Greg Kroah-Hartman) из корпорации IBM, который дал ясное понимание для применения udev. </para>
-                        <para/>
-                        <para>Decibel's UDEV Primer - документ о udev и Gentoo. </para>
-                        <para/>
-                        <para>Написание правил для udev члена сообщества разработки Gentoo Дэниела Дрэйка (Daniel Drake) - отличный документ для того, чтобы научится управлять установкой udev.</para></section>
+        </section>
+        <section>
+            <title>udev</title>
+            <para>Каждый раз, когда ядро обнаруживает обновление структуры устройств, оно вызывает программу <filename>/sbin/hotplug</filename>. Hotplug, в свою очередь, запускает приложения, указанные в каталоге <filename>/etc/hotplug.d/default</filename>, где также находится символическая ссылка на приложение udev. Hotplug направляет сведения, данные ядром, в программу udev, которая производит необходимые действия над структурой <filename>/dev</filename> (создавая или удаляя файлы устройств).</para>
+        </section>
+    </section>
+    <section>
+        <title>Как использовать udev в Gentoo</title>
+        <section>
+            <title>Требования к системе</title>
+            <para>Файловая система udev должна использоваться вместе с ядром версии 2.6 (пакеты vanilla-sources или gentoo-sources, и профилем 2005.0). Если вы используете такое ядро, убедитесь, что у вас есть самая последняя версия sys-apps/baselayout. Вот и всё, что потребуется. </para>
+            <example>
+                <title>Установка udev</title>
+                <screen><prompt>#</prompt> <userinput>emerge udev</userinput></screen>
+            </example>
+            <para>udev установит пакет hotplug-base, как одну из зависимостей. Не нужно устанавливать пакет hotplug до тех пор, пока вы хотите, чтобы модули автоматически загружались при подключении устройств. hotplug также управляет автоматическим включением сетевых устройств и загрузкой встроенного ПО. </para>
+            <example>
+                <title>Установка дополнительных сценариев hotplug</title>
+                <screen><prompt>#</prompt> <userinput>emerge hotplug</userinput></screen>
+            </example>
+            <para>Если хотите, чтобы загружались модули для устройств, подключаемых до загрузки, используйте пакет coldplug: </para>
+            <example>
+                <title>Установка пакета coldplug</title>
+                <screen><prompt>#</prompt> <userinput>emerge coldplug</userinput></screen>
+            </example>
+            <para>И не забудьте добавить coldplug на загрузочный уровень запуска (boot): </para>
+            <example>
+                <title>Добавление coldplug на загрузочный уровень запуска</title>
+                <screen><prompt>#</prompt> <userinput>rc-update add coldplug boot</userinput></screen>
+            </example>
+            <para>Что же касается ядра, не забудьте выбрать следующие параметры: </para>
+            <example>
+                <title>Требуемые параметры ядра</title>
+                <screen>General setup --->
+  [*] Support for hot-pluggable devices
+
+File systems --->
+  Pseudo filesystems --->
+    [*] /proc file system support
+    [*] Virtual memory file system support (former shm fs)</screen>
+            </example>
+            <para>По вашему усмотрению, можете оставить поддержку файловой системы <code>/dev file system support (OBSOLETE)</code> активной, но обязательно убедитесь в том, что параметр «Automatically mount at boot» выключен: </para>
+            <example>
+                <title>Автоматически не монтировать devfsd</title>
+                <screen>File systems --->
+  Pseudo Filesystems --->
+    [*] /dev file system support (OBSOLETE)
+      [ ]   Automatically mount at boot</screen>
+            </example>
+            <para>Если вы используете <command>genkernel</command>, не забудьте запустить её с параметром <parameter>--udev</parameter>, для включения всех необходимых параметров конфигурации ядра. Конфигурация по умолчанию, даваемая этим обращением к genkernel, достаточна. </para>
+        </section>
+        <section>
+            <title>Конфигурация</title>
+            <para>Если вы хотите использовать улучшения udev, добавленные Gentoo для более удобного использования, не читайте дальше. Gentoo будет использовать udev, сохраняя неизменной структуру <filename>/dev</filename>, так что вы никогда не потеряете специальные файлы устройств. Сценарии инициализации Gentoo не будут запускать демон devfsd и деактивируют devfs при загрузке. </para>
+            <para>Но если вы «крепкий орешек» и хотите запустить любыми средствами систему только с udev и без улучшений, к чему и стремится разработка udev (включая сложности в отсутствии узлов устройств, потому, что udev их ещё не поддерживает), тогда читайте дальше :) </para>
+            <para>Мы деактивируем правила, которые сохраняют специальные файлы устройств: отредактируйте переменную <envar>RC_DEVICE_TARBALL</envar> в <filename>/etc/conf.d/rc</filename> и устанавите её значение на <code>no</code>:</para>
+            <example>
+                <title><filename>/etc/conf.d/rc</filename></title>
+                <programlisting>RC_DEVICE_TARBALL="no"</programlisting>
+            </example>
+            <para>Если вы включили поддержку devfs в вашем ядре, вы можете деактивировать её в конфигурации загрузчика: добавьте <code>gentoo=nodevfs</code> как параметр ядра. Если вы хотите использовать devfs и деактивировать udev, добавьте <code>gentoo=noudev</code>. </para>
+        </section>
+    </section>
+    <section>
+        <title>Известные проблемы</title>
+        <section>
+            <title>Отсутствие специальных файлов устройств при загрузке</title>
+            <para>Если ваша машина не может успешно загрузится и выдаётся ошибка о том, что путь <filename>/dev/null</filename> не найден или отсутствует первоначальная консоль, то проблема в том, что отсутствуют некоторые файлы устройств, которые должны быть доступны до того, как <filename>/dev</filename> смонтирован и обработан udev. Это часто встречается на машинах, где Gentoo установлен со старых носителей. </para>
+            <para>Если вы используете <package>sys-apps/baselayout-1.8.12</package> или более позднюю версию, эта проблема облегчается, так как процесс загрузки должен управлять до полного завершения. Однако, чтобы избавится от этих раздражающих предупреждений, вам следует создать отсутствующие специальные файлы, как описано далее. </para>
+            <para>Выполните следующие команды для того, чтобы увидеть, какие специальные файлы присутствуют до обработки udev в <filename>/dev</filename>: </para>
+            <example>
+                <title>Вывод списка специальных файлов устройств, доступных при загрузке</title>
+                <screen><prompt>#</prompt> <userinput>mkdir test</userinput>
+<prompt>#</prompt> <userinput>mount --bind / test</userinput>
+<prompt>#</prompt> <userinput>cd test/dev</userinput>
+<prompt>#</prompt> <userinput>ls</userinput></screen>
+            </example>
+            <para>Устройства <filename>/dev/null</filename> и <filename>/dev/console</filename> необходимымы для успешной загрузки. Если они не были показаны в предыдущем тесте, вы должны создать их самостоятельно. Выполните следующие команды в каталоге <filename>test/dev/</filename>:</para>
+            <example>
+                <title>Создание необходимых специальных файлов устройств</title>
+                <screen><prompt>#</prompt> <userinput>mknod -m 660 console c 5 1</userinput>
+<prompt>#</prompt> <userinput>mknod -m 660 null c 1 3</userinput></screen>
+            </example>
+            <para>Когда закончите, не забудьте отмонтировать каталог <filename>test/</filename>:</para>
+            <example>
+                <title>Отмонтирование каталога <filename>test/</filename></title>
+                <screen><prompt>#</prompt> <userinput>cd ../..</userinput>
+<prompt>#</prompt> <userinput>umount test</userinput>
+<prompt>#</prompt> <userinput>rmdir test</userinput></screen>
+            </example>
+        </section>
+        <section>
+            <title>udev и nvidia</title>
+            <para>Если вы используете коммерческий драйвер от nVidia и сервер X не запускается только в системе с udev, убедитесь что у вас: </para>
+            <para>
+                <itemizedlist>
+                    <listitem>
+                        <para>название модуля nvidia указано в файле /etc/modules.autoload.d/kernel-2.6 </para>
+                    </listitem>
+                    <listitem>
+                        <para>версия nvidia-kernel больше или равна media-video/nvidia-kernel-1.0.5336-r2 </para>
+                    </listitem>
+                    <listitem>
+                        <para>версия baselayout как минимум sys-apps/baselayout-1.8.12 </para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+            <para>Если xorg-x11 отказывается запускаться, возможно, отсутствует файл устройства <filename>/dev/nvidia</filename>. В этом случае запустите <command>/sbin/NVmakedevices.sh</command>, чтобы его создать или пересоздать. </para>
+        </section>
+        <section>
+            <title>Не появляются имена LVM2</title>
+            <para>Если вы используете вместе udev и Logical Volume Manager 2 (LVM—менеджер логических разделов), вы можете заметить, что созданные вами группы разделов и логические разделы исчезли. Что ж, на самом деле нет, но они, к несчастью, названы <filename>/dev/dm-<replaceable>#</replaceable></filename>, где <replaceable>#</replaceable>—это 0, 1, ... и т.д. </para>
+            <para>Чтобы это исправить, отредактируйте файл <filename>/etc/udev/rules.d/50-udev.rules</filename> и уберите комментарий со следующей строки: </para>
+            <example>
+                <title>Как убрать комментарий со строки из файла <filename>/etc/udev/rules.d/50-udev.rules</filename></title>
+                <programlisting>KERNEL="dm-[0-9]*",     PROGRAM="/sbin/devmap_name %M %m", NAME="%k",
+SYMLINK="%c"</programlisting>
+            </example>
+            <para>Далее, установите пакет <package>sys-fs/multipath-tools</package>, который содержит программу <command>devmap_name</command>.</para>
+            <example>
+                <title>Установка пакета multipath-tools</title>
+                <screen><lineannotation>(На момент написания, пакет multipath-tools был доступен только в
+тестовой ветке дерева Portage)</lineannotation>
+<prompt>#</prompt> <userinput>echo "=sys-fs/multipath-tools-0.4.2 ~x86" >> /etc/portage/package.keywords</userinput>
+<prompt>#</prompt> <userinput>emerge multipath-tools</userinput></screen>
+            </example>
+        </section>
+        <section>
+            <title>Отличающиеся названия в DevFS и udev</title>
+            <para>Даже если наша цель—иметь совместимую схему именований между этими динамическими системами управления устройствами, иногда случаются различия в именовании. </para>
+            <para>Сообщалось о коллизии в работе контроллера HP Smart Array 5i (более точно - модуль ядра cciss). При использовании udev, устройства именовались как <filename>/dev/cciss/c<replaceable>X</replaceable>d<replaceable>Y</replaceable>p<replaceable>Z</replaceable></filename>, где X, Y и Z - числа. При использовании devfs, устройства именовались <filename>/dev/host<replaceable>X</replaceable>/target<replaceable>Y</replaceable>/part<replaceable>Z</replaceable></filename> или являлись символическими ссылками на <filename>/dev/ccisss/c<replaceable>X</replaceable>d<replaceable>Y</replaceable></filename>. </para>
+            <para>В этом случае, не забудьте обновить файл <filename>/etc/fstab</filename> и конфигурационные файлы загрузчика соответственно. </para>
+            <para>То же самое происходит со всеми символическими ссылками, которые существуют в каталоге <filename>/dev</filename>, такими как <filename>/dev/mouse</filename>, которые udev больше не создаёт. Обязательно проверьте настройку графического сервера X и посмотрите секцию Device, указывает ли там строка настройки на существующий файл устройства. </para>
+            <para>Другая проблема заключается в различном именовании терминалов между devfs и udev. Если в devfs терминалы называются tty, то в udev они называются vc. Это может привести к проблемам если возможность входа root с консоли ограничивается с помощью <filename>/etc/securetty</filename>. Чтобы обеспечить возможность входа root с консоли, нужно обязательно изменить tty1 на vc/1 в <filename>/etc/securetty</filename>.</para>
+        </section>
+        <section>
+            <title>Другие проблемы</title>
+            <para>Если файлы устройств не создаются, когда соответствующий модуль загружается из <filename>/etc/modules.autoload.d/kernel-2.6</filename>, но появляются когда вы загружаете этот модуль вручную при помощи <command>modprobe</command>, тогда вам стоит произвести обновление до <package>sys-apps/baselayout-1.8.12</package> или более поздней версии. </para>
+            <para>Поддержка устройств кадрового буфера (<filename>/dev/fb/*</filename>) включена в ядро с версии 2.6.6-rc2. </para>
+            <para>В ядрах старше, чем 2.6.4, вам следует явно включить поддержку для файловой системы <filename>/dev/pts</filename>.</para>
+            <example>
+                <title>Включение поддержки файловой системы <filename>/dev/pts</filename></title>
+                <screen>File systems --->
+  Pseudo filesystems --->
+    [*] /dev/pts file system for Unix98 PTYs</screen>
+            </example>
+        </section>
+    </section>
+    <section>
+        <title>Ссылки на ресурсы и благодарности</title>
+        <para>Разговор об udev начался на симпозиуме по Linux в Оттаве в 2003 году (Linux Symposium, Ottawa, Ontario Canada - 2003) Грегом Кроа-Хартманом (Greg Kroah-Hartman) из корпорации IBM, который дал ясное понимание для применения udev. </para>
+        <para><link xlink:href="http://webpages.charter.net/decibelshelp/LinuxHelp_UDEVPrimer.html">Decibel's UDEV Primer</link> - документ о udev и Gentoo. </para>
+        <para><link xlink:href="http://www.reactivated.net/udevrules.php">Написание правил для udev</link> члена сообщества разработки Gentoo Дэниела Дрэйка (Daniel Drake) - отличный документ для того, чтобы научится управлять установкой udev.</para>
+    </section>
 </article>
