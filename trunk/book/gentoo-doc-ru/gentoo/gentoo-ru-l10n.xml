@@ -166,7 +166,10 @@ LC_ALL=</screen>
                 <programlisting>LC_NUMERIC="POSIX"</programlisting>
             </example>
             <para>Аналогичным образом могут поступить пользователи, испытывающие стойкую неприязнь к русскоязычным меню и сообщениям программ: </para>
-            <example><title>Установка переменной <envar>LC_MESSAGES</envar></title>LC_MESSAGES="POSIX"</example>
+            <example>
+                <title>Установка переменной <envar>LC_MESSAGES</envar></title>
+                <programlisting>LC_MESSAGES="POSIX"</programlisting>
+            </example>
         </section>
     </section>
     <section>
