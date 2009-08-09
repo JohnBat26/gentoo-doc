@@ -33,6 +33,7 @@
 	
 	<xi:include href="gentoo/gentoo-basic.xml"/>
 	<xi:include href="gentoo/gentoo-using.xml"/>
+	<xi:include href="ru-wiki/ru-wiki.xml"/>
 	<xi:include href="desktop/desktop.xml"/>
 	<xi:include href="hardware/hardware.xml"/>
 	<xi:include href="security/security.xml"/>

@@ -116,7 +116,7 @@ PORTAGE_ELOG_SYSTEM="save"</programlisting>
                 <answer>
                     <para>Смотришь их флаги, включаешь, а они после этого потянут ещё что-нибудь... смотришь теперь и их флаги)) пока не остановится процесс разрастания))</para>
                     <para>Если не планируется использовать <command>deltup</command>, можно прописать зеркало yandex в <filename>make.conf</filename>:</para>
-                    <programlisting><para>GENTOO_MIRRORS="<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://mirror.yandex.ru/gentoo-distfiles/">http://mirror.yandex.ru/gentoo-distfiles/</link> <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://mirror.yandex.ru/gentoo-distfiles/%22">"</link>;</para></programlisting>
+                    <programlisting>GENTOO_MIRRORS="http://mirror.yandex.ru/gentoo-distfiles/ ";</programlisting>
                     <para>(хотя эта строка и при дельтапе не помешает).</para>
                 </answer>
             </qandaentry></qandaset>

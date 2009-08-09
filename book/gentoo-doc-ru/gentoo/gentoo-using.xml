@@ -9,7 +9,6 @@
     <xi:include href="gentoo-gcc-update.xml"/>
     <xi:include href="gentoo-advices-v2.xml"/>
     <xi:include href="gentoo-after-install.xml"/>
-    <xi:include href="gentoo-ruwiki.xml"/>
     <xi:include href="gentoo-tuning.xml"/>
     <xi:include href="gentoo-rpm.xml"/>
     <xi:include href="gentoo-utf8.xml"/>
