@@ -1,751 +1,877 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="windows-counterparts">
-    <info>
-        <title>Windows-эквиваленты</title>
-    </info>
-    <para>Ссылка на оригинал:<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/Windows-эквиваленты">http://ru.gentoo-wiki.com/Windows-эквиваленты</link></para>
-    <para>C версии: 1.0</para>
-    <para>Обновлено: 1.4</para>
-    <para/>
-    <para>Вы знаете, что хотите сделать, но не знаете, чем? Это список пакетов в портежах Gentoo и их эквиваленты в Windows. Он, конечно же, далеко не полный, но и не предназначен для этого. Он просто даёт возможность лёгкого старта в Gentoo. </para>
-    <para>Для расширения этой таблицы можно использовать статью: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.linuxrsp.ru/win-lin-soft/table-rus.html">Аналоги Windows-программ в Linux - таблица соответствий</link>. Также, весьма полный лист можно найти здесь: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://komnas.com/%7Eashamril/tips/files/win-vs-lin-soft-EN.shtml">[1]</link>(англ.). </para>
-    <para>Смотрите также <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://packages.gentoo.org/">официальную страницу портежей</link>(англ.) с портежами, классифицированными по <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://packages.gentoo.org/categories/">категориям</link>(англ.) </para>
-    <section>
-        <info>
-            <title>Прикладные и системные программы</title>
-        </info>
-        <table frame="all">
-            <title>Windows-эквиваленты: Прикладные и системные программы</title>
-            <tgroup cols="4">
-                <colspec colname="c1" colwidth="1*"/>
-                <colspec colname="c2" colwidth="1*"/>
-                <colspec colname="c3" colwidth="1*"/>
-                <colspec colname="c4" colwidth="1*"/>
-                <thead>
-                    <row>
-                        <entry morerows="1">Категории ПО</entry>
-                        <entry morerows="1">Программы MS Windows</entry>
-                        <entry namest="c3" nameend="c4">Программы Linux</entry>
-                    </row>
-                    <row>
-                        <entry>Аналоги</entry>
-                        <entry>Портежи</entry>
-                    </row>
-                </thead>
-                <tbody>
-                    <row>
-                        <entry>Антивирусы</entry>
-                        <entry>много</entry>
-                        <entry><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.clamav.net/">ClamAV</link></entry>
-                        <entry><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-antiviruse/clamav">clamav</link></entry>
-                    </row>
-                    <row>
-                        <entry morerows="6">Текстовые редакторы</entry>
-                        <entry morerows="6">Блокнот / Notepad, WordPad, TextPad, Vim, Xemacs,...</entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde.org/">Kedit (KDE)</link>(грф.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=kde-base/kedit">kedit</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/">Gedit (Gnome)</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/gedit">gedit</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde.org/">Kate (KDE)</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=kde-base/kate">kate</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://nedit.org/">Nedit</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/nedit">nedit</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.vim.org/">Vim</link>(кнс.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/vim">vim</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.xemacs.org/">Xemacs</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/xemacs">xemacs</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.bostic.com/vi/">Nvi</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/nvi">nvi</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry morerows="1">Запись CD/DVD</entry>
-                        <entry morerows="1">BurnAtOnce, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.nero.com/">Nero</link></entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://graveman.tuxfamily.org/">Graveman</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-cdr/graveman">graveman</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.k3b.org/">K3b</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-cdr/k3b">k3b</link>
-                        </entry>
-                    </row>
-                </tbody>
-            </tgroup>
-        </table>
-    </section>
-    <section>
-        <info>
-            <title>Работа в сети</title>
-        </info>
-        <table frame="all">
-            <title>Windows-эквиваленты: Работа в сети</title>
-            <tgroup cols="4">
-                <colspec colname="c1" colwidth="1*"/>
-                <colspec colname="c2" colwidth="1*"/>
-                <colspec colname="c3" colwidth="1*"/>
-                <colspec colname="c4" colwidth="1*"/>
-                <thead>
-                    <row>
-                        <entry morerows="1">Категории ПО</entry>
-                        <entry morerows="1">Программы MS Windows</entry>
-                        <entry namest="c3" nameend="c4">Программы Linux</entry>
-                    </row>
-                    <row>
-                        <entry>Аналоги</entry>
-                        <entry>Портежи</entry>
-                    </row>
-                </thead>
-                <tbody>
-                    <row>
-                        <entry morerows="7">Web-браузеры</entry>
-                        <entry morerows="7">Internet Explorer, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mozilla.org/">Mozilla</link>, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mozilla.com/firefox/">Firefox</link>, Opera...</entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/projects/epiphany/">Epiphany</link>(грф.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/epiphany">epiphany</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://galeon.sourceforge.net/">Galeon</link>(грф.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/galeon">galeon</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde.org/">Konqueror</link>(грф.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=kde-base/konqueror">konqueror</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://links.twibright.com/">Links</link>(кнс.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/links">links</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mozilla.org/">Mozilla</link>(грф.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/mozilla">mozilla</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mozilla.com/firefox/">Firefox</link>(грф.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/mozilla-firefox">mozilla-firefox</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/projects/nautilus/">Nautilus</link>(грф.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=gnome-base/nautilus">nautilus</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.opera.com/linux/">Opera</link>(грф.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/opera">opera</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry morerows="11">Почтовые программы</entry>
-                        <entry morerows="11">Outlook Express, Netscape/Mozilla, Thunderbird, The Bat, Eudora, Becky, Datula, Sylpheed/Sylpheed-claws, Opera</entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/projects/evolution/">Evolution</link>(грф.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/evolution">evolution</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mozilla.org/">Mozilla messenger</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/mozilla">mozilla</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://sylpheed.good-day.net/">Sylpheed</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/sylpheed">sylpheed</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://claws.sylpheed.org/">Sylpheed-claws</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/sylpheed-claws">sylpheed-claws</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde.org/">Kmail</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=kde-base/kmail">kmail</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnus.org/">Gnus</link>(кнс.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-emacs/gnus">gnus</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://balsa.gnome.org/">Balsa</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/balsa">balsa</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.collaboration-world.com/gnumail/">Gnumail</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=gnustep-apps/gnumail">gnumail</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.opera.com/">Opera</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/opera">opera</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mozilla.org/projects/thunderbird/">Thunderbird</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/thunderbird">thunderbird</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mutt.org/">Mutt</link>(кнс.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/mutt">mutt</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.washington.edu/pine/">Pine</link>(кнс.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/pine">pine</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry morerows="11">Клиенты быстрого обмена сообщениями (IM)</entry>
-                        <entry morerows="11">
-                            <para>ICQ Lite, ICQ Corp, MSN, AIM, Yahoo, ... </para>
-                            <para>Trillian ICQ (бесплатный, может заменить все 3 распространённых клиента), Miranda, Gaim </para>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.licq.org/">Licq</link>(ICQ) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/licq">licq </link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://thekonst.net/en/centericq">Centericq</link>(Все)(кнс.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/centericq">centericq</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.micq.org/">Micq</link>(ICQ)(кнс.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/micq">micq</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gnomeicu.sourceforge.net/">GnomeICU</link>(ICQ) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/gnomeicu">gnomeicu</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gaim.sourceforge.net/">Gaim</link>(Все) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/gaim">gaim</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ayttm.sourceforge.net/">Ayttm</link>(Все) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/ayttm">ayttm</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://kopete.kde.org/">Kopete</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/kopete">kopete</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://sim-im.org/">Simple Instant Messenger</link>(Все) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/sim">sim</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://amsn.sourceforge.net/">aMSN</link>(MSN) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/amsn">amsn </link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ysmv7.sourceforge.net/">YSM</link>(ICQ)(кнс.) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/ysm">ysm</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://public.yahoo.com/%7Emmk/index.html">Yahoo Messenger for Unix</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/ymessenger">ymessenger</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://kmess.sourceforge.net/">Kmess</link>(MSN) </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/kmess">kmess</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>Видеоредакторы и конвертеры</entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.virtualdub.org/">VirtualDub</link>, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://virtualdubmod.sourceforge.net/">VirtualDubMod</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://fixounet.free.fr/avidemux/">Avidemux</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=media-video/avidemux">avidemux</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>Virtual CD</entry>
-                        <entry>VirtualDrive, VirtualCD, Daemon Tools, ...</entry>
-                        <entry><command>mount -o loop "mycd.iso" /mnt/cdrom</command></entry>
-                        <entry/>
-                    </row>
-                    <row>
-                        <entry>Другое</entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.wikipedia.org/wiki/Bsod">Blue Screen of Death</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.jwz.org/xscreensaver/">XScreenSaver</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=x11-misc/xscreensaver">xscreensaver</link>
-                        </entry>
-                    </row>
-                </tbody>
-            </tgroup>
-        </table>
-    </section>
-    <section>
-        <info>
-            <title>Офис/Бизнес</title>
-        </info>
-        <table frame="all">
-            <title>Windows-эквиваленты: Офис/Бизнес</title>
-            <tgroup cols="4">
-                <colspec colname="c1" colwidth="1*"/>
-                <colspec colname="c2" colwidth="1*"/>
-                <colspec colname="c3" colwidth="1*"/>
-                <colspec colname="c4" colwidth="1*"/>
-                <thead>
-                    <row>
-                        <entry morerows="1">Категории ПО</entry>
-                        <entry morerows="1">Программы MS Windows</entry>
-                        <entry namest="c3" nameend="c4">Программы Linux</entry>
-                    </row>
-                    <row>
-                        <entry>Аналоги</entry>
-                        <entry>Портежи</entry>
-                    </row>
-                </thead>
-                <tbody>
-                    <row>
-                        <entry morerows="1">Офисный пакет</entry>
-                        <entry morerows="1">MS Office, StarOffice / OpenOffice, 602Software</entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://openoffice.org/">OpenOffice</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/koffice">koffice</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.koffice.org/">Koffice</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/openoffice">openoffice</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry morerows="2">Текстовый процессор</entry>
-                        <entry morerows="2">Word, StarOffice / OpenOffice Writer, 602Text, Abiword</entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://openoffice.org/">OpenOffice Writer</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/openoffice">openoffice</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.koffice.org/">KWord</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/kword">kword</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.abiword.org/">AbiWord</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/abiword">abiword</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry morerows="2">Электронные таблицы</entry>
-                        <entry morerows="2">Excel, StarOffice / OpenOffice Calc</entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://openoffice.org/">OpenOffice Calc</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/openoffice">openoffice</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.koffice.org/">KSpread</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/kspread">kspread</link>
-                        </entry>
-                    </row>
-                    <row>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/projects/gnumeric/">Gnumeric</link>
-                        </entry>
-                        <entry>
-                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/gnumeric">gnumeric</link>
-                        </entry>
-                    </row>
-                </tbody>
-            </tgroup>
-        </table>
-        <section>
-            <info>
-                <title>Chat</title>
-            </info>
-            <orderedlist>
-                <listitem>
-                    <para>amsn: alternative for MSN Messenger </para>
-                </listitem>
-                <listitem>
-                    <para>gaim: alternative for Aim, ICQ, IRC, Yahoo!, MSN, Jabber (Google Talk) </para>
-                </listitem>
-                <listitem>
-                    <para>irssi: (command line based) alternative for mIRC </para>
-                </listitem>
-                <listitem>
-                    <para>kopete: alternative for Aim, ICQ, IRC, Yahoo!, MSN, Jabber </para>
-                </listitem>
-                <listitem>
-                    <para>licq: alternative for ICQ </para>
-                </listitem>
-                <listitem>
-                    <para>psi: jabber client </para>
-                </listitem>
-                <listitem>
-                    <para>xchat: альтернатива mIRC </para>
-                </listitem>
-                <listitem>
-                    <para>
-                        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kvirc.ru/">KVIrc</link>: альтернатива mIRC </para>
-                </listitem>
-                <listitem>
-                    <para>konversation: alternative for mIRC </para>
-                </listitem>
-                <listitem>
-                    <para>Skype: Skype has also version in Linux </para>
-                </listitem>
-                <listitem>
-                    <para>WengoPhone:Wengophone also has a Linux version and is open source </para>
-                </listitem>
-                <listitem>
-                    <para>SIM-IM: alternative for ICQ, Jabber, MSN, SMS, Yahoo!, AIM </para>
-                </listitem>
-            </orderedlist>
-        </section>
-        <section>
-            <info>
-                <title>File managers</title>
-            </info>
-            <orderedlist>
-                <listitem>
-                    <para>krusader: alternative for Total Commander </para>
-                </listitem>
-                <listitem>
-                    <para>
-                        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.nongnu.org/gcmd">GNOME Commander</link>
-                    </para>
-                </listitem>
-            </orderedlist>
-        </section>
-        <section>
-            <info>
-                <title>FTP</title>
-            </info>
-            <orderedlist>
-                <listitem>
-                    <para>gFTP: alternative for FileZilla, SmartFTP </para>
-                </listitem>
-            </orderedlist>
-        </section>
-        <section>
-            <info>
-                <title>Graphics</title>
-            </info>
-            <orderedlist>
-                <listitem>
-                    <para>digiKam: alternative for the propriotary digital photo software bundled with your camera </para>
-                </listitem>
-                <listitem>
-                    <para>gimp: alternative for Adobe Photoshop </para>
-                </listitem>
-                <listitem>
-                    <para>
-                        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://inkscape.sourceforge.net/">Inkscape</link>: alternative for Adobe Illustrator </para>
-                </listitem>
-                <listitem>
-                    <para>gqview: alternative for Irfanview </para>
-                </listitem>
-                <listitem>
-                    <para>
-                        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gwenview.sourceforge.net/">gwenview</link>: alternative for Irfanview </para>
-                </listitem>
-                <listitem>
-                    <para>kuickshow: alternative for Irfanview </para>
-                </listitem>
-            </orderedlist>
-        </section>
-        <section>
-            <info>
-                <title>Internet</title>
-            </info>
-            <orderedlist>
-                <listitem>
-                    <para>Konqueror: alternative for Internet Explorer </para>
-                </listitem>
-                <listitem>
-                    <para>Mozilla Firefox: there is no alternative! </para>
-                </listitem>
-                <listitem>
-                    <para>Seamonkey (previously called Mozilla): alternative for Internet Explorer </para>
-                </listitem>
-                <listitem>
-                    <para>Opera: free but proprietary alternative for Internet Explorer </para>
-                </listitem>
-            </orderedlist>
-        </section>
-        <section>
-            <info>
-                <title>Mail</title>
-            </info>
-            <orderedlist>
-                <listitem>
-                    <para>Evolution: alternative for Outlook </para>
-                </listitem>
-                <listitem>
-                    <para>Mozilla Thunderbird: alternative for Outlook Express </para>
-                </listitem>
-                <listitem>
-                    <para>Kontact / kmail: alternative for Outlook Express </para>
-                </listitem>
-            </orderedlist>
-        </section>
-        <section>
-            <info>
-                <title>Multimedia</title>
-            </info>
-            <orderedlist>
-                <listitem>
-                    <para>AmaroK: alternative for iTunes player/WMP </para>
-                </listitem>
-                <listitem>
-                    <para>XMMS: alternative for WinAMP <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://komnas.com/%7Eashamril/tips/files/win-vs-lin-soft-EN.shtml">http://komnas.com/~ashamril/tips/files/win-vs-lin-soft-EN.shtml</link>
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>beep-media-player: alternative for WinAMP </para>
-                </listitem>
-            </orderedlist>
-            <orderedlist>
-                <listitem>
-                    <para>kaffeine: alternative for Windows Media Player (also plays DVDs) </para>
-                </listitem>
-                <listitem>
-                    <para>MPlayer | gmplayer | kmplayer | kplayer: alternative for Windows Media Player </para>
-                </listitem>
-                <listitem>
-                    <para>Xine: alternative for Windows Media Player (also plays DVDs) </para>
-                </listitem>
-                <listitem>
-                    <para>vlc: alternative for Windows Media Player </para>
-                </listitem>
-                <listitem>
-                    <para>RealPlayer: runs natively on linux! </para>
-                </listitem>
-                <listitem>
-                    <para>Totem : alternative for WMP, Menusupport for DVDs </para>
-                </listitem>
-            </orderedlist>
-            <orderedlist>
-                <listitem>
-                    <para>LMMS : "Linux Music Maker Studio" Linux analog of "FL Studio" <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/index.php?title=HomePage:http://www.lmms.sourceforge.net/&amp;action=edit">HomePage:http://www.lmms.sourceforge.net/</link>
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>Rosegarden : MIDI/Audio-sequencer <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/index.php?title=HomePage:http://www.rosegardenmusic.com/&amp;action=edit">HomePage:http://www.rosegardenmusic.com/</link>
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>Cheese-Tracker : one of the Trackers, use QT </para>
-                </listitem>
-            </orderedlist>
-        </section>
-        <section>
-            <info>
-                <title>Office</title>
-            </info>
-            <orderedlist>
-                <listitem>
-                    <para>OpenOffice.org: alternative for MS Word, Excel, Powerpoint and Access, great support for MS formats </para>
-                </listitem>
-                <listitem>
-                    <para>KOffice : like above without MS format support. Includes more specialized apps than even the full MS Office Pro </para>
-                </listitem>
-                <listitem>
-                    <para>AbiWord : Only like MS Word. Decent MS Format support. Includes grammar check </para>
-                </listitem>
-                <listitem>
-                    <para>StarOffice: commercial version of OpenOffice.org, includes extras (grammar check) </para>
-                </listitem>
-                <listitem>
-                    <para>kpdf, xpdf, epdfview, evince: PDF readers, alternative for Adobe Acrobat Reader </para>
-                </listitem>
-            </orderedlist>
-        </section>
-        <section>
-            <info>
-                <title>P2P</title>
-            </info>
-            <orderedlist>
-                <listitem>
-                    <para>Azureus: java bittorrent client (or bittorrent which is written in python) </para>
-                </listitem>
-                <listitem>
-                    <para>qtorrent, ktorrent: bittorrent clients </para>
-                </listitem>
-                <listitem>
-                    <para>Limewire + gtk-gnutella: Gnutella client </para>
-                </listitem>
-                <listitem>
-                    <para>MLDonkey + Sancho: client and interface for bittorrent, Gnutella, FastTrack, etc. </para>
-                </listitem>
-                <listitem>
-                    <para>aMule: alternative for eMule </para>
-                </listitem>
-                <listitem>
-                    <para>xmule: alternative for eMule </para>
-                </listitem>
-                <listitem>
-                    <para>nicotine: soulseek client </para>
-                </listitem>
-                <listitem>
-                    <para>Valknut, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://linuxdcpp.berlios.de/articles.php?um=index">LinuxDC++</link>: альтернативные клиенты для DC (Direct Connect) </para>
-                </listitem>
-            </orderedlist>
-        </section>
-    </section>
+	<info>
+		<title>Windows-эквиваленты</title>
+	</info>
+	<para>
+		Ссылка1:
+		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/Windows-эквиваленты">http://ru.gentoo-wiki.com/Windows-эквиваленты</link>
+	</para>
+	<para>
+		Ссылка2:
+		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://blog.r000n.net/win-lin-analogs">http://blog.r000n.net/win-lin-analogs</link>
+	</para>
+	<para>
+		Ссылка3:
+		<link xmlns:xlink="http://www.w3.org/1999/xlink"
+			xlink:href="http://ru.opensuse.org/%D0%AD%D0%BA%D0%B2%D0%B8%D0%B2%D0%B0%D0%BB%D0%B5%D0%BD%D1%82%D1%8B_%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B9">http://ru.opensuse.org/Эквиваленты_приложений</link>
+	</para>
+	<para>
+		Ссылка4:
+		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.linuxalt.com/">http://www.linuxalt.com/</link>
+	</para>
+
+	<para>C версии: 1.0</para>
+	<para>Обновлено: 2.0</para>
+	<para />
+	<para>Вы знаете, что хотите сделать, но не знаете, чем? Это список пакетов в портежах Gentoo и их эквиваленты в Windows. Он, конечно же, далеко не
+		полный, но и не предназначен для этого. Он просто даёт возможность лёгкого старта в Gentoo. </para>
+	<para>
+		Для расширения этой таблицы можно использовать статью:
+		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.linuxrsp.ru/win-lin-soft/table-rus.html">Аналоги Windows-программ в Linux - таблица соответствий</link>
+		. Также, весьма полный лист можно найти здесь:
+		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://komnas.com/%7Eashamril/tips/files/win-vs-lin-soft-EN.shtml">[1]</link>
+		(англ.).
+	</para>
+	<para>
+		Смотрите также
+		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://packages.gentoo.org/">официальную страницу портежей</link>
+		(англ.) с портежами, классифицированными по
+		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://packages.gentoo.org/categories/">категориям</link>
+		(англ.)
+	</para>
+	<section>
+		<info>
+			<title>Прикладные и системные программы</title>
+		</info>
+		<table frame="all">
+			<title>Windows-эквиваленты: Прикладные и системные программы</title>
+			<tgroup cols="4">
+				<colspec colname="c1" colwidth="1*" />
+				<colspec colname="c2" colwidth="1*" />
+				<colspec colname="c3" colwidth="1*" />
+				<colspec colname="c4" colwidth="1*" />
+				<thead>
+					<row>
+						<entry morerows="1">Категории ПО</entry>
+						<entry morerows="1">Программы MS Windows</entry>
+						<entry namest="c3" nameend="c4">Программы Linux</entry>
+					</row>
+					<row>
+						<entry>Аналоги</entry>
+						<entry>Портежи</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry morerows="3">Антивирусы</entry>
+						<entry morerows="3">Dr.Web,AVG,NOD32, Kaspersky, Clamav и другие</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.clamav.net/">ClamAV</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-antiviruse/clamav">clamav</link>
+						</entry>
+						</row>
+						<row>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://download.drweb.com/fileserver_unix/">Dr.Web</link>
+							</entry>
+						</row>
+						<row>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.avgrussia.ru">AVG</link>
+							</entry>
+						</row>
+						<row>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://esetnod32.ru/products/solution_5.php">NOD32</link>
+							</entry>
+						</row>
+						<row>
+							<entry morerows="6">Текстовые редакторы</entry>
+							<entry morerows="6">Блокнот / Notepad, WordPad, TextPad, Vim, Xemacs,...</entry>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde.org/">Kedit (KDE)</link>
+								(грф.)
+							</entry>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=kde-base/kedit">kedit</link>
+							</entry>
+						</row>
+						<row>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/">Gedit (Gnome)</link>
+							</entry>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/gedit">gedit</link>
+							</entry>
+						</row>
+						<row>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde.org/">Kate (KDE)</link>
+							</entry>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=kde-base/kate">kate</link>
+							</entry>
+						</row>
+						<row>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://nedit.org/">Nedit</link>
+							</entry>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/nedit">nedit</link>
+							</entry>
+						</row>
+						<row>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.vim.org/">Vim</link>
+								(кнс.)
+							</entry>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/vim">vim</link>
+							</entry>
+						</row>
+						<row>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.xemacs.org/">Xemacs</link>
+							</entry>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/xemacs">xemacs</link>
+							</entry>
+						</row>
+						<row>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.bostic.com/vi/">Nvi</link>
+							</entry>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/nvi">nvi</link>
+							</entry>
+						</row>
+						<row>
+							<entry morerows="1">Запись CD/DVD</entry>
+							<entry morerows="1">
+								BurnAtOnce,
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.nero.com/">Nero</link>
+							</entry>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://graveman.tuxfamily.org/">Graveman</link>
+							</entry>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-cdr/graveman">graveman</link>
+							</entry>
+						</row>
+						<row>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.k3b.org/">K3b</link>
+							</entry>
+							<entry>
+								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-cdr/k3b">k3b</link>
+							</entry>
+						</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+	<section>
+		<info>
+			<title>Работа в сети</title>
+		</info>
+		<table frame="all">
+			<title>Windows-эквиваленты: Работа в сети</title>
+			<tgroup cols="4">
+				<colspec colname="c1" colwidth="1*" />
+				<colspec colname="c2" colwidth="1*" />
+				<colspec colname="c3" colwidth="1*" />
+				<colspec colname="c4" colwidth="1*" />
+				<thead>
+					<row>
+						<entry morerows="1">Категории ПО</entry>
+						<entry morerows="1">Программы MS Windows</entry>
+						<entry namest="c3" nameend="c4">Программы Linux</entry>
+					</row>
+					<row>
+						<entry>Аналоги</entry>
+						<entry>Портежи</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry morerows="7">Web-браузеры</entry>
+						<entry morerows="7">
+							Internet Explorer,
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mozilla.org/">Mozilla</link>
+							,
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mozilla.com/firefox/">Firefox</link>
+							, Opera...
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/projects/epiphany/">Epiphany</link>
+							(грф.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/epiphany">epiphany</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://galeon.sourceforge.net/">Galeon</link>
+							(грф.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/galeon">galeon</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde.org/">Konqueror</link>
+							(грф.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=kde-base/konqueror">konqueror</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://links.twibright.com/">Links</link>
+							(кнс.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/links">links</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mozilla.org/">Mozilla</link>
+							(грф.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/mozilla">mozilla</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mozilla.com/firefox/">Firefox</link>
+							(грф.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/mozilla-firefox">mozilla-firefox</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/projects/nautilus/">Nautilus</link>
+							(грф.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=gnome-base/nautilus">nautilus</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.opera.com/linux/">Opera</link>
+							(грф.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/opera">opera</link>
+						</entry>
+					</row>
+					<row>
+						<entry morerows="11">Почтовые программы</entry>
+						<entry morerows="11">Outlook Express, Netscape/Mozilla, Thunderbird, The Bat, Eudora, Becky, Datula, Sylpheed/Sylpheed-claws, Opera</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/projects/evolution/">Evolution</link>
+							(грф.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/evolution">evolution</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mozilla.org/">Mozilla messenger</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/mozilla">mozilla</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://sylpheed.good-day.net/">Sylpheed</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/sylpheed">sylpheed</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://claws.sylpheed.org/">Sylpheed-claws</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/sylpheed-claws">sylpheed-claws</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde.org/">Kmail</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=kde-base/kmail">kmail</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnus.org/">Gnus</link>
+							(кнс.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-emacs/gnus">gnus</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://balsa.gnome.org/">Balsa</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/balsa">balsa</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.collaboration-world.com/gnumail/">Gnumail</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=gnustep-apps/gnumail">gnumail</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.opera.com/">Opera</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=www-client/opera">opera</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mozilla.org/projects/thunderbird/">Thunderbird</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/thunderbird">thunderbird</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mutt.org/">Mutt</link>
+							(кнс.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/mutt">mutt</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.washington.edu/pine/">Pine</link>
+							(кнс.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=mail-client/pine">pine</link>
+						</entry>
+					</row>
+					<row>
+						<entry morerows="11">Клиенты быстрого обмена сообщениями (IM)</entry>
+						<entry morerows="11">
+							<para>ICQ Lite, ICQ Corp, MSN, AIM, Yahoo, ... </para>
+							<para>Trillian ICQ (бесплатный, может заменить все 3 распространённых клиента), Miranda, Gaim </para>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.licq.org/">Licq</link>
+							(ICQ)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/licq">licq </link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://thekonst.net/en/centericq">Centericq</link>
+							(Все)(кнс.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/centericq">centericq</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.micq.org/">Micq</link>
+							(ICQ)(кнс.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/micq">micq</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gnomeicu.sourceforge.net/">GnomeICU</link>
+							(ICQ)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/gnomeicu">gnomeicu</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gaim.sourceforge.net/">Gaim</link>
+							(Все)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/gaim">gaim</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ayttm.sourceforge.net/">Ayttm</link>
+							(Все)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/ayttm">ayttm</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://kopete.kde.org/">Kopete</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/kopete">kopete</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://sim-im.org/">Simple Instant Messenger</link>
+							(Все)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/sim">sim</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://amsn.sourceforge.net/">aMSN</link>
+							(MSN)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/amsn">amsn </link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ysmv7.sourceforge.net/">YSM</link>
+							(ICQ)(кнс.)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/ysm">ysm</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://public.yahoo.com/%7Emmk/index.html">Yahoo Messenger for Unix</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/ymessenger">ymessenger</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://kmess.sourceforge.net/">Kmess</link>
+							(MSN)
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=net-im/kmess">kmess</link>
+						</entry>
+					</row>
+					<row>
+						<entry>Видеоредакторы и конвертеры</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.virtualdub.org/">VirtualDub</link>
+							,
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://virtualdubmod.sourceforge.net/">VirtualDubMod</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://fixounet.free.fr/avidemux/">Avidemux</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=media-video/avidemux">avidemux</link>
+						</entry>
+					</row>
+					<row>
+						<entry>Virtual CD</entry>
+						<entry>VirtualDrive, VirtualCD, Daemon Tools, ...</entry>
+						<entry>
+							<command>mount -o loop "mycd.iso" /mnt/cdrom</command>
+						</entry>
+						<entry />
+					</row>
+					<row>
+						<entry>Другое</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.wikipedia.org/wiki/Bsod">Blue Screen of Death</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.jwz.org/xscreensaver/">XScreenSaver</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=x11-misc/xscreensaver">xscreensaver</link>
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+	<section>
+		<info>
+			<title>Офис/Бизнес</title>
+		</info>
+		<table frame="all">
+			<title>Windows-эквиваленты: Офис/Бизнес</title>
+			<tgroup cols="4">
+				<colspec colname="c1" colwidth="1*" />
+				<colspec colname="c2" colwidth="1*" />
+				<colspec colname="c3" colwidth="1*" />
+				<colspec colname="c4" colwidth="1*" />
+				<thead>
+					<row>
+						<entry morerows="1">Категории ПО</entry>
+						<entry morerows="1">Программы MS Windows</entry>
+						<entry namest="c3" nameend="c4">Программы Linux</entry>
+					</row>
+					<row>
+						<entry>Аналоги</entry>
+						<entry>Портежи</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry morerows="1">Офисный пакет</entry>
+						<entry morerows="1">MS Office, StarOffice / OpenOffice, 602Software</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://openoffice.org/">OpenOffice</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/koffice">koffice</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.koffice.org/">Koffice</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/openoffice">openoffice</link>
+						</entry>
+					</row>
+					<row>
+						<entry morerows="2">Текстовый процессор</entry>
+						<entry morerows="2">Word, StarOffice / OpenOffice Writer, 602Text, Abiword</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://openoffice.org/">OpenOffice Writer</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/openoffice">openoffice</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.koffice.org/">KWord</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/kword">kword</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.abiword.org/">AbiWord</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/abiword">abiword</link>
+						</entry>
+					</row>
+					<row>
+						<entry morerows="2">Электронные таблицы</entry>
+						<entry morerows="2">Excel, StarOffice / OpenOffice Calc</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://openoffice.org/">OpenOffice Calc</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/openoffice">openoffice</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.koffice.org/">KSpread</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/kspread">kspread</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/projects/gnumeric/">Gnumeric</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-office/gnumeric">gnumeric</link>
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+		<section>
+			<info>
+				<title>Chat</title>
+			</info>
+			<orderedlist>
+				<listitem>
+					<para>amsn: alternative for MSN Messenger </para>
+				</listitem>
+				<listitem>
+					<para>gaim: alternative for Aim, ICQ, IRC, Yahoo!, MSN, Jabber (Google Talk) </para>
+				</listitem>
+				<listitem>
+					<para>irssi: (command line based) alternative for mIRC </para>
+				</listitem>
+				<listitem>
+					<para>kopete: alternative for Aim, ICQ, IRC, Yahoo!, MSN, Jabber </para>
+				</listitem>
+				<listitem>
+					<para>licq: alternative for ICQ </para>
+				</listitem>
+				<listitem>
+					<para>psi: jabber client </para>
+				</listitem>
+				<listitem>
+					<para>xchat: альтернатива mIRC </para>
+				</listitem>
+				<listitem>
+					<para>
+						<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kvirc.ru/">KVIrc</link>
+						: альтернатива mIRC
+					</para>
+				</listitem>
+				<listitem>
+					<para>konversation: alternative for mIRC </para>
+				</listitem>
+				<listitem>
+					<para>Skype: Skype has also version in Linux </para>
+				</listitem>
+				<listitem>
+					<para>WengoPhone:Wengophone also has a Linux version and is open source </para>
+				</listitem>
+				<listitem>
+					<para>SIM-IM: alternative for ICQ, Jabber, MSN, SMS, Yahoo!, AIM </para>
+				</listitem>
+			</orderedlist>
+		</section>
+		<section>
+			<info>
+				<title>File managers</title>
+			</info>
+			<orderedlist>
+				<listitem>
+					<para>krusader: alternative for Total Commander </para>
+				</listitem>
+				<listitem>
+					<para>
+						<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.nongnu.org/gcmd">GNOME Commander</link>
+					</para>
+				</listitem>
+			</orderedlist>
+		</section>
+		<section>
+			<info>
+				<title>FTP</title>
+			</info>
+			<orderedlist>
+				<listitem>
+					<para>gFTP: alternative for FileZilla, SmartFTP </para>
+				</listitem>
+			</orderedlist>
+		</section>
+		<section>
+			<info>
+				<title>Graphics</title>
+			</info>
+			<orderedlist>
+				<listitem>
+					<para>digiKam: alternative for the propriotary digital photo software bundled with your camera </para>
+				</listitem>
+				<listitem>
+					<para>gimp: alternative for Adobe Photoshop </para>
+				</listitem>
+				<listitem>
+					<para>
+						<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://inkscape.sourceforge.net/">Inkscape</link>
+						: alternative for Adobe Illustrator
+					</para>
+				</listitem>
+				<listitem>
+					<para>gqview: alternative for Irfanview </para>
+				</listitem>
+				<listitem>
+					<para>
+						<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gwenview.sourceforge.net/">gwenview</link>
+						: alternative for Irfanview
+					</para>
+				</listitem>
+				<listitem>
+					<para>kuickshow: alternative for Irfanview </para>
+				</listitem>
+			</orderedlist>
+		</section>
+		<section>
+			<info>
+				<title>Internet</title>
+			</info>
+			<orderedlist>
+				<listitem>
+					<para>Konqueror: alternative for Internet Explorer </para>
+				</listitem>
+				<listitem>
+					<para>Mozilla Firefox: there is no alternative! </para>
+				</listitem>
+				<listitem>
+					<para>Seamonkey (previously called Mozilla): alternative for Internet Explorer </para>
+				</listitem>
+				<listitem>
+					<para>Opera: free but proprietary alternative for Internet Explorer </para>
+				</listitem>
+			</orderedlist>
+		</section>
+		<section>
+			<info>
+				<title>Mail</title>
+			</info>
+			<orderedlist>
+				<listitem>
+					<para>Evolution: alternative for Outlook </para>
+				</listitem>
+				<listitem>
+					<para>Mozilla Thunderbird: alternative for Outlook Express </para>
+				</listitem>
+				<listitem>
+					<para>Kontact / kmail: alternative for Outlook Express </para>
+				</listitem>
+			</orderedlist>
+		</section>
+		<section>
+			<info>
+				<title>Multimedia</title>
+			</info>
+			<orderedlist>
+				<listitem>
+					<para>AmaroK: alternative for iTunes player/WMP </para>
+				</listitem>
+				<listitem>
+					<para>
+						XMMS: alternative for WinAMP
+						<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://komnas.com/%7Eashamril/tips/files/win-vs-lin-soft-EN.shtml">http://komnas.com/~ashamril/tips/files/win-vs-lin-soft-EN.shtml</link>
+					</para>
+				</listitem>
+				<listitem>
+					<para>beep-media-player: alternative for WinAMP </para>
+				</listitem>
+			</orderedlist>
+			<orderedlist>
+				<listitem>
+					<para>kaffeine: alternative for Windows Media Player (also plays DVDs) </para>
+				</listitem>
+				<listitem>
+					<para>MPlayer | gmplayer | kmplayer | kplayer: alternative for Windows Media Player </para>
+				</listitem>
+				<listitem>
+					<para>Xine: alternative for Windows Media Player (also plays DVDs) </para>
+				</listitem>
+				<listitem>
+					<para>vlc: alternative for Windows Media Player </para>
+				</listitem>
+				<listitem>
+					<para>RealPlayer: runs natively on linux! </para>
+				</listitem>
+				<listitem>
+					<para>Totem : alternative for WMP, Menusupport for DVDs </para>
+				</listitem>
+			</orderedlist>
+			<orderedlist>
+				<listitem>
+					<para>
+						LMMS : "Linux Music Maker Studio" Linux analog of "FL Studio"
+						<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/index.php?title=HomePage:http://www.lmms.sourceforge.net/&amp;action=edit">HomePage:http://www.lmms.sourceforge.net/</link>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Rosegarden : MIDI/Audio-sequencer
+						<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/index.php?title=HomePage:http://www.rosegardenmusic.com/&amp;action=edit">HomePage:http://www.rosegardenmusic.com/</link>
+					</para>
+				</listitem>
+				<listitem>
+					<para>Cheese-Tracker : one of the Trackers, use QT </para>
+				</listitem>
+			</orderedlist>
+		</section>
+		<section>
+			<info>
+				<title>Office</title>
+			</info>
+			<orderedlist>
+				<listitem>
+					<para>OpenOffice.org: alternative for MS Word, Excel, Powerpoint and Access, great support for MS formats </para>
+				</listitem>
+				<listitem>
+					<para>KOffice : like above without MS format support. Includes more specialized apps than even the full MS Office Pro </para>
+				</listitem>
+				<listitem>
+					<para>AbiWord : Only like MS Word. Decent MS Format support. Includes grammar check </para>
+				</listitem>
+				<listitem>
+					<para>StarOffice: commercial version of OpenOffice.org, includes extras (grammar check) </para>
+				</listitem>
+				<listitem>
+					<para>kpdf, xpdf, epdfview, evince: PDF readers, alternative for Adobe Acrobat Reader </para>
+				</listitem>
+			</orderedlist>
+		</section>
+		<section>
+			<info>
+				<title>P2P</title>
+			</info>
+			<orderedlist>
+				<listitem>
+					<para>Azureus: java bittorrent client (or bittorrent which is written in python) </para>
+				</listitem>
+				<listitem>
+					<para>qtorrent, ktorrent: bittorrent clients </para>
+				</listitem>
+				<listitem>
+					<para>Limewire + gtk-gnutella: Gnutella client </para>
+				</listitem>
+				<listitem>
+					<para>MLDonkey + Sancho: client and interface for bittorrent, Gnutella, FastTrack, etc. </para>
+				</listitem>
+				<listitem>
+					<para>aMule: alternative for eMule </para>
+				</listitem>
+				<listitem>
+					<para>xmule: alternative for eMule </para>
+				</listitem>
+				<listitem>
+					<para>nicotine: soulseek client </para>
+				</listitem>
+				<listitem>
+					<para>
+						Valknut,
+						<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://linuxdcpp.berlios.de/articles.php?um=index">LinuxDC++</link>
+						: альтернативные клиенты для DC (Direct Connect)
+					</para>
+				</listitem>
+			</orderedlist>
+		</section>
+	</section>
 </article>
