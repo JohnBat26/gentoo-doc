@@ -4,34 +4,36 @@
 		<title>Windows-эквиваленты</title>
 	</info>
 	<para>
-		Ссылка1:
+		Ссылка 1:
 		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/Windows-эквиваленты">http://ru.gentoo-wiki.com/Windows-эквиваленты</link>
 	</para>
 	<para>
-		Ссылка2:
+		Ссылка 2:
+		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.linuxrsp.ru/win-lin-soft/table-rus.html">http://www.linuxrsp.ru/win-lin-soft/table-rus.html</link>
+	</para>
+	<para>
+		Ссылка 3:
 		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://blog.r000n.net/win-lin-analogs">http://blog.r000n.net/win-lin-analogs</link>
 	</para>
 	<para>
-		Ссылка3:
+		Ссылка 4:
 		<link xmlns:xlink="http://www.w3.org/1999/xlink"
 			xlink:href="http://ru.opensuse.org/%D0%AD%D0%BA%D0%B2%D0%B8%D0%B2%D0%B0%D0%BB%D0%B5%D0%BD%D1%82%D1%8B_%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B9">http://ru.opensuse.org/Эквиваленты_приложений</link>
 	</para>
 	<para>
-		Ссылка4:
+		Ссылка 5:
 		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.linuxalt.com/">http://www.linuxalt.com/</link>
 	</para>
 
 	<para>C версии: 1.0</para>
 	<para>Обновлено: 2.0</para>
 	<para />
-	<para>Вы знаете, что хотите сделать, но не знаете, чем? Это список пакетов в портежах Gentoo и их эквиваленты в Windows. Он, конечно же, далеко не
-		полный, но и не предназначен для этого. Он просто даёт возможность лёгкого старта в Gentoo. </para>
 	<para>
-		Для расширения этой таблицы можно использовать статью:
-		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.linuxrsp.ru/win-lin-soft/table-rus.html">Аналоги Windows-программ в Linux - таблица соответствий</link>
-		. Также, весьма полный лист можно найти здесь:
-		<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://komnas.com/%7Eashamril/tips/files/win-vs-lin-soft-EN.shtml">[1]</link>
-		(англ.).
+		Вы знаете, что хотите сделать, но не знаете, чем? В данном разделе приводится большой перечень программ, существующих на обеих платформах.
+		Приводятся как свободные так и коммерческие аналоги.
+		Для тех программ, которые существуют в портежах gentoo, указаны названия пакетов и, если
+		необходимо установить дополнительный оверлей, название
+		оверлея.  
 	</para>
 	<para>
 		Смотрите также
@@ -46,20 +48,25 @@
 		</info>
 		<table frame="all">
 			<title>Windows-эквиваленты: Прикладные и системные программы</title>
-			<tgroup cols="4">
+			<tgroup cols="6">
 				<colspec colname="c1" colwidth="1*" />
 				<colspec colname="c2" colwidth="1*" />
 				<colspec colname="c3" colwidth="1*" />
 				<colspec colname="c4" colwidth="1*" />
+				<colspec colname="c5" colwidth="1*" />
+				<colspec colname="c6" colwidth="1*" />
 				<thead>
-					<row>
+					<row align="center">
 						<entry morerows="1">Категории ПО</entry>
 						<entry morerows="1">Программы MS Windows</entry>
-						<entry namest="c3" nameend="c4">Программы Linux</entry>
+						<entry namest="c3" nameend="c6" align="center">Программы Linux</entry>
 					</row>
-					<row>
-						<entry>Аналоги</entry>
+					<row align="center">
+						<entry>Аналоги своб.</entry>
+						<entry>Аналоги комм.</entry>
 						<entry>Портежи</entry>
+						<entry>Оверлеи</entry>
+
 					</row>
 				</thead>
 				<tbody>
@@ -69,106 +76,257 @@
 						<entry>
 							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.clamav.net/">ClamAV</link>
 						</entry>
+						<entry />
 						<entry>
-							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-antiviruse/clamav">clamav</link>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-antiviruse/clamav">clamav</link>
 						</entry>
-						</row>
-						<row>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://download.drweb.com/fileserver_unix/">Dr.Web</link>
-							</entry>
-						</row>
-						<row>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.avgrussia.ru">AVG</link>
-							</entry>
-						</row>
-						<row>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://esetnod32.ru/products/solution_5.php">NOD32</link>
-							</entry>
-						</row>
-						<row>
-							<entry morerows="6">Текстовые редакторы</entry>
-							<entry morerows="6">Блокнот / Notepad, WordPad, TextPad, Vim, Xemacs,...</entry>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde.org/">Kedit (KDE)</link>
-								(грф.)
-							</entry>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=kde-base/kedit">kedit</link>
-							</entry>
-						</row>
-						<row>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/">Gedit (Gnome)</link>
-							</entry>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/gedit">gedit</link>
-							</entry>
-						</row>
-						<row>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde.org/">Kate (KDE)</link>
-							</entry>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=kde-base/kate">kate</link>
-							</entry>
-						</row>
-						<row>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://nedit.org/">Nedit</link>
-							</entry>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/nedit">nedit</link>
-							</entry>
-						</row>
-						<row>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.vim.org/">Vim</link>
-								(кнс.)
-							</entry>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/vim">vim</link>
-							</entry>
-						</row>
-						<row>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.xemacs.org/">Xemacs</link>
-							</entry>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/xemacs">xemacs</link>
-							</entry>
-						</row>
-						<row>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.bostic.com/vi/">Nvi</link>
-							</entry>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-editors/nvi">nvi</link>
-							</entry>
-						</row>
-						<row>
-							<entry morerows="1">Запись CD/DVD</entry>
-							<entry morerows="1">
-								BurnAtOnce,
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.nero.com/">Nero</link>
-							</entry>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://graveman.tuxfamily.org/">Graveman</link>
-							</entry>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-cdr/graveman">graveman</link>
-							</entry>
-						</row>
-						<row>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.k3b.org/">K3b</link>
-							</entry>
-							<entry>
-								<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/wiki.php?s=app-cdr/k3b">k3b</link>
-							</entry>
-						</row>
+						<entry />
+					</row>
+					<row>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://download.drweb.com/fileserver_unix/">Dr.Web</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gpo.zugaina.org/app-antivirus/drweb">drweb</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-overlays.zugaina.org/crg/">crg</link>
+							,
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-overlays.zugaina.org/rostov/"> rostov</link>
+						</entry>
+					</row>
+					<row>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.avgrussia.ru">AVG</link>
+						</entry>
+						<entry />
+						<entry />
+					</row>
+					<row>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://esetnod32.ru/products/solution_5.php">NOD32</link>
+						</entry>
+						<entry />
+						<entry />
+					</row>
+					<row>
+						<entry morerows="11">Текстовые редакторы</entry>
+						<entry morerows="11">Блокнот / Notepad, WordPad, TextPad, Vim, Xemacs,...</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde.org/">Kedit (KDE)</link>
+							(грф.)
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/kde-base/kedit">kedit</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnome.org/">Gedit (Gnome)</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-editors/gedit">gedit</link>
+						</entry>
+					</row>
+
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kate-editor.org/kate">Kate (KDE)</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/kde-base/kate">kate</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kate-editor.org/kwrite">KWrite (KDE)</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/kde-base/kwrite">kwrite</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://nedit.org/">Nedit</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-editors/nedit">nedit</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.jedit.org/">jEdit</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-editors/jedit">jedit</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.vim.org/">Vim</link>
+
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-editors/vim">vim</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.xemacs.org/">Xemacs</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-editors/xemacs">xemacs</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scribes.sourceforge.net/">Scribes</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-editors/scribes">scribes</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://tarot.freeshell.org/leafpad/">leafpad</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-editors/leafpad">leafpad</link>
+						</entry>
+					</row>
+
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://xcoral.free.fr/">Xcoral</link>
+						</entry>
+						<entry />
+					</row>
+
+
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.bostic.com/vi/">Nvi</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-editors/nvi">nvi</link>
+						</entry>
+					</row>
+					<row>
+						<entry morerows="3">Консольные текстовые редакторы</entry>
+						<entry morerows="3"> Vim, Xemacs,Редактор из FAR, редактор из DN ...</entry>
+
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.nano-editor.org/">Nano</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-editors/nano">nano</link>
+						</entry>
+					</row>
+
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.jedsoft.org/jed/">Jed</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-editors/jed">jed</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.vim.org/">Vim</link>
+
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-editors/vim">vim</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.xemacs.org/">Xemacs</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-editors/xemacs">xemacs</link>
+						</entry>
+					</row>
+					<row>
+						<entry morerows="6">Запись CD/DVD</entry>
+						<entry morerows="6">
+							BurnAtOnce,Roxio Easy CD Creator,
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.nero.com/">Nero</link>
+						</entry>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://graveman.tuxfamily.org/">Graveman</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-cdr/graveman">graveman</link>
+						</entry>
+					</row>
+					<row>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.nero.com/rus/linux3.html">Nero Linux</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.k3b.org/">K3b (KDE)</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-cdr/k3b">k3b</link>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.xcdroast.org/">XCDRoast</link>
+						</entry>
+						<entry />
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/app-cdr/xcdroast">xcdroast</link>
+						</entry>
+					</row>
+
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://sourceforge.net/projects/eroaster/">Eroaster</link>
+						</entry>
+						<entry />
+
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://arson.sourceforge.net/">Arson</link>
+						</entry>
+						<entry />
+
+					</row>
+					<row>
+						<entry>
+							<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://tcdr.sourceforge.net/">tcdr</link>
+						</entry>
+						<entry />
+
+					</row>
+
 				</tbody>
 			</tgroup>
 		</table>
