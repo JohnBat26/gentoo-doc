@@ -1,378 +1,336 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
-<info><title>Gentoo и системы контроля версий.</title></info><section><info><title>Gentoo и Subversion.</title></info><section><info><title>HOWTO Subversion сервер при помощи Apache2 и WebDav</title></info>
-<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/HOWTO_Subversion_сервер_при_помощи_Apache2_и_WebDav">http://ru.gentoo-wiki.com/HOWTO Subversion сервер при помощи Apache2 и WebDav</link>
-</para>
-<para>C версии: 1.5</para><section><info><title>О чем эта статья </title></info>
-<para>Данное HOWTO является вольным переводом оригинальной английской статьи. Также в статью добавленно некоторое количество отсебятины по поводу и без (надеюсь автор оригинала не знает русского и не увидит как я испохабил его несчастную статью). </para>
-<para>Данная статья посвещена настройке сервера Subversion под Apache с применением WebDav и только ей. Информацию по клиенту и настройке автономного сервера можно найти по ссылке <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-wiki.com/HOWTO_Subversion">en:HOWTO Subversion</link> </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Предупреждение: Данная статья предусматривает, что читатель - разумный человек и не будет вешать репозиторий не на ssl хост, и вообще заботится о безопасности. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>FIXME: Хорошо бы описать в чем плюсы WebDav подхода и в чем минусы </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-</section>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Gentoo и системы контроля версий.</title>
+    </info>
     <section>
-        <info><title> Настройка WebDav глобально, безотносительно в virtual-хостам </title></info>
-    <section><info><title>Apache. Компиляция без Worker MPM </title></info>
-<para>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://svn.haxx.se/users/archive-2006-02/1317.shtml">Существует известная проблема</link> при больших коммитах (commit, оффициальный перевод - "фиксация изменений", на мой взгляд длинновато) связанная с использованием апачевого (от Apache) "worker" MPM. Рекомендуется просто отключить этот MPM и скомпилировать Apache с "prefork" MPM. Для этого просто добавьте новую (или поменяйте существующую, если таковая уже есть) строчку в package.use (в случае использования Gentoo, естественно): </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Файл: /etc/portage/package.use </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>www-servers/apache -mpm-worker mpm-prefork</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>После чего перекомпилируйте Апач: emerge -aDNtuv apache </para>
-<para>Более того, пожалуйста убедитесь, что subversion скомпилированна с (use flag) apache2 и без nowebdav юзами (от use flags). </para>
+        <info>
+            <title>Gentoo и Subversion.</title>
+        </info>
+        <section>
+            <info>
+                <title>HOWTO Subversion сервер при помощи Apache2 и WebDav</title>
+            </info>
+            <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/HOWTO_Subversion_сервер_при_помощи_Apache2_и_WebDav">http://ru.gentoo-wiki.com/HOWTO Subversion сервер при помощи Apache2 и WebDav</link>
+            </para>
+            <para>C версии: 1.5</para>
+            <section>
+                <info>
+                    <title>О чем эта статья </title>
+                </info>
+                <para>Данное HOWTO является вольным переводом оригинальной английской статьи. Также в статью добавленно некоторое количество отсебятины по поводу и без (надеюсь автор оригинала не знает русского и не увидит как я испохабил его несчастную статью). </para>
+                <para>Данная статья посвещена настройке сервера Subversion под Apache с применением WebDav и только ей. Информацию по клиенту и настройке автономного сервера можно найти по ссылке <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-wiki.com/HOWTO_Subversion">en:HOWTO Subversion</link>
+                </para>
+                <warning>
+                    <para>Данная статья предусматривает, что читатель - разумный человек и не будет вешать репозиторий не на ssl хост, и вообще заботится о безопасности. </para>
+                </warning>
+                <note>
+                    <para>FIXME: Хорошо бы описать в чем плюсы WebDav подхода и в чем минусы </para>
+                </note>
+            </section>
+            <section>
+                <info>
+                    <title> Настройка WebDav глобально, безотносительно в virtual-хостам </title>
+                </info>
+                <section>
+                    <info>
+                        <title>Apache. Компиляция без Worker MPM </title>
+                    </info>
+                    <para>
+                        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://svn.haxx.se/users/archive-2006-02/1317.shtml">Существует известная проблема</link> при больших коммитах (commit, оффициальный перевод - "фиксация изменений", на мой взгляд длинновато) связанная с использованием апачевого (от Apache) "worker" MPM. Рекомендуется просто отключить этот MPM и скомпилировать Apache с "prefork" MPM. Для этого просто добавьте новую (или поменяйте существующую, если таковая уже есть) строчку в package.use (в случае использования Gentoo, естественно): </para>
+                    <example>
+                        <title>Файл: <filename>/etc/portage/package.use</filename></title>
+                        <programlisting>www-servers/apache -mpm-worker mpm-prefork</programlisting>
+                    </example>
+                    <para>После чего перекомпилируйте Апач: <command>emerge -aDNtuv apache</command></para>
+                    <para>Более того, пожалуйста убедитесь, что subversion скомпилированна с (use flag) apache2 и без nowebdav юзами (от use flags). </para>
+                </section>
+            </section>
+            <section>
+                <info>
+                    <title>Включение SVN и WebDav модулей в Apache </title>
+                </info>
+                <para>Для использования WebDav и Subversion модулей их, как ни странно, необходимо включить. Делается это при помощи передачи соответсвующих опций (далее - дефайнов, от Define) Апачу при загрузке. Также, для аутентификации, вам возможно понадобится SSL (если вам так не кажется, советую подумать еще раз). Добавте следующую строчку после уже существующей APACHE2_OPTS строчки. (-D SVN_AUTHZ необходимо для использования авторизации, см. ниже) </para>
+                <example>
+                    <title>Файл: <filename>/etc/conf.d/apache2</filename></title>
+                    <programlisting>APACHE2_OPTS="$APACHE2_OPTS -D SVN -D SVN_AUTHZ -D DAV -D SSL"</programlisting>
+                </example>
+            </section>
+            <section>
+                <info>
+                    <title>Создание репозиториев применительно к данной конфигурации </title>
+                </info>
+                <para>Необходимо, чтобы Апач имел права на запись на папку репозитория(иев), с которым(и) он должен работать. Это можно сделать двумя способами: </para>
+                <orderedlist>
+                    <listitem>
+                        <para>Сменой пользователя/группы папки репозитория: </para>
+                    </listitem>
+                    <listitem>
+                        <para>Добавлением пользователя apache (или того, под которым ваш Апач бегает) в группу svnusers: </para>
+                    </listitem>
+                </orderedlist>
+                <para>Лично я, переводчик, рекомендую воспользоваться комбинацией этих способов, из соображений, что права на запись могут понадобится не только Апачу, а включать страждущего пользователя в группу apache тоже как-то нехорошо, т.к. это даст доступ не только к репозиториям. Для упрощения этой задачи мною был написан следующий скрипт: </para>
+                <example>
+                    <title>Файл: <filename>create_repository.sh </filename></title>
+                    <programlisting>#!/bin/sh
+
+DIR_MODE=770
+FILE_MODE=660
+SVN_ROOT="/var/svn"
+
+SVN_USER="apache"
+SVN_GROUP="svn"
+
+NAME=${1:?"Usage: create_repository.sh &lt;repository name&gt;"}
+
+REPO_DIR="${SVN_ROOT}/${NAME}"
+
+svnadmin create "${REPO_DIR}"
+chown "${SVN_USER}:${SVN_GROUP}" -R "${REPO_DIR}"
+find "${REPO_DIR}" -type d -exec chmod ${DIR_MODE} {} +
+find "${REPO_DIR}" -type f -exec chmod ${FILE_MODE} {} +
+
+# vim: nobackup</programlisting>
+                </example>
+            </section>
+            <section>
+                <info>
+                    <title>Базовая настройка </title>
+                </info>
+                <para>Вместе с subversion устанавливается файл /etc/apache2/modules.d/47_mod_dav_svn.conf (в случае включенного юза apache2), в котором и содержится практически работающий конфиг (от config - настройка). </para>
+                <para>Инструкция </para>
+                <programlisting>&lt;Location /svn&gt;
+        DAV svn</programlisting>
+                <para>сообщает Апачу о том, что все запросы, чей путь начинается с /svn необходимо обрабатывать при помощи WebDav модуля (Dav svn директива). </para>
+                <orderedlist>
+                    <listitem>
+                        <para>Если вам достаточно только одного репозитория то используйте директиву </para>
+                    </listitem>
+                </orderedlist>
+                <programlisting>        SVNPath <replaceable>/путь/к/репозиторию</replaceable></programlisting>
+                <orderedlist>
+                    <listitem>
+                        <para>В противном случе, для многочисленных репозиториев, необходимо использовать следующую директиву: </para>
+                    </listitem>
+                </orderedlist>
+                <programlisting>        SVNParentPath <replaceable>/путь/к/папке/с/репозиториями</replaceable></programlisting>
+                <para>В этом случае все подпапки папки, указанной в SVNParentPath директиве, будут рассматриватся как репозитории Subversion (Даже если они таковыми не являются). </para>
+                <para>Также существует возможность заставить Апач формировать список репозиториев/содержимого в них, в случае захода с обычного брузера. Для этого существует магическая опция SVNListParentPath (Правда данная опция доступна только с subversion версии 1.3, но для настоящего гентушника это все равно уже антиквариат), которую необходимо установить в on: </para>
+                <programlisting>        SVNListParentPath on</programlisting>
+                <para>ВАЖНО: При использовании SVNListParentPath может так случится, что вы получите 403 Forbidden, а не список репозиториев (Более подробно данный природный феномен описан <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.nabble.com/SVNListParentPath-t839339.html">здесь</link>). Как вариант избавления, вы можете добавить в описание блока Location заключительный слэш. </para>
+                <programlisting>        &lt;Location /svn/&gt;</programlisting>
+                <para>В таком случае, вам наверняка также захочется, чтобы Апач также отлавливал и просто путь /svn . Для этого можно воспользоватся магической опцией RedirectMatch (добавив ее куда-нибудь вовне блока Location), как показанно в нижеприведенном заклинании. </para>
+                <programlisting>        RedirectMatch ^(/svn)$ $1/</programlisting>
+                <para>Дабы избежать ппроблем, вроде описанной тут: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde-forum.org/artikel/14030/Intermediate-Collectionsfolders.html">Resource cannot be created at the destination...</link>, будет полезно добавить в конфиг директиву: </para>
+                <programlisting>        SVNAutoVersioning On</programlisting>
+            </section>
+            <section>
+                <info>
+                    <title>Аутентификация </title>
+                </info>
+                <section>
+                    <info>
+                        <title>Стандартная </title>
+                    </info>
+                    <para>На данный момент мы, чисто теоретически, имеем работающий Апач с подключенным Сабвершеном (от Subversion). Однако любая подозрительная личность может сделать с нашим репозиторием что захочет, что естественно не входит в наши планы. </para>
+                    <para>Добавление следующих строчек в <filename>/etc/apache2/modules.d/47_mod_dav_svn.conf</filename> включит базовую аутентификацию Апача </para>
+                    <example>
+                        <title>Файл: /etc/apache2/modules.d/47_mod_dav_svn.conf </title>
+                        <programlisting>  AuthType Basic
+  AuthName "Subversion repository"
+  AuthUserFile /var/svn/conf/svnusers
+  Require valid-user
+<lineannotation>  # Тип встроенной аутентификации "Basic" посылает пароли открытым текстом, что есть небезопасно.
+  # Чтобы избежать  ситуации кражи пароля необходимо добавить следующую директиву, 
+  # которая будет требовать подключения с ssl</lineannotation>
+  SSLRequireSSL</programlisting>
+                    </example>
+                    <note>
+                        <para>Как несложно догадатся, для того чтобы можно было требовать ssl, его неплохо было бы включить. Как это сделать было описано выше. </para>
+                    </note>
+                    <para>Дополнение: Однако намного более завлекательным вариантом является принудительный редирект на ssl хост, т.к. не вводит среднестатистического пользователя в ступор при виде непонятной ошибки на иноземном языке </para>
+                    <para>Начало общефилософского лирического отступления </para>
+                    <para>Также положительным побочным действием предложенного решения является то, что если у вас стандартный ssl порт уже занят, то таким образом можно ликвидировать проблему с запоминанием номера порта, просто заходя на http, а Апач вас уже перешлет на правильный порт (при условии, что вы ему скажите это делать, естественно - болезненной самостоятельностью юниксовые сервера, по счастью, не обладают (хотя периодически и кажется, что они проявляют признаки очень вредного интеллекта, подкидывая все новые и новые гадости))) </para>
+                    <para>Конец лирическому отступлению </para>
+                    <example>
+                        <title>Файл: <filename>/etc/apache2/modules.d/47_mod_dav_svn.conf </filename></title>
+                        <programlisting>&lt;Location /svn&gt;
+  [...]
+ 
+  RewriteEngine On
+  RewriteCond %{HTTPS} !on
+  RewriteRule ^/(.*) https://%{SERVER_NAME}%{REQUEST_URI} [R]</programlisting>
+                    </example>
+                    <para>Возможность: Чтобы ограничить доступ только по ssl, недостаточно директивы SSLRequireSSL в <filename>47_mod_dav_svn.conf</filename>. Для этого необходимо перенести все директивы из 47_mod_dav_svn.conf в файл с дефолтным (от default - по умолчанию) виртуальным хостом для ssl - XX_mod_ssl_default-vhost.conf. Также необходимо так поменять номер этого виртуального хоста так чтобы он грузился после mod_dav (все файлы в папке /etc/apache2/conf/modules.d загружаются в алфавитном порядке). Впрочем это необходимо только тем у кого настолько древний Апач (или настолько новый, кто знает - постоянно туда-сюда эти хосты путешествуют. По моему мнению, их вообще выкинуть можно), что дефолтный хост лежит все еще в modules.d - их уже месяцов пять как переместили в vhosts.d. Остальным беспокоится не зачем - vhosts.d загружаются после modules.d </para>
+                    <para>Небольшая оптимизация: Однако вместо того чтобы перемещать директивы из файла 47_mod_dav_svn.conf внутрь виртуального ssl-хоста, можно попросту проинклюдить (от include - включать (в себя)) туда целиком файл, предварительно поменяв ему расширение на что-нибуть отличное от .conf, либо вынеся вовне {{filename|modules.d}, дабы самостоятельно Апач его не разыскал. Делается это при помощи магической директивы Include с указанием абсолютного пути до желаемого файла </para>
+                    <para>Начало лирического отступления о культурных особенностях индейцев Вообще-то можно указать и относительный, но стоит учитывать, что Апач - индеец и имеет несколько свои представления о том что такое "относительный путь". Для него это путь относительно истинного пути - путь ServerRoot'а - т.е. по умолчанию откуда-то от /usr/lib/apache2 </para>
+                    <para>Конец лирическому отступлению </para>
+                    <para>Оптимизация побольше и по-глобальнее: По-умолчанию Апач грузит все конфиги в папке {{filename|modules.d} по маске {{filename|modules.d/*.conf}, так что можно немного переписать систему инклюдов, дабы разделить конфиги на обычные и продвинутые-ssl-ные. Для этого достаточно переименовать полюбившийся конфиг, в нашем случае - 47_mod_dav_svn.conf, в что-нибудь с расширением отличным от .conf (либо, как уже было предложено выше, создав отдельную папку для подобных продвинутых конфигов), к примеру в 47_mod_dav_svn.ssl-conf. Тогда достаточно будет указать в httpd.conf (или любом другом глобальном конфиге - к примеру в modules.d/40_mod_ssl.conf), внутри соответствующего блока &lt;IfModule ssl_module&gt;/&lt;IfDefine SSL&gt; следующие строчки: </para>
+                    <programlisting>  # Загрузить модули зависщие от ssl
+  Include /etc/apache2/modules.d/*.ssl-conf # либо /etc/apache2/modules.ssl.d/*.conf</programlisting>
+                    <para>Анонимный доступ: Хорошо, мы добились того, что теперь при каждом запросе к subversion будет спрашиваться пароль, однако вам может захотеться, чтобы анонимные пользователи могли читать ваш труд, а то зачем все это надо? В таком случае директиву Require valid-user стоит поместить в блок &lt;LimitExcept ...&gt; указав в качестве параметра список операций, которые, по вашему мнению, всякие подозрительные личности без особой опасности могут производить на вашем репозитории: </para>
+                    <programlisting>  [...]
+  AuthType Basic
+  [...]
+  # Для любых операций, кроме нижеперечисленных, спрашивать пароль.
+  &lt;LimitExcept GET PROPFIND OPTIONS REPORT&gt;
+      Require valid-user
+  &lt;/LimitExcept&gt;</programlisting>
+                    <para>В любом случае, для правильной работы subversion клиента с ssl в дефолтный ssl-хост XX_mod_ssl_default-vhost.conf, либо в 40_mod_ssl.conf, необходимо добавить следующую строчку ( подробности - <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mail-archive.com/dev@httpd.apache.org/msg14702.html">тут</link> ) </para>
+                    <programlisting>  BrowserMatch "SVN" redirect-carefully</programlisting>
+                    <para>Упомянутый выше файл <filename>/var/svn/conf/svnusers</filename> и содержит имена и зашифрованные пароли пользователей. </para>
+                    <para>Чтобы создать этот файл/добавить в него новую запись воспользуйтесь коммандой <command>htpasswd2</command>.</para>
+                    <para>Для создания файла с первым пользователем: </para>
+                    <screen>htpasswd2 -c /var/svn/conf/svnusers <replaceable>&lt;имя первого пользователя&gt;</replaceable></screen>
+                    <para>и для добавления последующих: </para>
+                    <screen>htpasswd2 /var/svn/conf/svnusers <replaceable>&lt;имя последующего пользователя&gt;</replaceable></screen>
+                </section>
+            </section>
+            <section>
+                <info>
+                    <title>Основанная на PAM </title>
+                </info>
+                <para>Если управление аж двумя различными файлами с паролями (системного и Апачевого) для вас слишком утомительно, то специально для вас был придуман модуль mod_auth_pam, который использует PAM для аутентификации пользователей. Если у вас нет еще этого модуля - emerge mod_auth_pam </para>
+                <warning>
+                    <para>Да будет вам известно, что mod_auth_pam представляет из себя потенциальную уязвимость: системный пользователь 'apache' (или тот под которым запущен ваш сервер) получит доступ на чтение к /etc/shadow. Это означает, что в случае взлома Апача, злоумышленник получит доступ к файлу /etc/shadow, и сможет натравить на него программу по взлому паролей (дальнейшая судьба системы будет зависить от того, заметите ли вы взлом и примите меры раньше, чем злоумышленник получит пароль рута). </para>
+                </warning>
+                <para>После сборки mod_auth_pam необходимо внести несколько изменений (суперпользователем) в ваши конфигурационные файлы. Для начала надо выдать пользователю 'apache' доступ на чтение <filename>/etc/shadow</filename>: </para>
+                <orderedlist>
+                    <listitem>
+                        <para><command>groupadd shadow</command></para>
+                    </listitem>
+                    <listitem>
+                        <para><command>gpasswd -a apache shadow</command></para>
+                    </listitem>
+                    <listitem>
+                        <para><command>chgrp shadow /etc/shadow</command></para>
+                    </listitem>
+                    <listitem>
+                        <para><command>chmod g+r /etc/shadow</command></para>
+                    </listitem>
+                </orderedlist>
+                <warning>
+                    <para>Если у вас есть веб-сервер на котором работают посторонние люди, и он работает под тем же пользователем 'apache', то эти самые посторонние люди без всякого взлома смогут прочесть ваш /etc/shadow, и это уже действительно опасно!. </para>
+                </warning>
+                <para>После чего внесите следующие изменения в <filename>/etc/apache2/modules.d/47_mod_dav_svn.conf</filename>: Вовнутрь блока <code>&lt;Location /svn&gt;</code> впишите: </para>
+                <example>
+                    <title>Файл: /etc/apache2/modules.d/47_mod_dav_svn.conf</title>
+                    <programlisting>&lt;IfModule mod_auth_sys_group.c&gt;
+    AuthPAM_Enabled on
+    AuthType Basic
+    AuthName "Subversion Repository"
+    SSLRequireSSL
+    Require group subversion
+&lt;/IfModule&gt;</programlisting>
+                </example>
+                <para>ВАЖНО: В отличие от стандартной ('basic') аутентификации, описанной выше, убедитесь что вы не указали директивы </para>
+                <para>AuthUserFile /var/svn/conf/svnusers</para>
+                <para>Впрочем существует возможность оставить стандартную аутентификацию как запасную на случай если PAM модуль по каким-то причинам не сработает. Для этого обратите внимание на файл /etc/apache2/modules.d/10_mod_auth_pam.conf </para>
+                <para>ВАЖНО: Как уже упоминалось выше базовый тип встроенной аутентификации (AuthType Basic) передает пароли открытым текстом и для обеспечения минимальной безопасности необходимо ограничить аутентификацию только по ссл, при помощи директивы SSLRequireSSL </para>
+                <para>Ну а для того, чтобы все, в пределах этого параграфа, проделанное имело смысл, необходимо включить mod_auth_pam, добавив -D AUTH_PAM в APACHE2_OPTS в /etc/conf.d/apache2 </para>
+            </section>
+            <section>
+                <info>
+                    <title>Active Directory/LDAP </title>
+                </info>
+                <para>Для того, чтобы настроить авторизацию в SVN через LDAP или Active Directory, следуйте следующим инструкциям. </para>
+                <para>В <filename>/etc/conf.d/apache2</filename> добавляем -D LDAP и -D AUTH_LDAP </para>
+                <programlisting>APACHE2_OPTS="-D SSL -D PHP4 -D DAV -D DAV_FS -D SVN -D DAV_SVN -D LDAP -D AUTH_LDAP"</programlisting>
+                <para>вот пример моей рабочей конфигурации Apache для авторизации через Active Directory: (нужно изменить путь к ldap на тот, что вы хотите использовать) </para>
+                <programlisting>&lt;IfDefine SVN&gt;
+&lt;Location /svn/repo&gt;
+    DAV svn
+    SVNPath /var/svn/repo
+    AuthType Basic
+    Options Indexes FollowSymLinks
+    AllowOverride None
+    order allow,deny
+    allow from all
+    AuthName "Authorize Me"
+    AuthLDAPURL
+    ldap://domain.com:389/OU=IT,OU=MainOffice,OU=Locations,OU=Corporate,DC=domainname,DC=com?samAccountName?sub?(objectCategory=person)
+    AuthLDAPBindDN "CN=webuser,OU=Resources,OU=Corporate,OU=AOM,DC=domain,DC=com"
+    AuthLDAPBindPassword xxxxxxxxxxx
+    Require valid-user
+&lt;/Location&gt;
+&lt;/IfDefine&gt;</programlisting>
+                <para>Для того, чтобы разрешить доступ только ограниченному списку пользователей: </para>
+                <programlisting>&lt;Location "/useraccess"&gt;
+    AuthName "user permissions"
+    require user larry bill sam
+&lt;/Location&gt;</programlisting>
+                <para>Для того, чтобы разрешить доступ только ограниченному списку групп: </para>
+                <programlisting>&lt;Location "/group"&gt;
+    AuthName "group permissions"
+    require group cn=Group,cn=Users,dc=domainname,dc=com
+&lt;/Location&gt;</programlisting>
+                <para>В случае возникновения проблем с запросами к LDAP, запустите следующую команду на вашем Windows-сервере: </para>
+                <screen>ldifde -f mydomain.ldif -s 127.0.0.1</screen>
+                <para>Она сбросит все содержимое LDAP в указанный файл. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Авторизация </title>
+                </info>
+                <para>Если обычной авторизации недостаточно, можно расширить ее списками доступа. Имеется в виду что базовая аутентификация уже настроена и мы будем раздавать или запрещать доступ отдельным пользователям. Управлять списком можно через специальный файл, SVNAccessFile: </para>
+                <example>
+                    <title>Файл: <filename>SVNAccessFile</filename></title>
+                    <programlisting>AuthzSVNAccessFile /var/svn/conf/svnpolicy</programlisting>
+                </example>
+                <para>Директива, указанная выше включает возможность создания списков доступа (ACL) для работы с репозиториями subversion через apache. </para>
+                <para>Правила авторизации для определенного репозитория задаются примерно так: </para>
+                <example>
+                    <title>Файл: <filename>SVNAccessFile</filename></title>
+                    <programlisting>[test:/trunk]
+testuser1 = rw
+testuser2 = 
+* = r</programlisting>
+                </example>
+                <para>Описанное выше правило разрешает производить пользователю testuser1 запись (commit, copy и т.д.) в репозиторий test (папка /trunk). Пользователь же testuser2 не имеет доступа к репозиторию. Остальные пользователи (маска *) имеют доступ только для чтения (могут производить checkout). </para>
+                <para>Для того, чтобы apache был в курсе наших опытов, нам нужно подредактировать /etc/conf.d/apache2: </para>
+                <example>
+                    <title>Файл: <filename>/etc/conf.d/apache2</filename></title>
+                    <programlisting>APACHE2_OPTS="... -D SVN_AUTHZ"</programlisting>
+                </example>
+                <para>И напоследок, несколько замечаний по работе с правилами доступа: будьте осторожны с пробелами - внутри скобок не должно быть ни одного; при использовании только одного репозитория, его название можно не указывать, достаточно указать только папку. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Наводим марафет </title>
+                </info>
+                <para>В последней ревизии репозитория можно полазать в любимом браузере. Удовольствия это много недоставит - выглядит все это дело не очень красиво. Чтобы это исправить, добавьте директиву </para>
+                <programlisting>SVNIndexXSLT /svnindex.xsl</programlisting>
+                <para>внутри тега <code>&lt;Location /svn&gt;</code> и укажите свой xsl-файл. Если же с xml вы знакомы недостаточно хорошо, попробуйте xsl и css -файлы, входящие в стандартный пакет subversion в папке <filename>/usr/share/doc/subversion-<replaceable>&lt;версия_пакета&gt;</replaceable></filename>. </para>
+                <para>Некоторые браузеры (например, Opera), вместо нормального отображения XSL-файла, могут показывать пустую страницу. Чтобы этого избежать, можно пропустить XSL через xsltproc, чтобы он преобразовал это дело в обычный html. Для этого необходимо установить пакет xsltproc: </para>
+                <screen>emerge libxslt</screen>
+                <para>И добавить следующее в файл настроек apache: </para>
+                <programlisting>BrowserMatch "Opera" xsltfilter
+
+ExtFilterDefine xslt mode=output enableenv=xsltfilter \ 
+    intype=text/xml outtype=text/html \ 
+    cmd="/usr/bin/xsltproc /var/www/svnindex.xsl -"</programlisting>
+                <para>И добавить следующее внутрь тега &lt;Location /svn&gt;: </para>
+                <programlisting>SetOutputFilter xslt
+AddDefaultCharset utf-8</programlisting>
+            </section>
+            <section>
+                <info>
+                    <title>Полезные ссылки </title>
+                </info>
+                <orderedlist>
+                    <listitem>
+                        <para>
+                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://svnbook.red-bean.com/">Книга по Subversion</link>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://httpd.apache.org/docs/2.0/mod/mod_auth_ldap.html">Документация по mod_auth_ldap</link>
+                        </para>
+                    </listitem>
+                </orderedlist>
+            </section>
+        </section>
     </section>
-    </section>        
-        <section><info><title>Включение SVN и WebDav модулей в Apache </title></info>
-<para>Для использования WebDav и Subversion модулей их, как ни странно, необходимо включить. Делается это при помощи передачи соответсвующих опций (далее - дефайнов, от Define) Апачу при загрузке. Также, для аутентификации, вам возможно понадобится SSL (если вам так не кажется, советую подумать еще раз). Добавте следующую строчку после уже существующей APACHE2_OPTS строчки. (-D SVN_AUTHZ необходимо для использования авторизации, см. ниже) </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Файл: /etc/conf.d/apache2 </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>        APACHE2_OPTS="$APACHE2_OPTS -D SVN -D SVN_AUTHZ -D DAV -D SSL"</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable></section><section><info><title>Создание репозиториев применительно к данной конфигурации </title></info>
-<para>Необходимо, чтобы Апач имел права на запись на папку репозитория(иев), с которым(и) он должен работать. Это можно сделать двумя способами: </para>
-<orderedlist>
-<listitem>
-<para>Сменой пользователя/группы папки репозитория: </para>
-</listitem>
-<listitem>
-<para>Добавлением пользователя apache (или того, под которым ваш Апач бегает) в группу svnusers: </para>
-</listitem>
-</orderedlist>
-<para>Лично я, переводчик, рекомендую воспользоваться комбинацией этих способов, из соображений, что права на запись могут понадобится не только Апачу, а включать страждущего пользователя в группу apache тоже как-то нехорошо, т.к. это даст доступ не только к репозиториям. Для упрощения этой задачи мною был написан следующий скрипт: </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Файл: create_repository.sh </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>#!/bin/sh</para>
-<para/>
-<para>DIR_MODE=770</para>
-<para>FILE_MODE=660</para>
-<para>SVN_ROOT="/var/svn"</para>
-<para/>
-<para>SVN_USER="apache"</para>
-<para>SVN_GROUP="svn"</para>
-<para/>
-<para>NAME=${1:?"Usage: create_repository.sh &lt;repository name&gt;"}</para>
-<para/>
-<para>REPO_DIR="${SVN_ROOT}/${NAME}"</para>
-<para/>
-<para>svnadmin create "${REPO_DIR}"</para>
-<para>chown "${SVN_USER}:${SVN_GROUP}" -R "${REPO_DIR}"</para>
-<para>find "${REPO_DIR}" -type d -exec chmod ${DIR_MODE} {} +</para>
-<para>find "${REPO_DIR}" -type f -exec chmod ${FILE_MODE} {} +</para>
-<para/>
-<para># vim: nobackup</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable></section><section><info><title>Базовая настройка </title></info>
-<para>Вместе с subversion устанавливается файл /etc/apache2/modules.d/47_mod_dav_svn.conf (в случае включенного юза apache2), в котором и содержится практически работающий конфиг (от config - настройка). </para>
-<para>Инструкция </para>
-<para>&lt;Location /svn&gt;</para>
-<para>        DAV svn</para>
-<para>сообщает Апачу о том, что все запросы, чей путь начинается с /svn необходимо обрабатывать при помощи WebDav модуля (Dav svn директива). </para>
-<orderedlist>
-<listitem>
-<para>Если вам достаточно только одного репозитория то используйте директиву </para>
-</listitem>
-</orderedlist>
-<para>        SVNPath /путь/к/репозиторию</para>
-<orderedlist>
-<listitem>
-<para>В противном случе, для многочисленных репозиториев, необходимо использовать следующую директиву: </para>
-</listitem>
-</orderedlist>
-<para>        SVNParentPath /путь/к/папке/с/репозиториями</para>
-<para>В этом случае все подпапки папки, указанной в SVNParentPath директиве, будут рассматриватся как репозитории Subversion (Даже если они таковыми не являются). </para>
-<para>Также существует возможность заставить Апач формировать список репозиториев/содержимого в них, в случае захода с обычного брузера. Для этого существует магическая опция SVNListParentPath (Правда данная опция доступна только с subversion версии 1.3, но для настоящего гентушника это все равно уже антиквариат), которую необходимо установить в on: </para>
-<para>        SVNListParentPath on</para>
-<para>ВАЖНО: При использовании SVNListParentPath может так случится, что вы получите 403 Forbidden, а не список репозиториев (Более подробно данный природный феномен описан <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.nabble.com/SVNListParentPath-t839339.html">здесь</link>). Как вариант избавления, вы можете добавить в описание блока Location заключительный слэш. </para>
-<para>        &lt;Location /svn/&gt;</para>
-<para>В таком случае, вам наверняка также захочется, чтобы Апач также отлавливал и просто путь /svn . Для этого можно воспользоватся магической опцией RedirectMatch (добавив ее куда-нибудь вовне блока Location), как показанно в нижеприведенном заклинании. </para>
-<para>        RedirectMatch ^(/svn)$ $1/</para>
-<para>Дабы избежать ппроблем, вроде описанной тут: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.kde-forum.org/artikel/14030/Intermediate-Collectionsfolders.html">Resource cannot be created at the destination...</link>, будет полезно добавить в конфиг директиву: </para>
-<para>        SVNAutoVersioning On</para>
-</section>
-    <section>
-        <info><title>Аутентификация </title></info>
-    <section><info><title>Стандартная </title></info>
-<para>На данный момент мы, чисто теоретически, имеем работающий Апач с подключенным Сабвершеном (от Subversion). Однако любая подозрительная личность может сделать с нашим репозиторием что захочет, что естественно не входит в наши планы. </para>
-<para>Добавление следующих строчек в /etc/apache2/modules.d/47_mod_dav_svn.conf включит базовую аутентификацию Апача </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Файл: /etc/apache2/modules.d/47_mod_dav_svn.conf </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>        AuthType Basic</para>
-<para>        AuthName "Subversion repository"</para>
-<para>        AuthUserFile /var/svn/conf/svnusers</para>
-<para>        Require valid-user</para>
-<para>        # Тип встроенной аутентификации "Basic" посылает пароли открытым текстом, что есть небезопасно. Чтобы избежать  ситуации кражи пароля необходимо добавить следующую директиву, которая будет требовать подключения с ssl</para>
-<para>        SSLRequireSSL</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Примечание: Как несложно догадатся, для того чтобы можно было требовать ssl, его неплохо было бы включить. Как это сделать было описано выше. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>Дополнение: Однако намного более завлекательным вариантом является принудительный редирект на ssl хост, т.к. не вводит среднестатистического пользователя в ступор при виде непонятной ошибки на иноземном языке </para>
-<para>Начало общефилософского лирического отступления </para>
-<para>Также положительным побочным действием предложенного решения является то, что если у вас стандартный ssl порт уже занят, то таким образом можно ликвидировать проблему с запоминанием номера порта, просто заходя на http, а Апач вас уже перешлет на правильный порт (при условии, что вы ему скажите это делать, естественно - болезненной самостоятельностью юниксовые сервера, по счастью, не обладают (хотя периодически и кажется, что они проявляют признаки очень вредного интеллекта, подкидывая все новые и новые гадости))) </para>
-<para>Конец лирическому отступлению </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Файл: /etc/apache2/modules.d/47_mod_dav_svn.conf </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>&lt;Location /svn&gt;</para>
-<para>        [...]</para>
-<para> </para>
-<para>        RewriteEngine On</para>
-<para>        RewriteCond %{HTTPS} !on</para>
-<para>        RewriteRule ^/(.*) https://%{SERVER_NAME}%{REQUEST_URI} [R]</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>Возможность: Чтобы ограничить доступ только по ssl, недостаточно директивы SSLRequireSSL в 47_mod_dav_svn.conf. Для этого необходимо перенести все директивы из 47_mod_dav_svn.conf в файл с дефолтным (от default - по умолчанию) виртуальным хостом для ssl - XX_mod_ssl_default-vhost.conf. Также необходимо так поменять номер этого виртуального хоста так чтобы он грузился после mod_dav (все файлы в папке /etc/apache2/conf/modules.d загружаются в алфавитном порядке). Впрочем это необходимо только тем у кого настолько древний Апач (или настолько новый, кто знает - постоянно туда-сюда эти хосты путешествуют. По моему мнению, их вообще выкинуть можно), что дефолтный хост лежит все еще в modules.d - их уже месяцов пять как переместили в vhosts.d. Остальным беспокоится не зачем - vhosts.d загружаются после modules.d </para>
-<para>Небольшая оптимизация: Однако вместо того чтобы перемещать директивы из файла 47_mod_dav_svn.conf внутрь виртуального ssl-хоста, можно попросту проинклюдить (от include - включать (в себя)) туда целиком файл, предварительно поменяв ему расширение на что-нибуть отличное от .conf, либо вынеся вовне {{filename|modules.d}, дабы самостоятельно Апач его не разыскал. Делается это при помощи магической директивы Include с указанием абсолютного пути до желаемого файла </para>
-<para>Начало лирического отступления о культурных особенностях индейцев Вообще-то можно указать и относительный, но стоит учитывать, что Апач - индеец и имеет несколько свои представления о том что такое "относительный путь". Для него это путь относительно истинного пути - путь ServerRoot'а - т.е. по умолчанию откуда-то от /usr/lib/apache2 </para>
-<para>Конец лирическому отступлению </para>
-<para>Оптимизация побольше и по-глобальнее: По-умолчанию Апач грузит все конфиги в папке {{filename|modules.d} по маске {{filename|modules.d/*.conf}, так что можно немного переписать систему инклюдов, дабы разделить конфиги на обычные и продвинутые-ssl-ные. Для этого достаточно переименовать полюбившийся конфиг, в нашем случае - 47_mod_dav_svn.conf, в что-нибудь с расширением отличным от .conf (либо, как уже было предложено выше, создав отдельную папку для подобных продвинутых конфигов), к примеру в 47_mod_dav_svn.ssl-conf. Тогда достаточно будет указать в httpd.conf (или любом другом глобальном конфиге - к примеру в modules.d/40_mod_ssl.conf), внутри соответствующего блока &lt;IfModule ssl_module&gt;/&lt;IfDefine SSL&gt; следующие строчки: </para>
-<para>        # Загрузить модули зависщие от ssl</para>
-<para>        Include /etc/apache2/modules.d/*.ssl-conf # либо /etc/apache2/modules.ssl.d/*.conf</para>
-<para>Анонимный доступ: Хорошо, мы добились того, что теперь при каждом запросе к subversion будет спрашиваться пароль, однако вам может захотеться, чтобы анонимные пользователи могли читать ваш труд, а то зачем все это надо? В таком случае директиву Require valid-user стоит поместить в блок &lt;LimitExcept ...&gt; указав в качестве параметра список операций, которые, по вашему мнению, всякие подозрительные личности без особой опасности могут производить на вашем репозитории: </para>
-<para>        [...]</para>
-<para>        AuthType Basic</para>
-<para>        [...]</para>
-<para>        # Для любых операций, кроме нижеперечисленных, спрашивать пароль.</para>
-<para>        &lt;LimitExcept GET PROPFIND OPTIONS REPORT&gt;</para>
-<para>                Require valid-user</para>
-<para>        &lt;/LimitExcept&gt;</para>
-<para>В любом случае, для правильной работы subversion клиента с ssl в дефолтный ssl-хост XX_mod_ssl_default-vhost.conf, либо в 40_mod_ssl.conf, необходимо добавить следующую строчку ( подробности - <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.mail-archive.com/dev@httpd.apache.org/msg14702.html">тут</link> ) </para>
-<para>        BrowserMatch "SVN" redirect-carefully</para>
-<para>Упомянутый выше файл /var/svn/conf/svnusers и содержит имена и зашифрованные пароли пользователей. </para>
-<para>Чтобы создать этот файл/добавить в него новую запись воспользуйтесь коммандой htpasswd2. </para>
-<para>Для создания файла с первым пользователем: </para>
-<para>htpasswd2 -c /var/svn/conf/svnusers &lt;имя первого пользователя&gt; </para>
-<para>и для добавления последующих: </para>
-<para>htpasswd2 /var/svn/conf/svnusers &lt;имя последующего пользователя&gt; </para>
-<para/></section>
-    </section>
-    
-        <section><info><title>Основанная на PAM </title></info>
-<para>Если управление аж двумя различными файлами с паролями (системного и Апачевого) для вас слишком утомительно, то специально для вас был придуман модуль mod_auth_pam, который использует PAM для аутентификации пользователей. Если у вас нет еще этого модуля - emerge mod_auth_pam </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Предупреждение: Да будет вам известно, что mod_auth_pam представляет из себя потенциальную уязвимость: системный пользователь 'apache' (или тот под которым запущен ваш сервер) получит доступ на чтение к /etc/shadow. Это означает, что в случае взлома Апача, злоумышленник получит доступ к файлу /etc/shadow, и сможет натравить на него программу по взлому паролей (дальнейшая судьба системы будет зависить от того, заметите ли вы взлом и примите меры раньше, чем злоумышленник получит пароль рута). </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>После сборки mod_auth_pam необходимо внести несколько изменений (суперпользователем) в ваши конфигурационные файлы. Для начала надо выдать пользователю 'apache' доступ на чтение /etc/shadow: </para>
-<orderedlist>
-<listitem>
-<para>groupadd shadow </para>
-</listitem>
-<listitem>
-<para>gpasswd -a apache shadow </para>
-</listitem>
-<listitem>
-<para>chgrp shadow /etc/shadow </para>
-</listitem>
-<listitem>
-<para>chmod g+r /etc/shadow </para>
-</listitem>
-</orderedlist>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Предупреждение: Если у вас есть веб-сервер на котором работают посторонние люди, и он работает под тем же пользователем 'apache', то эти самые посторонние люди без всякого взлома смогут прочесть ваш /etc/shadow, и это уже действительно опасно!. </para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>После чего внесите следующие изменения в /etc/apache2/modules.d/47_mod_dav_svn.conf: Вовнутрь блока &lt;Location /svn&gt; впишите: </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Файл: /etc/apache2/modules.d/47_mod_dav_svn.conf </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>&lt;IfModule mod_auth_sys_group.c&gt;</para>
-<para>        AuthPAM_Enabled on</para>
-<para>        AuthType Basic</para>
-<para>        AuthName "Subversion Repository"</para>
-<para>        SSLRequireSSL</para>
-<para>        Require group subversion</para>
-<para>&lt;/IfModule&gt;</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>ВАЖНО: В отличие от стандартной ('basic') аутентификации, описанной выше, убедитесь что вы не указали директивы </para>
-<para>AuthUserFile /var/svn/conf/svnusers</para>
-<para>Впрочем существует возможность оставить стандартную аутентификацию как запасную на случай если PAM модуль по каким-то причинам не сработает. Для этого обратите внимание на файл /etc/apache2/modules.d/10_mod_auth_pam.conf </para>
-<para>ВАЖНО: Как уже упоминалось выше базовый тип встроенной аутентификации (AuthType Basic) передает пароли открытым текстом и для обеспечения минимальной безопасности необходимо ограничить аутентификацию только по ссл, при помощи директивы SSLRequireSSL </para>
-<para>Ну а для того, чтобы все, в пределах этого параграфа, проделанное имело смысл, необходимо включить mod_auth_pam, добавив -D AUTH_PAM в APACHE2_OPTS в /etc/conf.d/apache2 </para></section><section><info><title>Active Directory/LDAP </title></info>
-<para>Для того, чтобы настроить авторизацию в SVN через LDAP или Active Directory, следуйте следующим инструкциям. </para>
-<para>В /etc/conf.d/apache2 добавляем -D LDAP и -D AUTH_LDAP </para>
-<para>APACHE2_OPTS="-D SSL -D PHP4 -D DAV -D DAV_FS -D SVN -D DAV_SVN -D LDAP -D AUTH_LDAP"</para>
-<para>вот пример моей рабочей конфигурации Apache для авторизации через Active Directory: (нужно изменить путь к ldap на тот, что вы хотите использовать) </para>
-<para>&lt;IfDefine SVN&gt;</para>
-<para>&lt;Location /svn/repo&gt;</para>
-<para>DAV svn</para>
-<para>SVNPath /var/svn/repo</para>
-<para>AuthType Basic</para>
-<para>Options Indexes FollowSymLinks</para>
-<para>AllowOverride None</para>
-<para>order allow,deny</para>
-<para>allow from all</para>
-<para>AuthName "Authorize Me"</para>
-<para>AuthLDAPURL</para>
-<para>ldap://domain.com:389/OU=IT,OU=MainOffice,OU=Locations,OU=Corporate,DC=domainname,DC=com?samAccountName?sub?(objectCategory=person)</para>
-<para>AuthLDAPBindDN "CN=webuser,OU=Resources,OU=Corporate,OU=AOM,DC=domain,DC=com"</para>
-<para>AuthLDAPBindPassword xxxxxxxxxxx</para>
-<para>Require valid-user</para>
-<para>&lt;/Location&gt;</para>
-<para>&lt;/IfDefine&gt;</para>
-<para>Для того, чтобы разрешить доступ только ограниченному списку пользователей: </para>
-<para>&lt;Location "/useraccess"&gt;</para>
-<para>AuthName "user permissions"</para>
-<para>require user larry bill sam</para>
-<para>&lt;/Location&gt;</para>
-<para>Для того, чтобы разрешить доступ только ограниченному списку групп: </para>
-<para>&lt;Location "/group"&gt;</para>
-<para>AuthName "group permissions"</para>
-<para>require group cn=Group,cn=Users,dc=domainname,dc=com</para>
-<para>&lt;/Location&gt;</para>
-<para>В случае возникновения проблем с запросами к LDAP, запустите следующую команду на вашем Windows-сервере: </para>
-<para>ldifde -f mydomain.ldif -s 127.0.0.1</para>
-<para>Она сбросит все содержимое LDAP в указанный файл. </para></section><section><info><title>Авторизация </title></info>
-<para>Если обычной авторизации недостаточно, можно расширить ее списками доступа. Имеется в виду что базовая аутентификация уже настроена и мы будем раздавать или запрещать доступ отдельным пользователям. Управлять списком можно через специальный файл, SVNAccessFile: </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Файл: SVNAccessFile </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>AuthzSVNAccessFile /var/svn/conf/svnpolicy</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>Директива, указанная выше включает возможность создания списков доступа (ACL) для работы с репозиториями subversion через apache. </para>
-<para>Правила авторизации для определенного репозитория задаются примерно так: </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Файл: SVNAccessFile </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>[test:/trunk]</para>
-<para>testuser1 = rw</para>
-<para>testuser2 = </para>
-<para>* = r</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>Описанное выше правило разрешает производить пользователю testuser1 запись (commit, copy и т.д.) в репозиторий test (папка /trunk). Пользователь же testuser2 не имеет доступа к репозиторию. Остальные пользователи (маска *) имеют доступ только для чтения (могут производить checkout). </para>
-<para>Для того, чтобы apache был в курсе наших опытов, нам нужно подредактировать /etc/conf.d/apache2: </para>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Файл: /etc/conf.d/apache2 </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>APACHE2_OPTS="... -D SVN_AUTHZ"</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>И напоследок, несколько замечаний по работе с правилами доступа: будьте осторожны с пробелами - внутри скобок не должно быть ни одного; при использовании только одного репозитория, его название можно не указывать, достаточно указать только папку. </para></section><section><info><title>Наводим марафет </title></info>
-<para>В последней ревизии репозитория можно полазать в любимом браузере. Удовольствия это много недоставит - выглядит все это дело не очень красиво. Чтобы это исправить, добавьте директиву </para>
-<para>SVNIndexXSLT /svnindex.xsl</para>
-<para>внутри тега &lt;Location /svn&gt; и укажите свой xsl-файл. Если же с xml вы знакомы недостаточно хорошо, попробуйте xsl и css -файлы, входящие в стандартный пакет subversion в папке /usr/share/doc/subversion-&lt;версия_пакета&gt;. </para>
-<para>Некоторые браузеры (например, Opera), вместо нормального отображения XSL-файла, могут показывать пустую страницу. Чтобы этого избежать, можно пропустить XSL через xsltproc, чтобы он преобразовал это дело в обычный html. Для этого необходимо установить пакет xsltproc: </para>
-<para>emerge libxslt</para>
-<para>И добавить следующее в файл настроек apache: </para>
-<para>BrowserMatch "Opera" xsltfilter </para>
-<para/>
-<para>ExtFilterDefine xslt mode=output enableenv=xsltfilter \ </para>
-<para>        intype=text/xml outtype=text/html \ </para>
-<para>        cmd="/usr/bin/xsltproc /var/www/svnindex.xsl -" </para>
-<para>И добавить следующее внутрь тега &lt;Location /svn&gt;: </para>
-<para>SetOutputFilter xslt </para>
-<para>AddDefaultCharset utf-8</para></section><section><info><title>Полезные ссылки </title></info>
-<orderedlist>
-<listitem>
-<para>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://svnbook.red-bean.com/">Книга по Subversion</link> </para>
-</listitem>
-<listitem>
-<para>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://httpd.apache.org/docs/2.0/mod/mod_auth_ldap.html">Документация по mod_auth_ldap</link> </para>
-</listitem>
-</orderedlist>
-<para/></section></section></section>
 </article>

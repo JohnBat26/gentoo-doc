@@ -1,509 +1,617 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
     <info>
         <title>Gentoo и Java</title>
     </info>
-    <section><info><title>Руководство по настройке Java в Gentoo</title></info>
-<para/>
-<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/java.xml">http://www.gentoo.org/doc/en/java.xml</link>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/java.xml"> </link>
-</para>
-<para>
-<inlinemediaobject>
-    <imageobject role="html">
-        <imagedata fileref="images/Java.png" width="2.352cm" depth="4.375cm"/>
-    </imageobject>
-    <imageobject role="fo">
-        <imagedata fileref="../../images/Java.png" width="2.352cm" depth="4.375cm"/>
-    </imageobject>
-</inlinemediaobject>                              +  <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Java">http://ru.wikipedia.org/wiki/Java</link>
-</para>
-<para>Перевод + дополнения: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:JohnBat26@gmail.com?subject=По%20поводу%20вашего%20перевода%20статьи:%20Gentoo%20Java%20Guide">Батогов Е.В a.k.a. JohnBat26</link> </para>
-<para>С версии: 1.0.</para>
-<para>Обновлено в: 1.4</para>
-<para>Дата оригинала:  01.01.2008</para>
-<para>Дата перевода: 28.01.2008</para>
-<para/>
-<para/><section><info><title>1. Что такое Java ?</title></info><section><info><title>Введение</title></info>
-<para/>
-<para>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Java">Java</link> — (произносится <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Международный_фонетический_алфавит">/ˈdʒɑːvə/</link>) — <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Объектно-ориентированный_язык_программирования">объектно-ориентированный язык программирования</link>, разрабатываемый компанией <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Sun_Microsystems">Sun Microsystems</link> с <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/1991_год">1991 года</link> и официально выпущенный <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/23_мая">23 мая</link> <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/1995_год">1995 года</link>. Многие люди, говоря на русском, называют язык «Ява» по аналогии с <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Ява">географическим названием</link>.</para>
-<para>Изначально новый язык программирования назывался Oak (<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/w/index.php?title=James_Gosling&amp;action=edit">James Gosling</link>) и разрабатывался для бытовой электроники, но впоследствии был переименован в Java и стал использоваться для написания <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Апплет">апплетов</link>, приложений и <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Сервер">серверного</link> программного обеспечения.</para>
-<para>Этот объектно-ориентированный  язык, разработанный для запуска на множестве платформ без необходимости повторной компиляции кода для каждой платформы. Хотя программа, написанная на Java, может быть скомпилирована как родная для конкретной платформы, наибольшую популярность Java принесла её переносимость, наряду с другими функциями, такими как сборка мусора (garbage collection).</para>
-<para>Программы на Java могут быть <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Трансляция">транслированы</link> в <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Байт-код">байт-код</link>, выполняемый на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Виртуальная_машина">виртуальной джава-машине</link> (JVM) — программе, обрабатывающей байтовый код и передающей инструкции оборудованию, как <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Интерпретатор">интерпретатор</link>, но с тем отличием, что байтовый код в отличие от текста обрабатывается значительно быстрее.</para>
-<para>Достоинство подобного способа выполнения программ — в полной независимости байт-кода от <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Операционная_система">ОС</link> и оборудования, что позволяет выполнять Java приложения на любом устройстве, которое поддерживает виртуальную машину. Другой важной особенностью технологии Java является гибкая система безопасности, благодаря тому, что исполнение программы полностью контролируется виртуальной машиной. Любые операции, которые превышают установленные полномочия программы (например, попытка несанкционированного доступа к данным или соединения с другим компьютером) вызывают немедленное прерывание. Это позволяет пользователям загружать программы, написанные на Java, на их компьютеры (или другие устройства, например, мобильные телефоны) из неизвестных источников, при этом не опасаясь заражения вирусами, пропажи ценной информации, и т. п.</para>
-<para>Часто к недостаткам этого подхода относят то, что исполнение байт-кода виртуальной машиной может снижать производительность программ и алгоритмов, реализованных на языке Java. Данное утверждение справедливо для первых версий виртуальной машины Java, однако в последнее время оно практически потеряло актуальность. Этому способствовал ряд усовершенствований: применение технологии JITs (Just-In-Time compiler), позволяющей переводить байт-код в машинный код во время исполнения программы с возможностью сохранения версий класса в машинном коде, широкое использование native-кода в стандартных библиотеках, а также аппаратные средства, обеспечивающие ускоренную обработку байт-кода (например, технология <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Jazelle">Jazelle</link>, поддерживаемая некоторыми процессорами фирмы <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/ARM">ARM</link>).</para>
-<para>Внутри Java существуют 3 основных семейства технологий:</para>
-<orderedlist>
-<listitem>
-<para>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/J2EE">J2EE</link> или Java EE (начиная с v1.5) — Java Enterprise Editon, для создания программного обеспечения уровня предприятия; </para>
-</listitem>
-<listitem>
-<para>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/J2SE">J2SE</link> или Java SE (начиная с v1.5) — Java Standard Editon, для создания пользовательских приложений, в первую очередь — для настольных систем; </para>
-</listitem>
-<listitem>
-<para>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/J2ME">J2ME</link>, Java ME или Java Micro Edition, для использования в устройствах, ограниченных по вычислительной мощности, в том числе <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Мобильный_телефон">мобильных телефонах</link>, PDA, встроенных системах </para>
-</listitem>
-</orderedlist>
-<para>Последней версией является <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://java.sun.com/javase/6/">версия 1.6</link>, в которой было произведено улучшение системы безопасности, улучшение поддержки XML и скриптового языка Mozilla Rhino, улучшена интеграция с рабочим столом, добавлены некоторые новые возможности в создании графических интерфейсов.</para>
-<para>Таким образом байт-код запускается на так называемой JRE (Java Runtime Environment —  Java-окружение времени выполнения ), а не напрямую  операционной системой. Следовательно, для выполнения Java-байткода мы нуждаемся в установленной JDK(Java Runtime Environment). JRE включает в себя основные библиотеки, независимую от платформы - виртуальную Java-машину, плагины для браузеров и многое другое.  JDK (Java Development Kit — набор для Java-разработчика) добавляет средства программирования, такие как  компилятор байткода и отладчик.</para>
-<para/>
-</section>
-</section>
     <section>
-        <info><title>2.  Перед тем как начать</title></info>
-<para>Если у Вас уже установлена Java, тогда удостоверьтесь, что Вы следовали <link xlink:href="#">Java Upgrade Guide</link>.</para>
-<para>Новая установка не требует дополнительных приготовлений.</para>
-<para/></section><section><info><title>3. Установка виртуальной машины</title></info><section><info><title>Варианты</title></info>
-<para>Gentoo сопровождает многочисленные Runtime Environments (JREs) и Development Kits (JDKs). Среди всех предлагаемых вариантов имеются:</para>
-<para/>
-<para/>
-<para/>
-<para/>
-<informaltable frame="all">
-<tgroup cols="3"><tbody>
-<row>
-<entry>
-<para>Поставщик</para>
-</entry>
-<entry>
-<para>JDK</para>
-</entry>
-<entry>
-<para>JRE</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>The Blackdown Java Kit</para>
-</entry>
-<entry>
-<para>dev-java/blackdown-jdk</para>
-</entry>
-<entry>
-<para>dev-java/blackdown-jre</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>Sun's Java Kit</para>
-</entry>
-<entry>
-<para>dev-java/sun-jdk</para>
-</entry>
-<entry>
-<para>dev-java/sun-jre-bin</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>The IBM Java Kit</para>
-</entry>
-<entry>
-<para>dev-java/ibm-jdk-bin</para>
-</entry>
-<entry>
-<para>dev-java/ibm-jre-bin</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>BEA WebLogic's J2SE Development Kit</para>
-</entry>
-<entry>
-<para>dev-java/jrockit-jdk-bin</para>
-</entry>
-<entry>
-<para>----------------------------</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para/>
-<para>Таблица 3.1: Выбор JDKs/JREs в Gentoo Linux</para>
-<para/>
-<para>Пара Blackdown JRE/JDK  используется по умолчанию для версии 1.4., т.к. Она свободна доступна без дополнительных регистраций. JREs и JDKs от <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://java.sun.com/javase/downloads/index.jsp">Sun</link>, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.ibm.com/developerworks/java/jdk/">IBM</link>, и <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.bea.com/framework.jsp?CNT=index.htm&amp;FP=/content/products/jrockit/">BEA</link> конечно быстрее, но их получение требует немного больше усилий, таких как чтение и подтверждение лицензии перед загрузкой (IBM дополнительно требует Вашей регистрации).</para></section><section><info><title>Установка JRE/JDKs</title></info>
-<para>Для установки JDK, принятой по умолчанию для Вашего профиля запустите:</para>
-<para> emerge  virtual/jdk.</para>
-<para>Или для установки JRE, принятой по умолчанию для Вашего профиля, запустите: </para>
-<para> emerge virtual/jre.</para>
-<para>Недавно Sun провел повторное лицензирование своих JDK и JRE под более дружественной к Linux лицензией. В результате этого, Sun выпустил версию Java 1.5 и выше как свободно загружаемые, без дополнительных трудностей.</para>
-<para>Примечание: JDK также включает и JRE, поэтому установив JDK, Вам не нужно устанавливать JRE</para></section><section><info><title>Установка других, немного ограничивающих их получение, виртуальных машин</title></info>
-<para>Как уже упоминалось, некоторые из JDKs и JREs требуют, чтобы Вы совершили несколько дополнительных действий перед установкой. Просто запустите emerge для этих пакетов как Вы обычно это делаете. Ebuilds (сборочные файлы) в последствии сообщат Вам, куда идти и что скачать. Затем Вам следует загрузить указанные файлы в каталог: /usr/portage/distfiles. После этого, Вы можете повторно запустить команду emerge, которая на этот раз установит данную JRE/JDK.</para></section></section><section><info><title>4. Настройка Вашей виртуальной машины</title></info><section><info><title>Введение</title></info>
-<para>Gentoo способен иметь множество  установленных JDKs и JREs  без появления каких-либо конфликтов.</para>
-<para>Используя средство  java-config, Вы можете установить умолчания для всей системы (удостоверьтесь, что Вы имеете доступ под root). Пользователи могут также использовать java-config, для установки их персональных настроек по умолчанию.</para>
-<para>Примечание: Вы также можете использовать eselect  для изменения системной и пользовательской  виртуальной машины. Смотрите eselect java-vm help.</para>
-<para/></section><section><info><title>Установка виртуальной машины по умолчанию</title></info>
-<para>Запущенная команда java-config --list-available-vms даст Вам список всех JREs и JDKs, установленных на Вашей системе. Здесь приведен пример вывода этой команды:</para>
-<para/>
-<para>Листинг 4.1 Список доступных виртуальных машин.</para>
-<para># java-config --list-available-vms</para>
-<para>The following VMs are available for generation-2:</para>
-<para>1)      Blackdown JDK 1.4.2.03 [blackdown-jdk-1.4.2]</para>
-<para>2)      Blackdown JRE 1.4.2.03 [blackdown-jre-1.4.2]</para>
-<para>3)      Blackdown 32bit JRE 1.4.2.03 [emul-linux-x86-java-1.4.2]</para>
-<para>4)      Sun 32bit JRE 1.5.0.08 [emul-linux-x86-java-1.5]</para>
-<para>5)      Kaffe 1.1.7 [kaffe]</para>
-<para>*)      Sun JDK 1.5.0.08 [sun-jdk-1.5]</para>
-<para/>
-<para>Символ * показывает текущую активную виртуальную машину (system-vm или user-vm). Имя в скобках ([]) это описатель или номер для конкретной VM. Вы можете использовать описатель или номер для команды: java-config —set-system-vm. Здесь приведён пример по установке системной VM:</para>
-<para/>
-<para>Листинг 4.2 Установка системной виртуальной машины (system-vm)</para>
-<para>(По описателю (предпочтительней))</para>
-<para># java-config --set-system-vm blackdown-jdk-1.4</para>
-<para>Now using blackdown-jdk-1.4 as your generation-2 system JVM</para>
-<para>(По номеру)</para>
-<para># java-config --set-system-vm 6</para>
-<para>Now using sun-jdk-1.5 as your generation-2 system JVM</para>
-<para/>
-<para>Как обычный пользователь, Вы можете использовать: java-config --set-user-vm</para>
-<para>Примечание: Вам нет необходимости изменять профиль для смены user/system VM.</para></section><section><info><title>Установка предпочтительной виртуальной машины</title></info>
-<para>Во время установки различных Java пакетов, виртуальная машина может и будет переключена так, как требуется.</para>
-<para>Из-за того, что доступно большое множество виртуальных машин, мы не имеем ресурсов для тестирования и проверки работы каждого пакета их всех.  Таким образом, для гарантии того, что все пакеты установятся гладко и правильно, мы определили список по умолчанию/поддерживаемых виртуальных машин на каждую архитектуру. Вы можете найти этот список в файле: /usr/share/java-config-2/config/jdk-defaults.conf. Когда Вы устанавливаете Java пакеты (через portage), то он обнаруживает одну из этих виртуальных машин в том файле и будет автоматически использовать ту VM, вместо системной VM. Во время установки VM переключается если это необходимо когда, например, ваша системная VM установлена на версию 1.4, но пакет, который Вы устанавливаете, требует как минимум VM версии 1.5. Во время установки он будет использовать предпочтительную версию 1.5 VM, оставляя вашу системную VM не тронутой.</para>
-<para>Конечно, Gentoo всегда предлагает выбор, поэтому Вы можете переопределить эти установки по умолчанию в файле: /etc/java-config-2/build/jdk.conf и будете иметь полный контроль тем, какая VM будет использована. Несколько примеров:</para>
-<para/>
-<para>Листинг 4.3 Пример файла: /etc/java-config-2/build/jdk.conf</para>
-<para>(Я хочу всегда использовать sun-jdk, т.е sun-jdk-1.4 для 1.4, sun-jdk-1.5 для 1.5, и так далее)</para>
-<para>*=sun-jdk</para>
-<para/>
-<para>Листинг 4.4 Пример файла: /etc/java-config-2/build/jdk.conf</para>
-<para>(Я хочу всегда использовать sun-jdk-1.5 когда возможно, за исключением случаев, когда 1.3 или 1.4 VM явно необходимы)</para>
-<para>*=sun-jdk-1.5</para>
-<para/>
-<para>Листинг 4.5 Пример файла: /etc/java-config-2/build/jdk.conf</para>
-<para># Для 1.3  я предпочитаю  sun-jdk 1.4, но когда она недоступна необходимо использовать ibm-jdk-bin,</para>
-<para># Для 1.4, использовать blackdown-jdk, а для 1.5, использовать sun-jdk </para>
-<para>1.3=sun-jdk-1.4 ibm-jdk-bin</para>
-<para>1.4=blackdown-jdk</para>
-<para>1.5=sun-jdk</para>
-<para/>
-<para>Предупреждение: Вам нет необходимости изменять этот файл. Если вы измените эти параметры на не поддерживаемую VM, может случиться непредсказуемое. Сведения об ошибках в таком случае будут иметь гораздо меньший приоритет, чем сведения об ошибках с поддерживаемыми Vms.</para>
-<para/></section></section><section><info><title>5. Компиляторы</title></info>
-<para>Стандартным Java-компилятором, используемым для сборки, является: javac. Он поставляется с каждым JDK. В добавление к настройке виртуальной машины, используемой на этапе сборки, также возможно настроить какой компилятор использовать. Вы определяете список предпочтительных компиляторов в файле: in /etc/java-config-2/build/compilers.conf.</para>
-<para/>
-<para>Листинг 5.1 файл /etc/java-config-2/build/compilers.conf</para>
-<para># If the ebuild supports it</para>
-<para># it will check the COMPILERS var front to back and</para>
-<para># use the first compiler that is installed</para>
-<para/>
-<para>COMPILERS="ecj-3.1 jikes javac"</para>
-<para/>
-<para>Некоторый компиляторы не поддерживают все возможные параметры -target и -source.  Как бы то ни было, каждый компилятор в этом списке проверяется, может ли он поддерживать желаемые -source/-target. javac будет работать во всех случаях, когда ни одного подходящего компилятора не найдено. Более детально о каждом компиляторе показано в таблице ниже:</para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="4"><tbody>
-<row>
-<entry>
-<para>Наименование</para>
-</entry>
-<entry>
-<para>Описатель</para>
-</entry>
-<entry>
-<para>Пакет </para>
-</entry>
-<entry>
-<para>Подробности</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>javac</para>
-</entry>
-<entry>
-<para>javac</para>
-</entry>
-<entry>
-<para>N/A</para>
-</entry>
-<entry>
-<para>Это компилятор по умолчанию, поставляется с каждой JDK</para>
-</entry>
-</row>
-<row>
-<entry>
-<para>jikes</para>
-</entry>
-<entry>
-<para>jikes</para>
-</entry>
-<entry>
-<para>dev-java/jikes</para>
-</entry>
-<entry>
-<para>Jikes был изначально разработан IBM. Это анекдот, но он обычно быстрее чем javac. Тем не менее он более педантичный и падает в тех случаях, в которых javac не имеет проблем. Jikes пока не поддерживает синтаксис Java 1.5 </para>
-</entry>
-</row>
-<row>
-<entry>
-<para>Eclipse Compiler for Java</para>
-</entry>
-<entry>
-<para>ecj-3.1</para>
-</entry>
-<entry>
-<para>=dev-java/eclipse-ecj-3.1*</para>
-</entry>
-<entry>
-<para>Этот компилятор используется в Eclipse SDK. Он является достаточно функциональным и быстрым. Также поддерживает синтаксис Java 1.5</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para/></section><section><info><title>6. Установка переменной CLASSPATH по умолчанию</title></info>
-<para>Предупреждение:  Опции, рассмотренные в этом разделе являются устаревшими, и будут удалены в будущем. Мы очень рекомендуем не использовать их, так как Ваши Java проекты или приложения могут идеально управлять своими classpaths. Если Вы определили специфичный CLASSPATH по умолчанию, то некоторые приложения могут повести себя неожиданно, так как классы могут вдруг появиться в classpath.</para>
-<para/>
-<para>java-config может использоваться для установки системного CLASSPATH, так же как и пользовательского CLASSPATH.  Во-первых Вам необходимо получить список доступных java библиотек, установленных в Вашей системе, которые Вы желаете поместить в CLASSPATH.  Далее приведен пример:</para>
-<para>Листинг 6.1: Список классов</para>
-<para># java-config --list-available-packages</para>
-<para>[xerces-2] The next generation of high performance, fully compliant XML parsers in the Apache Xerces family (/usr/share/xerces-2/package.env)</para>
-<para>[junit] Simple framework to write repeatable tests (/usr/share/junit/package.env)</para>
-<para>[bsh] BeanShell: A small embeddable Java source interpreter (/usr/share/bsh/package.env)</para>
-<para>[bcel] The Byte Code Engineering Library: analyze, create, manipulate Java class files (/usr/share/bcel/package.env)</para>
-<para>[log4j] A low-overhead robust logging package for Java (/usr/share/log4j/package.env)</para>
-<para>...</para>
-<para>И вновь, имена в скобках ([]) являются ID для передачи в  java-config —set-system-classpath. Здесь  пример:</para>
-<para/>
-<para>Листинг 6.2 Установка CLASSPATHs.</para>
-<para># java-config --set-system-classpath log4j,xerces-2</para>
-<para/>
-<para>Примечание: заметьте, что текущая директория (.) не является частью системного CLASSPATH, и должна быть добавлена  в пользовательский профиль</para>
-<para/>
-<para>Для обновления Вашего окружения, выйдите их системы, и зайдите вновь. Можно еще сделать </para>
-<para>source /etc/profile</para>
-<para>Для пользователей,java-config —set-user-classpath создаст ~/.gentoo/java-env-classpath,  который будет затем использоваться в вашем консольном профиле.</para>
-<para>Листинг 6.3 Установка пользовательского classpath.</para>
-<para>if [[ -f "${HOME}/.gentoo/java-env-classpath" ]]; then</para>
-<para>       source ${HOME}/.gentoo/java-env-classpath</para>
-<para>fi</para>
-<para/>
-<para>Если Вы действительно хотите иметь системный или пользовательский classpath, Вы можете добавить следующее в Ваш консольный профиль. Но мы советует избегать этого</para>
-<para/>
-<para>Листинг 6.4 Установка CLASSPATH</para>
-<para>export CLASSPATH="${CLASSPATH}:$(java-config --classpath log4j,xerces-2)" </para>
-<para/></section><section><info><title>7. Java-плагины для  браузера</title></info><section><info><title>Установка плагина</title></info>
-<para>Вы можете установить Java плагин для Вашего Web браузера путем запуска emerge для Java VM  c включенным флагом nsplugin.</para>
-<para>Примечание: nsplugin недоступен для всех архитектур. Для проверки доступности плагинов для вашей архитектуры, перед установкой Java VM выполните:</para>
-<para>emerge -pv &lt;java-vm&gt;</para>
-<para>Portage позволяет установить Вам множество версий плагинов, но только один будет использоваться браузером. Вы можете проверить список доступных плагинов, запустив:</para>
-<para/>
-<para>Листинг 7.1: Просмотр доступных плагинов</para>
-<para># eselect java-nsplugin list</para>
-<para>   [1]   sun-jre-bin-1.5</para>
-<para>   [2]   blackdown-jre-1.4.2</para>
-<para/>
-<para>В примере ниже, sun-jre-bin устанавливается в качестве плагина для браузера:</para>
-<para/>
-<para/>
-<para>Листинг 7.2:  Выбор плагина</para>
-<para># eselect java-nsplugin set sun-jre-bin-1.5</para>
-<para/>
-<para>Проверка, что правильный плагин был выбран:</para>
-<para/>
-<para>Листинг 7.3 Проверка правильности выбора плагина</para>
-<para># eselect java-nsplugin list</para>
-<para>   [1]   sun-jre-bin-1.5  current</para>
-<para>   [2]   blackdown-jre-1.4.2</para>
-<para/>
-<para>Ресурс <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://java.com/">http://java.com</link> также предоставляет ссылку для <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://java.com/en/download/installed.jsp">проверки правильности установки плагина</link>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://java.com/en/download/installed.jsp">. </link> Дополнительно, если Вы используете браузер, основанный на Mozilla (например Firefox), тогда Вы можете проверить Ваш Java плагин, просто введя: about:plugins в адресной строке.</para>
-<para/></section><section><info><title>Плагины на системах с множеством библиотек.</title></info>
-<para>Если Вы работаете на смешанной 64-битной и 32-битной системе (например: на AMD64), то можете использовать только 32-битные плагины.</para>
-<para>Для использования 32-битного плагина, Вам необходимо выполнить:</para>
-<para>emerge emul-linux-x86-java</para>
-<para>с включенным USE-флагом nsplugin.</para>
-<para>Листинг 7.4 Установка 32-битного плагина.</para>
-<para># echo "app-emulation/emul-linux-x86-java nsplugin" &gt;&gt; /etc/portage/package.use</para>
-<para># emerge emul-linux-x86-java</para>
-<para/>
-<para>Далее проверьте, какие плагины вообще доступны:</para>
-<para/>
-<para>Листинг 7.5 Просмотр доступных плагинов.</para>
-<para># eselect java-nsplugin list</para>
-<para>Available 32-bit Java browser plugins</para>
-<para>  [1]   emul-linux-x86-java-1.4.2</para>
-<para>  [2]   emul-linux-x86-java-1.5</para>
-<para/>
-<para>Хотя, Вы должны выбрать 32-битный браузер (такой как mozilla-firefox-bin) для использования с Вашим 32-битным плагином, 64-битная версия  konqueror использует Вашу Java VM напрямую. Таким образом, возможно использовать 64-битную версию  blackdown с этим браузером без дополнительных настроек.</para>
-<para>Теперь выберите правильный плагин для Вашего 32-битного браузера:</para>
-<para>Листинг 7.6 Выбор плагинов</para>
-<para># eselect java-nsplugin set 32bit emul-linux-x86-java-1.5</para>
-<para/>
-<para>Проверка, что правильные плагины были выбраны.</para>
-<para/>
-<para>Листинг 7.7 Проверка правильного плагина</para>
-<para># eselect java-nsplugin list</para>
-<para>Available 32-bit Java browser plugins</para>
-<para>  [1]   emul-linux-x86-java-1.4.2</para>
-<para>  [2]   emul-linux-x86-java-1.5  current</para>
-<para/></section></section><section><info><title>8.  USE флаги, используемые с  Java</title></info>
-<para>Установка USE флагов.</para>
-<para>Для получения дополнительной информации относительно USE флагов, смотрите главу <link xlink:href="#">USE флаги</link> в настольной книге Gentoo</para>
-<para>Флаги<footnote>
-<para>Для более удобной установки USE-флагов, используйте ufed (Use Flag Editor) (emerge ufed)</para>
-</footnote>:</para>
-<orderedlist>
-<listitem>
-<para>Флаг java добавляет поддержку Java  во множество программ.</para>
-</listitem>
-<listitem>
-<para>Флаг nsplugin добавляет поддержку для браузеров, основанных на Mozilla (включая Firefox). Это необходимо для просмотра апплетов в этих браузерах.</para>
-</listitem>
-<listitem>
-<para>Флаг source включает установку zip архива исходных кодов пакета. Это обычно используется в IDE для присоединения исходников.</para>
-</listitem>
-<listitem>
-<para>Флаг jce добавляет поддержку криптографического расширения Java.</para>
-</listitem>
-<listitem>
-<para>Для Java пакетов, флаг doc включает сборку документации по API, используя javadoc.</para>
-</listitem>
-</orderedlist>
-<para/></section><section><info><title>9.  Дополнительные ресурсы</title></info>
-<para>Off-line ресурсы:</para>
-<orderedlist>
-<listitem>
-<para>java-config man page </para>
-</listitem>
-<listitem>
-<para>java-config --help </para>
-</listitem>
-</orderedlist>
-<para>Online ресурсы</para>
-<orderedlist>
-<listitem>
-<para>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/java/">Java Project Page</link> </para>
-</listitem>
-<listitem>
-<para> <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://news.gmane.org/gmane.linux.gentoo.java">gentoo-java</link>, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://news.gmane.org/gmane.linux.gentoo.user">gentoo-user</link>, и <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://news.gmane.org/gmane.linux.gentoo.devel">gentoo-dev</link> списки рассылки</para>
-</listitem>
-<listitem>
-<para>#gentoo и #gentoo-java на irc.freenode.net </para>
-</listitem>
-<listitem>
-<para>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://en.wikipedia.org/wiki/Java_programming_language">Wikipedia's entry for Java</link> </para>
-</listitem>
-<listitem>
-<para>If you have suggestions or questions regarding this document, please email the Gentoo Java team: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:java@gentoo.org">java@gentoo.org</link> </para>
-</listitem>
-</orderedlist>
-<para/></section></section><section><info><title>Руководство по обновлению Java в Gentoo</title></info>
-<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/java/java-upgrade.xml">http://www.gentoo.org/proj/en/java/java-upgrade.xml</link>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/java.xml"> </link>
-</para>
-<para>Перевод: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:JohnBat26@gmail.com?subject=По%20поводу%20вашего%20перевода%20статьи:%20Руководство%20по%20обновлению%20Java%20в%20Gentoo">Батогов Е.В a.k.a. JohnBat26 </link>
-</para>
-<para>С версии: 1.4.</para>
-<para>Дата оригинала:  19.10.2006</para>
-<para>Дата перевода: 29.01.2008</para><section><info><title>1. Введение</title></info>
-<para>Привет и добро пожаловать. Теперь Вы можете спросить: "почему я могу захотеть обновлять  Java?". Или, вероятно, вы начали процесс и получили ссылку на эту страницу после ошибки в течение выполнения emerge?  Несмотря ни на что, целью этого документа является помощь Вам в процессе обновления на новую Java систему. Но чем же является эта новая Java система.</para>
-<para/><section><info><title>Новая Java система</title></info>
-<para>Для тех, кто не знаком с новой Java системой, здесь приведен список новых возможностей:</para>
-<orderedlist>
-<listitem>
-<para>Способность переключать текущую VM на лету.</para>
-</listitem>
-<listitem>
-<para>Непосредственно изменять пользовательскую и системную VM, без необходимости трогать окружение шелла (т.е. не надо больше запускать env-update &amp;&amp; source /etc/profile после переключения системной VM) .</para>
-</listitem>
-<listitem>
-<para>Теперь появилось понятие "сборочной VM", используемой для установки (через emerge) пакетов, и настраиваемой независимо от системной VM.</para>
-</listitem>
-<listitem>
-<para>Для каждой версии Java, т.е. 1.3, 1.4, 1.5, 1.6 и т.д., сборочная VM может быть настроена  и по поставщику и по версии.</para>
-</listitem>
-<listitem>
-<para>Во время выполнения emerge, VM может переключаться на лету в соответствии с её настройками, а также из-за зависимостей пакетов. Например, некоторые пакеты не собираются с версией 1.5. В таких случаях  версия 1.4 будет использована во время сборки.</para>
-</listitem>
-<listitem>
-<para>У Java пакетов, которые собираются с ant, во время компиляции будет перезаписан файл build.xml, для гарантии, что правильная версия байт-кода будет получена.</para>
-</listitem>
-</orderedlist>
-<para/></section><section><info><title>Терминология/ основные понятия</title></info>
-<para>Теперь, когда Вы знаете идею того, что получаете... далее приводится несколько терминов и понятий, которые Вы можете найти полезными перед началом.</para>
-<para/>
-<para>Поколение (Generation)</para>
-<para>Это новое понятие. Смысл состоит в том, что поколение это множество средств и eclasses для сборки Java пакетов. В некоторое время мы начнем переходить с существующего поколения на новое. В течение этого времени, оба поколения существуют вместе в Вашей системе и в дереве портежей. Так например, Вы можете иметь системную VM для поколения 1 и системную VM для поколения 2. Для достижения этого, пакеты которые используют поколение 1 и поколение 2 могут сосуществовать, пока происходит миграция на новое поколение.</para>
-<para/>
-<para>Поколение 1 (Generation 1)</para>
-<para>       Это поколение состоит из существующих eclasses (java-pkg, java-utils, и java)         и</para>
-<para>       java-config-1. Поколение 1 это устаревшая, постепенно уходящая, система. </para>
-<para>Поколение 2 (Generation 2)</para>
-<para>Это поколение состоит из новых eclasses (java-pkg-2, java-pkg-opt-2, java-ant-2, и java-utils-2) и новой версии java-config. Это поколение, куда мы постепенно мигрируем.</para>
-<para>Поколение 1 Системная VM</para>
-<para>     Эта VM используется для установки Java пакетов, используя eclasses из         Поколения 1. Она устанавливается следующим образом:</para>
-<para>          java-config-1 --set-system-vm &lt;choice of vm&gt;. </para>
-<para>Поколение 2 Системная VM </para>
-<para>C Поколением 1, системная VM используется только для  root и для пользователей, которые не имеют установленной пользовательской VM</para>
-<para>Поколение 2 Сборочная VM</para>
-<para>        Поколение 2 вводит новый класс VM. Сборочная VM используется во время         установки для сборки Java пакетов. Она изменяется, как того требует         зависимости от пакетов. Например, если пакет собирается только с версией         1.4, то VM версии 1.4 и будет использоваться. Умолчания определены в         файле: /usr/share/java-config-2/config/jdk-defaults.conf.  Дополнительно         сборочная VM может быть настроена в файле:/etc/java-config-2/build/jdk.conf. </para>
-<para/></section></section><section><info><title>2.  Обновление java-config</title></info>
-<para>Новый пакет java-config-wrapper, блокируется старыми версиями java-confg, так что нам следует удалить его сначала: </para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Листинг 2.1: Удаление старого java-config</para>
-</entry>
-</row>
-<row>
-<entry>
-<para># emerge -C java-config</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>Теперь нам необходимо установить новую версию java-config:</para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Листинг 2.2: Установка нового java-config</para>
-</entry>
-</row>
-<row>
-<entry>
-<para># emerge -1 "=java-config-1*" "=java-config-2*"</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable></section><section><info><title>3. Проверка вашего окружения</title></info>
-<para>У нас теперь есть новый скрипт: java-check-environment. Как можно догадаться из его названия, он проверяет правильность Вашего окружения Java. Потом он советует, какие действия Вы можете предпринять для исправления найденных проблем. Таким образом, теперь запустите:</para>
-<para/>
-<informaltable frame="all">
-<tgroup cols="1"><tbody>
-<row>
-<entry>
-<para>Листинг 3.1: Проверка Вашего окружения </para>
-</entry>
-</row>
-<row>
-<entry>
-<para># java-check-environment</para>
-</entry>
-</row></tbody></tgroup>
-</informaltable>
-<para>Если java-check-environment обнаружит проблему, остановится и скажет Вам о том как её исправить. Следуйте этим советам, и повторно запускайте java-check-environment,  пока он не найдет никаких проблем.</para></section><section><info><title>4. Обновление ... завершено!</title></info>
-<para>Если Вы дошли до этого места, значит Вы успешно перешли на новую Java систему. Поздравляем !</para>
-<para>Теперь, когда Вы обновились, Вы можете захотеть взглянуть на нашу обновленную документацию:</para>
-<orderedlist>
-<listitem>
-<para>
-<link xlink:href="#">Руководство пользователя (Рус.)</link>
-</para>
-</listitem>
-<listitem>
-<para>
-<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/java/java-devel.xml">Руководство разработчика (Англ.)</link>
-</para>
-</listitem>
-</orderedlist>
-<para/></section><section><info><title>5. Общие проблемы и вопросы</title></info>
-<para>Для решения общих проблем, Java team имеет свою wiki страницу <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://overlays.gentoo.org/proj/java/wiki/Common_Problems">здесь</link>. Перед поиском помощи, или отправкой отчета о проблеме, пожалуйста, ознакомьтесь с этой страницей.</para></section></section>
+        <info>
+            <title>Руководство по настройке Java в Gentoo</title>
+        </info>
+        <para/>
+        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/java.xml">http://www.gentoo.org/doc/en/java.xml</link>
+            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/java.xml">
+            </link>
+        </para>
+        <para>
+            <inlinemediaobject>
+                <imageobject role="html">
+                    <imagedata fileref="images/Java.png" width="2.352cm" depth="4.375cm"/>
+                </imageobject>
+                <imageobject role="fo">
+                    <imagedata fileref="../../images/Java.png" width="2.352cm" depth="4.375cm"/>
+                </imageobject>
+            </inlinemediaobject>                             +  <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Java">http://ru.wikipedia.org/wiki/Java</link>
+        </para>
+        <para>Перевод + дополнения: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:JohnBat26@gmail.com?subject=По%20поводу%20вашего%20перевода%20статьи:%20Gentoo%20Java%20Guide">Батогов Е.В a.k.a. JohnBat26</link>
+        </para>
+        <para>С версии: 1.0.</para>
+        <para>Обновлено в: 1.4</para>
+        <para>Дата оригинала:  01.01.2008</para>
+        <para>Дата перевода: 28.01.2008</para>
+        <para/>
+        <para/>
+        <section>
+            <info>
+                <title>1. Что такое Java ?</title>
+            </info>
+            <section>
+                <info>
+                    <title>Введение</title>
+                </info>
+                <para/>
+                <para>
+                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Java">Java</link> — (произносится <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Международный_фонетический_алфавит">/ˈdʒɑːvə/</link>) — <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Объектно-ориентированный_язык_программирования">объектно-ориентированный язык программирования</link>, разрабатываемый компанией <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Sun_Microsystems">Sun Microsystems</link> с <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/1991_год">1991 года</link> и официально выпущенный <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/23_мая">23 мая</link>
+                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/1995_год">1995 года</link>. Многие люди, говоря на русском, называют язык «Ява» по аналогии с <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Ява">географическим названием</link>.</para>
+                <para>Изначально новый язык программирования назывался Oak (<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/w/index.php?title=James_Gosling&amp;action=edit">James Gosling</link>) и разрабатывался для бытовой электроники, но впоследствии был переименован в Java и стал использоваться для написания <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Апплет">апплетов</link>, приложений и <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Сервер">серверного</link> программного обеспечения.</para>
+                <para>Этот объектно-ориентированный  язык, разработанный для запуска на множестве платформ без необходимости повторной компиляции кода для каждой платформы. Хотя программа, написанная на Java, может быть скомпилирована как родная для конкретной платформы, наибольшую популярность Java принесла её переносимость, наряду с другими функциями, такими как сборка мусора (garbage collection).</para>
+                <para>Программы на Java могут быть <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Трансляция">транслированы</link> в <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Байт-код">байт-код</link>, выполняемый на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Виртуальная_машина">виртуальной джава-машине</link> (JVM) — программе, обрабатывающей байтовый код и передающей инструкции оборудованию, как <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Интерпретатор">интерпретатор</link>, но с тем отличием, что байтовый код в отличие от текста обрабатывается значительно быстрее.</para>
+                <para>Достоинство подобного способа выполнения программ — в полной независимости байт-кода от <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Операционная_система">ОС</link> и оборудования, что позволяет выполнять Java приложения на любом устройстве, которое поддерживает виртуальную машину. Другой важной особенностью технологии Java является гибкая система безопасности, благодаря тому, что исполнение программы полностью контролируется виртуальной машиной. Любые операции, которые превышают установленные полномочия программы (например, попытка несанкционированного доступа к данным или соединения с другим компьютером) вызывают немедленное прерывание. Это позволяет пользователям загружать программы, написанные на Java, на их компьютеры (или другие устройства, например, мобильные телефоны) из неизвестных источников, при этом не опасаясь заражения вирусами, пропажи ценной информации, и т. п.</para>
+                <para>Часто к недостаткам этого подхода относят то, что исполнение байт-кода виртуальной машиной может снижать производительность программ и алгоритмов, реализованных на языке Java. Данное утверждение справедливо для первых версий виртуальной машины Java, однако в последнее время оно практически потеряло актуальность. Этому способствовал ряд усовершенствований: применение технологии JITs (Just-In-Time compiler), позволяющей переводить байт-код в машинный код во время исполнения программы с возможностью сохранения версий класса в машинном коде, широкое использование native-кода в стандартных библиотеках, а также аппаратные средства, обеспечивающие ускоренную обработку байт-кода (например, технология <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Jazelle">Jazelle</link>, поддерживаемая некоторыми процессорами фирмы <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/ARM">ARM</link>).</para>
+                <para>Внутри Java существуют 3 основных семейства технологий:</para>
+                <orderedlist>
+                    <listitem>
+                        <para>
+                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/J2EE">J2EE</link> или Java EE (начиная с v1.5) — Java Enterprise Editon, для создания программного обеспечения уровня предприятия; </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/J2SE">J2SE</link> или Java SE (начиная с v1.5) — Java Standard Editon, для создания пользовательских приложений, в первую очередь — для настольных систем; </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/J2ME">J2ME</link>, Java ME или Java Micro Edition, для использования в устройствах, ограниченных по вычислительной мощности, в том числе <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.wikipedia.org/wiki/Мобильный_телефон">мобильных телефонах</link>, PDA, встроенных системах </para>
+                    </listitem>
+                </orderedlist>
+                <para>Последней версией является <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://java.sun.com/javase/6/">версия 1.6</link>, в которой было произведено улучшение системы безопасности, улучшение поддержки XML и скриптового языка Mozilla Rhino, улучшена интеграция с рабочим столом, добавлены некоторые новые возможности в создании графических интерфейсов.</para>
+                <para>Таким образом байт-код запускается на так называемой JRE (Java Runtime Environment —  Java-окружение времени выполнения ), а не напрямую  операционной системой. Следовательно, для выполнения Java-байткода мы нуждаемся в установленной JDK(Java Runtime Environment). JRE включает в себя основные библиотеки, независимую от платформы - виртуальную Java-машину, плагины для браузеров и многое другое.  JDK (Java Development Kit — набор для Java-разработчика) добавляет средства программирования, такие как  компилятор байткода и отладчик.</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>2.  Перед тем как начать</title>
+            </info>
+            <para>Если у Вас уже установлена Java, тогда удостоверьтесь, что Вы следовали <link xlink:href="#">Java Upgrade Guide</link>.</para>
+            <para>Новая установка не требует дополнительных приготовлений.</para>
+        </section>
+        <section>
+            <info>
+                <title>3. Установка виртуальной машины</title>
+            </info>
+            <section>
+                <info>
+                    <title>Варианты</title>
+                </info>
+                <para>Gentoo сопровождает многочисленные Runtime Environments (JREs) и Development Kits (JDKs). Среди всех предлагаемых вариантов имеются:</para>
+                <informaltable frame="all">
+                    <tgroup cols="3">
+                        <thead>
+                            <row>
+                                <entry>
+                                    <para>Поставщик</para>
+                                </entry>
+                                <entry>
+                                    <para>JDK</para>
+                                </entry>
+                                <entry>
+                                    <para>JRE</para>
+                                </entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>
+                                    <para>The Blackdown Java Kit</para>
+                                </entry>
+                                <entry>
+                                    <para>dev-java/blackdown-jdk</para>
+                                </entry>
+                                <entry>
+                                    <para>dev-java/blackdown-jre</para>
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <para>Sun's Java Kit</para>
+                                </entry>
+                                <entry>
+                                    <para>dev-java/sun-jdk</para>
+                                </entry>
+                                <entry>
+                                    <para>dev-java/sun-jre-bin</para>
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <para>The IBM Java Kit</para>
+                                </entry>
+                                <entry>
+                                    <para>dev-java/ibm-jdk-bin</para>
+                                </entry>
+                                <entry>
+                                    <para>dev-java/ibm-jre-bin</para>
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>
+                                    <para>BEA WebLogic's J2SE Development Kit</para>
+                                </entry>
+                                <entry>
+                                    <para>dev-java/jrockit-jdk-bin</para>
+                                </entry>
+                                <entry>
+                                    <para>----------------------------</para>
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </informaltable>
+                <para>Таблица 3.1: Выбор JDKs/JREs в Gentoo Linux</para>
+                <para>Пара Blackdown JRE/JDK  используется по умолчанию для версии 1.4., т.к. Она свободна доступна без дополнительных регистраций. JREs и JDKs от <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://java.sun.com/javase/downloads/index.jsp">Sun</link>, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.ibm.com/developerworks/java/jdk/">IBM</link>, и <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.bea.com/framework.jsp?CNT=index.htm&amp;FP=/content/products/jrockit/">BEA</link> конечно быстрее, но их получение требует немного больше усилий, таких как чтение и подтверждение лицензии перед загрузкой (IBM дополнительно требует Вашей регистрации).</para>
+            </section>
+            <section>
+                <info>
+                    <title>Установка JRE/JDKs</title>
+                </info>
+                <para>Для установки JDK, принятой по умолчанию для Вашего профиля запустите:</para>
+                <screen> emerge  virtual/jdk.</screen>
+                <para>Или для установки JRE, принятой по умолчанию для Вашего профиля, запустите: </para>
+                <screen> emerge virtual/jre.</screen>
+                <para>Недавно Sun провел повторное лицензирование своих JDK и JRE под более дружественной к Linux лицензией. В результате этого, Sun выпустил версию Java 1.5 и выше как свободно загружаемые, без дополнительных трудностей.</para>
+                <para>Примечание: JDK также включает и JRE, поэтому установив JDK, Вам не нужно устанавливать JRE</para>
+            </section>
+            <section>
+                <info>
+                    <title>Установка других, немного ограничивающих их получение, виртуальных машин</title>
+                </info>
+                <para>Как уже упоминалось, некоторые из JDKs и JREs требуют, чтобы Вы совершили несколько дополнительных действий перед установкой. Просто запустите emerge для этих пакетов как Вы обычно это делаете. Ebuilds (сборочные файлы) в последствии сообщат Вам, куда идти и что скачать. Затем Вам следует загрузить указанные файлы в каталог: /usr/portage/distfiles. После этого, Вы можете повторно запустить команду emerge, которая на этот раз установит данную JRE/JDK.</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>4. Настройка Вашей виртуальной машины</title>
+            </info>
+            <section>
+                <info>
+                    <title>Введение</title>
+                </info>
+                <para>Gentoo способен иметь множество  установленных JDKs и JREs  без появления каких-либо конфликтов.</para>
+                <para>Используя средство  java-config, Вы можете установить умолчания для всей системы (удостоверьтесь, что Вы имеете доступ под root). Пользователи могут также использовать java-config, для установки их персональных настроек по умолчанию.</para>
+                <para>Примечание: Вы также можете использовать eselect  для изменения системной и пользовательской  виртуальной машины. Смотрите <command>eselect java-vm help</command>.</para>
+            </section>
+            <section>
+                <info>
+                    <title>Установка виртуальной машины по умолчанию</title>
+                </info>
+                <para>Запущенная команда java-config --list-available-vms даст Вам список всех JREs и JDKs, установленных на Вашей системе. Здесь приведен пример вывода этой команды:</para>
+                <example>
+                    <title>Список доступных виртуальных машин.</title>
+                    <screen><prompt>#</prompt> <userinput>java-config --list-available-vms</userinput>
+The following VMs are available for generation-2:
+1)      Blackdown JDK 1.4.2.03 [blackdown-jdk-1.4.2]
+2)      Blackdown JRE 1.4.2.03 [blackdown-jre-1.4.2]
+3)      Blackdown 32bit JRE 1.4.2.03 [emul-linux-x86-java-1.4.2]
+4)      Sun 32bit JRE 1.5.0.08 [emul-linux-x86-java-1.5]
+5)      Kaffe 1.1.7 [kaffe]
+*)      Sun JDK 1.5.0.08 [sun-jdk-1.5]</screen>
+                </example>
+                <para>Символ * показывает текущую активную виртуальную машину (system-vm или user-vm). Имя в скобках ([]) это описатель или номер для конкретной VM. Вы можете использовать описатель или номер для команды: java-config —set-system-vm. Здесь приведён пример по установке системной VM:</para>
+                <para>
+                    <example>
+                        <title>Установка системной виртуальной машины (system-vm)</title>
+                        <screen><lineannotation>(По описателю (предпочтительней))</lineannotation>
+<prompt>#</prompt> <userinput>java-config --set-system-vm blackdown-jdk-1.4</userinput>
+Now using blackdown-jdk-1.4 as your generation-2 system JVM
+<lineannotation>(По номеру)</lineannotation>
+<prompt>#</prompt> <userinput>java-config --set-system-vm 6</userinput>
+Now using sun-jdk-1.5 as your generation-2 system JVM</screen>
+                    </example>
+                </para>
+                <para>Как обычный пользователь, Вы можете использовать: java-config --set-user-vm</para>
+                <note>
+                    <para>Вам нет необходимости изменять профиль для смены user/system VM.</para>
+                </note>
+            </section>
+            <section>
+                <info>
+                    <title>Установка предпочтительной виртуальной машины</title>
+                </info>
+                <para>Во время установки различных Java пакетов, виртуальная машина может и будет переключена так, как требуется.</para>
+                <para>Из-за того, что доступно большое множество виртуальных машин, мы не имеем ресурсов для тестирования и проверки работы каждого пакета их всех.  Таким образом, для гарантии того, что все пакеты установятся гладко и правильно, мы определили список по умолчанию/поддерживаемых виртуальных машин на каждую архитектуру. Вы можете найти этот список в файле: /usr/share/java-config-2/config/jdk-defaults.conf. Когда Вы устанавливаете Java пакеты (через portage), то он обнаруживает одну из этих виртуальных машин в том файле и будет автоматически использовать ту VM, вместо системной VM. Во время установки VM переключается если это необходимо когда, например, ваша системная VM установлена на версию 1.4, но пакет, который Вы устанавливаете, требует как минимум VM версии 1.5. Во время установки он будет использовать предпочтительную версию 1.5 VM, оставляя вашу системную VM не тронутой.</para>
+                <para>Конечно, Gentoo всегда предлагает выбор, поэтому Вы можете переопределить эти установки по умолчанию в файле: /etc/java-config-2/build/jdk.conf и будете иметь полный контроль тем, какая VM будет использована. Несколько примеров:</para>
+                <para>
+                    <example>
+                        <title>Пример файла: <filename>/etc/java-config-2/build/jdk.conf</filename></title>
+                        <programlisting><lineannotation>(Я хочу всегда использовать sun-jdk, т.е sun-jdk-1.4 для 1.4, sun-jdk-1.5 для 1.5, и так далее)</lineannotation>
+*=sun-jdk</programlisting>
+                    </example>
+                </para>
+                <example>
+                    <title>Пример файла: <filename>/etc/java-config-2/build/jdk.conf</filename></title>
+                    <programlisting>(Я хочу всегда использовать sun-jdk-1.5 когда возможно, за исключением случаев, когда 1.3 или 1.4 VM явно необходимы)
+*=sun-jdk-1.5</programlisting>
+                </example>
+                <example>
+                    <title>Пример файла: /etc/java-config-2/build/jdk.conf</title>
+                    <programlisting># Для 1.3  я предпочитаю  sun-jdk 1.4, но когда она недоступна необходимо использовать ibm-jdk-bin,
+# Для 1.4, использовать blackdown-jdk, а для 1.5, использовать sun-jdk 
+1.3=sun-jdk-1.4 ibm-jdk-bin
+1.4=blackdown-jdk
+1.5=sun-jdk</programlisting>
+                </example>
+                <warning>
+                    <para>Вам нет необходимости изменять этот файл. Если вы измените эти параметры на не поддерживаемую VM, может случиться непредсказуемое. Сведения об ошибках в таком случае будут иметь гораздо меньший приоритет, чем сведения об ошибках с поддерживаемыми Vms.</para>
+                </warning>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>5. Компиляторы</title>
+            </info>
+            <para>Стандартным Java-компилятором, используемым для сборки, является: javac. Он поставляется с каждым JDK. В добавление к настройке виртуальной машины, используемой на этапе сборки, также возможно настроить какой компилятор использовать. Вы определяете список предпочтительных компиляторов в файле: in /etc/java-config-2/build/compilers.conf.</para>
+            <example>
+                <title>файл /<filename>etc/java-config-2/build/compilers.conf</filename></title>
+                <programlisting># If the ebuild supports it
+# it will check the COMPILERS var front to back and
+# use the first compiler that is installed
+
+COMPILERS="ecj-3.1 jikes javac"</programlisting>
+            </example>
+            <para>Некоторый компиляторы не поддерживают все возможные параметры -target и -source.  Как бы то ни было, каждый компилятор в этом списке проверяется, может ли он поддерживать желаемые -source/-target. javac будет работать во всех случаях, когда ни одного подходящего компилятора не найдено. Более детально о каждом компиляторе показано в таблице ниже:</para>
+            <informaltable frame="all">
+                <tgroup cols="4">
+                    <thead>
+                        <row>
+                            <entry>
+                                <para>Наименование</para>
+                            </entry>
+                            <entry>
+                                <para>Описатель</para>
+                            </entry>
+                            <entry>
+                                <para>Пакет </para>
+                            </entry>
+                            <entry>
+                                <para>Подробности</para>
+                            </entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        <row>
+                            <entry>
+                                <para>javac</para>
+                            </entry>
+                            <entry>
+                                <para>javac</para>
+                            </entry>
+                            <entry>
+                                <para>N/A</para>
+                            </entry>
+                            <entry>
+                                <para>Это компилятор по умолчанию, поставляется с каждой JDK</para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>jikes</para>
+                            </entry>
+                            <entry>
+                                <para>jikes</para>
+                            </entry>
+                            <entry>
+                                <para>dev-java/jikes</para>
+                            </entry>
+                            <entry>
+                                <para>Jikes был изначально разработан IBM. Это анекдот, но он обычно быстрее чем javac. Тем не менее он более педантичный и падает в тех случаях, в которых javac не имеет проблем. Jikes пока не поддерживает синтаксис Java 1.5 </para>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <para>Eclipse Compiler for Java</para>
+                            </entry>
+                            <entry>
+                                <para>ecj-3.1</para>
+                            </entry>
+                            <entry>
+                                <para>=dev-java/eclipse-ecj-3.1*</para>
+                            </entry>
+                            <entry>
+                                <para>Этот компилятор используется в Eclipse SDK. Он является достаточно функциональным и быстрым. Также поддерживает синтаксис Java 1.5</para>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </informaltable>
+        </section>
+        <section>
+            <info>
+                <title>6. Установка переменной CLASSPATH по умолчанию</title>
+            </info>
+            <para>Предупреждение:  Опции, рассмотренные в этом разделе являются устаревшими, и будут удалены в будущем. Мы очень рекомендуем не использовать их, так как Ваши Java проекты или приложения могут идеально управлять своими classpaths. Если Вы определили специфичный CLASSPATH по умолчанию, то некоторые приложения могут повести себя неожиданно, так как классы могут вдруг появиться в classpath.</para>
+            <para>java-config может использоваться для установки системного CLASSPATH, так же как и пользовательского CLASSPATH.  Во-первых Вам необходимо получить список доступных java библиотек, установленных в Вашей системе, которые Вы желаете поместить в CLASSPATH.  Далее приведен пример:</para>
+            <example>
+                <title>Список классов</title>
+                <screen><prompt>#</prompt> <userinput>java-config --list-available-packages</userinput>
+[xerces-2] The next generation of high performance, fully compliant XML parsers in the Apache Xerces family (/usr/share/xerces-2/package.env)
+[junit] Simple framework to write repeatable tests (/usr/share/junit/package.env)
+[bsh] BeanShell: A small embeddable Java source interpreter (/usr/share/bsh/package.env)
+[bcel] The Byte Code Engineering Library: analyze, create, manipulate Java class files (/usr/share/bcel/package.env)
+[log4j] A low-overhead robust logging package for Java (/usr/share/log4j/package.env)
+...</screen>
+            </example>
+            <para>И вновь, имена в скобках ([]) являются ID для передачи в  java-config —set-system-classpath. Здесь  пример:</para>
+            <example>
+                <title>Установка CLASSPATHs</title>
+                <screen><prompt>#</prompt> <userinput>java-config --set-system-classpath log4j,xerces-2</userinput></screen>
+            </example>
+            <note>
+                <para>заметьте, что текущая директория (.) не является частью системного CLASSPATH, и должна быть добавлена  в пользовательский профиль</para>
+            </note>
+            <para>Для обновления Вашего окружения, выйдите их системы, и зайдите вновь. Можно еще сделать </para>
+            <screen>source /etc/profile</screen>
+            <para>Для пользователей, java-config --set-user-classpath создаст ~/.gentoo/java-env-classpath,  который будет затем использоваться в вашем консольном профиле.</para>
+            <example>
+                <title>Установка пользовательского classpath.</title>
+                <programlisting>if [[ -f "${HOME}/.gentoo/java-env-classpath" ]]; then
+       source ${HOME}/.gentoo/java-env-classpath
+fi</programlisting>
+            </example>
+            <para>Если Вы действительно хотите иметь системный или пользовательский classpath, Вы можете добавить следующее в Ваш консольный профиль. Но мы советует избегать этого</para>
+            <example>
+                <title>Установка CLASSPATH</title>
+                <programlisting>export CLASSPATH="${CLASSPATH}:$(java-config --classpath log4j,xerces-2)" </programlisting>
+            </example>
+        </section>
+        <section>
+            <info>
+                <title>7. Java-плагины для  браузера</title>
+            </info>
+            <section>
+                <info>
+                    <title>Установка плагина</title>
+                </info>
+                <para>Вы можете установить Java плагин для Вашего Web браузера путем запуска emerge для Java VM  c включенным флагом nsplugin.</para>
+                <para>Примечание: nsplugin недоступен для всех архитектур. Для проверки доступности плагинов для вашей архитектуры, перед установкой Java VM выполните:</para>
+                <screen>emerge -pv &lt;java-vm&gt;</screen>
+                <para>Portage позволяет установить Вам множество версий плагинов, но только один будет использоваться браузером. Вы можете проверить список доступных плагинов, запустив:</para>
+                <example>
+                    <title>Просмотр доступных плагинов</title>
+                    <screen><prompt>#</prompt> <userinput>eselect java-nsplugin list</userinput>
+   [1]   sun-jre-bin-1.5
+   [2]   blackdown-jre-1.4.2</screen>
+                </example>
+                <para>В примере ниже, sun-jre-bin устанавливается в качестве плагина для браузера:</para>
+                <example>
+                    <title>Выбор плагина</title>
+                    <screen><prompt>#</prompt> <userinput>eselect java-nsplugin set sun-jre-bin-1.5</userinput></screen>
+                </example>
+                <para>Проверка, что правильный плагин был выбран:</para>
+                <example>
+                    <title>Проверка правильности выбора плагина</title>
+                    <screen><prompt>#</prompt> <userinput>eselect java-nsplugin list</userinput>
+   [1]   sun-jre-bin-1.5  current
+   [2]   blackdown-jre-1.4.2</screen>
+                </example>
+                <para>Ресурс <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://java.com/">http://java.com</link> также предоставляет ссылку для <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://java.com/en/download/installed.jsp">проверки правильности установки плагина</link>
+                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://java.com/en/download/installed.jsp">. </link> Дополнительно, если Вы используете браузер, основанный на Mozilla (например Firefox), тогда Вы можете проверить Ваш Java плагин, просто введя: about:plugins в адресной строке.</para>
+            </section>
+            <section>
+                <info>
+                    <title>Плагины на системах с множеством библиотек.</title>
+                </info>
+                <para>Если Вы работаете на смешанной 64-битной и 32-битной системе (например: на AMD64), то можете использовать только 32-битные плагины.</para>
+                <para>Для использования 32-битного плагина, Вам необходимо выполнить:</para>
+                <screen>emerge emul-linux-x86-java</screen>
+                <para>с включенным USE-флагом nsplugin.</para>
+                <example>
+                    <title>Установка 32-битного плагина.</title>
+                    <screen><prompt>#</prompt> <userinput>echo "app-emulation/emul-linux-x86-java nsplugin" &gt;&gt; /etc/portage/package.use</userinput>
+<prompt>#</prompt> <userinput>emerge emul-linux-x86-java</userinput></screen>
+                </example>
+                <para>Далее проверьте, какие плагины вообще доступны:</para>
+                <example>
+                    <title>Просмотр доступных плагинов.</title>
+                    <screen><prompt>#</prompt> <userinput>eselect java-nsplugin list</userinput>
+Available 32-bit Java browser plugins
+  [1]   emul-linux-x86-java-1.4.2
+  [2]   emul-linux-x86-java-1.5</screen>
+                </example>
+                <para>Хотя, Вы должны выбрать 32-битный браузер (такой как mozilla-firefox-bin) для использования с Вашим 32-битным плагином, 64-битная версия  konqueror использует Вашу Java VM напрямую. Таким образом, возможно использовать 64-битную версию  blackdown с этим браузером без дополнительных настроек.</para>
+                <para>Теперь выберите правильный плагин для Вашего 32-битного браузера:</para>
+                <example>
+                    <title>Выбор плагинов</title>
+                    <screen><prompt>#</prompt> <userinput>eselect java-nsplugin set 32bit emul-linux-x86-java-1.5</userinput></screen>
+                </example>
+                <para>Проверка, что правильные плагины были выбраны.</para>
+                <example>
+                    <title>Проверка правильного плагина</title>
+                    <screen><prompt>#</prompt> <userinput>eselect java-nsplugin list</userinput>
+Available 32-bit Java browser plugins
+  [1]   emul-linux-x86-java-1.4.2
+  [2]   emul-linux-x86-java-1.5  current</screen>
+                </example>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>8.  USE флаги, используемые с  Java</title>
+            </info>
+            <para>Установка USE флагов.</para>
+            <para>Для получения дополнительной информации относительно USE флагов, смотрите главу <link xlink:href="#">USE флаги</link> в настольной книге Gentoo</para>
+            <para>Флаги<footnote>
+                    <para>Для более удобной установки USE-флагов, используйте ufed (Use Flag Editor) (emerge ufed)</para>
+                </footnote>:</para>
+            <orderedlist>
+                <listitem>
+                    <para>Флаг java добавляет поддержку Java  во множество программ.</para>
+                </listitem>
+                <listitem>
+                    <para>Флаг nsplugin добавляет поддержку для браузеров, основанных на Mozilla (включая Firefox). Это необходимо для просмотра апплетов в этих браузерах.</para>
+                </listitem>
+                <listitem>
+                    <para>Флаг source включает установку zip архива исходных кодов пакета. Это обычно используется в IDE для присоединения исходников.</para>
+                </listitem>
+                <listitem>
+                    <para>Флаг jce добавляет поддержку криптографического расширения Java.</para>
+                </listitem>
+                <listitem>
+                    <para>Для Java пакетов, флаг doc включает сборку документации по API, используя javadoc.</para>
+                </listitem>
+            </orderedlist>
+        </section>
+        <section>
+            <info>
+                <title>9.  Дополнительные ресурсы</title>
+            </info>
+            <para>Off-line ресурсы:</para>
+            <orderedlist>
+                <listitem>
+                    <para>java-config man page </para>
+                </listitem>
+                <listitem>
+                    <para>java-config --help </para>
+                </listitem>
+            </orderedlist>
+            <para>Online ресурсы</para>
+            <orderedlist>
+                <listitem>
+                    <para>
+                        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/java/">Java Project Page</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para> <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://news.gmane.org/gmane.linux.gentoo.java">gentoo-java</link>, <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://news.gmane.org/gmane.linux.gentoo.user">gentoo-user</link>, и <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://news.gmane.org/gmane.linux.gentoo.devel">gentoo-dev</link> списки рассылки</para>
+                </listitem>
+                <listitem>
+                    <para>#gentoo и #gentoo-java на irc.freenode.net </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://en.wikipedia.org/wiki/Java_programming_language">Wikipedia's entry for Java</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>If you have suggestions or questions regarding this document, please email the Gentoo Java team: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:java@gentoo.org">java@gentoo.org</link>
+                    </para>
+                </listitem>
+            </orderedlist>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>Руководство по обновлению Java в Gentoo</title>
+        </info>
+        <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/java/java-upgrade.xml">http://www.gentoo.org/proj/en/java/java-upgrade.xml</link>
+            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/en/java.xml">
+            </link>
+        </para>
+        <para>Перевод: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:JohnBat26@gmail.com?subject=По%20поводу%20вашего%20перевода%20статьи:%20Руководство%20по%20обновлению%20Java%20в%20Gentoo">Батогов Е.В a.k.a. JohnBat26 </link>
+        </para>
+        <para>С версии: 1.4.</para>
+        <para>Дата оригинала:  19.10.2006</para>
+        <para>Дата перевода: 29.01.2008</para>
+        <section>
+            <info>
+                <title>1. Введение</title>
+            </info>
+            <para>Привет и добро пожаловать. Теперь Вы можете спросить: "почему я могу захотеть обновлять  Java?". Или, вероятно, вы начали процесс и получили ссылку на эту страницу после ошибки в течение выполнения emerge?  Несмотря ни на что, целью этого документа является помощь Вам в процессе обновления на новую Java систему. Но чем же является эта новая Java система.</para>
+            <para/>
+            <section>
+                <info>
+                    <title>Новая Java система</title>
+                </info>
+                <para>Для тех, кто не знаком с новой Java системой, здесь приведен список новых возможностей:</para>
+                <orderedlist>
+                    <listitem>
+                        <para>Способность переключать текущую VM на лету.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Непосредственно изменять пользовательскую и системную VM, без необходимости трогать окружение шелла (т.е. не надо больше запускать env-update &amp;&amp; source /etc/profile после переключения системной VM) .</para>
+                    </listitem>
+                    <listitem>
+                        <para>Теперь появилось понятие "сборочной VM", используемой для установки (через emerge) пакетов, и настраиваемой независимо от системной VM.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Для каждой версии Java, т.е. 1.3, 1.4, 1.5, 1.6 и т.д., сборочная VM может быть настроена  и по поставщику и по версии.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Во время выполнения emerge, VM может переключаться на лету в соответствии с её настройками, а также из-за зависимостей пакетов. Например, некоторые пакеты не собираются с версией 1.5. В таких случаях  версия 1.4 будет использована во время сборки.</para>
+                    </listitem>
+                    <listitem>
+                        <para>У Java пакетов, которые собираются с ant, во время компиляции будет перезаписан файл build.xml, для гарантии, что правильная версия байт-кода будет получена.</para>
+                    </listitem>
+                </orderedlist>
+            </section>
+            <section>
+                <info>
+                    <title>Терминология/ основные понятия</title>
+                </info>
+                <para>Теперь, когда Вы знаете идею того, что получаете... далее приводится несколько терминов и понятий, которые Вы можете найти полезными перед началом.</para>
+                <para>Поколение (Generation)</para>
+                <para>Это новое понятие. Смысл состоит в том, что поколение это множество средств и eclasses для сборки Java пакетов. В некоторое время мы начнем переходить с существующего поколения на новое. В течение этого времени, оба поколения существуют вместе в Вашей системе и в дереве портежей. Так например, Вы можете иметь системную VM для поколения 1 и системную VM для поколения 2. Для достижения этого, пакеты которые используют поколение 1 и поколение 2 могут сосуществовать, пока происходит миграция на новое поколение.</para>
+                <para>Поколение 1 (Generation 1)</para>
+                <para>Это поколение состоит из существующих eclasses (java-pkg, java-utils, и java) и java-config-1. Поколение 1 это устаревшая, постепенно уходящая, система. </para>
+                <para>Поколение 2 (Generation 2)</para>
+                <para>Это поколение состоит из новых eclasses (java-pkg-2, java-pkg-opt-2, java-ant-2, и java-utils-2) и новой версии java-config. Это поколение, куда мы постепенно мигрируем.</para>
+                <para>Поколение 1 Системная VM</para>
+                <para>Эта VM используется для установки Java пакетов, используя eclasses из Поколения 1. Она устанавливается следующим образом:</para>
+                <screen>java-config-1 --set-system-vm &lt;choice of vm&gt;. </screen>
+                <para>Поколение 2 Системная VM </para>
+                <para>C Поколением 1, системная VM используется только для  root и для пользователей, которые не имеют установленной пользовательской VM</para>
+                <para>Поколение 2 Сборочная VM</para>
+                <para>Поколение 2 вводит новый класс VM. Сборочная VM используется во время установки для сборки Java пакетов. Она изменяется, как того требует зависимости от пакетов. Например, если пакет собирается только с версией 1.4, то VM версии 1.4 и будет использоваться. Умолчания определены в файле: /usr/share/java-config-2/config/jdk-defaults.conf. Дополнительно сборочная VM может быть настроена в файле:/etc/java-config-2/build/jdk.conf. </para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>2.  Обновление java-config</title>
+            </info>
+            <para>Новый пакет java-config-wrapper, блокируется старыми версиями java-confg, так что нам следует удалить его сначала: </para>
+            <example>
+                <title>Удаление старого java-config</title>
+                <screen><prompt>#</prompt> <userinput>emerge -C java-config</userinput></screen>
+            </example>
+            <para>Теперь нам необходимо установить новую версию java-config:</para>
+            <example>
+                <title>Установка нового java-config</title>
+                <screen><prompt>#</prompt> <userinput>emerge -1 "=java-config-1*" "=java-config-2*"</userinput></screen>
+            </example>
+        </section>
+        <section>
+            <info>
+                <title>3. Проверка вашего окружения</title>
+            </info>
+            <para>У нас теперь есть новый скрипт: java-check-environment. Как можно догадаться из его названия, он проверяет правильность Вашего окружения Java. Потом он советует, какие действия Вы можете предпринять для исправления найденных проблем. Таким образом, теперь запустите:</para>
+            <example>
+                <title>Проверка Вашего окружения</title>
+                <screen><prompt>#</prompt> <userinput>java-check-environment</userinput></screen>
+            </example>
+            <para>Если java-check-environment обнаружит проблему, остановится и скажет Вам о том как её исправить. Следуйте этим советам, и повторно запускайте java-check-environment,  пока он не найдет никаких проблем.</para>
+        </section>
+        <section>
+            <info>
+                <title>4. Обновление ... завершено!</title>
+            </info>
+            <para>Если Вы дошли до этого места, значит Вы успешно перешли на новую Java систему. Поздравляем !</para>
+            <para>Теперь, когда Вы обновились, Вы можете захотеть взглянуть на нашу обновленную документацию:</para>
+            <orderedlist>
+                <listitem>
+                    <para>
+                        <link xlink:href="#">Руководство пользователя (Рус.)</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/proj/en/java/java-devel.xml">Руководство разработчика (Англ.)</link>
+                    </para>
+                </listitem>
+            </orderedlist>
+        </section>
+        <section>
+            <info>
+                <title>5. Общие проблемы и вопросы</title>
+            </info>
+            <para>Для решения общих проблем, Java team имеет свою wiki страницу <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://overlays.gentoo.org/proj/java/wiki/Common_Problems">здесь</link>. Перед поиском помощи, или отправкой отчета о проблеме, пожалуйста, ознакомьтесь с этой страницей.</para>
+        </section>
+    </section>
 </article>
