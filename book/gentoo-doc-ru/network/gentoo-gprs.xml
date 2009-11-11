@@ -222,102 +222,102 @@ Password = ""</programlisting>
         <para>2) Должен быть установлен ppp</para>
         <para>3) В <filename>/etc/conf.d/net</filename> нужно добавить:</para>
         <programlisting>#**********/-------Nokia with Megafon
-            config_ppp1=( "ppp" )
-            link_ppp1="ttyACM0"
-            pppd_ppp1=(
-            "debug" # Comment this off, if you don't need more info
-            #460800 # Serial port line speed
-            "crtscts" # hardware flow control for cable
-            "local" # Ignore carrier detect signal from the modem:
-            "lcp-echo-failure 0"
-            "lcp-echo-interval 0"
-            # IP addresses:
-            ":0.0.0.0"
-            # - accept peers idea of our local address and set address peer as 10.6.6.6
-            # (any address would do, since IPCP gives 0.0.0.0 to it)
-            # - if you use the 10. network at home or something and pppd rejects it,
-            # change the address
-            "noipdefault" # pppd must not propose any IP address to the peer!
-            "ipcp-accept-local" # Accept peers idea of our local address
-            "defaultroute" # Add the ppp interface as default route to the IP routing table
-            #replacedefaultroute # New route should be our default route to Internet
-            "usepeerdns" # User DNS returned by server
-            "noauth" # The phone is not required to authenticate
-            # Most phone do not support compression, so turn it off.
-            #noipv6
-            #novj
-            #nobsdcomp
-            #novjccomp
-            #nopcomp
-            #noaccomp
-            # Username and password:
-            # If username and password are required by the APN, put here the username
-            # and put the username-password combination to the secrets file:
-            # /etc/ppp/pap-secrets for PAP and /etc/ppp/chap-secrets for CHAP
-            # authentication. See pppd man pages for details.
-            'user "internet"' # Change this
-            "persist" # Persistent connection
-            "maxfail 99999" # Retry and retry and retry if failed...
-            )
-            chat_ppp1=(
-            'TIMEOUT'  '45'
-            'ABORT'    'BUSY'
-            'ABORT'    'NO CARRIER'
-            'ABORT'    'ERROR'
-            ''         'ATE1'
-            'OK'       'AT+CGDCONT=1,"IP","internet"'
-            'OK'       'ATD*99***1#'
-            'CONNECT'  'c'
-            )
+config_ppp1=( "ppp" )
+link_ppp1="ttyACM0"
+pppd_ppp1=(
+  "debug" # Comment this off, if you don't need more info
+  #460800 # Serial port line speed
+  "crtscts" # hardware flow control for cable
+  "local" # Ignore carrier detect signal from the modem:
+  "lcp-echo-failure 0"
+  "lcp-echo-interval 0"
+  # IP addresses:
+  ":0.0.0.0"
+  # - accept peers idea of our local address and set address peer as 10.6.6.6
+  # (any address would do, since IPCP gives 0.0.0.0 to it)
+  # - if you use the 10. network at home or something and pppd rejects it,
+  # change the address
+  "noipdefault" # pppd must not propose any IP address to the peer!
+  "ipcp-accept-local" # Accept peers idea of our local address
+  "defaultroute" # Add the ppp interface as default route to the IP routing table
+  #replacedefaultroute # New route should be our default route to Internet
+  "usepeerdns" # User DNS returned by server
+  "noauth" # The phone is not required to authenticate
+  # Most phone do not support compression, so turn it off.
+  #noipv6
+  #novj
+  #nobsdcomp
+  #novjccomp
+  #nopcomp
+  #noaccomp
+  # Username and password:
+  # If username and password are required by the APN, put here the username
+  # and put the username-password combination to the secrets file:
+  # /etc/ppp/pap-secrets for PAP and /etc/ppp/chap-secrets for CHAP
+  # authentication. See pppd man pages for details.
+  'user "internet"' # Change this
+  "persist" # Persistent connection
+  "maxfail 99999" # Retry and retry and retry if failed...
+)
+chat_ppp1=(
+  'TIMEOUT'  '45'
+  'ABORT'    'BUSY'
+  'ABORT'    'NO CARRIER'
+  'ABORT'    'ERROR'
+  ''         'ATE1'
+  'OK'       'AT+CGDCONT=1,"IP","internet"'
+  'OK'       'ATD*99***1#'
+  'CONNECT'  'c'
+)
             
-            #**********/-------Motorola with Beeline
-            config_ppp2=( "ppp" )
-            link_ppp2="ttyACM0"
-            pppd_ppp2=(
-            "debug" # Comment this off, if you don't need more info
-            #460800 # Serial port line speed
-            "crtscts" # hardware flow control for cable
-            "local" # Ignore carrier detect signal from the modem:
-            "lcp-echo-failure 0"
-            "lcp-echo-interval 0"
-            # IP addresses:
-            ":0.0.0.0"
-            # - accept peers idea of our local address and set address peer as 10.6.6.6
-            # (any address would do, since IPCP gives 0.0.0.0 to it)
-            # - if you use the 10. network at home or something and pppd rejects it,
-            # change the address
-            "noipdefault" # pppd must not propose any IP address to the peer!
-            "ipcp-accept-local" # Accept peers idea of our local address
-            "defaultroute" # Add the ppp interface as default route to the IP routing table
-            #replacedefaultroute # New route should be our default route to Internet
-            "usepeerdns" # User DNS returned by server
-            "noauth" # The phone is not required to authenticate
-            # Most phone do not support compression, so turn it off.
-            #noipv6
-            #novj
-            #nobsdcomp
-            #novjccomp
-            #nopcomp
-            #noaccomp
-            # Username and password:
-            # If username and password are required by the APN, put here the username
-            # and put the username-password combination to the secrets file:
-            # /etc/ppp/pap-secrets for PAP and /etc/ppp/chap-secrets for CHAP
-            # authentication. See pppd man pages for details.
-            'user "internet.beeline.ru"' # Change this
-            "persist" # Persistent connection
-            "maxfail 99999" # Retry and retry and retry if failed...
-            )
-            chat_ppp2=(
-            'TIMEOUT'  '45'
-            'ABORT'    'BUSY'
-            'ABORT'    'NO CARRIER'
-            'ABORT'    'ERROR'
-            ''         'ATE1'
-            'OK'       'AT+CGDCONT=1,"IP","internet.beeline.ru"'
-            'OK'       'ATD*99***1#'
-            'CONNECT'  'c'
-            )</programlisting>
+#**********/-------Motorola with Beeline
+config_ppp2=( "ppp" )
+link_ppp2="ttyACM0"
+pppd_ppp2=(
+  "debug" # Comment this off, if you don't need more info
+  #460800 # Serial port line speed
+  "crtscts" # hardware flow control for cable
+  "local" # Ignore carrier detect signal from the modem:
+  "lcp-echo-failure 0"
+  "lcp-echo-interval 0"
+  # IP addresses:
+  ":0.0.0.0"
+  # - accept peers idea of our local address and set address peer as 10.6.6.6
+  # (any address would do, since IPCP gives 0.0.0.0 to it)
+  # - if you use the 10. network at home or something and pppd rejects it,
+  # change the address
+  "noipdefault" # pppd must not propose any IP address to the peer!
+  "ipcp-accept-local" # Accept peers idea of our local address
+  "defaultroute" # Add the ppp interface as default route to the IP routing table
+  #replacedefaultroute # New route should be our default route to Internet
+  "usepeerdns" # User DNS returned by server
+  "noauth" # The phone is not required to authenticate
+  # Most phone do not support compression, so turn it off.
+  #noipv6
+  #novj
+  #nobsdcomp
+  #novjccomp
+  #nopcomp
+  #noaccomp
+  # Username and password:
+  # If username and password are required by the APN, put here the username
+  # and put the username-password combination to the secrets file:
+  # /etc/ppp/pap-secrets for PAP and /etc/ppp/chap-secrets for CHAP
+  # authentication. See pppd man pages for details.
+  'user "internet.beeline.ru"' # Change this
+  "persist" # Persistent connection
+  "maxfail 99999" # Retry and retry and retry if failed...
+)
+chat_ppp2=(
+  'TIMEOUT'  '45'
+  'ABORT'    'BUSY'
+  'ABORT'    'NO CARRIER'
+  'ABORT'    'ERROR'
+  ''         'ATE1'
+  'OK'       'AT+CGDCONT=1,"IP","internet.beeline.ru"'
+  'OK'       'ATD*99***1#'
+  'CONNECT'  'c'
+)</programlisting>
         <para>4) Сделайте ссылки на net.lo</para>
         <screen>ln -s /etc/init.d/net.lo /etc/init.d/net.ppp1ln -s /etc/init.d/net.lo /etc/init.d/net.ppp2</screen>
         <para>5) Подключите телефон с помощью USB, появится /dev/ttyACM0</para>
