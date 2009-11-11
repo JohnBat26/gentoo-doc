@@ -36,6 +36,7 @@
 	<xi:include href="ru-wiki/ru-wiki.xml"/>
 	<xi:include href="desktop/desktop.xml"/>
 	<xi:include href="hardware/hardware.xml"/>
+	<xi:include href="network/network.xml"/>
 	<xi:include href="security/security.xml"/>
 	
 	<xi:include href="linux-more/linux-more.xml"/>
