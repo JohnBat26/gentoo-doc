@@ -8,7 +8,7 @@
 <para>Автор:  <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:johnbat26@gmail.com?subject=По%20поводу%20примеров%20конфигурационных%20файлов">Евгений Батогов a.k.a JohnBat26</link>
 </para>
 <para>С версии: 1.0</para>
-<para>Обновлено: 1.5 (30.03.08)</para>
+<para>Обновлено: 2.0-M2 (03.01.10)</para>
 <para/>
 <para>Мой компьютер:   </para>
 <para>Ноутбук DELL Inspiron 9400:</para>
@@ -23,7 +23,7 @@
 <para>VIDEO: Nvidia Geforce 7900 GS 256 Mb DDR3 </para>
 </listitem>
 <listitem>
-<para>HDD: 120 Gb.</para>
+<para>HDD: 512 Gb.</para>
 </listitem>
 <listitem>
 <para>Max. Res. 1920X1200 pixels</para>
@@ -38,251 +38,227 @@
 <para>Gentoo Linux.</para>
 </listitem>
 <listitem>
-<para>Kernel: 2.6.24</para>
+<para>Kernel: zen-sources-2.6.32-zen4</para>
 </listitem>
 <listitem>
-<para>GCC: 4.2.3</para>
+<para>GCC: 4.4.2 </para>
 </listitem>
 <listitem>
-<para>Glibc: 2.7</para>
+<para>Glibc: 2.11-r2</para>
 </listitem>
 <listitem>
-<para>X.org: 1.4.0.90-r2</para>
+<para>X.org: 1.7.3</para>
 </listitem>
 <listitem>
-<para>KDE 3.5.9</para>
+<para>KDE 4.3.4</para>
 </listitem>
 <listitem>
 <para>...</para>
 </listitem>
 </orderedlist>
 <section><info><title>Мой make.conf</title></info>
-<para>Важно: в данном файле я использую оптимизацию: O3. Этот вариант не гарантирует надежной работы. Поэтому используйте O2, когда не хотите рисковать.</para>
-<para># These settings were set by the catalyst build script that automatically built this stage</para>
-<para># Please consult /etc/make.conf.example for a more detailed example</para>
-<para>CFLAGS="-O3 -march=native -mtune=native -msse3 -mfpmath=sse -pipe -fomit-frame-pointer"</para>
+<para>CFLAGS="-O2 -march=native -pipe"</para>
 <para>CHOST="x86_64-pc-linux-gnu"</para>
 <para>CXXFLAGS="${CFLAGS}"</para>
 <para>MAKEOPTS="-j3"</para>
-<para>USE="64bit 7zip X a52 aac aalib accessibility acl acpi aim alsa amarok amazon</para>
-<para>     amuled apm archive arts asf async audiofile automount avi bash-completion</para>
-<para>     bcmath berkdb big-iron binary-drivers bitmap-fonts bluetooth branding</para>
-<para>     bzip2 c++ cairo caps captury cardbus ccache cdda cddb cdinstall cdio</para>
-<para>     cdparanoia cdr cdrom cdsound chm chroot cisco clamav clamd colordiff</para>
-<para>     compress connectionstatus contactnotes cpio cpudetection cpulimit</para>
-<para>     cracklib crypt cscope ctype cups curl curlwrappers custom-cflags cviewer</para>
-<para>     cxx cyrillic darcs dba dbus dell depth32 designer-plugin device-mapper</para>
-<para>     devil dhcp dia dialup dict directfb divx divx4linux djvu dri dv dvb dvd</para>
-<para>     dvdr dvdread dvi dxr3 editor effects emerald emovix enca encode exif</para>
-<para>     expat extensions fat fbcon fbsplash festival ffmpeg fftw firefox flac</para>
-<para>     flash font-server fontconfig foomaticdb fortran freeimage ftp gadu games</para>
-<para>     gd gdb gdbm gif gimp gimpprint ginac glitz gmail gnuplot gpac gpg gphoto2</para>
-<para>     gpm graphics graphviz groupwise grub gtk gtk2 hal hbci hddtemp highlight</para>
-<para>     history htmlhandbook iconv icq id3tag ieee1394 ifp imagemagick imap imlib</para>
-<para>     inkjar interbase ipq-mon iptv ipv6 ipw3945 ipw4965 irc jabber java java6</para>
-<para>     javascript jbig jce jpeg jpeg2k kcal kde kdecards kdeenablefinal</para>
-<para>     kdehiddenvisibility kdepim kdexdeltas kdgraphics kdm kdrive kernel_linux</para>
-<para>     kig-scripting kipi kontact krb4 lame laptop latex lcd lcmsjpeg ldap</para>
-<para>     ldapsam lha libcaca libclamav libg++ libgcrypt libnotify libvisual libwww</para>
-<para>     live lm_sensors logitech-mouse logrotate magic maps matroska md5sum</para>
-<para>     memlimit mikmod mime mmx mng modplug mozbranding mozdevelop mozilla mp2</para>
-<para>     mp3 mp4 mp4live mpeg mpeg2 mplayer mplayer-bin musepack musicbrains mysql</para>
-<para>     ncurses nemesi netmeeting networkmanager nfs nls nokia6600 nomotif</para>
-<para>     nowlistening nptl nptlonly nsplugin ntfs numeric nvidia obex objc objc++</para>
-<para>     objc-gc octave office ofx ogg oggvorbis oodict openexr opengl openssl</para>
-<para>     openvpn oscar overlays pam pcntl pcre pda pdf pdflib perl pie pink plasma</para>
-<para>     player pmount pmu png portage posix postgres povray ppp pptp pulseaudio</para>
-<para>     pymol python qq qt qt-copy qt-static qt3 qt3support qt4 query-browser</para>
-<para>     quicktime rar rc5 rdesktop readline real realmedia rss rtc ruby samba</para>
-<para>     sametime sasl savepwd sbig scaner scanfolder scanner sdl search sensord</para>
-<para>     session sharedext sharedmem simplexml skins slang slp smp sms smtp</para>
-<para>     snapshot sndfile soap sockets solver sound sounds spamassassin speech</para>
-<para>     speedo speex spell spexx sql sqlite sqlite3 sse sse2 ssl statistics stats</para>
-<para>     stream subtitles subversion svg svnserve symlink sysfs tcl tcltk tcpd</para>
-<para>     texteffect tga theora thesaurus threads tiff translator transparency</para>
-<para>     trayicon truetype tunepimp type1 udev unicode upnp usb utempter utf8 vcd</para>
-<para>     videos vim vim-pager vim-syntax vim-with-x visualization vnc vncviewer</para>
-<para>     vorbis vorbis-psy weather webpresence widescreen wifi winpopup wireshark</para>
-<para>     wmf wmp wxgtk1 wxwindows xcomposite xforms xfs xine xinerama xml xml2 xmp</para>
-<para>     xorg xosd xpm xprint xrender xskatcards xsl xv xvid yahoo zip zlib -daap</para>
-<para>     -privacy -unzip"</para>
-<para>ACCEPT_KEYWORDS="~amd64 ~x86 amd64 x86"</para>
+<para>USE="3dnow 64bit 7zip X a52 aac aalib accessibility ace acl acpi addbookmarks</para>
+<para>     addition additions admin administrator aim alias alsa amarok amazon antlr</para>
+<para>     apm archive asf async atmo automount autoreplace autotrace avi</para>
+<para>     bash-completion bcmath big-iron binary-drivers bitmap-fonts bl bluetooth</para>
+<para>     branding bwscheduler bzip2 c++ c3p0 cairo caps captury cardbus ccache</para>
+<para>     cdaudio cdda cddb cdinstall cdio cdparanoia cdr cdrom cdsound chipcard</para>
+<para>     chm chroot cisco clamav clamd clearcase cleartype colordiff compat</para>
+<para>     compress connectionstatus consolekit contactnotes cpio cpudetection</para>
+<para>     cpulimit cracklib crypt cscope css ctype cups curl curlwrappers</para>
+<para>     custom-optimization cviewer cvs cxx cyrillic daap daemon darcs dba dbm</para>
+<para>     dbus dbx dell depth32 designer-plugin device-mapper dhcp dia dialup dict</para>
+<para>     directfb divx divx4linux djvu dmi dms dri dtaus dv dvb dvd dvdarchive</para>
+<para>     dvdchapjump dvdr dvdread dvi ebook editor embedded emerald emovix enca</para>
+<para>     encode eselect exif exiv2 expat extensions extra-cardsets faad faad2</para>
+<para>     fastcgi fat fbcon fbcondecor fbsplash ffmpeg fftw firefox firefox3 fits</para>
+<para>     flac flash flexresp flexresp2 flup font-server fontconfig fontforge</para>
+<para>     foomaticdb ftp fts3 gadu games gcrypt gd gdb gdbm gecko gif gimp</para>
+<para>     gimpprint ginac git glep glib glibc-compat20 glitz gmail gmedia gnokii</para>
+<para>     gnuplot google google-gadgets gpac gpg gphoto2 gpm graphics graphviz</para>
+<para>     groupwise grub gstreamer gtk2 gtkhotkey gtkstyle hal handbook hbci</para>
+<para>     hddtemp hdri hibernate-script highlight history hpn htmlhandbook iconv</para>
+<para>     icq id3tag ieee1394 ifp imagemagick imaging imap imlib infowidget inkjar</para>
+<para>     innodb ipfilter ipq-mon iptv ipv6 ipw3945 ipython irc isight jabber java6</para>
+<para>     javascript jbig jpeg jpeg2k kate kcal kde kde4 kdebuild kdecards</para>
+<para>     kdehiddenvisibility kdepim kdexdeltas kdgraphics kdm kdrive kernel_linux</para>
+<para>     kig-scripting kino kipi kontact krb4 lame laptop latex lcd lcms lcmsjpeg</para>
+<para>     ldapsam lha libcaca libclamav libg++ libgcrypt libnotify libvisual libwww</para>
+<para>     linux-smp-stats live lm_sensors logitech-mouse logrotate logviewer magic</para>
+<para>     matroska md5sum mediaplayer memlimit mikmod mime mmx mng mod_python</para>
+<para>     modplug mozdevelop mozilla mp2 mp3 mp3tunes mp4 mp4live mpeg mpeg2</para>
+<para>     mpi-threads mplayer mplayer-bin msn msql mssql mtp multilib multislot</para>
+<para>     musepack musicbrains mysql ncurses nemesi netmeeting network network-cron</para>
+<para>     networkmanager nfs njb nls nomotif nova nptl nptlonly nsplugin ntfs</para>
+<para>     numeric nvidia obex objc objc++ objc-gc office ofx ogg oggvorbis oodict</para>
+<para>     openexr opengl openssh openssl opensslcrypt openvpn oracle oscar otr</para>
+<para>     overlays pam pcntl pcre pdf pdflib perforce phonon pie pink plasma player</para>
+<para>     pmount pmu png portage posix postgres povray ppp pptp privacy pronounce</para>
+<para>     pulseaudio pysolcards pyste python pyzord q32 qca qmail qt qt-copy</para>
+<para>     qt-static qt-webkit qt3 qt3support qt4 query-browser quicktime rar raw</para>
+<para>     rc5 rdesktop readline real realmedia reiser4 reiserfs resolvconf rss rtc</para>
+<para>     ruby samba sametime sasl savepwd sbig scaner scanfolder scanner searchv</para>
+<para>     sensord server session sharedext sharedmem simplexml skins slang slp smp</para>
+<para>     sms smtp snapshot sndfile soap sockets solver sound sounds spamassassin</para>
+<para>     speech speedo speex spell spexx sql sqlite sqlite3 sse sse2 sse3 ssh1 ssl</para>
+<para>     ssse3 statistics stats stk stream subtitles subversion svg svnservev</para>
+<para>     symlink sysfs tcl tcltk tcpd testbed texteffect tga thesaurus threads</para>
+<para>     tiff tk translator transparency trayicon truetype tunepimp type1 udev</para>
+<para>     unicode upnp urlpicpreview usb utempter utf8 v4l v4l2 vcd vcdinfo vcdx</para>
+<para>     vdr video_cards_nvidia videos vim vim-pager vim-syntax vim-with-x</para>
+<para>     visualization vlm vnc vncviewer vorbis vorbis-psy webkit webpresence</para>
+<para>     widescreen width wifi winetools wininst winpopup wireshark wma-fixed wmf</para>
+<para>     wmp wxgtk1 wxwindows xanim xcf xcomposite xforms xfs xft xine xinerama</para>
+<para>     xml xml2 xmp xorg xosd xpm xprint xrender xskatcards xsl xslt xv xvid</para>
+<para>     xvmc yahoo zip zlib -bindist -dso -fortran -gnome -java5 -jce -odbc -perl</para>
+<para>    -startup-notification -unzip -xorgmodule -xulrunner"</para>
+
 <para>AUTOCLEAN="yes"</para>
-<para>PORTAGE_NICENESS=39</para>
-<para>#FEATURES="ccache candy userfetch buildpkg -sandbox collision-protect"</para>
-<para>FEATURES="ccache candy userfetch buildpkg -sandbox"</para>
+<para>PORTAGE_NICENESS=15</para>
+<para>FEATURES="candy ccache  -sandbox metadata-transfer nostrip"</para>
 <para>CCACHE_DIR="/var/tmp/ccache/"</para>
 <para>CCACHE_SIZE="4G"</para>
 <para>CC="gcc"</para>
 <para>CXX="g++"</para>
-<para>#PORTDIR_OVERLAY="/usr/portage/local/alsa /usr/portage/local/infra /usr/portage/local/qstardict #/usr/portage/local/stardict  /usr/portage/local/layman /usr/portage/local/google /usr/portage/local/layman/#sunrise /usr/portage/local/layman/xeffects /usr/portage/local/krusader"</para>
-<para/>
-<para>GENTOO_MIRRORS="http://trumpetti.atm.tut.fi/gentoo ftp://ftp.ussg.iu.edu/pub/linux/gentoo ftp://ftp.ucsb.edu/pub/mirrors/linux/gentoo/ http://ftp.ucsb.edu/pub/mirrors/linux/gentoo/ http://gentoo.chem.wisc.edu/gentoo/ ftp://gentoo.mirrors.pair.com/  http://gentoo.mirrors.tds.net/gentoo/ ftp://gentoo.mirrors.tds.net/gentoo/ http://gentoo.netnitco.net/  ftp://gentoo.netnitco.net/pub/mirrors/gentoo/source/ http://mirror.espri.arizona.edu/gentoo/</para>
-<para>#http://mirrors.acm.cs.rpi.edu/gentoo/ ftp://ftp.ndlug.nd.edu/pub/gentoo/ http://open-systems.ufl.edu/mirrors/gentoo #http://gentoo.llarian.net/ ftp://gentoo.llarian.net/pub/gentoo #http://gentoo.binarycompass.org #http://mirror.datapipe.net/gentoo ftp://mirror.datapipe.net/gentoo http://prometheus.cs.wmich.edu/gentoo #http://modzer0.cs.uaf.edu/public/gentoo/ #http://mirror.usu.edu/mirrors/gentoo/ ftp://mirror.usu.edu/mirrors/gentoo/ #ftp://lug.mtu.edu/gentoo http://mirror.phy.olemiss.edu/mirror/gentoo http://mirror.mcs.anl.gov/pub/gentoo/ #ftp://mirror.mcs.anl.gov/pub/gentoo/ http://gentoo.mirrors.easynews.com/linux/gentoo/ #http://gentoo.cites.uiuc.edu/pub/gentoo/ ftp://gentoo.cites.uiuc.edu/pub/gentoo/ #ftp://ftp.wwc.edu/pub/mirrors/ftp.gentoo.org http://gentoo.localhost.net.ar/ #ftp://mirrors.localhost.net.ar/pub/mirrors/gentoo http://www.las.ic.unicamp.br/pub/gentoo/ #ftp://ftp.las.ic.unicamp.br/pub/gentoo/ http://gentoo.inode.at/ ftp://gentoo.inode.at/source/ #http://gd.tuwien.ac.at/opsys/linux/gentoo/ ftp://gd.tuwien.ac.at/opsys/linux/gentoo/ #http://ftp.belnet.be/mirror/rsync.gentoo.org/gentoo/ ftp://ftp.belnet.be/mirror/rsync.gentoo.org/gentoo/ #http://mirror.bih.net.ba/gentoo/ ftp://mirror.bih.net.ba/gentoo/ #ftp://ftp.sh.cvut.cz/MIRRORS/gentoo/gentoo #http://gentoo.supp.name/ http://mirror.uni-c.dk/pub/gentoo/ http://ftp.linux.ee/pub/gentoo/distfiles/ #ftp://ftp.linux.ee/pub/gentoo/distfiles/ #http://trumpetti.atm.tut.fi/gentoo/ ftp://trumpetti.atm.tut.fi/gentoo/ #http://ftp.public.fix.fi/gentoo/ ftp://ftp.public.fix.fi/gentoo http://gentoo.modulix.net/gentoo/ #http://ftp.club-internet.fr/pub/mirrors/gentoo ftp://gentoo.imj.fr/pub/gentoo/ #ftp://ftp.tu-clausthal.de/pub/linux/gentoo/ ftp://sunsite.informatik.rwth-aachen.de/pub/Linux/gentoo #http://linux.rz.ruhr-uni-bochum.de/download/gentoo-mirror/ "</para>
-<para/>
-<para>#FETCHCOMMAND="/usr/bin/getdelta.sh \${URI}"</para>
+<para>PORTDIR_OVERLAY="/usr/local/portage/layman/sunrise /usr/local/portage/layman/zugaina /usr/local/portage/layman/kde-testing  \
+                                         /usr/local/portage/layman/arcon /usr/local/portage/layman/rion  /usr/local/portage/layman/python  /usr/local/portage/layman/ikelos \
+                                         /usr/local/portage/layman/gentoo-china /usr/local/portage/layman/roslin   /usr/local/portage/layman/zen-sources  \
+                                         /usr/local/portage/layman/calculate /usr/local/portage/layman/multilib"
+</para>
+<para>GENTOO_MIRRORS="http://trumpetti.atm.tut.fi/gentoo ftp://ftp.ussg.iu.edu/pub/linux/gentoo ftp://ftp.ucsb.edu/pub/mirrors/linux/gentoo/ \
+                                          http://ftp.ucsb.edu/pub/mirrors/linux/gentoo/ http://gentoo.chem.wisc.edu/gentoo/ ftp://gentoo.mirrors.pair.com/  \
+                                          http://gentoo.mirrors.tds.net/gentoo/ ftp://gentoo.mirrors.tds.net/gentoo/ http://gentoo.netnitco.net/  \
+                                          ftp://gentoo.netnitco.net/pub/mirrors/gentoo/source/ http://mirror.espri.arizona.edu/gentoo/
+</para>
 <para>SYNC="rsync://rsync.gentoo.org/gentoo-portage"</para>
 <para>INPUT_DEVICES="keyboard mouse synaptics evdev"</para>
 <para>VIDEO_CARDS="nv nvidia vesa"</para>
 <para>LINGUAS="ru"</para>
 <para>PORTDIR="/usr/portage" </para>
 <para>ALSA_CARDS="hda-intel"</para>
-<para/></section><section><info><title>2. Файл xorg.conf для NVIDIA Geforce</title></info>
+<para>#Tune elogv</para>
+<para>PORTAGE_ELOG_CLASSES="warn error log qa"</para>
+<para>PORTAGE_ELOG_SYSTEM="save"</para>
+<para>ACCEPT_LICENSE="Q3AEULA Nero-EULA-US  dlj-1.1 sun-bcla-java-vm"</para>
 <para/>
-<para>Section "Module" </para>
-<para>    Load        "ddc"   # ddc probing of monitor </para>
-<para>    Load        "dbe"   # Double buffer extension </para>
-<para>    SubSection  "extmod" </para>
-<para>      Option    "omit xfree86-dga"   # don't initialize the DGA extension </para>
-<para>    EndSubSection </para>
-<para>    Load          "record"</para>
-<para>    Load          "xtrap"</para>
-<para>    Load               "type1" </para>
-<para>    Load             "freetype" </para>
-<para>    Load             "synaptics" </para>
-<para>    Load             "glx"</para>
-<para>    Load             "wfb" </para>
+</section>
+<section>
+     <info>
+        <title>2. Файл xorg.conf для NVIDIA Geforce</title>
+       </info>
+
+<para/>
+<para>Section "Module"</para>
+<para>    Load        "ddc"   # ddc probing of monitor</para>
+<para>    Load        "dbe"   # Double buffer extension</para>
+<para>    SubSection  "extmod"</para>
+<para>      Option    "omit xfree86-dga"   # don't initialize the DGA extension</para>
+<para>    EndSubSection</para>
+<para>    Load        "record"</para>
+<para>    Load        "xtrap"</para>
+<para>    Load        "type1"</para>
+<para>    Load        "freetype"</para>
+<para>    Load        "glx"</para>
+<para>    Load        "wfb"</para>
 <para>EndSection</para>
 <para/>
 <para>Section "Files"</para>
-<para>    FontPath     "/usr/share/fonts/misc:unscaled"</para>
-<para>    FontPath     "/usr/share/fonts/Type1/" </para>
-<para>    FontPath     "/usr/share/fonts/TTF/"</para>
-<para>    FontPath     "/usr/share/fonts/corefonts"</para>
-<para>    FontPath     "/usr/share/fonts/freefonts"</para>
-<para>    FontPath     "/usr/share/fonts/sharefonts"        </para>
-<para>    FontPath     "/usr/share/fonts/terminus"</para>
-<para>    FontPath     "/usr/share/fonts/ttf-bitstream-vera"</para>
-<para>    FontPath     "/usr/share/fonts/unifont"</para>
-<para>    FontPath     "/usr/share/fonts/100dpi:unscaled"</para>
-<para>    FontPath     "/usr/share/fonts/75dpi:unscaled" </para>
-<para>    FontPath     "/usr/share/fonts/artwiz"</para>
-<para>    FontPath     "/usr/share/fonts/cyrillic"</para>
+<para>    FontPath     "/usr/share/fonts/misc:unscaled"</para>
+<para>    FontPath     "/usr/share/fonts/Type1/"</para>
+<para>   FontPath     "/usr/share/fonts/TTF/"</para>
+<para>    FontPath     "/usr/share/fonts/corefonts"</para>
+<para>    FontPath     "/usr/share/fonts/freefonts"</para>
+<para>    FontPath     "/usr/share/fonts/sharefonts"</para>
+<para>    FontPath     "/usr/share/fonts/terminus"</para>
+<para>    FontPath     "/usr/share/fonts/ttf-bitstream-vera"</para>
+<para>    FontPath     "/usr/share/fonts/unifont"</para>
+<para>    FontPath     "/usr/share/fonts/100dpi:unscaled"</para>
+<para>    FontPath     "/usr/share/fonts/75dpi:unscaled"</para>
+<para>    FontPath     "/usr/share/fonts/artwiz"</para>
+<para>    FontPath     "/usr/share/fonts/cyrillic"</para>
 <para>EndSection</para>
 <para/>
-<para>Section "ServerFlags" </para>
-<para>    Option       "AllowMouseOpenFail" "true" </para>
-<para>    Option       "SuspendTime"        "10" </para>
-<para>    Option       "OffTime"            "15"</para>
-<para>    Option "AutoAddDevices" "false" </para>
+<para>Section "ServerFlags"</para>
+<para>    Option      "AllowMouseOpenFail" "true"</para>
+<para>    Option      "AllowEmptyInput" "on"</para>
+<para>    Option      "AutoAddDevices" "on"</para>
+<para>    Option      "AutoEnableDevices" "on"</para>
+<para>    Option      "SuspendTime"        "10"</para>
+<para>    Option     "OffTime"            "15"</para>
 <para>EndSection</para>
 <para/>
-<para>Section "InputDevice" </para>
-<para>    Identifier  "Keyboard1" </para>
-<para>    Driver      "kbd" </para>
-<para>    Option      "XkbRules"      "xorg"</para>
-<para>    Option      "XkbModel"      "microsoftpro" </para>
-<para>    Option      "XkbLayout"     "us,ru" </para>
-<para>    Option      "XkbVariant"     ",winkeys"</para>
-<para>    Option      "XkbOptions"    "grp:shift_toggle,grp_led:scroll"</para>
-<para>    Option      "AutoRepeat"    "500 30" </para>
+<para>Section "Monitor"</para>
+<para>    Identifier  "DellLFP"</para>
+<para>    HorizSync       28.0 - 96.0</para>
+<para>    VertRefresh     43.0 - 60.0</para>
+<para>    Option      "DPMS"</para>
+<para>    DisplaySize     406.4 254.0</para>
 <para>EndSection</para>
 <para/>
-<para>Section "InputDevice" </para>
-<para>    Identifier  "USBMouse" </para>
-<para>    Driver      "mouse"</para>
-<para>    Option      "Device" "/dev/input/mice"</para>
-<para>    Option      "Buttons"      "7"</para>
-<para>    Option      "CorePointer"</para>
-<para>    Option      "Protocol" "auto"</para>
-<para>    Option      "ZAxisMapping" "4 5 6 7"</para>
-<para>EndSection</para>
-<para/>
-<para>Section "InputDevice"</para>
-<para>    Driver      "synaptics"</para>
-<para>    Identifier  "TouchPad"</para>
-<para>    Option      "Device"       "/dev/input/mice"</para>
-<para>    Option      "Protocol"     "auto-dev"</para>
-<para>    Option      "LeftEdge"     "1900"</para>
-<para>    Option      "RightEdge"    "5400"</para>
-<para>    Option      "BottomEdge"   "1800"</para>
-<para>    Option      "TopEdge"      "3900"</para>
-<para>    Option      "FingerLow"    "25"</para>
-<para>    Option      "FingerHigh"   "30"</para>
-<para>    Option      "MaxTapTime"   "180"</para>
-<para>    Option      "MaxTapMove"   "220"</para>
-<para>    Option      "VertScrollDelta" "100"</para>
-<para>    Option      "MinSpeed"     "0.02"</para>
-<para>    Option      "MaxSpeed"     "0.18"</para>
-<para>    Option      "AccelFactor"  "0.0010"</para>
-<para>    Option      "SendCoreEvents" "true"</para>
-<para>    Option      "Repeater"     "/dev/ps2mouse"</para>
-<para>    Option      "SHMConfig"    "true"</para>
-<para>EndSection</para>
-<para>Section "Monitor" </para>
-<para>    Identifier  "DellLFP" </para>
-<para>    HorizSync       28.0 - 96.0</para>
-<para>    VertRefresh     43.0 - 60.0</para>
-<para>    Option      "DPMS" </para>
-<para>#    DisplaySize     320 240</para>
-<para>EndSection</para>
-<para/>
-<para/>
-<para>Section "Device" </para>
-<para>    # Some names might need to be changed hereafter: </para>
-<para>    Identifier  "NVIDIA GeForce 7900GS" </para>
-<para>    Driver      "nvidia" </para>
-<para>    VendorName  "nVidia Corporation"</para>
-<para>    BoardName   "GeForce 7900 GS" </para>
-<para>    BusID       "PCI:1:0:0"</para>
-<para>    #Option     "NoLogo" "1" </para>
-<para>    Option "UseDisplayDevice" "DFP"</para>
-<para>    ### 2D ACCELLERATION</para>
-<para>    #Option  "RenderAccel"           "false" # hardware Render acceleration</para>
-<para>    #Option  "BackinStore"           "true"  #[] prevent artifacts?</para>
-<para>    #Option  "NoRenderExtension"     "true"</para>
-<para>    ## some options</para>
-<para>    Option  "SWcursor"              "false" #[]</para>
-<para>    Option  "Render"                "true"</para>
-<para>    Option  "Composite"             "true"</para>
-<para>    ### 3D ACCELLERATION</para>
-<para>    Option  "EnablePageFlip"        "yes"   #[] Improves performance</para>
-<para>    Option  "AGPFastWrite"          "yes"   #[]</para>
-<para>    Option  "AGPMode"               "4"     # Supports AGP 4x</para>
-<para>    # VideoRam    262144 </para>
-<para>    # Insert Clocks lines here if appropriate </para>
-<para>    #Option "IgnoreDisplayDevices" "CRT, TV"</para>
-<para>    Option "TripleBuffer" "True"</para>
-<para>    Option "AddARGBGLXVisuals" "True"</para>
-<para>    Option "AllowGLXWithComposite" "true" </para>
-<para>    Option "Coolbits" "1"</para>
+<para>Section "Device"</para>
+<para>    # Some names might need to be changed hereafter:</para>
+<para>    Identifier  "NVIDIA GeForce 7900GS"</para>
+<para>    Driver      "nvidia"</para>
+<para>    VendorName  "nVidia Corporation"</para>
+<para>    BoardName   "GeForce 7900 GS"</para>
+<para>    BusID       "PCI:1:0:0"</para>
+<para>    Option      "NoLogo" "0"</para>
+<para>    Option      "UseDisplayDevice" "DFP"</para>
+ <para>   Option "DPI" "120 x 120"</para>
+<para>    ### 2D ACCELLERATION</para>
+<para>    Option      "RenderAccel"           "true" # hardware Render acceleration</para>
+<para>    #Option     "BackinStore"           "true"  #[] prevent artifacts?</para>
+<para>   #Option     "NoRenderExtension"     "true"</para>
+<para>    ## some options</para>
+<para>    Option      "SWcursor"              "false" #[]</para>
+<para>    Option      "Render"                  "true"</para>
+<para>    ### 3D ACCELLERATION</para>
+<para>    Option      "EnablePageFlip"        "yes"   #[] Improves performance</para>
+<para>    Option      "AGPFastWrite"          "yes"   #[]</para>
+<para>    Option      "AGPMode"               "1"     # Supports AGP 4x</para>
+<para>    # VideoRam    262144</para>
+<para>    # Insert Clocks lines here if appropriate</para>
+<para>    #Option "IgnoreDisplayDevices" "CRT, TV"</para>
+<para>    Option      "TripleBuffer" "True"</para>
+<para>    Option      "AllowGLXWithComposite" "true"</para>
+<para>    Option      "AddARGBGLXVisuals" "true"</para>
+<para>    Option      "Coolbits" "1"</para>
 <para>EndSection</para>
 <para/>
 <para>Section "Screen"</para>
-<para>        Identifier "Screen1"</para>
-<para>        Device     "NVIDIA GeForce 7900GS"</para>
-<para>        Monitor    "DellLFP"</para>
-<para>        DefaultDepth     24</para>
-<para>        SubSection "Display"</para>
-<para>                Viewport   0 0</para>
-<para>                Depth     8</para>
-<para>                Modes    "1920x1200" "1400x1050" "1280x1024" "1024x768" "800x600" "640x480"</para>
-<para>        EndSubSection</para>
-<para>        SubSection "Display"</para>
-<para>                Viewport   0 0</para>
-<para>                Depth     16</para>
-<para>                Modes    "1920x1200" "1400x1050" "1280x1024" "1024x768" "800x600" "640x480"</para>
-<para>        EndSubSection</para>
-<para>        SubSection "Display"</para>
-<para>                Viewport   0 0</para>
-<para>                Depth     24</para>
-<para>                Modes    "1920x1200" "1400x1050" "1280x1024" "1024x768" "800x600" "640x480"</para>
-<para>        EndSubSection</para>
-<para>    Option         "RenderAccel" "true"</para>
-<para>    Option         "AddARGBGLXVisuals" "True"</para>
-<para>    Option         "DisableGLXRootClipping" "True" </para>
+<para>        Identifier "Screen1"</para>
+<para>        Device     "NVIDIA GeForce 7900GS"</para>
+<para>        Monitor    "DellLFP"</para>
+<para>        DefaultDepth     24</para>
+<para>        SubSection "Display"</para>
+<para>                Viewport   0 0</para>
+<para>                Depth     8</para>
+<para>                Modes    "1920x1200" "1400x1050" "1280x1024" "1024x768" "800x600" "640x480"</para>
+<para>        EndSubSection</para>
+<para>        SubSection "Display"</para>
+<para>                Viewport   0 0</para>
+<para>                Depth     16</para>
+<para>                Modes    "1920x1200" "1400x1050" "1280x1024" "1024x768" "800x600" "640x480"</para>
+<para>        EndSubSection</para>
+<para>        SubSection "Display"</para>
+<para>                Viewport   0 0</para>
+<para>                Depth     24</para>
+<para>                Modes    "1920x1200" "1400x1050" "1280x1024" "1024x768" "800x600" "640x480"</para>
+<para>        EndSubSection</para>
 <para>EndSection</para>
-<para/>
-<para>Section "ServerLayout" </para>
-<para>    Identifier  "Flat Panel Only" </para>
-<para>    Screen      "Screen 1" </para>
-<para>  #InputDevice "Touchpad"      "AlwaysCore" </para>
-<para>    InputDevice    "TouchPad" </para>
-<para>    InputDevice    "USBMouse" "CorePointer"</para>
-<para>EndSection </para>
-<para> Section "Extensions"</para>
-<para>        Option      "Composite"   "enable"</para>
+<para>Section "ServerLayout"</para>
+<para>   Identifier     "Flat Panel Only"</para>
+<para>    Screen         "Screen 1"</para>
 <para>EndSection</para>
+<para>Section "Extensions"</para>
+<para>    Option "Composite" "Enable"</para>
+<para>    Option "RENDER"    "Enable"</para>
+<para>EndSection</para>
+
 <para/></section><section><info><title> 3. Файл xorg.conf для ATI radeon:</title></info>
 <para>Section "ServerLayout"</para>
 <para>        Identifier     "X.org Configured"</para>
@@ -535,6 +511,18 @@
     <section>
         <info><title>4. Файл /etc/fstab</title></info>
 <para/>
+<para>/dev/sda2               /boot                ext2           defaults,noatime                                                  1 2</para>
+<para>/dev/sda6               /                       xfs             defaults,noatime,nodiratime,osyncisdsync               0 1</para>
+<para>/dev/sda5               none                swap           sw                                                                      0 0</para>
+<para>/dev/sda9               /home               xfs             defaults,noatime,nodiratime,osyncisdsync               0 1</para>
+<para>/dev/sda8               /usr/portage    reiserfs         defaults,noatime,nodiratime                                  0 0</para>
+<para>/dev/sda10              /opt/media       xfs              defaults,noatime,osyncisdsync                               0 1</para>
+<para>#/dev/sr0               /media/cdrom   auto            noauto,ro,user,noatime,gid=19                              0 0</para>
+<para>#/dev/sr0               /media/cdro     auto             noauto,ro,user,iocharset=utf8                               0 0</para>
+<para>/dev/sda1               /windows/c      vfat              auto,iocharset=utf8,quiet,user,umask=000,noatime 0 0</para>
+<para>/dev/sda7               /windows/d      vfat              auto,iocharset=utf8,user,quiet,umask=000,noatime 0 0</para>
+<para># NOTE: The next line is critical for boot!</para>
+<para>proc                    /proc                 proc            defaults                                         0 0</para>
 <para/>
 <para/></section>
 </article>
