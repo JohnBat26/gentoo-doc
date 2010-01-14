@@ -1,243 +1,281 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
     <info>
         <title>Настройка спутникового интернета в Gentoo</title>
     </info>
     <para>   Автор: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:tuxmaster@list.ru?subject=По%20поводу%20Вашей%20статьи%20о%20настройке%20спутникового%20интернета">tuxmaster</link>
     </para>
-        <para>   С версии: 1.5</para>
-        <para/><section><info><title>Введение</title></info>
-            <para>Спутниковый Интернет - это экономичный способ высокоскоростного подключения к интернету. Спутниковое соединение обеспечивает столь же быструю скорость, как и выделенная линия или DSL - до нескольких мегабит в секунду (это примерно в 100 раз быстрее обычного модема). Спутниковая связь очень надежна, и вопреки расхожему мнению, отлично работает при любой погоде - нужно просто использовать антенну достаточного диаметра.</para>
-            <para/>
-            <para>Услугами спутникового Интернет можно пользоваться в любой географической точке, расположенной в обширной зоне обслуживания спутника. Если изменится место Вашего проживания, Вы всегда сможете перенести свой "спутниковый канал". Вам не придется снова тратить деньги на высокоскоростное подключение к интернету. </para>
-            <section>
-                <info><title>Как работает спутниковый Интернет?</title></info>
-                <para>Передача данных через спутник носит односторонний характер (асимметричный доступ): Вы можете только получать данные. Для передачи Ваших запросов на какую-либо информацию в Сети, а также исходящих от Вас данных (например, Ваших электронных писем) нужно использовать любой вид наземного соединения. Вся входящая к Вам информация будет поступать через высокоскоростной спутниковый канал.</para>
-            </section>
-            <section><info><title>Оборудование</title></info>
-                <para>Для приема информации со спутника используется комплект оборудования, состоящий из спутниковой антенны, конвертера и dvb-платы. Никаких разрешительных документов на установку принимающей антенны не требуется. В дальнейшем мы предполагаем, что Ваша спутниковая антенна уже установлена и настроена.</para>
-                <para/></section></section><section><info><title>Подготовка Gentoo к использованию спутникового Интернета</title></info><section><info><title>Настройка ядра</title></info>
-                    <para>Перейдите в каталог с исходными кодами ядра и введите команду make menuconfig. Этой командой Вы вызовете конфигурационное меню, использующее ncurses.</para>
-                    <para/>
-                    <para>Листинг 1: Вызов конфигурационного меню</para>
-                    <para># cd /usr/src/linux</para>
-                    <para># make menuconfig</para>
-                    <para/>
-                    <para>Перед Вами появятся несколько секций настроек. Прежде всего необходимо включить поддержку загружаемых модулей (если Вы использовали genkernel этот шаг можно пропустить).</para>
-                    <para/>
-                    <para>Листинг 2: Включение поддержки модулей</para>
-                    <para>Loadable module support ---&gt;</para>
-                    <para>        [*] Enable loadable module support</para>
-                    <para>        [*] Automatic kernel module loading</para>
-                    <para/>
-                    <para>Включите поддержку Вашей DVB-платы.</para>
-                    <para/>
-                    <para>Листинг 3: Включение поддержки DVB:</para>
-                    <para>Device Drivers ---&gt;</para>
-                    <para>        Multimedia devices ---&gt;</para>
-                    <para>                &lt;M&gt; DVB for Linux</para>
-                    <para>                [*] Load and attach frontends modules as needed </para>
-                    <para>                [*] DVB/ATSC adapters  ---&gt; </para>
-                    <para>                        &lt;M&gt; Ваша_DVB-плата</para>
-                    <para/>
-                    <para>Теперь Вы можете приступить к компиляции ядра. Если Вы неуверенны в своих силах обратитесь к соответствующим разделам руководства.</para></section><section><info><title>Установка пакета утилит</title></info>
-                        <para>Для проверки работоспособности оборудования, настройки, создания сетевого интерфейса, и т.п. Вам потребуются определенные утилиты, входящие в состав linuxtv-dvb-apps</para>
-                        <para/>
-                        <para>Листинг 4: Установка пакета утилит</para>
-                        <para># emerge linuxtv-dvb-apps</para>
-                    </section>
-                    <section>
-                        <info><title>Настройка параметров системы</title></info>
-                    <section><info><title>dvb_core</title></info>
-                            <para>По умолчанию после 5 секунд простоя  DVB-плата отключается, при использовании ядер 2.6.23 и старше эта проблема решается загрузкой модуля dvb_core с параметром dvb_shutdown_timeout=0 </para>
-                            <para/>
-                            <para>Листинг 5: Установка параметров модуля</para>
-                            <para># echo 'alias dvb_core dvb_shutdown_timeout=0' &gt;&gt; /etc/modules.d/aliases</para>
-                            <para/>
-                            <para>К сожалению, в ядрах 2.6.24 такой способ не работает.</para></section>
-                    </section>
-                    <section>
-                            <info><title>/etc/channels.conf</title></info>
-                        <para>В файле channels.conf хранятся параметры настройки dvb-карты на спутник. Для дальнейшей работы нам нужны значения частоты, скорости потока и поляризации, узнать их можно на сайте провайдера.</para>
-                                <para/>
-                                <para>Листинг 6: Создаем /etc/channels.conf</para>
-                                <para># nano -w /etc/channels.conf</para>
-                                <para/>
-                                <para>Теперь заполним channels.conf  параметрами транспондеров. Ниже приведен пример channels.conf для провайдера Raduga с подробными комментариями.</para>
-                                <para/>
-                                <para>Листинг 7: channels.conf для абонетов Raduga</para>
-                                <para># Каждая строка описывает параметры отдельного транспондера в формате:</para>
-                                <para># Name:Frequency:Polarisation:diseqc:Symbolrate:VPID:APID:SID</para>
-                                <para># где</para>
-                                <para># Name — Желаемое название транспондера</para>
-                                <para># Frequency — Частота транспондера в мегагерцах (МГц, MHz)</para>
-                                <para># Polarisation — Поляризация, возможные значения  </para>
-                                <para>#    v-вертикальная (левая круговая), h-горизонтальная (правая круговая)</para>
-                                <para># diseqc — Номер входа diseqc. Если у Вас один конвертер выберите 0.</para>
-                                <para># Symbolrate — Символьная скорость в килосимволов/сек (Ksps)</para>
-                                <para/>
-                                <para>#  Express AM22 (53 East)</para>
-                                <para>1:11096:v:0:6164:0:0:0</para>
-                                <para/>
-                                <para>#  Express AM1 (40 East)</para>
-                                <para>2:11082:v:0:5064:0:0:0</para>
-                                <para/>
-                                <para>#  Intelsat 904 (60 East)</para>
-                                <para>3:11595:v:0:29270:0:0:0</para>
-                                <para>4:10983:v:0:3819:0:0:0</para>
-                                <para/>
-                                <para>#  Yamal 201 Ku (90 East)</para>
-                                <para>5:11672:v:0:18200:0:0:0</para>
-                                <para/>
-                                <para>#  Yamal 201 C (90 East)</para>
-                                <para>6:3980:h:0:38000:0:0:0</para>
-                                <para/>
-                                <para>#  ABS 1 (75 East)</para>
-                                <para>7:12609:v:0:22000:0:0:0</para>
-                                <para/>
-                                <para>#  Sirius 4 (5 East)</para>
-                                <para>8:12680:v:0:9404:0:0:0</para>
-                                <para/>
-                    </section>
-                    <section>
-                        <info><title>Сетевой интерфейс</title></info>
-                        <para>Так как при каждом включении или перезагрузке необходимо создавать dvb-сетевой интерфейс, рекомендуем создать скрипт, выполняющий эти действия автоматически.</para>
-                                    <para/>
-                                    <para> Листинг 8: Создаем /bin/satup</para>
-                                    <para># nano -w /bin/satup</para>
-                                    <para/>
-                                    <para/>
-                                    <para> Листинг 9: Вариант /bin/satup</para>
-                                    <para>#!/bin/bash</para>
-                                    <para/>
-                                    <para># Параметры подписки </para>
-                                    <para># Ваш PID</para>
-                                    <para>PID=0x1234 </para>
-                                    <para/>
-                                    <para># IP адрес подписки</para>
-                                    <para>IP_ADDR=000.111.222.333</para>
-                                    <para/>
-                                    <para># MAC адрес платы, на которую оформлена подписка</para>
-                                    <para>MAC_ADDR=00:11:22:33:44:55 </para>
-                                    <para/>
-                                    <para># Поднимаем сетевой интерфейс </para>
-                                    <para>dvbnet -p $PID </para>
-                                    <para>/sbin/ifconfig dvb0_0 $IP_ADDR </para>
-                                    <para>/sbin/ifconfig dvb0_0 hw ether $MAC_ADDR </para>
-                                    <para/>
-                                    <para># Отключаем spoof-фильтрацию</para>
-                                    <para>echo 0 &gt; /proc/sys/net/ipv4/conf/dvb0_0/rp_filter</para>
-                                    <para/>
-                                    <para/>
-                                    <para> Листинг 10: Добавление /bin/satup в автозапуск</para>
-                                    <para># echo '/bin/satup' &gt;&gt; /etc/conf.d/local.start</para>
-                    </section>
-                    <section>
-                        <info><title>Сетевой фильтр</title></info>
-                        <para>Общий принцип, не зависящий от провайдера: необходимо разрешить входящий трафика с DVB-платы на порты ускорителя и исходящий на сервер провайдера.</para>
-                                        <para/>
-                                        <para> Листинг 11: Пример настройки iptables для ускорителя Sprint (спутник Yamal-90 Ku)</para>
-                                        <para># iptables -A INPUT -p udp -m udp -i dvb0_0 --dport 8093 --sport 1024:65535 -j ACCEPT</para>
-                                        <para># iptables -A OUTPUT -p udp -m udp -m multiport -d 80.81.208.66 --dports 8093,8095 --sport 1024:65535 -j ACCEPT</para>
-                                        <para># /etc/init.d/iptables save</para>
-                    </section>
-                </section>
+    <para>   С версии: 1.5</para>
     <section>
-        <info><title>Проверка работоспособности</title></info>
-        <para>Запустите в терминале szap с параметрами 'n номер_транспондера_в_файле_channels.conf', 'x' — прекратить работу после настройки и 'c путь_к_файлу_channels.conf'</para>
-                                            <para/>
-                                            <para> Листинг 12: Проверка параметров трансподера Ku-диапазон</para>
-                                            <para>~ szap -n 5 -x -c /etc/channels.conf</para>
-                                            <para>reading channels from file '/etc/channels.conf' </para>
-                                            <para>zapping to 5 '5': </para>
-                                            <para>sat 0, frequency = 11671 MHz V, symbolrate 18200000, vpid = 0x0000, apid = 0x0000 </para>
-                                            <para>using '/dev/dvb/adapter0/frontend0' and '/dev/dvb/adapter0/demux0' </para>
-                                            <para>status 00 | signal d689 | snr 9a83 | ber 00000117 | unc 00000000 | </para>
-                                            <para>status 1f | signal e625 | snr d587 | ber 00000088 | unc 00000000 | FE_HAS_LOCK </para>
-                                            <para/>
-                                            <para> Листинг 13: Проверка параметров трансподера C-диапазон</para>
-                                            <para>~ szap -n 6 -x -l C-BAND -c /etc/channels.conf</para>
-                                            <para>reading channels from file '/etc/channels.conf' </para>
-                                            <para>zapping to 6 '6': </para>
-                                            <para>sat 0, frequency = 3980 MHz H, symbolrate 38000000, vpid = 0x0000, apid = 0x0000 </para>
-                                            <para>using '/dev/dvb/adapter0/frontend0' and '/dev/dvb/adapter0/demux0' </para>
-                                            <para>status 00 | signal a367 | snr 7543 | ber 00000129 | unc 00000000 | </para>
-                                            <para>status 1f | signal ea32 | snr e259 | ber 00000052 | unc 00000000 | FE_HAS_LOCK </para>
-                                            <para/>
-                                            <para>Ключевые слова: status 1f и  FE_HAS_LOCK говорят о том, что настройка завершилась успешно. Теперь проверим, поддерживает ли Ваше ядро параметр  dvb_shutdown_timeout=0</para>
-                                            <para/>
-                                            <para> Листинг 14: Ядро поддерживает  dvb_shutdown_timeout=0</para>
-                                            <para>~ femon</para>
-                                            <para>using '/dev/dvb/adapter0/frontend0' </para>
-                                            <para>FE: ST STV0299 DVB-S (SAT) </para>
-                                            <para>status 1f | signal e5df | snr d500 | ber 00000000 | unc 00000000 | FE_HAS_LOCK </para>
-                                            <para>status 1f | signal e879 | snr d518 | ber 00000000 | unc 00000000 | FE_HAS_LOCK </para>
-                                            <para>status 1f | signal e8a0 | snr d527 | ber 00000000 | unc 00000000 | FE_HAS_LOCK </para>
-                                            <para/>
-                                            <para> Листинг 15: Ядро не поддерживает  dvb_shutdown_timeout=0</para>
-                                            <para>~ femon</para>
-                                            <para>using '/dev/dvb/adapter0/frontend0' </para>
-                                            <para>FE: ST STV0299 DVB-S (SAT) </para>
-                                            <para>status 03 | signal 9f5e | snr 0000 | ber 00008080 | unc 00000000 | </para>
-                                            <para>status 03 | signal 9f5e | snr 0000 | ber 00008080 | unc 00000000 | </para>
-                                            <para>status 03 | signal 9f5e | snr 0000 | ber 00008080 | unc 00000000 | </para>
-                                            <para/>
-                                            <para>Во втором случае перед подключением к Интернету необходимо запустить szap без параметра 'х' (при этом окно терминала закрывать нельзя). Добавьте эту команду в скрипт запуска ускорителя спутникового интернета.</para>
-                                            <para/>
-                                            <para> Листинг 16: Запуск szap в фоновом режиме (пример для Ku-диапазона спутника Yamal-90)</para>
-                                            <para>~ szap -n 5 -c /etc/channels.conf &gt;&gt; null &amp;</para>
-                                            <para/>
-                                            <para>Теперь, когда dvb-плата настроена, проверим принимает ли dvb-плата поток</para>
-                                            <para/>
-                                            <para> Листинг 17: Проверка обработки dvb-платой транспортного потока</para>
-                                            <para>~ dvbtraffic</para>
-                                            <para>1039    53 p/s     9 kb/s    80 kbit </para>
-                                            <para>103a     7 p/s     1 kb/s    11 kbit </para>
-                                            <para>103b   271 p/s    49 kb/s   408 kbit </para>
-                                            <para>103c   102 p/s    18 kb/s   154 kbit </para>
-                                            <para>103d   713 p/s   130 kb/s  1073 kbit </para>
-                                            <para>104a  1190 p/s   218 kb/s  1790 kbit </para>
-                                            <para>104b   835 p/s   153 kb/s  1256 kbit </para>
-                                            <para>104c   635 p/s   116 kb/s   955 kbit </para>
-                                            <para>104d   843 p/s   154 kb/s  1267 kbit </para>
-                                            <para>104e  1187 p/s   217 kb/s  1786 kbit </para>
-                                            <para>104f   962 p/s   176 kb/s  1447 kbit </para>
-                                            <para>1051   167 p/s    30 kb/s   252 kbit </para>
-                                            <para>1057    91 p/s    16 kb/s   137 kbit </para>
-                                            <para>1101  4485 p/s   823 kb/s  6746 kbit </para>
-                                            <para>1105   195 p/s    35 kb/s   293 kbit </para>
-                                            <para>2000 14404 p/s  2644 kb/s 21664 kbit </para>
-                                            <para>-PID—FREQ-----BANDWIDTH-BANDWIDTH- </para>
-                                            <para/>
-                                            <para/>
-                                            <para>и функционирование сетевого интерфейса</para>
-                                            <para/>
-                                            <para> Листинг 18: Проверка сетевого интерфейса</para>
-                                            <para># tcpdump -c 3 -qn -i dvb0_0 </para>
-                                            <para>tcpdump: verbose output suppressed, use -v or -vv for full protocol decode </para>
-                                            <para>listening on dvb0_0, link-type EN10MB (Ethernet), capture size 96 bytes </para>
-                                            <para>16:55:06.196218 IP 10.10.10.1 &gt; 10.252.43.127: udp </para>
-                                            <para>16:55:06.196802 IP 10.10.10.1.52632 &gt; 10.252.43.246.8093: UDP, length 884 </para>
-                                            <para>16:55:06.196871 IP 10.10.10.1.52632 &gt; 10.252.43.246.8093: UDP, length 884 </para>
-                                            <para>3 packets captured </para>
-                                            <para>3 packets received by filter </para>
-                                            <para>0 packets dropped by kernel </para>
-                                            <para/>
-                                            <para/>
-                                            <para/>
+        <info>
+            <title>Введение</title>
+        </info>
+        <para>Спутниковый Интернет - это экономичный способ высокоскоростного подключения к интернету. Спутниковое соединение обеспечивает столь же быструю скорость, как и выделенная линия или DSL - до нескольких мегабит в секунду (это примерно в 100 раз быстрее обычного модема). Спутниковая связь очень надежна, и вопреки расхожему мнению, отлично работает при любой погоде - нужно просто использовать антенну достаточного диаметра.</para>
+        <para>Услугами спутникового Интернет можно пользоваться в любой географической точке, расположенной в обширной зоне обслуживания спутника. Если изменится место Вашего проживания, Вы всегда сможете перенести свой "спутниковый канал". Вам не придется снова тратить деньги на высокоскоростное подключение к интернету. </para>
+        <section>
+            <info>
+                <title>Как работает спутниковый Интернет?</title>
+            </info>
+            <para>Передача данных через спутник носит односторонний характер (асимметричный доступ): Вы можете только получать данные. Для передачи Ваших запросов на какую-либо информацию в Сети, а также исходящих от Вас данных (например, Ваших электронных писем) нужно использовать любой вид наземного соединения. Вся входящая к Вам информация будет поступать через высокоскоростной спутниковый канал.</para>
+        </section>
+        <section>
+            <info>
+                <title>Оборудование</title>
+            </info>
+            <para>Для приема информации со спутника используется комплект оборудования, состоящий из спутниковой антенны, конвертера и dvb-платы. Никаких разрешительных документов на установку принимающей антенны не требуется. В дальнейшем мы предполагаем, что Ваша спутниковая антенна уже установлена и настроена.</para>
+        </section>
     </section>
     <section>
-        <info><title>Использование спутникового канала</title></info>
+        <info>
+            <title>Подготовка Gentoo к использованию спутникового Интернета</title>
+        </info>
+        <section>
+            <info>
+                <title>Настройка ядра</title>
+            </info>
+            <para>Перейдите в каталог с исходными кодами ядра и введите команду <command>make menuconfig</command>. Этой командой Вы вызовете конфигурационное меню, использующее ncurses.</para>
+            <example>
+                <title>Вызов конфигурационного меню</title>
+                <screen><prompt>#</prompt> <userinput>cd /usr/src/linux</userinput>
+<prompt>#</prompt> <userinput>make menuconfig</userinput></screen>
+            </example>
+            <para>Перед Вами появятся несколько секций настроек. Прежде всего необходимо включить поддержку загружаемых модулей (если Вы использовали genkernel этот шаг можно пропустить).</para>
+            <example>
+                <title>Включение поддержки модулей</title>
+                <screen>Loadable module support ---&gt;
+        [*] Enable loadable module support
+        [*] Automatic kernel module loading</screen>
+            </example>
+            <para>Включите поддержку Вашей DVB-платы.</para>
+            <example>
+                <title>Включение поддержки DVB</title>
+                <screen>Device Drivers ---&gt;
+        Multimedia devices ---&gt;
+                &lt;M&gt; DVB for Linux
+                [*] Load and attach frontends modules as needed
+                [*] DVB/ATSC adapters  ---&gt;
+                        &lt;M&gt; <replaceable>Ваша_DVB-плата</replaceable></screen>
+            </example>
+            <para>Теперь Вы можете приступить к компиляции ядра. Если Вы неуверенны в своих силах обратитесь к соответствующим разделам руководства.</para>
+        </section>
+        <section>
+            <info>
+                <title>Установка пакета утилит</title>
+            </info>
+            <para>Для проверки работоспособности оборудования, настройки, создания сетевого интерфейса, и т.п. Вам потребуются определенные утилиты, входящие в состав linuxtv-dvb-apps</para>
+            <example>
+                <title>Установка пакета утилит</title>
+                <screen><prompt>#</prompt> <userinput>emerge linuxtv-dvb-apps</userinput></screen>
+            </example>
+        </section>
+        <section>
+            <info>
+                <title>Настройка параметров системы</title>
+            </info>
+            <section>
+                <info>
+                    <title>dvb_core</title>
+                </info>
+                <para>По умолчанию после 5 секунд простоя  DVB-плата отключается, при использовании ядер 2.6.23 и старше эта проблема решается загрузкой модуля dvb_core с параметром <code>dvb_shutdown_timeout=0</code>
+                </para>
+                <example>
+                    <title>Установка параметров модуля</title>
+                    <screen><prompt>#</prompt> <userinput>echo 'alias dvb_core dvb_shutdown_timeout=0' &gt;&gt; /etc/modules.d/aliases</userinput></screen>
+                </example>
+                <para>К сожалению, в ядрах 2.6.24 такой способ не работает.</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>/etc/channels.conf</title>
+            </info>
+            <para>В файле <filename>channels.conf</filename> хранятся параметры настройки dvb-карты на спутник. Для дальнейшей работы нам нужны значения частоты, скорости потока и поляризации, узнать их можно на сайте провайдера.</para>
+            <example>
+                <title>Создаем <filename>/etc/channels.conf</filename></title>
+                <screen><prompt>#</prompt> <userinput>nano -w /etc/channels.conf</userinput></screen>
+            </example>
+            <para>Теперь заполним <filename>channels.conf</filename>  параметрами транспондеров. Ниже приведен пример <filename>channels.conf</filename> для провайдера Raduga с подробными комментариями.</para>
+            <example>
+                <title><filename>channels.conf</filename> для абонетов Raduga</title>
+                <programlisting># Каждая строка описывает параметры отдельного транспондера в формате:
+# Name:Frequency:Polarisation:diseqc:Symbolrate:VPID:APID:SID
+# где
+# Name — Желаемое название транспондера
+# Frequency — Частота транспондера в мегагерцах (МГц, MHz)
+# Polarisation — Поляризация, возможные значения  
+#    v-вертикальная (левая круговая), h-горизонтальная (правая круговая)
+# diseqc — Номер входа diseqc. Если у Вас один конвертер выберите 0.
+# Symbolrate — Символьная скорость в килосимволов/сек (Ksps)
+
+#  Express AM22 (53 East)
+1:11096:v:0:6164:0:0:0
+
+#  Express AM1 (40 East)
+2:11082:v:0:5064:0:0:0
+
+#  Intelsat 904 (60 East)
+3:11595:v:0:29270:0:0:0
+4:10983:v:0:3819:0:0:0
+
+#  Yamal 201 Ku (90 East)
+5:11672:v:0:18200:0:0:0
+
+#  Yamal 201 C (90 East)
+6:3980:h:0:38000:0:0:0
+
+#  ABS 1 (75 East)
+7:12609:v:0:22000:0:0:0
+
+#  Sirius 4 (5 East)
+8:12680:v:0:9404:0:0:0</programlisting>
+            </example>
+        </section>
+        <section>
+            <info>
+                <title>Сетевой интерфейс</title>
+            </info>
+            <para>Так как при каждом включении или перезагрузке необходимо создавать dvb-сетевой интерфейс, рекомендуем создать скрипт, выполняющий эти действия автоматически.</para>
+            <example>
+                <title>Создаем <filename>/bin/satup</filename></title>
+                <screen><prompt>#</prompt> <userinput>nano -w /bin/satup</userinput></screen>
+            </example>
+            <example>
+                <title>Вариант <filename>/bin/satup</filename></title>
+                <programlisting>#!/bin/bash
+
+# Параметры подписки
+# Ваш PID
+PID=0x1234
+ 
+# IP адрес подписки
+IP_ADDR=000.111.222.333
+
+# MAC адрес платы, на которую оформлена подписка
+MAC_ADDR=00:11:22:33:44:55 
+
+# Поднимаем сетевой интерфейс 
+dvbnet -p $PID 
+/sbin/ifconfig dvb0_0 $IP_ADDR 
+/sbin/ifconfig dvb0_0 hw ether $MAC_ADDR
+ 
+# Отключаем spoof-фильтрацию
+echo 0 > /proc/sys/net/ipv4/conf/dvb0_0/rp_filter</programlisting>
+            </example>
+            <example>
+                <title>Добавление <filename>/bin/satup</filename> в автозапуск</title>
+                <screen><prompt>#</prompt> <userinput>echo '/bin/satup' &gt;&gt; /etc/conf.d/local.start</userinput></screen>
+            </example>
+        </section>
+        <section>
+            <info>
+                <title>Сетевой фильтр</title>
+            </info>
+            <para>Общий принцип, не зависящий от провайдера: необходимо разрешить входящий трафика с DVB-платы на порты ускорителя и исходящий на сервер провайдера.</para>
+            <example>
+                <title>Пример настройки iptables для ускорителя Sprint (спутник Yamal-90 Ku)</title>
+                <screen><prompt>#</prompt> <userinput>iptables -A INPUT -p udp -m udp -i dvb0_0 --dport 8093 --sport 1024:65535 -j ACCEPT</userinput>
+<prompt>#</prompt> <userinput>iptables -A OUTPUT -p udp -m udp -m multiport -d 80.81.208.66 --dports 8093,8095 --sport 1024:65535 -j ACCEPT</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/iptables save</userinput></screen>
+            </example>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>Проверка работоспособности</title>
+        </info>
+        <para>Запустите в терминале szap с параметрами 'n номер_транспондера_в_файле_channels.conf', 'x' — прекратить работу после настройки и 'c путь_к_файлу_channels.conf'</para>
+        <example>
+            <title>Проверка параметров трансподера Ku-диапазон</title>
+            <screen><prompt>~</prompt> <userinput>szap -n 5 -x -c /etc/channels.conf</userinput>
+reading channels from file '/etc/channels.conf' 
+zapping to 5 '5': 
+sat 0, frequency = 11671 MHz V, symbolrate 18200000, vpid = 0x0000, apid = 0x0000 
+using '/dev/dvb/adapter0/frontend0' and '/dev/dvb/adapter0/demux0' 
+status 00 | signal d689 | snr 9a83 | ber 00000117 | unc 00000000 | 
+status 1f | signal e625 | snr d587 | ber 00000088 | unc 00000000 | FE_HAS_LOCK</screen>
+        </example>
+        <example>
+            <title>Проверка параметров трансподера C-диапазон</title>
+            <screen><prompt>~</prompt> <userinput>szap -n 6 -x -l C-BAND -c /etc/channels.conf</userinput>
+reading channels from file '/etc/channels.conf' 
+zapping to 6 '6': 
+sat 0, frequency = 3980 MHz H, symbolrate 38000000, vpid = 0x0000, apid = 0x0000 
+using '/dev/dvb/adapter0/frontend0' and '/dev/dvb/adapter0/demux0' 
+status 00 | signal a367 | snr 7543 | ber 00000129 | unc 00000000 | 
+status 1f | signal ea32 | snr e259 | ber 00000052 | unc 00000000 | FE_HAS_LOCK</screen>
+        </example>
+        <para>Ключевые слова: <code>status 1f</code> и <code>FE_HAS_LOCK</code> говорят о том, что настройка завершилась успешно. Теперь проверим, поддерживает ли Ваше ядро параметр <code>dvb_shutdown_timeout=0</code></para>
+        <example>
+            <title>Ядро поддерживает <code>dvb_shutdown_timeout=0</code></title>
+            <screen><prompt>~</prompt> <userinput>femon</userinput>
+using '/dev/dvb/adapter0/frontend0' 
+FE: ST STV0299 DVB-S (SAT) 
+status 1f | signal e5df | snr d500 | ber 00000000 | unc 00000000 | FE_HAS_LOCK 
+status 1f | signal e879 | snr d518 | ber 00000000 | unc 00000000 | FE_HAS_LOCK 
+status 1f | signal e8a0 | snr d527 | ber 00000000 | unc 00000000 | FE_HAS_LOCK </screen>
+        </example>
+        <example>
+            <title>Ядро не поддерживает <code>dvb_shutdown_timeout=0</code></title>
+            <screen><prompt>~</prompt> <userinput>femon</userinput>
+using '/dev/dvb/adapter0/frontend0' 
+FE: ST STV0299 DVB-S (SAT) 
+status 03 | signal 9f5e | snr 0000 | ber 00008080 | unc 00000000 | 
+status 03 | signal 9f5e | snr 0000 | ber 00008080 | unc 00000000 | 
+status 03 | signal 9f5e | snr 0000 | ber 00008080 | unc 00000000 | </screen>
+        </example>
+        <para>Во втором случае перед подключением к Интернету необходимо запустить <command>szap</command> без параметра 'х' (при этом окно терминала закрывать нельзя). Добавьте эту команду в скрипт запуска ускорителя спутникового интернета.</para>
+        <example>
+            <title>Запуск szap в фоновом режиме (пример для Ku-диапазона спутника Yamal-90)</title>
+            <screen><prompt>~</prompt> <userinput>szap -n 5 -c /etc/channels.conf &gt;&gt; null &amp;</userinput></screen>
+        </example>
+        <para>Теперь, когда dvb-плата настроена, проверим принимает ли dvb-плата поток</para>
+        <example>
+            <title>Проверка обработки dvb-платой транспортного потока</title>
+            <screen><prompt>~</prompt> <userinput>dvbtraffic</userinput>
+1039    53 p/s     9 kb/s    80 kbit 
+103a     7 p/s     1 kb/s    11 kbit 
+103b   271 p/s    49 kb/s   408 kbit 
+103c   102 p/s    18 kb/s   154 kbit 
+103d   713 p/s   130 kb/s  1073 kbit 
+104a  1190 p/s   218 kb/s  1790 kbit 
+104b   835 p/s   153 kb/s  1256 kbit 
+104c   635 p/s   116 kb/s   955 kbit 
+104d   843 p/s   154 kb/s  1267 kbit 
+104e  1187 p/s   217 kb/s  1786 kbit 
+104f   962 p/s   176 kb/s  1447 kbit 
+1051   167 p/s    30 kb/s   252 kbit 
+1057    91 p/s    16 kb/s   137 kbit 
+1101  4485 p/s   823 kb/s  6746 kbit 
+1105   195 p/s    35 kb/s   293 kbit 
+2000 14404 p/s  2644 kb/s 21664 kbit 
+-PID—FREQ-----BANDWIDTH-BANDWIDTH- </screen>
+        </example>
+        <para>и функционирование сетевого интерфейса</para>
+        <example>
+            <title>Проверка сетевого интерфейса</title>
+            <screen><prompt>#</prompt> <userinput>tcpdump -c 3 -qn -i dvb0_0</userinput>
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode 
+listening on dvb0_0, link-type EN10MB (Ethernet), capture size 96 bytes 
+16:55:06.196218 IP 10.10.10.1 > 10.252.43.127: udp 
+16:55:06.196802 IP 10.10.10.1.52632 > 10.252.43.246.8093: UDP, length 884 
+16:55:06.196871 IP 10.10.10.1.52632 > 10.252.43.246.8093: UDP, length 884 
+3 packets captured 
+3 packets received by filter 
+0 packets dropped by kernel</screen>
+        </example>
+    </section>
+    <section>
+        <info>
+            <title>Использование спутникового канала</title>
+        </info>
         <para>Установите соединение с наземным провайдером, запустите ускоритель и пользуйтесь недорогим и качественным интернетом со спутника :)</para>
-                                                <para/>
-                                                <para/>
-                                                <para> Листинг 19: Пример скрипта для запуска ускорителя Sprint</para>
-                                                <para>#!/bin/bash</para>
-                                                <para>szap -n 5 -c /etc/channels.conf &gt;&gt; null &amp;</para>
-                                                <para>cd /home/sprint</para>
-                                                <para>/home/sprint/sprint</para>
-                                                <para/></section>
+        <example>
+            <title>Пример скрипта для запуска ускорителя Sprint</title>
+            <programlisting>#!/bin/bash
+szap -n 5 -c /etc/channels.conf >> null &amp;
+cd /home/sprint
+/home/sprint/sprint</programlisting>
+        </example>
+    </section>
 </article>
