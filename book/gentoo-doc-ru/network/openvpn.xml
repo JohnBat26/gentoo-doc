@@ -1,142 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
     <info>
-        <title>Соединение нескольких офисов в одну сеть с помощью OpenVPN</title></info>
-        <para>   Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ylsoftware.com/?action=news&amp;na=viewfull&amp;news=393">http://ylsoftware.com/</link>
-        </para>
-        <para>   Автор: MooSE (<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:moose@home.ylsoftware.com?subject=По%20поводу%20вашей%20статьи%20о%20OpenVPN">moose@home.ylsoftware.com</link>)</para>
-        <para>   С версии: 1.4</para>
-        <para>   Дата: 19.01.2008</para>
-        <para/>
-        <para>Итак. Допустим что у некоторой фирмы есть несколько офисов в различных точках города (возможно даже земного шара - не суть важно) и нам нужно обеспечить максимально простой способ взаимодействия локальных сетей различных офисов между собой. Неплохим решением этой задачи будет объединение этих сетей посредством OpenVPN.</para>
-        <para>Итак. Уточним начальные условия:</para>
-        <para/>
-        <para>Центральный офис (office-0):</para>
-        <para>Сервер под управлением Ubuntu Linux. Три сетевых интерфейса: eth0, eth1, eth2. Конфигурация следующая:</para>
-        <orderedlist>
-            <listitem>
-                <para>eth0: внешний интерфейс, имеющий реальный ip-адрес a.b.c.d. </para>
-            </listitem>
-            <listitem>
-                <para>eth1: первая локальная сеть: 192.168.1.1/24. </para>
-            </listitem>
-            <listitem>
-                <para>eth2: вторая локальная сеть: 192.168.2.1/24. </para>
-            </listitem>
-        </orderedlist>
-        <para>Офис 1 (office-1):</para>
-        <para>Под управлением Mandriva Linux. Два интерфейса:</para>
-        <orderedlist>
-            <listitem>
-                <para>eth0: внешний интерфейс, имеющий доступ к адресу a.b.c.d (каким либо образом). </para>
-            </listitem>
-            <listitem>
-                <para>eth1: локальная сеть: 192.168.3.1/24. </para>
-            </listitem>
-        </orderedlist>
-        <para>Офис 2 (office-2)</para>
-        <para>Сервер полностью аналогичен серверу в первом офисе, за исключением eth1: там адрес 192.168.4.1/24.</para>
-        <para/>
-        <para>Объединять мы будем сервера в виртуальную сеть 192.168.10.0/24. Поэтому на всех серверах должен быть настроен NAT не только для "своих" сетей, но и для сети 192.168.10.0/24.</para>
-        <para>Будем считать что всё это уже сделано. Приступаем к установке и настройке OpenVPN-сервера:</para>
-        <para>apt-get install openvpn</para>
-        <para>Создаём файл конфигурации /etc/openvpn/server.conf следующего содержания:</para>
-        <para>mode server</para>
-        <para>tls-server</para>
-        <para>daemon</para>
-        <para/>
-        <para>ifconfig 192.168.10.1 255.255.255.0</para>
-        <para/>
-        <para>port 1194</para>
-        <para>proto tcp-server</para>
-        <para>dev tap</para>
-        <para>ca /etc/openvpn/keys/ca.crt</para>
-        <para>cert /etc/openvpn/keys/office-0.crt</para>
-        <para>key /etc/openvpn/keys/office-0.key</para>
-        <para>dh /etc/openvpn/keys/dh1024.pem</para>
-        <para>client-config-dir /etc/openvpn/ccd</para>
-        <para>push "route 192.168.10.0 255.255.255.0 192.168.10.1"</para>
-        <para>keepalive 10 120</para>
-        <para>comp-lzo</para>
-        <para>persist-key</para>
-        <para>persist-tun</para>
-        <para>verb 3</para>
-        <para>log-append /var/log/openvpn.log</para>
-        <para>Создаём каталог, в котором будут хранится индивидуальные настройки клиентов:</para>
-        <para>mkdir /etc/openvpn/ccd</para>
-        <para>Копируем скрипты для генерации ключей и создаём ключи:</para>
-        <para>cp -vR /usr/share/doc/openvpn/examples/easy-rsa/2.0 /etc/openvpn/</para>
-        <para>mkdir /etc/openvpn/2.0/keys</para>
-        <para>ln -s /etc/openvpn/2.0/keys /etc/openvpn/keys</para>
-        <para>cd /etc/openvpn/2.0/keys</para>
-        <para>source ./vars</para>
-        <para>./clean-all</para>
-        <para>./build-ca</para>
-        <para>./build-dh</para>
-        <para/>
-        <para># Ключ для центрального офиса</para>
-        <para>./build-key office-0</para>
-        <para/>
-        <para># Ключ для первого офиса</para>
-        <para>./build-key office-1</para>
-        <para/>
-        <para># Ключ для второго офиса</para>
-        <para>./build-key office-2</para>
-        <para>В ходе выполнения этих команд будет задан ряд вопрос. Ответы на них вобщем-то очевидны, поэтому заострять на них внимание не будем.</para>
-        <para>Далее создаём файлы /etc/openvpn/ccd/office-1 и /etc/openvpn/ccd/office-2. Содержание первого:</para>
-        <para># приcваиваем ip-адрес</para>
-        <para>ifconfig-push 192.168.10.101 255.255.255.0</para>
-        <para/>
-        <para># роутинг на сети центрального офиса</para>
-        <para>push "route 192.168.1.0 255.255.255.0 192.168.10.1"</para>
-        <para>push "route 192.168.2.0 255.255.255.0 192.168.10.1"</para>
-        <para/>
-        <para># роутинг на сеть второго офиса</para>
-        <para>push "route 192.168.4.0 255.255.255.0 192.168.10.102"</para>
-        <para>Содержание второго:</para>
-        <para># присваиваем ip-адрес</para>
-        <para>ifconfig-push 192.168.10.102 255.255.255.0</para>
-        <para/>
-        <para># роутинг на сети центрального офиса</para>
-        <para>push "route 192.168.1.0 255.255.255.0 192.168.10.1"</para>
-        <para>push "route 192.168.2.0 255.255.255.0 192.168.10.1"</para>
-        <para/>
-        <para># роутинг на сеть первого офиса</para>
-        <para>push "route 192.168.3.0 255.255.255.0 192.168.10.101"</para>
-        <para>На этом настрока сервера завершена. Перезапускаем его:</para>
-        <para>/etc/init.d/openvpn restart</para>
-        <para>Убеждаемся что поднялся интерфейс tap0:</para>
-        <para>ifconfig tap0</para>
-        <para>Переходим к настройке офисов. Рассмотрим только один. Второй будет сделан аналогично, за исключением имён сертификатов.</para>
-        <para>Устанавливаем openvpn:</para>
-        <para>urpmi openvpn</para>
-        <para>mkdir /etc/openvpn/keys</para>
-        <para>Создаём файл конфигурации /etc/openvpn/client.conf:</para>
-        <para>client</para>
-        <para>dev tap</para>
-        <para>proto tcp</para>
-        <para/>
-        <para># адрес сервера в центрально офисе</para>
-        <para>remote a.b.c.d 1194</para>
-        <para>resolv-retry infinite</para>
-        <para>nobind</para>
-        <para>persist-key</para>
-        <para>persist-tun</para>
-        <para>comp-lzo</para>
-        <para>ns-cert-type server</para>
-        <para>ca ca.crt</para>
-        <para>cert /etc/openvpn/keys/office-1.crt</para>
-        <para>key /etc/openvpn/keys/office-1.key</para>
-        <para>log-append /var/log/openvpn.log</para>
-        <para>Далее нам нужно поместить файлы office-1.* и ca.crt из каталога /etc/openvpn/keys сервера в каталог /etc/openvpn/keys клиента.</para>
-        <para>После этого запускаем сервис:</para>
-        <para>chkconfig openvpn on</para>
-        <para>service openvpn start</para>
-        <para>Убеждаемся что поднялся интерфейс:</para>
-        <para>ifconfig tap0</para>
-        <para>После настройки обоих офисов можно убедиться в работе сети попробовав пинговать из одного офиса какой-нибудь компьютер, расположенный в другом офисе.</para>
-        <para>На этом всё. Более подробную информацию можно найти в документации по openvpn.</para>
+        <title>Соединение нескольких офисов в одну сеть с помощью OpenVPN</title>
+    </info>
+    <para>   Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.ylsoftware.com/news/393">http://www.ylsoftware.com/news/393</link>
+    </para>
+    <para>   Автор: MooSE (<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="mailto:moose@home.ylsoftware.com?subject=По%20поводу%20вашей%20статьи%20о%20OpenVPN">moose@home.ylsoftware.com</link>)</para>
+    <para>   С версии: 1.4</para>
+    <para>   Дата: 19.01.2008</para>
+    <para>Итак. Допустим что у некоторой фирмы есть несколько офисов в различных точках города (возможно даже земного шара - не суть важно) и нам нужно обеспечить максимально простой способ взаимодействия локальных сетей различных офисов между собой. Неплохим решением этой задачи будет объединение этих сетей посредством OpenVPN.</para>
+    <para>Итак. Уточним начальные условия:</para>
+    <para><emphasis role="bold">Центральный офис (office-0):</emphasis></para>
+    <para>Сервер под управлением Ubuntu Linux. Три сетевых интерфейса: eth0, eth1, eth2. Конфигурация следующая:</para>
+    <orderedlist>
+        <listitem>
+            <para>eth0: внешний интерфейс, имеющий реальный ip-адрес a.b.c.d. </para>
+        </listitem>
+        <listitem>
+            <para>eth1: первая локальная сеть: 192.168.1.1/24. </para>
+        </listitem>
+        <listitem>
+            <para>eth2: вторая локальная сеть: 192.168.2.1/24. </para>
+        </listitem>
+    </orderedlist>
+    <para><emphasis role="bold">Офис 1 (office-1):</emphasis></para>
+    <para>Под управлением Mandriva Linux. Два интерфейса:</para>
+    <orderedlist>
+        <listitem>
+            <para>eth0: внешний интерфейс, имеющий доступ к адресу a.b.c.d (каким либо образом). </para>
+        </listitem>
+        <listitem>
+            <para>eth1: локальная сеть: 192.168.3.1/24. </para>
+        </listitem>
+    </orderedlist>
+    <para><emphasis role="bold">Офис 2 (office-2)</emphasis></para>
+    <para>Сервер полностью аналогичен серверу в первом офисе, за исключением eth1: там адрес 192.168.4.1/24.</para>
+    <para/>
+    <para>Объединять мы будем сервера в виртуальную сеть 192.168.10.0/24. Поэтому на всех серверах должен быть настроен NAT не только для "своих" сетей, но и для сети 192.168.10.0/24.</para>
+    <para>Будем считать что всё это уже сделано. Приступаем к установке и настройке OpenVPN-сервера:</para>
+    <screen><prompt>#</prompt> <userinput>apt-get install openvpn</userinput></screen>
+    <para>Создаём файл конфигурации <filename>/etc/openvpn/server.conf</filename> следующего содержания:</para>
+    <programlisting>mode server
+tls-server
+daemon
+
+ifconfig 192.168.10.1 255.255.255.0
+
+port 1194
+proto tcp-server
+dev tap
+ca /etc/openvpn/keys/ca.crt
+cert /etc/openvpn/keys/office-0.crt
+key /etc/openvpn/keys/office-0.key
+dh /etc/openvpn/keys/dh1024.pem
+client-config-dir /etc/openvpn/ccd
+push "route 192.168.10.0 255.255.255.0 192.168.10.1"
+keepalive 10 120
+client-to-client
+comp-lzo
+persist-key
+persist-tun
+verb 3
+log-append /var/log/openvpn.log</programlisting>
+    <para>Создаём каталог, в котором будут хранится индивидуальные настройки клиентов:</para>
+    <screen><prompt>#</prompt> <userinput>mkdir /etc/openvpn/ccd</userinput></screen>
+    <para>Копируем скрипты для генерации ключей и создаём ключи:</para>
+    <screen><prompt>#</prompt> <userinput>cp -vR /usr/share/doc/openvpn/examples/easy-rsa/2.0 /etc/openvpn/</userinput>
+<prompt>#</prompt> <userinput>mkdir /etc/openvpn/2.0/keys</userinput>
+<prompt>#</prompt> <userinput>ln -s /etc/openvpn/2.0/keys /etc/openvpn/keys</userinput>
+<prompt>#</prompt> <userinput>cd /etc/openvpn/2.0/keys</userinput>
+<prompt>#</prompt> <userinput>source ./vars</userinput>
+<prompt>#</prompt> <userinput>./clean-all</userinput>
+<prompt>#</prompt> <userinput>./build-ca</userinput>
+<prompt>#</prompt> <userinput>./build-dh</userinput>
+
+<lineannotation>Ключ для центрального офиса</lineannotation>
+<prompt>#</prompt> <userinput>./build-key-server office-0</userinput>
+
+<lineannotation>Ключ для первого офиса</lineannotation>
+<prompt>#</prompt> <userinput>./build-key office-1</userinput>
+
+<lineannotation>Ключ для второго офиса</lineannotation>
+<prompt>#</prompt> <userinput>./build-key office-2</userinput></screen>
+    <para>В ходе выполнения этих команд будет задан ряд вопросов. Ответы на них вобщем-то очевидны, поэтому заострять на них внимание не будем.</para>
+    <para>Далее создаём файлы <filename>/etc/openvpn/ccd/office-1</filename> и <filename>/etc/openvpn/ccd/office-2</filename>. Содержание первого:</para>
+    <programlisting># приcваиваем ip-адрес
+ifconfig-push 192.168.10.101 255.255.255.0
+
+# роутинг на сети центрального офиса
+push "route 192.168.1.0 255.255.255.0 192.168.10.1"
+push "route 192.168.2.0 255.255.255.0 192.168.10.1"
+
+# роутинг на сеть второго офиса
+push "route 192.168.4.0 255.255.255.0 192.168.10.102"</programlisting>
+    <para>Содержание второго:</para>
+    <programlisting># присваиваем ip-адрес
+ifconfig-push 192.168.10.102 255.255.255.0
+
+# роутинг на сети центрального офиса
+push "route 192.168.1.0 255.255.255.0 192.168.10.1"
+push "route 192.168.2.0 255.255.255.0 192.168.10.1"
+
+# роутинг на сеть первого офиса
+push "route 192.168.3.0 255.255.255.0 192.168.10.101"</programlisting>
+    <para>На этом настрока сервера завершена. Перезапускаем его:</para>
+    <screen><prompt>#</prompt> <userinput>/etc/init.d/openvpn restart</userinput></screen>
+    <para>Убеждаемся что поднялся интерфейс tap0:</para>
+    <screen><prompt>#</prompt> <userinput>ifconfig tap0</userinput></screen>
+    <para>Переходим к настройке офисов. Рассмотрим только один. Второй будет сделан аналогично, за исключением имён сертификатов.</para>
+    <para>Устанавливаем openvpn:</para>
+    <screen><prompt>#</prompt> <userinput>urpmi openvpn</userinput>
+<prompt>#</prompt> <userinput>mkdir /etc/openvpn/keys</userinput></screen>
+    <para>Создаём файл конфигурации <filename>/etc/openvpn/client.conf</filename>:</para>
+    <programlisting>client
+dev tap
+proto tcp
+
+# адрес сервера в центрально офисе
+remote a.b.c.d 1194
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+comp-lzo
+ns-cert-type server
+ca ca.crt
+cert /etc/openvpn/keys/office-1.crt
+key /etc/openvpn/keys/office-1.key
+log-append /var/log/openvpn.log</programlisting>
+    <para>Далее нам нужно поместить файлы <filename>office-1.*</filename> и <filename>ca.crt</filename> из каталога <filename>/etc/openvpn/keys</filename> сервера в каталог <filename>/etc/openvpn/keys</filename> клиента.</para>
+    <para>После этого запускаем сервис:</para>
+    <screen><prompt>#</prompt> <userinput>chkconfig openvpn on</userinput>
+<prompt>#</prompt> <userinput>service openvpn start</userinput></screen>
+    <para>Убеждаемся что поднялся интерфейс:</para>
+    <screen><prompt>#</prompt> <userinput>ifconfig tap0</userinput></screen>
+    <para>После настройки обоих офисов можно убедиться в работе сети попробовав пинговать из одного офиса какой-нибудь компьютер, расположенный в другом офисе.</para>
+    <para>На этом всё. Более подробную информацию можно найти в документации по openvpn.</para>
 </article>
