@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
-<info><title>Важные команды Gentoo Linux</title></info>
-        <para/>
-        <orderedlist>
-            <listitem>
-                <para>emerge --ask --verbose (или emerge -av) - просмотр USE-флагов перед началом компиляции.</para>
-            </listitem>
-            <listitem>
-                <para>emerge имя_пакета – установка пакета.</para>
-            </listitem>
-            <listitem>
-                <para>emerge sync – обновление локального дерева портежей.</para>
-            </listitem>
-            <listitem>
-                <para>echo "category/some_package some_flags" &gt;&gt; /etc/portage/package.use --  прописывание USE-флагов в /etc/portage/package.use, для этого выполните </para>
-            </listitem>
-        </orderedlist>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Важные команды Gentoo Linux</title>
+    </info>
+    <orderedlist>
+        <listitem>
+            <para><command>emerge --ask --verbose</command> (или <command>emerge -av</command>) - просмотр USE-флагов перед началом компиляции.</para>
+        </listitem>
+        <listitem>
+            <para><command>emerge <replaceable>имя_пакета</replaceable></command> – установка пакета.</para>
+        </listitem>
+        <listitem>
+            <para><command>emerge sync</command> – обновление локального дерева портежей.</para>
+        </listitem>
+        <listitem>
+            <para><command>echo "<replaceable>category</replaceable>/<replaceable>some_package</replaceable>
+                    <replaceable>some_flags</replaceable>" &gt;&gt; /etc/portage/package.use</command> –  прописывание USE-флагов в <filename>/etc/portage/package.use</filename>.</para>
+        </listitem>
+    </orderedlist>
 </article>

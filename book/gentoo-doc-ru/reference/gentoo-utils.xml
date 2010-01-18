@@ -1,54 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
-<info><title>Полезные утилиты Gentoo Linux</title></info>
-        <para/>
-        <orderedlist>
-            <listitem>
-                <para>Пакет gentoolkit (для установки наберите: emerge gentoolkit) содержит:</para>
-            </listitem>
-        </orderedlist>
-        <orderedlist>
-            <listitem>
-                <para/>
-            </listitem>
-        </orderedlist>
-        <orderedlist>
-            <listitem>
-                <para>Утилита genlop (для установки наберите: emerge genlop) позволяет извлечь множество различной инфрмации из этого файла. Например genlop -c покажет вам какой пакет собирается в данный момент и попытается предсказать сколько времени осталось до конца сборки.м</para>
-                <para/>
-            </listitem>
-            <listitem>
-                <para>Утилита ufed (для установки наберите: emerge ufed) позволяет просматривать и устанавливать USE флаги в более дружественном интерфейсе.</para>
-                <para/>
-            </listitem>
-            <listitem>
-                <para>Скрипт update-world (ссылка: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/news/ru/gwn/20061204-newsletter.xml">http://www.gentoo.org/news/ru/gwn/20061204-newsletter.xml</link>  Пункт 3. Полезные советы / Простейший путь обновления своей системы)  позволяет оставлять обновляющуюся систему не боясь, что обновление прервется на каком-либо пакете. Данный скрипт просто </para>
-                <para>продолжит обновление со следующего пакета.</para>
-                <para/>
-            </listitem>
-            <listitem>
-                <para>Оконные приложения: </para>
-                <para>   -  kuroo (написана на Qt, установка: emerge kuroo);</para>
-                <para>   -  porthole (написана на GTK, установка: emerge porthole);</para>
-                <para>   -  portagemaster (написана на Java, установка: emerge portagemaster); </para>
-                <para/>
-                <para> предлагают доступ к portage в оконном режиме. Выбирайте на свой вкус! :)</para>
-                <para/>
-            </listitem>
-            <listitem>
-                <para>Общая Linux утилита lshw – hardware list (emerge lshw) показывает информацию о аппаратном обеспечении компьютера.</para>
-                <para/>
-            </listitem>
-            <listitem>
-                <para>Если необходимо заново сгенерировать файл world используйте команду regenworld. </para>
-                <para/>
-            </listitem>
-            <listitem>
-                <para>Если необходимо пересобрать модули ядра после компиляции нового ядра, то воспользуйтесь утилитой module-rebuild (emerge module-rebuild)</para>
-                
-            </listitem>
-        </orderedlist>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Полезные утилиты Gentoo Linux</title>
+    </info>
+    <orderedlist>
+        <listitem>
+            <para>Пакет <emphasis role="bold">gentoolkit</emphasis> (для установки наберите: <code>emerge gentoolkit</code>) содержит:</para>
+            <itemizedlist>
+                <listitem>
+                    <para><emphasis role="bold">euse</emphasis>, которая существенно упрощает управление флагами USE. Выполните <command>euse -i <replaceable>flag</replaceable></command> для получения информации о флаге "flag". Так же просмотрите man-страницу euse (не волнуйтесь. она короткая :-)).</para>
+                </listitem>
+                <listitem>
+                    <para><emphasis role="bold">eclean</emphasis>. Она поможет удалить не нужные файлы. Эта утилита может работать как с исходниками, так и с бинарными пакетами. (просто вызовите её как <command>eclean-dist</command> или <command>eclean-pkg</command> соответственно). Прочитайте страницу man для получения полного списка опций.</para>
+                </listitem>
+            </itemizedlist>
+        </listitem>
+        <listitem>
+            <para>Утилита <emphasis role="bold">genlop</emphasis> (для установки наберите: emerge genlop) позволяет извлечь множество различной инфрмации из этого файла. Например <command>genlop -c</command> покажет вам какой пакет собирается в данный момент и попытается предсказать сколько времени осталось до конца сборки.м</para>
+        </listitem>
+        <listitem>
+            <para>Утилита <emphasis role="bold">ufed</emphasis> (для установки наберите: <command>emerge ufed</command>) позволяет просматривать и устанавливать USE флаги в более дружественном интерфейсе.</para>
+        </listitem>
+        <listitem>
+            <para>Скрипт <emphasis role="bold">update-world</emphasis> (ссылка: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/news/ru/gwn/20061204-newsletter.xml">http://www.gentoo.org/news/ru/gwn/20061204-newsletter.xml</link>  Пункт 3. Полезные советы / Простейший путь обновления своей системы)  позволяет оставлять обновляющуюся систему не боясь, что обновление прервется на каком-либо пакете. Данный скрипт просто </para>
+            <para>продолжит обновление со следующего пакета.</para>
+        </listitem>
+        <listitem>
+            <para>Оконные приложения: </para>
+            <para>
+                <itemizedlist>
+                    <listitem>
+                        <para><emphasis role="bold">kuroo</emphasis> (написана на Qt, установка: <command>emerge kuroo</command>);</para>
+                    </listitem>
+                    <listitem>
+                        <para><emphasis role="bold">porthole</emphasis> (написана на GTK, установка: <command>emerge porthole</command>);</para>
+                    </listitem>
+                    <listitem>
+                        <para><emphasis role="bold">portagemaster</emphasis> (написана на Java, установка: <command>emerge portagemaster</command>); </para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+            <para>предлагают доступ к portage в оконном режиме. Выбирайте на свой вкус! :)</para>
+        </listitem>
+        <listitem>
+            <para>Общая Linux утилита <emphasis role="bold">lshw</emphasis> – hardware list (<command>emerge lshw</command>) показывает информацию о аппаратном обеспечении компьютера.</para>
+        </listitem>
+        <listitem>
+            <para>Если необходимо заново сгенерировать файл world используйте команду <command>regenworld</command>. </para>
+        </listitem>
+        <listitem>
+            <para>Если необходимо пересобрать модули ядра после компиляции нового ядра, то воспользуйтесь утилитой module-rebuild (<command>emerge module-rebuild</command>)</para>
+        </listitem>
+    </orderedlist>
 </article>
