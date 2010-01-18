@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
     <title>Ресурсы</title>
     <section>
-        <info><title>Ресурсы с документацией</title></info>
-        <para/>
+        <title>Ресурсы с документацией</title>
         <orderedlist>
             <listitem>
                 <para>
@@ -74,42 +71,46 @@
                 </para>
             </listitem>
         </orderedlist>
-        <para/></section><section><info><title>Ресурсы с программным обеспечением</title></info>
-            <orderedlist>
-                <listitem>
-                    <para>
-                        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://packages.gentoo.org/">http://packages.gentoo.org</link>
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>
-                        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/">http://gentoo-portage.com</link>
-                    </para>
-                </listitem>
-            </orderedlist>
-            <para/></section><section><info><title>Каналы IRC (freenode.net)</title></info>
-                <orderedlist>
-                    <listitem>
-                        <para>#gentoo.</para>
-                    </listitem>
-                    <listitem>
-                        <para>#gentoo-amd64</para>
-                    </listitem>
-                    <listitem>
-                        <para>#gentoo-kde</para>
-                    </listitem>
-                    <listitem>
-                        <para>#gentoo-ru.</para>
-                    </listitem>
-                    <listitem>
-                        <para>#rugentoo.</para>
-                    </listitem>
-                    <listitem>
-                        <para>#gentoo-doc-ru</para>
-                    </listitem>
-                    <listitem>
-                        <para>#gentoo-laptop</para>
-                    </listitem>
-                </orderedlist>
-                <para/></section>
+    </section>
+    <section>
+        <title>Ресурсы с программным обеспечением</title>
+        <orderedlist>
+            <listitem>
+                <para>
+                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://packages.gentoo.org/">http://packages.gentoo.org</link>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-portage.com/">http://gentoo-portage.com</link>
+                </para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Каналы IRC (freenode.net)</title>
+        <orderedlist>
+            <listitem>
+                <para>#gentoo.</para>
+            </listitem>
+            <listitem>
+                <para>#gentoo-amd64</para>
+            </listitem>
+            <listitem>
+                <para>#gentoo-kde</para>
+            </listitem>
+            <listitem>
+                <para>#gentoo-ru.</para>
+            </listitem>
+            <listitem>
+                <para>#rugentoo.</para>
+            </listitem>
+            <listitem>
+                <para>#gentoo-doc-ru</para>
+            </listitem>
+            <listitem>
+                <para>#gentoo-laptop</para>
+            </listitem>
+        </orderedlist>
+    </section>
 </article>
