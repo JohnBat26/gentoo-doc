@@ -1,370 +1,382 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
-<info><title>Виртуальная почтовая система на основе qmail/vpopmail.</title></info>
-<para/>
-<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/qmail-howto.xml">http://www.gentoo.org/doc/ru/qmail-howto.xml</link>
-</para>
-<para>C версии: 1.0</para>
-<para/><section><info><title>1. Введение</title></info>
-<para/>
-<para>Не важно для чего вы хотите организовать систему электронной почты, только лишь для сервисов, как самостоятельный сервер, или для нескольких виртуальных доменов, qmail может быть легко настроен для любых ваших нужд. Это руководство поможет вам установить и настроить qmail, для любого из этих вариантов с уклоном на удаленный доступ, в том числе через зашифрованные каналы данных. </para>
-<para/>
-<para>Это руководство поможет вам освоить qmail, courier-imap, vpopmail, и horde/imp. Но вместе с ними так же вступят в "игру" daemontools, ucspi-tcp, mysql, apache, и mod_php. qmail предоставляет функции MTA (Mail Transfer Agent), courier-imap - предоставляет удаленный сбор почты, (pop3/imap сервер. прим.пер.) vpopmail предоставляет функции управления виртуальными доменами, и horde/imp - это почтовый веб-клиент. </para>
-<para/>
-<para>До установки (emerging) чего-либо, вы должны корректно установить переменную USE. Если у вас уже были установлены какие-нибудь из этих пакетов, то, возможно, вам придется их переустановить. USE="maildir ssl imap mysql". Также, если вы хотите использовать horde/imp как web-клиент, то так же надо добавить USE="nls" до установки mod_php.</para>
-<para/>
-<para>Примечание: Это руководство написано "по-шагам" Если в какой-то момент вы чувствуете что все то, что нужно готово, то можете не продолжать. </para>
-<para/>
-<para/>
-<para>Cуществует достаточно пакетов, с помошью которых можно построить систему электронной почты. Сейчас самое время осмыслить и решить для вас ли qmail. У нас так же есть прекрасное руководство основанное на Postfix, или вы можете взглянуть на exim. Выбирайте решение для себя, а мы покажем вам, как использовать qmail. </para>
-<para/></section><section><info><title>2. qmail ("Разговаривая с собой")</title></info>
-<para>Листинг 2.1: Emerge qmail</para>
-<para># emerge qmail</para>
-<para/>
-<para>Важно: Эта часть построена вокруг qmail-1.03-r13 или старше. Будет ли нижеизложенное работать с ранними версиями? Может быть. Должны ли вы обновиться? Да, если вы хотите быть уверены, что это сработает. </para>
-<para/>
-<para>Предупреждение: Если вы получили сообщение the virtual/mta package conflicts with another package тогда вам необходимо удалить из системы любой другой MTA. Чтобы узнать что это за пакет, просто запустите emerge qmail -p. </para>
-<para/>
-<para/>
-<para>Установка qmail так же "потянет" за собой установку ucspi-tcp и daemontools. О них, если хотите, вы можете прочитать на ucspi-tcp и на daemontools. Обычно, daemontools отвечает за управление qmail'ом как сервисом, тогда как ucspi-tcp отвечает за управление входящими TCP соединениями для сервиса qmail. </para>
-<para/>
-<para>Для начала проведем несколько пост-инсталяционных мероприятий. :) </para>
-<para/>
-<para>Листинг 2.2: Конфигурирование qmail</para>
-<para>(Измените под свою конфигурацию)</para>
-<para># nano /var/qmail/control/servercert.cnf</para>
-<para># ebuild /var/db/pkg/mail-mta/qmail-1.03-r*/qmail-1.03-r*.ebuild config</para>
-<para/>
-<para/>
-<para>Qmail проектировался так, чтобы полностью соответствовать требованиям безопасности. Почта никогда не посылается пользователю 'root'. Поэтому вам надо выбрать пользователя на машине, который будет получать почту предназначенную 'root'. С этого момента я предполагаю, что этот пользователь 'vapier'. </para>
-<para/>
-<para>Листинг 2.3: Установка не-root акаунта для e-mail.</para>
-<para># cd /var/qmail/alias</para>
-<para># echo vapier &gt; .qmail-root</para>
-<para># echo vapier &gt; .qmail-postmaster</para>
-<para># echo vapier &gt; .qmail-mailer-daemon</para>
-<para/>
-<para/>
-<para>Теперь, поднимем сервис доставки qmail. </para>
-<para/>
-<para>Листинг 2.4: Запуск qmail delivery service</para>
-<para># rc-update add svscan default</para>
-<para># /etc/init.d/svscan start</para>
-<para># cd /service</para>
-<para># ln -s /var/qmail/supervise/qmail-send qmail-send</para>
-<para/>
-<para/>
-<para>Надо убедиться, что qmail работает корректно, вот небольшой тест. </para>
-<para/>
-<para>Листинг 2.5: Test delivery service</para>
-<para># ssh vapier@localhost</para>
-<para># maildirmake .maildir</para>
-<para># qmail-inject root &lt;&lt; EOF</para>
-<para>test root e-mail!</para>
-<para>EOF</para>
-<para># qmail-inject postmaster &lt;&lt; EOF</para>
-<para>test postmaster e-mail!</para>
-<para>EOF</para>
-<para># qmail-inject vapier &lt;&lt; EOF</para>
-<para>test vapier e-mail!</para>
-<para>EOF</para>
-<para># mutt</para>
-<para/>
-<para>(Теперь в вашем ящике должно быть 3 письма)</para>
-<para/>
-<para/>
-<para>Вот и все! Теперь у вас стоит почтовая система способная удовлетворить, потребности локальной машины и системных демонов/пользователей. </para>
-<para>Предупреждение: Если вы не получили никаких писем или видите странные ошибки в лог-файлах (проверьте /var/log/qmail/) включающие 'localhost.localhost', это означает что ваша domain/dns информация не корректна. По умолчанию, qmail использует информацию от hostname --fqdn. Если на вашей машине, эта команда выводит 'localhost', тогда проверьте ваши файлы /etc/hostname, /etc/hosts, и настройки dns чтобы убедиться что все правильно. Отредактируйте конфигурационные файлы в каталоге /var/qmail/control/. Используйте их примеры, (там же) если вам нужна помощь. </para>
-<para/>
-<para/>
-<para>Листинг 2.6: Пример /var/qmail/control/ файлов для домена второго уровня</para>
-<para># hostname --fqdn</para>
-<para>wh0rd.org</para>
-<para># cat me</para>
-<para>wh0rd.org</para>
-<para># cat defaultdomain</para>
-<para>wh0rd.org</para>
-<para># cat plusdomain</para>
-<para>wh0rd.org</para>
-<para># cat locals</para>
-<para>wh0rd.org</para>
-<para># cat rcpthosts</para>
-<para>wh0rd.org</para>
-<para/>
-<para/>
-<para>Листинг 2.7: Пример /var/qmail/control/ файлов для домена третьего уровня</para>
-<para># hostname --fqdn</para>
-<para>mail.wh0rd.org</para>
-<para># cat me</para>
-<para>mail.wh0rd.org</para>
-<para># cat defaultdomain</para>
-<para>wh0rd.org</para>
-<para># cat plusdomain</para>
-<para>wh0rd.org</para>
-<para># cat locals</para>
-<para>mail.wh0rd.org</para>
-<para># cat rcpthosts</para>
-<para>mail.wh0rd.org</para>
-<para/>
-<para/></section><section><info><title>3. vpopmail</title></info>
-<para/>
-<para>Листинг 3.1: Emerge vpopmail</para>
-<para># emerge vpopmail</para>
-<para/>
-<para>Важно: Эта часть построена вокруг vpopmail-5.4.6 или старше. Будет ли нижеизложенное работать с ранними версиями? Может быть. Должны ли вы обновиться? Да, если вы хотите быть уверены что это сработает. </para>
-<para/>
-<para/>
-<para>vpopmail требует немного больше старания при установке, чем предыдущие пакеты. Мы должны убедиться что он запущен и работает (до mysql). Далее мы можем установить базу данных vpopmail. До того как приступить к следующему шагу, необходимо проверить что mysql корректно установлен. Учтите, пароль для базы данных vpopmail будет 'vpoppw', конечно вы можете выбрать другой. </para>
-<para/>
-<para>Листинг 3.2: Установка vpopmail в mysql</para>
-<para># rc-update add mysql default</para>
-<para>Если вы установили mysql в первый раз, убедитесь что была запущена команда </para>
-<para>ebuild &lt;mysql.ebuild&gt; config до запуска mysql сервера.</para>
-<para># /etc/init.d/mysql start</para>
-<para># nano /etc/vpopmail.conf </para>
-<para>(Изменим пароль с 'secret' на 'vpoppw')</para>
-<para># mysql -p &lt;&lt; EOF</para>
-<para>create database vpopmail;</para>
-<para>use mysql;</para>
-<para>grant select, insert, update, delete, create, drop on vpopmail.* to vpopmail@localhost identified by 'vpoppw';</para>
-<para>flush privileges;</para>
-<para>EOF</para>
-<para>(Следующие шаги могут понадобиться, а могут и нет, но мы выполним их просто чтобы быть уверенными)</para>
-<para># chown root:vpopmail /etc/vpopmail.conf</para>
-<para># chmod 640 /etc/vpopmail.conf</para>
-<para># chown root:vpopmail /var/vpopmail/bin/vchkpw</para>
-<para># chmod 4711 /var/vpopmail/bin/vchkpw</para>
-<para/>
-<para>Предупреждение: Если вы испытываете трудности с доступом в mysql/vpopmail, перезапустите mysql. Выполните /etc/init.d/mysql restart. </para>
-<para/>
-<para/>
-<para>Теперь, vpopmail готов к использованию. В этой части, мы предоставим виртуальный хостинг для домена 'wh0rd.org'. Это означает что мы должны "сообщить" vpopmail об этом домене. Кстати, давайте добавим пользователя 'vapier'. </para>
-<para/>
-<para>Листинг 3.3: Добавление домена</para>
-<para>(это нужно сделать только в том случае если vadddomain выдает "command not found" (см. далее))</para>
-<para># source /etc/profile</para>
-<para>(при отладке vpopmail, вам может понадобиться просмотр журналов)</para>
-<para># mysql -u vpopmail -p</para>
-<para>mysql&gt; select * from vpopmail.vlog;</para>
-<para># vadddomain wh0rd.org postpass</para>
-<para>(теперь проверим, правильно ли установлен домен)</para>
-<para># printf "postmaster@wh0rd.org\0postpass\0blah\0" | vchkpw `which id` 3&lt;&amp;0</para>
-<para>uid=89(vpopmail) gid=89(vpopmail) groups=0(root)</para>
-<para>(если вы не видите что-либо подобное, значит права доступа где-то выставлены некорректно)</para>
-<para># vadduser vapier@wh0rd.org vappw</para>
-<para/>
-<para/>
-<para>В каждом домене созданном vpopmail существует аккаунт 'postmaster'. Мы задаем пароль postmaster'а в 'postpass'. Чтобы vpopmail был действительно полезен нам, мы должны получать почту через courier и посылать с помощью qmail и SMTP. </para>
-<para/></section><section><info><title>4. Courier POP/IMAP</title></info>
-<para/>
-<para>Листинг 4.1: Emerge courier-imap</para>
-<para># emerge net-mail/courier-imap</para>
-<para/>
-<para>Важно: Сразу после vpopmail вы должны установить courier-imap Модуль authvchkpw будет встроен.(?) </para>
-<para/>
-<para>Важно: Эта часть построена вокруг net-mail/courier-imap-3.0.7 или старше. Будет ли нижеизложенное работать с ранними версиями? Может быть. Должны ли вы обновиться? Да, если вы хотите быть уверены что это сработает. </para>
-<para/>
-<para/>
-<para>И еще несколько пост-инсталляционных шагов:). Они необходимы только в том случае если вы будете использовать SSL зашифрованные коммуникации (Рекомендуется!). Иначе вы можете пропустить последние 2 шага, в следующих листингах, удаляя '-ssl' из имени инициализационного скрипта. </para>
-<para/>
-<para>Листинг 4.2: Конфигурирование POP3/SSL</para>
-<para># nano /etc/courier/authlib/authdaemonrc</para>
-<para>(Оставьте в переменной authmodulelist только "authvchkpw")</para>
-<para># cd /etc/courier-imap</para>
-<para># nano pop3d.cnf </para>
-<para>(Отредактируйте секцию [ req_dn ] )</para>
-<para># mkpop3dcert</para>
-<para># rc-update add courier-pop3d-ssl default</para>
-<para># /etc/init.d/courier-pop3d-ssl start</para>
-<para/>
-<para/>
-<para>Листинг 4.3: Конфигурирование IMAP/SSL</para>
-<para># cd /etc/courier-imap</para>
-<para># nano imapd.cnf </para>
-<para>(Отредактируйте секцию [ req_dn ] )</para>
-<para># mkimapdcert</para>
-<para># rc-update add courier-imapd-ssl default</para>
-<para># /etc/init.d/courier-imapd-ssl start</para>
-<para/>
-<para/>
-<para>Ваш почтовый клиент теперь может соединиться с сервером (с запущенным на нем courier) и получать почту предназначенную для виртуального хоста. В моем случае, я могу соединиться с именем 'vapier@wh0rd.org' и паролем 'vappw'. </para>
-<para/></section><section><info><title>5. qmail (разговаривая с миром)</title></info>
-<para/>
-<para>Давайте заставим SMTP работать, не причинив ущерба людям, открыв очередную спам-дыру. </para>
-<para/>
-<para>Листинг 5.1: Запуск qmail SMTP service</para>
-<para># cd /var/qmail/control/</para>
-<para># nano conf-smtpd</para>
-<para>(Раскомментируйте SMTP-AUTH переменную и установите QMAIL_SMTP_CHECKPASSWORD</para>
-<para> в /var/vpopmail/bin/vchkpw)</para>
-<para># nano servercert.cnf </para>
-<para>(Отредактируйте секцию [ req_dn ] )</para>
-<para># mkservercert</para>
-<para># cd /service</para>
-<para># ln -s /var/qmail/supervise/qmail-smtpd qmail-smtpd</para>
-<para># /etc/init.d/svscan restart</para>
-<para/>
-<para/>
-<para>Предположим вы не меняли файлов qmail, тогда он теперь принимает почту для виртуального домена wh0rd.org и для пользователей локальной машины. Более того, qmail доверяет любому кто посылает письма через 127.0.0.1 и для любого кто может пройти аутентификацию через vpopmail. При настройке своего почтового клиента для отправки почты, убедитесь что вы включили опцию вроде 'Server requires authentication'. В моем случае, я поставил имя пользователя в 'vapier@wh0rd.org' и пароль - 'vappw'. И последняя деталь - убедитесь что настроили использование SSL/TLS для SMTP в своем клиенте. Qmail не позволит вам пройти аутентификацию если сессия не зашифрована. </para>
-<para/></section><section><info><title>6. Веб клиент Horde / IMP</title></info>
-<para/>
-<para>Несмотря на то что существует множество веб-клиентов электронной почты (и вы свободны выбрать любой из них), я предпочитаю IMP Webmail Client который является частью "окружения Horde". Основная причина заключается в том что Horde предоставляет достаточно прозрачный web доступ к почте, и вы можете очень просто добавить другие компоненты, такие как Адресные Книги, Календари, Задачи, и др. И если он до сих пор вас не устраивает, тогда вам следует прочитать Horde. </para>
-<para/>
-<para>On to the good stuff! Теперь установим IMP. </para>
-<para/>
-<para>Листинг 6.1: Emerge IMP</para>
-<para># emerge horde-imp</para>
-<para/>
-<para>Важно: Эта часть построена вокруг horde-2.2.x and horde-imp-3.2.x. CVS версии (и следующие релизы) скорее всего, будут очень различаться в настройках. Так же имейте ввиду php-5.x, скорее всего, нарушит работу horde-2.x. </para>
-<para/>
-<para/>
-<para>Horde не просто настроить если вы точно не знаете что делать. К счастью для вас, я точно знаю что делать, значит и вы будете. :) </para>
-<para/>
-<para>Листинг 6.2: Конфигурирование Horde</para>
-<para># cd /var/www/localhost/htdocs/horde/config/</para>
-<para># for f in *.dist ; do mv ${f} ${f/.dist} ; done</para>
-<para># nano horde.php</para>
-<para>(Ниже 'Horde Authentication':)</para>
-<para>$conf['auth']['driver'] = 'imap';</para>
-<para>$conf['auth']['params']['dsn'] = '{localhost:993/imap/ssl/novalidate-cert}';</para>
-<para/>
-<para>(Ниже 'Horde Logging':)</para>
-<para>$conf['log']['name'] = '/var/log/apache2/horde.log';</para>
-<para/>
-<para>(Ниже 'Problem Reporting':)</para>
-<para>$conf['problems']['enabled'] = true;</para>
-<para>$conf['problems']['email'] = 'webmaster@wh0rd.org';</para>
-<para/>
-<para># nano registry.php</para>
-<para>(Ниже 'Handlers':)</para>
-<para>$this-&gt;registry['auth']['login'] = 'imp';</para>
-<para>$this-&gt;registry['auth']['logout'] = 'imp';</para>
-<para/>
-<para>(Ниже 'Application registry':) Установите элемент 'status', раздел</para>
-<para> applications['imp'], из 'inactive' в 'active'</para>
-<para/>
-<para># touch /var/log/apache2/horde.log</para>
-<para># chown apache:apache /var/log/apache2/horde.log</para>
-<para/>
-<para>Примечание: Вы можете поменять аккаунт 'webmaster' на что-нибудь другое. Если вы хотите использовать этот e-mail адрес, тогда вы должны добавить такого пользователя в vpopmail. (или смотрите ниже о qmailadmin). </para>
-<para/>
-<para/>
-<para>Теперь действительно быстро установим IMP. </para>
-<para/>
-<para>Листинг 6.3: Конфигурирование IMP</para>
-<para># cd /var/www/localhost/htdocs/horde/imp/config/</para>
-<para># for f in *.dist ; do mv ${f} ${f/.dist} ; done</para>
-<para># nano servers.php</para>
-<para/>
-<para>(Отредактируйте массив $servers['imap'] </para>
-<para>$servers['imap'] = array(</para>
-<para>        'name' =&gt; 'wh0rd.org',</para>
-<para>        'server' =&gt; 'localhost',</para>
-<para>        'protocol' =&gt; 'imap/ssl/novalidate-cert',</para>
-<para>        'port' =&gt; 993,</para>
-<para>        'folders' =&gt; '',</para>
-<para>            'namespace' =&gt; 'INBOX.',</para>
-<para>        'maildomain' =&gt; 'wh0rd.org',</para>
-<para>        'smtphost' =&gt; 'localhost',</para>
-<para>        'realm' =&gt; '',</para>
-<para>        'preferred' =&gt; ''</para>
-<para>);</para>
-<para/>
-<para/>
-<para>Наконец, поднимем apache, чтобы начать использовать webmail. </para>
-<para/>
-<para>Листинг 6.4: Запуск apache</para>
-<para># nano /etc/conf.d/apache2 </para>
-<para>(Раскоменнтируйте APACHE2_OPTS="-D SSL -D PHP4")</para>
-<para># rc-update add apache2 default</para>
-<para># /etc/init.d/apache2 start</para>
-<para/>
-<para>Предупреждение: Вы должны подумать о том, чтобы заставить работать Horde через https. Это не простая задача, но приглядитесь к ней ради безопасности. </para>
-<para/>
-<para/>
-<para>Чтобы проверить установку IMP, запустите браузер и зайдите http://localhost/horde/ (измените localhost на ваш сервер) Вы должны увидеть страницу приглашения Horde где вы можете войти. Опять же, в моей установке я вхожу с помощью 'vapier@wh0rd.org' и 'vappw' соответственно как логин и пароль. </para>
-<para/>
-<para>На данный момент, Horde и IMP установлены. Однако, вы можете пройти заново через все дерево конфигурационных директорий и настроить все что вашей душе угодно. </para>
-<para/></section><section><info><title>7. Дополнительные пакеты</title></info>
-<para/>
-<para>qmailadmin</para>
-<para/>
-<para>Первый пакет на который я обращу ваше внимание это qmailadmin. Это веб интерфейс для управления виртуальными доменами. Просто emerge net-mail/qmailadmin а затем укажите вашему браузеру на http://localhost/cgi-bin/qmailadmin чтобы начать использовать его. qmailadmin делает жизнь намного проще. </para>
-<para/>
-<para>qmHandle</para>
-<para/>
-<para>Если вы вляпались в проблемы с очередями qmail и провели много времени над отладкой, то, возможно захотите взглянуть на qmHandle. Это простая перл программа которая позволяет вам видеть и редактировать очередь сообщений qmail. Опять таки все что нужно сделать это emerge net-mail/qmhandle. </para>
-<para/>
-<para>Дополнения к horde</para>
-<para/>
-<para>Я очень рекомендую посмотреть на множество приложений Horde. Turba, Kronolith, и Nag эти приложения очень хорошо дополняют IMP для разных случаев. Их настройка схожа с настройкой IMP, так что у вас не будет проблем с ними. Просто не забудьте отредактировать registry.php в директории конфигурации horde, и новые приложения появятся внизу странички Horde. </para>
-<para/>
-<para>ucspi-tcp</para>
-<para/>
-<para>qmail использует ucspi-tcp для фильтрации входящих соединений. Если вы хотите настроить правила фильтрации, тогда смотрите файлы в /etc/tcprules.d/ (в старых версиях qmail эти файлы находятся в /etc). Здесь вы найдете по два файла на каждый сервис, конфигурационный файл (tcp.qmail-smtp) и его откомпилированную версию, ту которую и использует ucspi-tcp (tcp.qmail-smtp.cdb). Каждый раз после обновления конфигурационного файла, надо пересобрать бинарную его версию. Запустите tcprules tcp.qmail-smtp.cdb tcp.qmail-smtp.tmp &lt; tcp.qmail-smtp. Каждый раз при соединении с qmail, откомпилированные правила перечитываются с диска, то есть, нет нужды перезапускать сервис. </para>
-<para/>
-<para>qmail-scanner</para>
-<para/>
-<para>Если вы хотите обеспечить фильтрацию контента на своем mail сервере (спам, вирусы), тогда вам необходимо использовать другую программу для организации очередей. Одна из хороших программ это qmail-scanner. Наберите emerge qmail-scanner и отредактируйте /etc/tcprules.d/tcp.qmail-smtp. </para>
-<para>Важно: Процесс сборки qmail-scanner очень уродлив. Чтобы поддерживать пакеты, они уже должны быть установлены в системе. Это означает что вы должны установить SpamAssassin и/или Clam AntiVirus до qmail-scanner'а. Смотрите подходящие секции ниже. </para>
-<para/>
-<para/>
-<para>Листинг 7.1: Смена программы организации очередей.</para>
-<para># cd /etc/tcprules.d/</para>
-<para># nano tcp.qmail-smtp</para>
-<para>(добавьте QMAILQUEUE="/var/qmail/bin/qmail-scanner-queue" в правило catchall)</para>
-<para># tcprules tcp.qmail-smtp.cdb tcp.qmail-smtp.tmp &lt; tcp.qmail-smtp</para>
-<para/>
-<para/>
-<para>Смотрите секции об установке спам и вирус фильтров. Вы можете отредактировать несколько опций в /var/qmail/bin/qmail-scanner-queue.pl. </para>
-<para/>
-<para>SpamAssassin</para>
-<para/>
-<para>Один из лучших спам фильтров это SpamAssassin. Чтобы установить emerge mail-filter/spamassassin. Пакет поставляется двояко, как версия для командной строки и как клиент/серверная. Для серверов через которые проходит небольшое количество почты, использование версии для командной строки себя оправдывает. Но любой у кого большая загрузка серверов должен использовать клиент/серверную версию. </para>
-<para/>
-<para>Листинг 7.2: Конфигурирование SpamAssassin</para>
-<para># nano /etc/mail/spamassassin/local.cf</para>
-<para>(чтобы обеспечить самый минимум, добавьте следующие опции:)</para>
-<para>required_hits 6</para>
-<para>skip_rbl_checks 1</para>
-<para/>
-<para># rc-update add spamd default</para>
-<para># /etc/init.d/spamd start</para>
-<para># nano /var/qmail/bin/qmail-scanner-queue.pl</para>
-<para>(Убедитесь что $spamc_binary variable выставлена в '/usr/bin/spamc'.)</para>
-<para>(Если она выставлена в '', тогда смотрите далее.)</para>
-<para/>
-<para>Важно: Если у вас не был установлен SpamAssassin до установки qmail-scanner'а, Вы должны будете переустановить qmail-scanner. Процесс его сборки очень ужасен, включены будут только те функции, пакеты для которых уже были установлены. </para>
-<para/>
-<para/>
-<para>На этом этапе входящая почта будет проходить через qmail-scanner который в свою очередь пропустит ее через SpamAssassin. </para>
-<para/>
-<para>Clam AntiVirus</para>
-<para/>
-<para>Как и SpamAssassin, Clam AntiVirus поставляется в двойном исполнении. Я расскажу как быстро поставить клиент/серверную версию. Во-первых, emerge app-antivirus/clamav. </para>
-<para/>
-<para>Листинг 7.3: Конфигурирование Clam AntiVirus</para>
-<para># nano /etc/conf.d/clamd </para>
-<para>(Установите START_CLAMD=yes)</para>
-<para># nano /etc/clamav.conf</para>
-<para>(Настройте все как хотите)</para>
-<para># rc-update add clamd default</para>
-<para># /etc/init.d/clamd start</para>
-<para># nano /var/qmail/bin/qmail-scanner-queue.pl</para>
-<para>(Убедитесь что $clamscan_binary переменная установлена</para>
-<para> в '/usr/bin/clamscan'. Если нет, смотрите ниже.)</para>
-<para># nano /var/qmail/control/conf-common</para>
-<para>(Если ClamAV сообщает о проблемах с памятью попробуйте увеличить</para>
-<para> программный лимит (softlimit))</para>
-<para/>
-<para>Важно: Если у вас не был установлен Clam AntiVirus до установки qmail-scanner'а, Вы должны будете переустановить qmail-scanner. Процесс его сборки очень ужасен, включены будут только те функции, пакеты для которых уже были установлены. </para>
-<para/>
-<para/>
-<para>На этом этапе входящая почта будет проходить через qmail-scanner который в свою очередь пропустит ее через Clam AntiVirus. </para>
-<para/></section><section><info><title>8. Заключительные примечания</title></info>
-<para/>
-<para>У меня нет особых примечаний, но если у вас проблемы с этим руководством, пожалуйста, свяжитесь со мной или разместите сообщение в системе распределения запросов Gentoo. Если у вас есть интересная информация которая вы считаете, может расширить это руководство, то шлите ее мне для включения. Я люблю qmail и с удовольствием добавлю веши, которые могут расширить опыт работы пользователя с mta</para></section>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Виртуальная почтовая система на основе qmail/vpopmail.</title>
+    </info>
+    <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/qmail-howto.xml">http://www.gentoo.org/doc/ru/qmail-howto.xml</link>
+    </para>
+    <para>C версии: 1.0</para>
+    <section>
+        <title>Введение</title>
+        <para>Не важно для чего вы хотите организовать систему электронной почты, только лишь для сервисов, как самостоятельный сервер, или для нескольких виртуальных доменов, qmail может быть легко настроен для любых ваших нужд. Это руководство поможет вам установить и настроить qmail, для любого из этих вариантов с уклоном на удаленный доступ, в том числе через зашифрованные каналы данных. </para>
+        <para>Это руководство поможет вам освоить qmail, courier-imap, vpopmail, и horde/imp. Но вместе с ними так же вступят в "игру" daemontools, ucspi-tcp, mysql, apache, и mod_php. qmail предоставляет функции MTA (Mail Transfer Agent), courier-imap - предоставляет удаленный сбор почты, (pop3/imap сервер. прим.пер.) vpopmail предоставляет функции управления виртуальными доменами, и horde/imp - это почтовый веб-клиент. </para>
+        <para>До установки (emerging) чего-либо, вы должны корректно установить переменную USE. Если у вас уже были установлены какие-нибудь из этих пакетов, то, возможно, вам придется их переустановить. <code>USE="maildir ssl imap mysql"</code>. Также, если вы хотите использовать horde/imp как web-клиент, то так же надо добавить <code>USE="nls"</code> до установки mod_php.</para>
+        <note>
+            <para>Это руководство написано "по-шагам" Если в какой-то момент вы чувствуете что все то, что нужно готово, то можете не продолжать. </para>
+        </note>
+        <para>Cуществует достаточно пакетов, с помошью которых можно построить систему электронной почты. Сейчас самое время осмыслить и решить для вас ли qmail. У нас так же есть <link xlink:href="#">прекрасное руководство</link> основанное на <link xlink:href="http://www.postfix.org/">Postfix</link>, или вы можете взглянуть на <link xlink:href="http://www.exim.org/">exim</link>. Выбирайте решение для себя, а мы покажем вам, как использовать qmail. </para>
+        <para/>
+    </section>
+    <section>
+        <info>
+            <title>qmail ("Разговаривая с собой")</title>
+        </info>
+        <example>
+            <title>Emerge qmail</title>
+            <screen><prompt>#</prompt> <userinput>emerge qmail</userinput></screen>
+        </example>
+        <important>
+            <para>Эта часть построена вокруг qmail-1.03-r13 или старше. Будет ли нижеизложенное работать с ранними версиями? Может быть. Должны ли вы обновиться? Да, если вы хотите быть уверены, что это сработает. </para>
+        </important>
+        <warning>
+            <para>Если вы получили сообщение <code>the virtual/mta package conflicts with another package</code> тогда вам необходимо удалить из системы любой другой MTA. Чтобы узнать что это за пакет, просто запустите <command>emerge qmail -p</command>. </para>
+        </warning>
+        <para>Установка qmail так же "потянет" за собой установку ucspi-tcp и daemontools. О них, если хотите, вы можете прочитать на <link xlink:href="http://cr.yp.to/ucspi-tcp.html">ucspi-tcp</link> и на <link xlink:href="http://cr.yp.to/daemontools.html">daemontools</link>. Обычно, daemontools отвечает за управление qmail'ом как сервисом, тогда как ucspi-tcp отвечает за управление входящими TCP соединениями для сервиса qmail. </para>
+        <para>Для начала проведем несколько пост-инсталяционных мероприятий. :) </para>
+        <example>
+            <title>Конфигурирование qmail</title>
+            <screen><lineannotation>(Измените под свою конфигурацию)</lineannotation>
+<prompt>#</prompt> <userinput>nano /var/qmail/control/servercert.cnf</userinput>
+<prompt>#</prompt> <userinput>ebuild /var/db/pkg/mail-mta/qmail-1.03-r*/qmail-1.03-r*.ebuild config</userinput></screen>
+        </example>
+        <para>Qmail проектировался так, чтобы полностью соответствовать требованиям безопасности. Почта никогда не посылается пользователю 'root'. Поэтому вам надо выбрать пользователя на машине, который будет получать почту предназначенную 'root'. С этого момента я предполагаю, что этот пользователь 'vapier'. </para>
+        <example>
+            <title>Установка не-root акаунта для e-mail.</title>
+            <screen><prompt>#</prompt> <userinput>cd /var/qmail/alias</userinput>
+<prompt>#</prompt> <userinput>echo vapier > .qmail-root</userinput>
+<prompt>#</prompt> <userinput>echo vapier > .qmail-postmaster</userinput>
+<prompt>#</prompt> <userinput>echo vapier > .qmail-mailer-daemon</userinput></screen>
+        </example>
+        <para>Теперь, поднимем сервис доставки qmail. </para>
+        <example>
+            <title>Запуск qmail delivery service</title>
+            <screen><prompt>#</prompt> <userinput>rc-update add svscan default</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/svscan start</userinput>
+<prompt>#</prompt> <userinput>cd /service</userinput>
+<prompt>#</prompt> <userinput>ln -s /var/qmail/supervise/qmail-send qmail-send</userinput></screen>
+        </example>
+        <para>Надо убедиться, что qmail работает корректно, вот небольшой тест. </para>
+        <example>
+            <title>Test delivery service</title>
+            <screen><prompt>#</prompt> <userinput>ssh vapier@localhost</userinput>
+<prompt>#</prompt> <userinput>maildirmake .maildir</userinput>
+<prompt>#</prompt> <userinput>qmail-inject root &lt;&lt; EOF
+test root e-mail!
+EOF</userinput>
+<prompt>#</prompt> <userinput>qmail-inject postmaster &lt;&lt; EOF
+test postmaster e-mail!
+EOF</userinput>
+<prompt>#</prompt> <userinput>qmail-inject vapier &lt;&lt; EOF
+test vapier e-mail!
+EOF</userinput>
+<prompt>#</prompt> <userinput>mutt</userinput>
+<lineannotation>(Теперь в вашем ящике должно быть 3 письма)</lineannotation></screen>
+        </example>
+        <para>Вот и все! Теперь у вас стоит почтовая система способная удовлетворить, потребности локальной машины и системных демонов/пользователей. </para>
+        <warning>
+            <para>Если вы не получили никаких писем или видите странные ошибки в лог-файлах (проверьте <filename>/var/log/qmail/</filename>) включающие 'localhost.localhost', это означает что ваша domain/dns информация не корректна. По умолчанию, qmail использует информацию от <command>hostname --fqdn</command>. Если на вашей машине, эта команда выводит 'localhost', тогда проверьте ваши файлы <filename>/etc/hostname</filename>, <filename>/etc/hosts</filename>, и настройки dns чтобы убедиться что все правильно. Отредактируйте конфигурационные файлы в каталоге <filename>/var/qmail/control/</filename>. Используйте их примеры, (там же) если вам нужна помощь. </para>
+        </warning>
+        <example>
+            <title>Пример <filename>/var/qmail/control/</filename> файлов для домена второго уровня</title>
+            <screen><prompt>#</prompt> <userinput>hostname --fqdn</userinput>
+wh0rd.org
+<prompt>#</prompt> <userinput>cat me</userinput>
+wh0rd.org
+<prompt>#</prompt> <userinput>cat defaultdomain</userinput>
+wh0rd.org
+<prompt>#</prompt> <userinput>cat plusdomain</userinput>
+wh0rd.org
+<prompt>#</prompt> <userinput>cat locals</userinput>
+wh0rd.org
+<prompt>#</prompt> <userinput>cat rcpthosts</userinput>
+wh0rd.org</screen>
+        </example>
+        <example>
+            <title>Пример /var/qmail/control/ файлов для домена третьего уровня</title>
+            <screen><prompt>#</prompt> <userinput>hostname --fqdn</userinput>
+mail.wh0rd.org
+<prompt>#</prompt> <userinput>cat me</userinput>
+mail.wh0rd.org
+<prompt>#</prompt> <userinput>cat defaultdomain</userinput>
+wh0rd.org
+<prompt>#</prompt> <userinput>cat plusdomain</userinput>
+wh0rd.org
+<prompt>#</prompt> <userinput>cat locals</userinput>
+mail.wh0rd.org
+<prompt>#</prompt> <userinput>cat rcpthosts</userinput>
+mail.wh0rd.org</screen>
+        </example>
+    </section>
+    <section>
+        <info>
+            <title>vpopmail</title>
+        </info>
+        <example>
+            <title>Emerge vpopmail</title>
+            <screen><prompt>#</prompt> <userinput>emerge vpopmail</userinput></screen>
+        </example>
+        <important>
+            <para>Эта часть построена вокруг vpopmail-5.4.6 или старше. Будет ли нижеизложенное работать с ранними версиями? Может быть. Должны ли вы обновиться? Да, если вы хотите быть уверены что это сработает. </para>
+        </important>
+        <para>vpopmail требует немного больше старания при установке, чем предыдущие пакеты. Мы должны убедиться что он запущен и работает (до mysql). Далее мы можем установить базу данных vpopmail. До того как приступить к следующему шагу, необходимо проверить что mysql корректно установлен. Учтите, пароль для базы данных vpopmail будет 'vpoppw', конечно вы можете выбрать другой. </para>
+        <example>
+            <title>Установка vpopmail в mysql</title>
+            <screen><prompt>#</prompt> <userinput>rc-update add mysql default</userinput>
+<lineannotation>Если вы установили mysql в первый раз, убедитесь что была запущена команда
+ebuild &lt;mysql.ebuild> config до запуска mysql сервера.</lineannotation>
+<prompt>#</prompt> <userinput>/etc/init.d/mysql start</userinput>
+<prompt>#</prompt> <userinput>nano /etc/vpopmail.conf</userinput>
+<lineannotation>(Изменим пароль с 'secret' на 'vpoppw')</lineannotation>
+<prompt>#</prompt> <userinput>mysql -p &lt;&lt; EOF
+create database vpopmail;
+use mysql;
+grant select, insert, update, delete, create, drop on vpopmail.* to vpopmail@localhost identified by 'vpoppw';
+flush privileges;
+EOF</userinput>
+<lineannotation>(Следующие шаги могут понадобиться, а могут и нет, но мы выполним их просто чтобы быть уверенными)</lineannotation>
+<prompt>#</prompt> <userinput>chown root:vpopmail /etc/vpopmail.conf</userinput>
+<prompt>#</prompt> <userinput>chmod 640 /etc/vpopmail.conf</userinput>
+<prompt>#</prompt> <userinput>chown root:vpopmail /var/vpopmail/bin/vchkpw</userinput>
+<prompt>#</prompt> <userinput>chmod 4711 /var/vpopmail/bin/vchkpw</userinput></screen>
+        </example>
+        <warning>
+            <para>Если вы испытываете трудности с доступом в mysql/vpopmail, перезапустите mysql. Выполните /etc/init.d/mysql restart. </para>
+        </warning>
+        <para>Теперь, vpopmail готов к использованию. В этой части, мы предоставим виртуальный хостинг для домена 'wh0rd.org'. Это означает что мы должны "сообщить" vpopmail об этом домене. Кстати, давайте добавим пользователя 'vapier'. </para>
+        <example>
+            <title>Добавление домена</title>
+            <screen><lineannotation>(это нужно сделать только в том случае если vadddomain выдает "command not found" (см. далее))</lineannotation>
+<prompt>#</prompt> <userinput>source /etc/profile</userinput>
+<lineannotation>(при отладке vpopmail, вам может понадобиться просмотр журналов)</lineannotation>
+<prompt>#</prompt> <userinput>mysql -u vpopmail -p</userinput>
+<prompt>mysql></prompt> <userinput>select * from vpopmail.vlog;</userinput>
+<prompt>#</prompt> <userinput>vadddomain wh0rd.org postpass</userinput>
+<lineannotation>(теперь проверим, правильно ли установлен домен)</lineannotation>
+<prompt>#</prompt> <userinput>printf "postmaster@wh0rd.org\0postpass\0blah\0" | vchkpw `which id` 3&lt;&amp;0</userinput>
+uid=89(vpopmail) gid=89(vpopmail) groups=0(root)
+<lineannotation>(если вы не видите что-либо подобное, значит права доступа где-то выставлены некорректно)</lineannotation>
+<prompt>#</prompt> <userinput>vadduser vapier@wh0rd.org vappw</userinput></screen>
+        </example>
+        <para>В каждом домене созданном vpopmail существует аккаунт 'postmaster'. Мы задаем пароль postmaster'а в 'postpass'. Чтобы vpopmail был действительно полезен нам, мы должны получать почту через courier и посылать с помощью qmail и SMTP. </para>
+    </section>
+    <section>
+        <info>
+            <title>Courier POP/IMAP</title>
+        </info>
+        <example>
+            <title>Emerge courier-imap</title>
+            <screen><prompt>#</prompt> <userinput>emerge net-mail/courier-imap</userinput></screen>
+        </example>
+        <important>
+            <para>Сразу после vpopmail вы должны установить courier-imap. Модуль authvchkpw будет встроен.(?) </para>
+        </important>
+        <important>
+            <para>Эта часть построена вокруг net-mail/courier-imap-3.0.7 или старше. Будет ли нижеизложенное работать с ранними версиями? Может быть. Должны ли вы обновиться? Да, если вы хотите быть уверены что это сработает. </para>
+        </important>
+        <para>И еще несколько пост-инсталляционных шагов:). Они необходимы только в том случае если вы будете использовать SSL зашифрованные коммуникации (Рекомендуется!). Иначе вы можете пропустить последние 2 шага, в следующих листингах, удаляя '-ssl' из имени инициализационного скрипта. </para>
+        <example>
+            <title>Конфигурирование POP3/SSL</title>
+            <screen><prompt>#</prompt> <userinput>nano /etc/courier/authlib/authdaemonrc</userinput>
+<lineannotation>(Оставьте в переменной authmodulelist только "authvchkpw")</lineannotation>
+<prompt>#</prompt> <userinput>cd /etc/courier-imap</userinput>
+<prompt>#</prompt> <userinput>nano pop3d.cnf</userinput>
+<lineannotation>(Отредактируйте секцию [ req_dn ] )</lineannotation>
+<prompt>#</prompt> <userinput>mkpop3dcert</userinput>
+<prompt>#</prompt> <userinput>rc-update add courier-pop3d-ssl default</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/courier-pop3d-ssl start</userinput></screen>
+        </example>
+        <example>
+            <title>Конфигурирование IMAP/SSL</title>
+            <screen><prompt>#</prompt> <userinput>cd /etc/courier-imap</userinput>
+<prompt>#</prompt> <userinput>nano imapd.cnf</userinput>
+<lineannotation>(Отредактируйте секцию [ req_dn ] )</lineannotation>
+<prompt>#</prompt> <userinput>mkimapdcert</userinput>
+<prompt>#</prompt> <userinput>rc-update add courier-imapd-ssl default</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/courier-imapd-ssl start</userinput></screen>
+        </example>
+        <para>Ваш почтовый клиент теперь может соединиться с сервером (с запущенным на нем courier) и получать почту предназначенную для виртуального хоста. В моем случае, я могу соединиться с именем 'vapier@wh0rd.org' и паролем 'vappw'. </para>
+    </section>
+    <section>
+        <info>
+            <title>qmail (разговаривая с миром)</title>
+        </info>
+        <para>Давайте заставим SMTP работать, не причинив ущерба людям, открыв очередную спам-дыру. </para>
+        <example>
+            <title>Запуск qmail SMTP service</title>
+            <screen><prompt>#</prompt> <userinput>cd /var/qmail/control/</userinput>
+<prompt>#</prompt> <userinput>nano conf-smtpd</userinput>
+<lineannotation>(Раскомментируйте SMTP-AUTH переменную и установите QMAIL_SMTP_CHECKPASSWORD
+ в /var/vpopmail/bin/vchkpw)</lineannotation>
+<prompt>#</prompt> <userinput>nano servercert.cnf</userinput>
+<lineannotation>(Отредактируйте секцию [ req_dn ] )</lineannotation>
+<prompt>#</prompt> <userinput>mkservercert</userinput>
+<prompt>#</prompt> <userinput>cd /service</userinput>
+<prompt>#</prompt> <userinput>ln -s /var/qmail/supervise/qmail-smtpd qmail-smtpd</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/svscan restart</userinput></screen>
+        </example>
+        <para>Предположим вы не меняли файлов qmail, тогда он теперь принимает почту для виртуального домена wh0rd.org и для пользователей локальной машины. Более того, qmail доверяет любому кто посылает письма через 127.0.0.1 и для любого кто может пройти аутентификацию через vpopmail. При настройке своего почтового клиента для отправки почты, убедитесь что вы включили опцию вроде 'Server requires authentication'. В моем случае, я поставил имя пользователя в 'vapier@wh0rd.org' и пароль - 'vappw'. И последняя деталь - убедитесь что настроили использование SSL/TLS для SMTP в своем клиенте. Qmail не позволит вам пройти аутентификацию если сессия не зашифрована. </para>
+    </section>
+    <section>
+        <info>
+            <title>Веб клиент Horde / IMP</title>
+        </info>
+        <para>Несмотря на то что существует множество веб-клиентов электронной почты (и вы свободны выбрать любой из них), я предпочитаю IMP Webmail Client который является частью "окружения Horde". Основная причина заключается в том что Horde предоставляет достаточно прозрачный web доступ к почте, и вы можете очень просто добавить другие компоненты, такие как Адресные Книги, Календари, Задачи, и др. И если он до сих пор вас не устраивает, тогда вам следует прочитать Horde. </para>
+        <para>On to the good stuff! Теперь установим IMP. </para>
+        <example>
+            <title>Emerge IMP</title>
+            <screen><prompt>#</prompt> <userinput>emerge horde-imp</userinput></screen>
+        </example>
+        <important>
+            <para>Эта часть построена вокруг horde-2.2.x and horde-imp-3.2.x. CVS версии (и следующие релизы) скорее всего, будут очень различаться в настройках. Так же имейте ввиду php-5.x, скорее всего, нарушит работу horde-2.x. </para>
+        </important>
+        <para>Horde не просто настроить если вы точно не знаете что делать. К счастью для вас, я точно знаю что делать, значит и вы будете. :) </para>
+        <example>
+            <title>Конфигурирование Horde</title>
+            <screen><prompt>#</prompt> <userinput>cd /var/www/localhost/htdocs/horde/config/</userinput>
+<prompt>#</prompt> <userinput>for f in *.dist ; do mv ${f} ${f/.dist} ; done</userinput>
+<prompt>#</prompt> <userinput>nano horde.php</userinput>
+<lineannotation>(Ниже 'Horde Authentication':)</lineannotation>
+$conf['auth']['driver'] = 'imap';
+$conf['auth']['params']['dsn'] = '{localhost:993/imap/ssl/novalidate-cert}';
+
+<lineannotation>(Ниже 'Horde Logging':)</lineannotation>
+$conf['log']['name'] = '/var/log/apache2/horde.log';
+
+<lineannotation>(Ниже 'Problem Reporting':)</lineannotation>
+$conf['problems']['enabled'] = true;
+$conf['problems']['email'] = 'webmaster@wh0rd.org';
+
+<prompt>#</prompt> <userinput>nano registry.php</userinput>
+<lineannotation>(Ниже 'Handlers':)</lineannotation>
+$this->registry['auth']['login'] = 'imp';
+$this->registry['auth']['logout'] = 'imp';
+
+<lineannotation>(Ниже 'Application registry':) Установите элемент 'status', раздел
+applications['imp'], из 'inactive' в 'active'</lineannotation>
+
+<prompt>#</prompt> <userinput>touch /var/log/apache2/horde.log</userinput>
+<prompt>#</prompt> <userinput>chown apache:apache /var/log/apache2/horde.log</userinput></screen>
+        </example>
+        <note>
+            <para>Вы можете поменять аккаунт 'webmaster' на что-нибудь другое. Если вы хотите использовать этот e-mail адрес, тогда вы должны добавить такого пользователя в vpopmail. (или смотрите ниже о qmailadmin). </para>
+        </note>
+        <para>Теперь действительно быстро установим IMP. </para>
+        <example>
+            <title>Out-of-the-box setup for IMP</title>
+            <screen><prompt>#</prompt> <userinput>cd /var/www/localhost/htdocs/horde/imp/config/</userinput>
+<prompt>#</prompt> <userinput>for f in *.dist ; do mv ${f} ${f/.dist} ; done</userinput>
+<prompt>#</prompt> <userinput>nano servers.php</userinput>
+
+<lineannotation>(Edit the $servers['imap'] array:)</lineannotation>
+$servers['imap'] = array(
+  'name' => 'wh0rd.org',
+  'server' => 'localhost',
+  'protocol' => 'imap/ssl/novalidate-cert',
+  'port' => 993,
+  'folders' => '',
+  'namespace' => 'INBOX.',
+  'maildomain' => 'wh0rd.org',
+  'smtphost' => 'localhost',
+  'realm' => '',
+  'preferred' => ''
+);</screen>
+        </example>
+        <para>Наконец, поднимем apache, чтобы начать использовать webmail. </para>
+        <example>
+            <title>Запуск apache</title>
+            <screen><prompt>#</prompt> <userinput>nano /etc/conf.d/apache2</userinput>
+<lineannotation>(Раскоменнтируйте APACHE2_OPTS="-D SSL -D PHP4")</lineannotation>
+<prompt>#</prompt> <userinput>rc-update add apache2 default</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/apache2 start</userinput></screen>
+        </example>
+        <warning>
+            <para>Вы должны подумать о том, чтобы заставить работать Horde через https. Это не простая задача, но приглядитесь к ней ради безопасности. </para>
+        </warning>
+        <para>Чтобы проверить установку IMP, запустите браузер и зайдите http://localhost/horde/ (измените localhost на ваш сервер) Вы должны увидеть страницу приглашения Horde где вы можете войти. Опять же, в моей установке я вхожу с помощью 'vapier@wh0rd.org' и 'vappw' соответственно как логин и пароль. </para>
+        <para>На данный момент, Horde и IMP установлены. Однако, вы можете пройти заново через все дерево конфигурационных директорий и настроить все что вашей душе угодно. </para>
+    </section>
+    <section>
+        <title>Дополнительные пакеты</title>
+        <section>
+            <title>qmailadmin</title>
+            <para>Первый пакет на который я обращу ваше внимание это <link xlink:href="http://www.inter7.com/qmailadmin.html">qmailadmin</link>. Это веб интерфейс для управления виртуальными доменами. Просто выполните <command>emerge net-mail/qmailadmin</command> а затем укажите вашему браузеру на <link xlink:href="http://localhost/cgi-bin/qmailadmin">http://localhost/cgi-bin/qmailadmin</link> чтобы начать использовать его. qmailadmin делает жизнь намного проще. </para>
+        </section>
+        <section>
+            <title>qmHandle</title>
+            <para>Если вы вляпались в проблемы с очередями qmail и провели много времени над отладкой, то, возможно захотите взглянуть на <link xlink:href="http://qmhandle.sourceforge.net/">qmHandle</link>. Это простая перл программа которая позволяет вам видеть и редактировать очередь сообщений qmail. Опять таки все что нужно сделать это <command>emerge net-mail/qmhandle</command>. </para>
+        </section>
+        <section>
+            <title>Дополнения к horde</title>
+            <para>Я очень рекомендую посмотреть на множество приложений Horde. <link xlink:href="http://www.horde.org/turba/">Turba</link>, <link xlink:href="http://www.horde.org/kronolith/">Kronolith</link>, и <link xlink:href="http://www.horde.org/nag/">Nag</link> эти приложения очень хорошо дополняют IMP для разных случаев. Их настройка схожа с настройкой IMP, так что у вас не будет проблем с ними. Просто не забудьте отредактировать registry.php в директории конфигурации horde, и новые приложения появятся внизу странички Horde. </para>
+        </section>
+        <section>
+            <title>ucspi-tcp</title>
+            <para>qmail использует ucspi-tcp для фильтрации входящих соединений. Если вы хотите настроить правила фильтрации, тогда смотрите файлы в <filename>/etc/tcprules.d/</filename> (в старых версиях qmail эти файлы находятся в <filename>/etc</filename>). Здесь вы найдете по два файла на каждый сервис, конфигурационный файл (<filename>tcp.qmail-smtp</filename>) и его откомпилированную версию, ту которую и использует ucspi-tcp (<filename>tcp.qmail-smtp.cdb</filename>). Каждый раз после обновления конфигурационного файла, надо пересобрать бинарную его версию. Запустите <command>tcprules tcp.qmail-smtp.cdb tcp.qmail-smtp.tmp &lt; tcp.qmail-smtp</command>. Каждый раз при соединении с qmail, откомпилированные правила перечитываются с диска, то есть, нет нужды перезапускать сервис. </para>
+        </section>
+        <section>
+            <title>qmail-scanner</title>
+            <para>Если вы хотите обеспечить фильтрацию контента на своем mail сервере (спам, вирусы), тогда вам необходимо использовать другую программу для организации очередей. Одна из хороших программ это <link xlink:href="http://qmail-scanner.sourceforge.net/">qmail-scanner</link>. Наберите <command>emerge qmail-scanner</command> и отредактируйте <filename>/etc/tcprules.d/tcp.qmail-smtp</filename>. </para>
+            <important>
+                <para>Процесс сборки qmail-scanner очень уродлив. Чтобы поддерживать пакеты, они уже должны быть установлены в системе. Это означает что вы должны установить SpamAssassin и/или Clam AntiVirus до qmail-scanner'а. Смотрите подходящие секции ниже. </para>
+            </important>
+            <example>
+                <title>Смена программы организации очередей.</title>
+                <screen><prompt>#</prompt> <userinput>cd /etc/tcprules.d/</userinput>
+<prompt>#</prompt> <userinput>nano tcp.qmail-smtp</userinput>
+<lineannotation>(добавьте QMAILQUEUE="/var/qmail/bin/qmail-scanner-queue" в правило catchall)</lineannotation>
+<prompt>#</prompt> <userinput>tcprules tcp.qmail-smtp.cdb tcp.qmail-smtp.tmp &lt; tcp.qmail-smtp</userinput></screen>
+            </example>
+            <para>Смотрите секции об установке спам и вирус фильтров. Вы можете отредактировать несколько опций в <filename>/var/qmail/bin/qmail-scanner-queue.pl</filename>. </para>
+        </section>
+        <section>
+            <title>SpamAssassin</title>
+            <para>Один из лучших спам фильтров это <link xlink:href="http://www.spamassassin.org/">SpamAssassin</link>. Чтобы установить <command>emerge mail-filter/spamassassin</command>. Пакет поставляется двояко, как версия для командной строки и как клиент/серверная. Для серверов через которые проходит небольшое количество почты, использование версии для командной строки себя оправдывает. Но любой у кого большая загрузка серверов должен использовать клиент/серверную версию. </para>
+            <example>
+                <title>Конфигурирование SpamAssassin</title>
+                <screen><prompt>#</prompt> <userinput>nano /etc/mail/spamassassin/local.cf</userinput>
+<lineannotation>(чтобы обеспечить самый минимум, добавьте следующие опции:)</lineannotation>
+required_hits 6
+skip_rbl_checks 1
+
+<prompt>#</prompt> <userinput>rc-update add spamd default</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/spamd start</userinput>
+<prompt>#</prompt> <userinput>nano /var/qmail/bin/qmail-scanner-queue.pl</userinput>
+<lineannotation>(Убедитесь что $spamc_binary variable выставлена в '/usr/bin/spamc'.)
+(Если она выставлена в '', тогда смотрите далее.)</lineannotation></screen>
+            </example>
+            <important>
+                <para>Если у вас не был установлен SpamAssassin до установки qmail-scanner'а, Вы должны будете переустановить qmail-scanner. Процесс его сборки очень ужасен, включены будут только те функции, пакеты для которых уже были установлены. </para>
+            </important>
+            <para>На этом этапе входящая почта будет проходить через qmail-scanner который в свою очередь пропустит ее через SpamAssassin. </para>
+        </section>
+        <section>
+            <title>Clam AntiVirus</title>
+            <para>Как и SpamAssassin, <link xlink:href="http://www.clamav.net/">Clam AntiVirus</link> поставляется в двойном исполнении. Я расскажу как быстро поставить клиент/серверную версию. Во-первых, <command>emerge app-antivirus/clamav</command>. </para>
+            <example>
+                <title>Конфигурирование Clam AntiVirus</title>
+                <screen><prompt>#</prompt> <userinput>nano /etc/conf.d/clamd</userinput>
+<lineannotation>(Установите START_CLAMD=yes)</lineannotation>
+<prompt>#</prompt> <prompt>nano /etc/clamav.conf</prompt>
+<lineannotation>(Настройте все как хотите)</lineannotation>
+<prompt>#</prompt> <userinput>rc-update add clamd default</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/clamd start</userinput>
+<prompt>#</prompt> <userinput>nano /var/qmail/bin/qmail-scanner-queue.pl</userinput>
+<lineannotation>(Убедитесь что $clamscan_binary переменная установлена
+ в '/usr/bin/clamscan'. Если нет, смотрите ниже.)</lineannotation>
+<prompt>#</prompt> <userinput>nano /var/qmail/control/conf-common</userinput>
+<lineannotation>(Если ClamAV сообщает о проблемах с памятью попробуйте увеличить
+ программный лимит (softlimit))</lineannotation></screen>
+            </example>
+            <important>
+                <para>Если у вас не был установлен Clam AntiVirus до установки qmail-scanner'а, Вы должны будете переустановить qmail-scanner. Процесс его сборки очень ужасен, включены будут только те функции, пакеты для которых уже были установлены. </para>
+            </important>
+            <para>На этом этапе входящая почта будет проходить через qmail-scanner который в свою очередь пропустит ее через Clam AntiVirus. </para>
+        </section>
+    </section>
+    <section>
+        <title>Заключительные примечания</title>
+        <para/>
+        <para>У меня нет особых примечаний, но если у вас проблемы с этим руководством, пожалуйста, свяжитесь <link xlink:href="mailto:vapier@gentoo.org">со мной</link> или разместите сообщение в <link xlink:href="http://bugs.gentoo.org/">системе распределения запросов Gentoo</link>. Если у вас есть интересная информация которая вы считаете, может расширить это руководство, то шлите ее мне для включения. Я люблю qmail и с удовольствием добавлю веши, которые могут расширить опыт работы пользователя с mta</para>
+    </section>
 </article>

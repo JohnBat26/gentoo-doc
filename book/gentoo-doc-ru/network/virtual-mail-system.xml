@@ -1,753 +1,783 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
-<info><title>Создание виртуальной почтовой системы</title></info>
-<para/>
-<para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/virt-mail-howto.xml">http://www.gentoo.org/doc/ru/virt-mail-howto.xml</link>
-</para>
-<para>C версии: 1.0</para><section><info><title>1. Введение</title></info>
-<para/>
-<para>Для большинства пользователей gentoo простого почтового клиента и fetchmail (для сбора почты) достаточно. Однако, если вы размещаете на своей системе домен, вам необходим полноценный MTA (Mail Transfer Agent). И если вы размещаете на своей системе несколько доменов, тогда вам точно необходимо что-то мощное для обработки всей почты ваших пользователей. Эта система была разработана для элегантного решения этой проблемы. </para>
-<para/>
-<para>Виртуальная почтовая система должна быть способна обработать почту от многочисленных доменов с множеством пользователей через разнообразные интерфейсы. С этим связано несколько проблем, которые надо решить. Для примера, что если вы имеете двух пользователей в разных доменах, которые хотят иметь одинаковые имена? Если вы предоставляете сервисы imap и smtp-авторизации, как вы комбинируете различные демоны авторизации в одной системе? Как обеспечиваете безопасность многочисленных компонентов которая содержит система? Как вы управляете этим всем? </para>
-<para/>
-<para>Это howto покажет вам, как настроить гибкую систему обработки почты из стольких доменов, сколько ваша поддерживает система, как создавать виртуальных пользователей не требующих наличия аккаунта в системе, иметь доменные имена пользователей, как авторизовать пользователей через веб, imap, smtp и pop3 снова таки из одной базы данных, использовать ssl-транспорт для безопасности, как обрабатывать списки рассылки для любого домена на машине, и контролировать все хорошей и простой базой данных mysql. </para>
-<para/>
-<para>Конечно существует множество путей настройки виртуальной почтовой системы. Другой способ возможно окажется более подходящим вашим нуждам. Дополнительную информацию вы можете найти на http://www.qmail.org/ и http://www.exim.org/ </para>
-<para/>
-<para>Мы будем использовать следующие программы: apache, courier-imap, pam_mysql, postfix, mod_php, phpmyadmin, squirrelmail, cyrus-sasl, mysql, php, и mailman. </para>
-<para/>
-<para>Убедитесь что вы добавили в файле /etc/make.conf в переменную USE следующие пакеты: USE="mysql imap libwww maildir sasl ssl". Иначе, возможно, вам придeтся перекомпилировать пакеты, для поддержки всех необходимых протоколов. Затем, хорошей идеей будет отключить любые другие почтовые и сетевые программы которые вам не нужны, вроде IPv6. </para>
-<para>Важно: Это howto написано для postfix-2.0.x. Если вы используете postfix версии &lt; 2 некоторые переменные используемые в этом документе могут отличается. В таком случае рекомендуется обновить postfix. Некоторые пакеты используемые в этом документе зависят от версии. Вы поступите мудро, если прочтете документацию поставляемую с пакетами, при возникновении вопросов. </para>
-<para/>
-<para>Важно: В нашем документе мы будем использовать apache-1.3.x. В портежах Apache-2 был помечен stable, но как бы то ни было существуют еще некоторые проблемы интеграции с php. Пока php-поддержка в apache-2.0.x не будет отмечена stable, в этом документе будем продолжать использовать apache-1.3.x. </para>
-<para/>
-<para>Важно: Вам необходимо доменное имя для работы общедоступного почтового сервера, или по крайней мере иметь МХ-записи для домена. В идеале вы должны иметь контроль над двумя доменами, для извлечения пользы из функциональности новой виртуальной системы. </para>
-<para/>
-<para>Важно: Убедитесь что в /etc/hostname указано правильное имя сервера, также убедитесь что в /etc/hosts нет конфликтных значений. </para>
-<para/>
-<para>Примечание: Рекомендуется прочесть документ полностью и ознакомится со всеми шагами настройки, перед тем как начинать инсталляцию. Если вы столкнетесь с проблемами при любом из шагов, проверьте troubleshooting guide в конце этого документа. Также не все упомянутые пакеты необходимы, просто настройка, описанная здесь, достаточна гибка. Для примера, если вам не требуется веб-интерфейса, вы свободны пропустить соответствующий раздел squirrelmail. </para>
-<para/>
-<para/></section><section><info><title>2. Начальная настройка postfix</title></info>
-<para/>
-<para>Листинг 2.1: Инсталляция postfix</para>
-<para># emerge postfix</para>
-<para/>
-<para>Предупреждение: Проверьте чтобы у вас не были проинсталлированы любые другие MTA, например ssmtp, exim или qmail, иначе у вас могут быть БОЛЬШИЕ проблемы. </para>
-<para/>
-<para/>
-<para>После инсталляции postfix, время его настроить. Измените следующие настройки в /etc/postfix/main.cf: </para>
-<para/>
-<para>Листинг 2.2: /etc/postfix/main.cf</para>
-<para/>
-<para>myhostname = $host.domain.name</para>
-<para>mydomain = $domain.name</para>
-<para>inet_interfaces = all</para>
-<para>mydestination = $myhostname, localhost.$mydomain $mydomain</para>
-<para>mynetworks = my.ip.net.work/24, 127.0.0.0/8</para>
-<para>home_mailbox = .maildir/</para>
-<para>local_destination_concurrency_limit = 2</para>
-<para>default_destination_concurrency_limit = 10 </para>
-<para/>
-<para/>
-<para>Следующие изменения следуют для /etc/postfix/master.cf. Они включат режим подробного протоколирования для отладки: </para>
-<para/>
-<para>Листинг 2.3: /etc/postfix/master.cf</para>
-<para/>
-<para># service type  private unpriv  chroot  wakeup  maxproc command + args</para>
-<para>#               (yes)   (yes)   (yes)   (never) (50)</para>
-<para>#</para>
-<para>==========================================================================</para>
-<para>smtp      inet  n       -       n       -       -       smtpd -v</para>
-<para/>
-<para>(просто добавьте -v после smtpd)</para>
-<para/>
-<para/>
-<para>Дальше правим /etc/mail/aliases для добавления локальных псевдонимов. По крайне туда должен быть включен псевдоним для root типа: root: your@email.address. </para>
-<para/>
-<para>Листинг 2.4: Запуск postfix'а в первый раз</para>
-<para># /usr/bin/newaliases</para>
-<para>(это создаст новые псевдонимы. Это требуется делать)</para>
-<para>(когда вы создаете или обновляете файл псевдонимов.)</para>
-<para># /etc/init.d/postfix start</para>
-<para/>
-<para/>
-<para>Теперь postfix запущен, запустите вашего любимого консольного почтового клиента и пошлите самому себе письмо. Я использую mutt для всей переписки из консоли. </para>
-<para>Примечание: Настоятельно рекомендуется проверить, чтобы postfix доставлял почту локальным пользователям, перед тем как перейти к следующему шагу. </para>
-<para/>
-<para/></section><section><info><title>3. Courier-imap</title></info>
-<para/>
-<para>Листинг 3.1: Инсталляция courier-imap</para>
-<para># emerge courier-imap</para>
-<para/>
-<para/>
-<para>Листинг 3.2: Настройка courier-imap</para>
-<para># cd /etc/courier-imap</para>
-<para>(если вы хотите использовать возможности ssl в courier-imap или pop3, )</para>
-<para>(вам необходимо создать сертификаты)</para>
-<para>(если вы не хотите использовать ssl, просто пропустите следующий шаг )</para>
-<para/>
-<para># nano -w pop3d.cnf</para>
-<para># nano -w imapd.cnf</para>
-<para>(измените значения C, ST, L, CN и адреса e-mail)</para>
-<para/>
-<para># mkpop3dcert</para>
-<para># mkimapdcert</para>
-<para/>
-<para/>
-<para>Листинг 3.3: Запуск нужных вам сервисов courier</para>
-<para># /etc/init.d/courier-imapd start</para>
-<para># /etc/init.d/courier-imapd-ssl start</para>
-<para># /etc/init.d/courier-pop3d start</para>
-<para># /etc/init.d/courier-pop3d-ssl start</para>
-<para/>
-<para/>
-<para>Снова запустите ваш любимый почтовый клиент и проверьте что сервисы начали принимать и посылать почту. Теперь когда основная часть заработала, перейдем к связыванию всех компонентов, для получения спокойно работающей системы. Снова, проверьте, что все что мы сделали работает, перед тем как переходить к следующему шагу. </para>
-<para/></section><section><info><title>4. Cyrus-sasl</title></info>
-<para/>
-<para>Следующим шагом будет инсталляция cyrus-sasl. Sasl на самом деле играет роль передатчика авторизационных переменных к pam (Pluggable Authentication Modules), который передаст эту информацию mysql, для авторизации smtp пользователей. Мы не будем проверять работоспособность sasl, пока не настроим mysql, и не создадим тестовых пользователей. В конечном результате, он будет авторизовать пользователей в mysql. </para>
-<para>Примечание: По некоторым причинам, sasl плохо работает с pam используя shadow. Для меня долгое время это была большая проблема. Если кто-нибудь знает почему sasl не авторизирует пользователей из /etc/shadow в текущем релизе gentoo, пожалуйста напишите мне об этом, я буду очень рад услышать решение этой проблемы. E-mail. </para>
-<para/>
-<para/>
-<para>Листинг 4.1: Инсталляция и настройка cyrus-sasl</para>
-<para># USE='-ldap -mysql' emerge cyrus-sasl</para>
-<para>(мы не используем ldap и мы не используем возможности sasl-mysql,</para>
-<para>поэтому мы отключаем их )</para>
-<para/>
-<para/>
-<para>Дальше правим /usr/lib/sasl2/smtp.conf. </para>
-<para/>
-<para>Листинг 4.2: Запуск sasl</para>
-<para># nano -w /usr/lib/sasl2/smtp.conf</para>
-<para>pwcheck_method: saslauthd</para>
-<para>mech_list: LOGIN PLAIN</para>
-<para>(важно выключить метод авторизации который мы не используем.</para>
-<para>Они могут привести к граблям на некоторых почтовых клиентах)</para>
-<para># /etc/init.d/saslauthd start</para>
-<para/>
-<para/></section><section><info><title>5. SSL-сертификаты для Postfix и Apache</title></info>
-<para/>
-<para>Дальше делаем ssl-сертификаты для posfix и apache. </para>
-<para/>
-<para>Листинг 5.1: </para>
-<para># cd /etc/ssl/</para>
-<para># nano -w openssl.cnf</para>
-<para>(измените следующие значения для вашего домена:)</para>
-<para>countryName_default</para>
-<para>stateOrProvinceName_default</para>
-<para>localityName_default</para>
-<para>0.organizationName_default</para>
-<para>commonName_default</para>
-<para>emailAddress_default.</para>
-<para/>
-<para>(если каких-то переменных нет, просто добавьте их в любое удобное место)</para>
-<para/>
-<para># cd misc</para>
-<para># nano -w CA.pl</para>
-<para>(нам необходимо добавить -nodes в код строк "# create a certificate" и</para>
-<para>"# create a certificate request" таким образом чтобы наши новые ssl-сертификаты</para>
-<para>загрузились без пароля. Иначе после перезагрузки системы ssl-сертификаты будут </para>
-<para>не доступны )</para>
-<para>(найдите эти строки в файле и измените их:)</para>
-<para/>
-<para># create a certificate</para>
-<para>system ("$REQ -new -nodes -x509 -keyout newreq.pem -out newreq.pem $DAYS");</para>
-<para/>
-<para># create a certificate request</para>
-<para>system ("$REQ -new -nodes -keyout newreq.pem -out newreq.pem $DAYS");</para>
-<para/>
-<para>(далее создаем сертификат для postfix)</para>
-<para/>
-<para># ./CA.pl -newca</para>
-<para># ./CA.pl -newreq</para>
-<para># ./CA.pl -sign</para>
-<para># cp newcert.pem /etc/postfix</para>
-<para># cp newreq.pem /etc/postfix</para>
-<para># cp demoCA/cacert.pem /etc/postfix</para>
-<para>(а теперь такой же для apache)</para>
-<para/>
-<para># openssl req -new &gt; new.cert.csr</para>
-<para># openssl rsa -in privkey.pem -out new.cert.key</para>
-<para># openssl x509 -in new.cert.csr -out new.cert.cert -req -signkey new.cert.key -days 365</para>
-<para>(оставьте получившиеся сертификаты, мы их проинсталлируем когда будем настраивать apache )</para>
-<para/>
-<para/></section><section><info><title>6. Добавим SSL и SASL поддержку в Postfix</title></info>
-<para/>
-<para>Теперь поправим конфигурацию postfix чтобы включить совместимость с sasl и ssl. Добавьте следующие параметры в конец файла, где их легко потом можно будет найти. </para>
-<para/>
-<para>Листинг 6.1: /etc/postfix/main.cf</para>
-<para># nano -w /etc/postfix/main.cf</para>
-<para/>
-<para>smtpd_sasl_auth_enable = yes</para>
-<para>smtpd_sasl2_auth_enable = yes</para>
-<para>smtpd_sasl_security_options = noanonymous</para>
-<para>broken_sasl_auth_clients = yes</para>
-<para>smtpd_sasl_local_domain =</para>
-<para/>
-<para>(опция broken_sasl_auth_clients и метод авторизации используется только</para>
-<para>для outlook и outlook express, они не документированы. Опция smtpd_sasl_local_domain </para>
-<para>добавляет имя домена для клиентов использующих smtp-авторизацию. Убедитесь что </para>
-<para>postfix отвергает пустое или просто имя пользователя, и они не могут авторизоваться )</para>
-<para/>
-<para>smtpd_recipient_restrictions =</para>
-<para>        permit_sasl_authenticated,</para>
-<para>        permit_mynetworks,</para>
-<para>        reject_unauth_destination</para>
-<para/>
-<para/>
-<para>smtpd_use_tls = yes</para>
-<para>#smtpd_tls_auth_only = yes</para>
-<para>smtpd_tls_key_file = /etc/postfix/newreq.pem</para>
-<para>smtpd_tls_cert_file = /etc/postfix/newcert.pem</para>
-<para>smtpd_tls_CAfile = /etc/postfix/cacert.pem</para>
-<para>smtpd_tls_loglevel = 3</para>
-<para>smtpd_tls_received_header = yes</para>
-<para>smtpd_tls_session_cache_timeout = 3600s</para>
-<para>tls_random_source = dev:/dev/urandom</para>
-<para/>
-<para>(опция smtpd_tls_auth_only закомментирована для простоты тестирования,</para>
-<para>вы можете включить ее позже, если захотите)</para>
-<para/>
-<para># postfix reload</para>
-<para/>
-<para/>
-<para>Теперь мы попробуем проверить работоспособность postfix'а, и то что он прочел файлы конфигурации. </para>
-<para/>
-<para>Листинг 6.2: Проверка поддержки sasl и tls</para>
-<para># telnet localhost 25</para>
-<para/>
-<para>Trying 127.0.0.1...</para>
-<para>Connected to localhost.</para>
-<para>Escape character is '^]'.</para>
-<para>220 mail.domain.com ESMTP Postfix</para>
-<para>EHLO domain.com</para>
-<para>250-mail.domain.com</para>
-<para>250-PIPELINING</para>
-<para>250-SIZE 10240000</para>
-<para>250-VRFY</para>
-<para>250-ETRN</para>
-<para>250-STARTTLS</para>
-<para>250-AUTH LOGIN PLAIN</para>
-<para>250-AUTH=LOGIN PLAIN</para>
-<para>250-XVERP</para>
-<para>250 8BITMIME</para>
-<para>^]</para>
-<para>telnet&gt; quit</para>
-<para/>
-<para/>
-<para>Проверьте, что ответ postfix'а содержит линии AUTH и STARTTLS. Как уже замечалось выше, AUTH пока не будет работать, потому что sasl пытается авторизовать из sasldb, вместо shadow по неизвестным причинам. Итак мы просто пропускаем это и дальше настраиваем mysql для принятия нашей авторизации и информации о виртуальных доменах. </para>
-<para/></section><section><info><title>7. MySQL</title></info>
-<para/>
-<para>Для инсталляции mysql нам необходим dump-файл genericmailsql.sql genericmailsql.sql </para>
-<para/>
-<para>Листинг 7.1: Инсталляция и настройка MySQL</para>
-<para># emerge mysql</para>
-<para># /usr/bin/mysql_install_db</para>
-<para>(далее следуйте указаниям на экране, для добавления пароля root в </para>
-<para>mysql, не mysqladmin, иначе ваша база будет открыта всем ветрам )</para>
-<para/>
-<para># /etc/init.d/mysql start</para>
-<para># mysqladmin -u root -p create mailsql</para>
-<para># mysql -u root -p mailsql &lt; genericmailsql.sql</para>
-<para/>
-<para># mysql -u root -p mysql</para>
-<para>mysql&gt; GRANT SELECT,INSERT,UPDATE,DELETE</para>
-<para>        -&gt;     ON mailsql.*</para>
-<para>        -&gt;     TO mailsql@localhost</para>
-<para>        -&gt;     IDENTIFIED BY '$password';</para>
-<para/>
-<para>        -&gt;     quit</para>
-<para>(проверьте, что новый mailsql пользователь, может подключатся к mysql серверу )</para>
-<para/>
-<para># mysql -u mailsql -p mailsql</para>
-<para/>
-<para/>
-<para>Ваша новая база имеет значения по умолчанию и таблицы для двух доменов. Вложены следующие таблицы: </para>
-<para/>
-<orderedlist>
-<listitem>
-<para>alias — локальные e-mail и информация о псевдонимах для mailman</para>
-</listitem>
-<listitem>
-<para>relocated — информация о адресах перемещенных пользователях</para>
-</listitem>
-<listitem>
-<para>transport — информация о почтовых транспортах для всех доменов размещающихся у вас </para>
-</listitem>
-<listitem>
-<para>users — информация о всех пользователях</para>
-</listitem>
-<listitem>
-<para>virtual — информация о псевдонимах для виртуальных доменов</para>
-</listitem>
-</orderedlist>
-<para/>
-<para>Листинг 7.2: пример таблицы псевдонимов</para>
-<para>id   alias    destination</para>
-<para>1    root     foo@bar.com</para>
-<para>2  postmaster foo@bar.com</para>
-<para/>
-<para/>
-<para>Листинг 7.3: пример таблицы пользователей</para>
-<para>(приведем для ясности строку)</para>
-<para>id email            clear     name     uid     gid     homedir     \</para>
-<para>        maildir                                quota  postfix</para>
-<para>10 foo@virt-bar.org $password realname virtid  virtid  /home/vmail \</para>
-<para>        /home/vmail/virt-bar.org/foo/.maildir/        y</para>
-<para>13 foo@bar.com      $password realname localid localid /home/foo   \</para>
-<para>        /home/foo/.maildir/                           y</para>
-<para/>
-<para/>
-<para>Листинг 7.4: пример таблицы транспортов</para>
-<para>id   domain       destination</para>
-<para>1    bar.com      local:</para>
-<para>2    virt-bar.org virtual:</para>
-<para/>
-<para/>
-<para>Листинг 7.5: пример таблицы псевдонимов для виртуальных доменов</para>
-<para>id   email            destination</para>
-<para>3   root@virt-bar.org other@email.address</para>
-<para/>
-<para/></section><section><info><title>8. Apache и phpMyAdmin</title></info>
-<para/>
-<para>Итак, следующим шагом мы настроим apache и создадим интерфейс для еще более простого взаимодействия с базой данных. </para>
-<para/>
-<para>Листинг 8.1: Настройка apache и phpmyadmin</para>
-<para># emerge apache mod_php phpmyadmin</para>
-<para/>
-<para/>
-<para>Существует множество руководств по настройке apache с поддержкой php. Например, http://www.linuxguruz.org/z.php?id=31. Также многочисленные сообщения на http://forums.gentoo.org где рассматриваются решения проблем возникших в ходе инсталляции (поиск по "apache php"). Итак, я не стараюсь раскрыть эту тему здесь. Настройте apache и php, затем продолжим вместе настройку. Теперь слово для умных: .htaccess положите в директорию к phpmyadmin. Если вы не сделаете этого, поисковые системы проиндексируют страницы phpmyadmin и каждый сможет получить к нему доступ с помощью google, и изменить ваши базы, что не есть хорошо. Существует много howto как это сделать. http://docs.csoft.net/micro/black-htaccess.html. </para>
-<para/>
-<para>Теперь мы переходим к инсталляции сертификатов для apache, созданных нами ранее. Директивы apache которые вам требуется изменить для этого: </para>
-<para>SSLCertificateFile /path/to/certs/new.cert.cert</para>
-<para>SSLCertificateKeyFile /path/to/certs/new.cert.key</para>
-<para/>
-<para>Листинг 8.2: Инсталляция Apache SSL сертификатов</para>
-<para># cp /etc/ssl/misc/new.cert.cert /etc/apache/conf/ssl/</para>
-<para># cp /etc/ssl/misc/new.cert.key /etc/apache/conf/ssl/</para>
-<para># nano -w /etc/apache/conf/vhosts/ssl.default-vhost.conf</para>
-<para>(измените следующие параметры)</para>
-<para/>
-<para>ServerName host.domain.name</para>
-<para>ServerAdmin your@email.address</para>
-<para>SSLCertificateFile /etc/apache/conf/ssl/new.cert.cert</para>
-<para>SSLCertificateKeyFile /etc/apache/conf/ssl/new.cert.key</para>
-<para/>
-<para># /etc/init.d/apache restart</para>
-<para/>
-<para>Примечание: Если у вас apache уже проинсталлирован, вам вероятно придется сделать перезагрузку сервера. Проверьте логи системы на предмет корректного запуска apache. </para>
-<para/>
-<para/>
-<para>Дальше настраиваем phpMyAdmin. </para>
-<para/>
-<para>Листинг 8.3: Настройка phpMyAdmin</para>
-<para># nano -w /home/httpd/htdocs/phpmyadmin/config.inc.php</para>
-<para>(измените следующие параметры)</para>
-<para/>
-<para>$cfg['Servers'][$i]['host'] = 'localhost';          // MySQL hostname</para>
-<para>$cfg['Servers'][$i]['controluser'] = 'mailsql';     // MySQL настройки системного аккаунта</para>
-<para>                                                    // (этот аккаунт должен иметь read-only</para>
-<para>$cfg['Servers'][$i]['controlpass'] = '$password';   // доступ к таблицам "mysql/user"</para>
-<para>                                                    // и "mysql/db" tables)</para>
-<para>$cfg['Servers'][$i]['user'] = 'mailsql';            // MySQL пользователь</para>
-<para>$cfg['Servers'][$i]['password'] = '$password';      // MySQL пароль</para>
-<para/>
-<para/>
-<para>Теперь введите адрес phpmyadmin страницы и просмотрите ваши таблицы в базе. Вы можете добавить локальные псевдонимы, поправить таблицу пользователей и добавить тестового пользователя, изменить таблицу транспортов для добавления информации о ваших доменах. Значений по умолчанию которые устанавливаются вместе с dump-файлом должно быть достаточно для примера, чтобы помочь вам настроить систему. Убедитесь что ввели в базу корректную информацию. Для примера, убедитесь что директории локальных пользователей существуют и указаны корректные uid/gid. Почтовые директории пользователей, должны быть созданы postfix, при первой принятой почте для пользователя. Будет неплохо, если вы пошлете "Добро пожаловать!", чтобы убедится, что .maildir создан. </para>
-<para/></section><section><info><title>9. Vmail-пользователь</title></info>
-<para/>
-<para>Здесь вы можете быть удивлены, узнав, что для виртуальных акаунтов, используются пользователи и директории, и будете правы. </para>
-<para/>
-<para>Листинг 9.1: Adding the vmail user</para>
-<para># adduser -d /home/vmail -s /bin/false vmail</para>
-<para># uid=`cat /etc/passwd | grep vmail | cut -f 3 -d :`</para>
-<para># groupadd -g $uid vmail</para>
-<para># mkdir /home/vmail</para>
-<para># chown vmail. /home/vmail</para>
-<para/>
-<para/>
-<para>Теперь, когда вы настраиваете виртуальный акаунт, используйте vmail uid, gid , и его домашнюю папку. Когда вы создаете локальный акаунт, используйте uid, gid и домашнюю папку нового пользователя, а не vmail. Мы имеем ввиду, что если вы захотите создать php-страничку для администрирования пользователей, не забывайте, что phpmyadmin в целом справляется с этой работой очень неплохо. </para>
-<para/></section><section><info><title>10. Настройка MySQL авторизации и виртуальных доменов</title></info>
-<para/>
-<para>Дальше мы перенастроим нашу авторизацию, на использование mailsql базы в courier-imap и postfix. Во всех следующих примерах, замените $paasword паролем, который вы задали пользователю mailsql для mysql. </para>
-<para/>
-<para>Листинг 10.1: </para>
-<para># emerge /usr/portage/sys-libs/pam_mysql/pam_mysql-$currentversion.ebuild</para>
-<para>(этот пакет здесь задан маской, которую вы должны заменить на текущую </para>
-<para>версию пакета. версию пакета вы можете посмотреть в portage )</para>
-<para/>
-<para># nano -w /etc/pam.d/imap</para>
-<para>(закомментируйте существующие строки настройки авторизации, и добавьте </para>
-<para>указанные ниже)</para>
-<para/>
-<para>#auth       required     pam_nologin.so</para>
-<para>#auth       required     pam_stack.so service=system-auth</para>
-<para>#account    required     pam_stack.so service=system-auth</para>
-<para>#session    required     pam_stack.so service=system-auth</para>
-<para/>
-<para>auth     optional       pam_mysql.so host=localhost db=mailsql user=mailsql \</para>
-<para>  passwd=$password table=users usercolumn=email passwdcolumn=clear crypt=0</para>
-<para>account  required       pam_mysql.so host=localhost db=mailsql user=mailsql \</para>
-<para>  passwd=$password table=users usercolumn=email passwdcolumn=clear crypt=0</para>
-<para/>
-<para># nano -w /etc/pam.d/pop3</para>
-<para># nano -w /etc/pam.d/smtp</para>
-<para>(сделайте такие же изменения в pop3 и smtp файлах)</para>
-<para/>
-<para/>
-<para>Далее нам нужно поправить конфигурацию авторизации courier. </para>
-<para/>
-<para>Листинг 10.2: </para>
-<para># nano -w /etc/courier-imap/authdaemonrc</para>
-<para>authmodulelist="authmysql authpam"</para>
-<para/>
-<para># nano -w /etc/courier-imap/authdaemond.conf</para>
-<para>AUTHDAEMOND="authdaemond.mysql"</para>
-<para/>
-<para># nano -w /etc/courier-imap/authmysqlrc</para>
-<para>MYSQL_SERVER            localhost</para>
-<para>MYSQL_USERNAME       mailsql</para>
-<para>MYSQL_PASSWORD      $password</para>
-<para>MYSQL_DATABASE          mailsql</para>
-<para>MYSQL_USER_TABLE        users</para>
-<para>#MYSQL_CRYPT_PWFIELD    crypt (эта строка должна быть закомментирована)</para>
-<para>MYSQL_CLEAR_PWFIELD     clear</para>
-<para>MYSQL_UID_FIELD         uid</para>
-<para>MYSQL_GID_FIELD         gid</para>
-<para>MYSQL_LOGIN_FIELD       email</para>
-<para>MYSQL_HOME_FIELD        homedir</para>
-<para>MYSQL_NAME_FIELD        name</para>
-<para>MYSQL_MAILDIR_FIELD     maildir</para>
-<para/>
-<para># /etc/init.d/authdaemond restart</para>
-<para># /etc/init.d/saslauthd restart</para>
-<para/>
-<para/>
-<para>Мы уже почти подошли к тому что вам обещал. Далее мы настроим необходимые конфиги postfix'a для связки с базой данных для всех необходимых необходимых транспортов. </para>
-<para/>
-<para>Листинг 10.3: /etc/postfix/mysql-aliases.cf</para>
-<para># nano -w /etc/postfix/mysql-aliases.cf</para>
-<para># mysql-aliases.cf</para>
-<para/>
-<para>user            = mailsql</para>
-<para>password        = $password</para>
-<para>dbname          = mailsql</para>
-<para>table           = alias</para>
-<para>select_field    = destination</para>
-<para>where_field     = alias</para>
-<para>hosts           = unix:/var/run/mysqld/mysqld.sock</para>
-<para/>
-<para/>
-<para>Листинг 10.4: /etc/postfix/mysql-relocated.cf</para>
-<para># nano -w /etc/postfix/mysql-relocated.cf</para>
-<para># mysql-relocated.cf</para>
-<para/>
-<para>user            = mailsql</para>
-<para>password        = $password</para>
-<para>dbname          = mailsql</para>
-<para>table           = relocated</para>
-<para>select_field    = destination</para>
-<para>where_field     = email</para>
-<para>hosts           = unix:/var/run/mysqld/mysqld.sock</para>
-<para/>
-<para/>
-<para>Листинг 10.5: /etc/postfix/mysql-transport.cf (необязательно)</para>
-<para># nano -w /etc/postfix/mysql-transport.cf</para>
-<para># mysql-transport.cf</para>
-<para/>
-<para>user            = mailsql</para>
-<para>password        = $password</para>
-<para>dbname          = mailsql</para>
-<para>table           = transport</para>
-<para>select_field    = destination</para>
-<para>where_field     = domain</para>
-<para>hosts           = unix:/var/run/mysqld/mysqld.sock</para>
-<para/>
-<para/>
-<para>Листинг 10.6: /etc/postfix/mysql-virtual-gid.cf (необязательно)</para>
-<para># nano -w /etc/postfix/mysql-virtual-gid.cf</para>
-<para>#myql-virtual-gid.cf</para>
-<para/>
-<para>user            = mailsql</para>
-<para>password        = $password</para>
-<para>dbname          = mailsql</para>
-<para>table           = users</para>
-<para>select_field    = gid</para>
-<para>where_field     = email</para>
-<para>additional_conditions = and postfix = 'y'</para>
-<para>hosts           = unix:/var/run/mysqld/mysqld.sock</para>
-<para/>
-<para/>
-<para>Листинг 10.7: /etc/postfix/mysql-virtual-maps.cf</para>
-<para>#nano -w /etc/postfix/mysql-virtual-maps.cf</para>
-<para>#myql-virtual-maps.cf</para>
-<para/>
-<para>user            = mailsql</para>
-<para>password        = $password</para>
-<para>dbname          = mailsql</para>
-<para>table           = users</para>
-<para>select_field    = maildir</para>
-<para>where_field     = email</para>
-<para>additional_conditions = and postfix = 'y'</para>
-<para>hosts           = unix:/var/run/mysqld/mysqld.sock</para>
-<para/>
-<para/>
-<para>Листинг 10.8: /etc/postfix/mysql-virtual-uid.cf (необязательно)</para>
-<para># nano -w /etc/postfix/mysql-virtual-uid.cf</para>
-<para># mysql-virtual-uid.cf</para>
-<para/>
-<para>user            = mailsql</para>
-<para>password        = $password</para>
-<para>dbname          = mailsql</para>
-<para>table           = users</para>
-<para>select_field    = uid</para>
-<para>where_field     = email</para>
-<para>additional_conditions = and postfix = 'y'</para>
-<para>hosts           = unix:/var/run/mysqld/mysqld.sock</para>
-<para/>
-<para/>
-<para>Листинг 10.9: /etc/postfix/mysql-virtual.cf</para>
-<para># nano -w /etc/postfix/mysql-virtual.cf</para>
-<para># mysql-virtual.cf</para>
-<para/>
-<para>user            = mailsql</para>
-<para>password        = $password</para>
-<para>dbname          = mailsql</para>
-<para>table           = virtual</para>
-<para>select_field    = destination</para>
-<para>where_field     = email</para>
-<para>hosts           = unix:/var/run/mysqld/mysqld.sock</para>
-<para/>
-<para/>
-<para>И последнее, правим /etc/postfix/main.cf еще один раз. </para>
-<para/>
-<para>Листинг 10.10: /etc/postfix/main.cf</para>
-<para># nano -w /etc/postfix/main.cf</para>
-<para>alias_maps = mysql:/etc/postfix/mysql-aliases.cf</para>
-<para>relocated_maps = mysql:/etc/postfix/mysql-relocated.cf</para>
-<para/>
-<para>local_transport = local</para>
-<para>local_recipient_maps = $alias_maps $virtual_mailbox_maps unix:passwd.byname</para>
-<para/>
-<para>virtual_transport = virtual</para>
-<para>virtual_mailbox_domains =</para>
-<para>        virt-bar.com,</para>
-<para>        $other-virtual-domain.com</para>
-<para/>
-<para>virtual_minimum_uid = 1000</para>
-<para>virtual_gid_maps = static:$vmail-gid</para>
-<para>virtual_mailbox_maps = mysql:/etc/postfix/mysql-virtual-maps.cf</para>
-<para>virtual_alias_maps = mysql:/etc/postfix/mysql-virtual.cf</para>
-<para>virtual_uid_maps = static:$vmail-uid</para>
-<para>virtual_mailbox_base = /</para>
-<para>#virtual_mailbox_limit =</para>
-<para/>
-<para/>
-<para>Здесь видно чем значительно отличается postfix 2.0.x от 1.1.x. Сильнее всего заметно отсутствие необходимости в таблицах транспорта, virtual-gid и virtual-uid, хотя эти таблицы и вкладываются, чтобы вы могли их использовать при необходимости. </para>
-<para>Примечание: Рекомендуем прочесть VIRTUAL_README идущий с postfix, для большего количества информации. </para>
-<para/>
-<para/>
-<para>Листинг 10.11: </para>
-<para># postfix reload</para>
-<para/>
-<para/>
-<para>Теперь, если все прошло хорошо, вы должны иметь работающий почтовый сервер. Пользователи должны быть способны авторизоватся в sql базе, использовать свой полный почтовый адрес для pop3, imap, и smtp. Настоятельно рекомендую проверить , что всё это действительно работает. Если вы столкнулись с проблемами, проверьте раздел troubleshooting в конце документа. </para>
-<para/></section><section><info><title>11. Squirrelmail</title></info>
-<para/>
-<para>Листинг 11.1: </para>
-<para># emerge squirrelmail</para>
-<para>(добавим ссылку на htdocs для более короткого пути)</para>
-<para># ln -s /home/httpd/htdocs/squirrelmail/ /home/httpd/htdocs/mail</para>
-<para># cd /home/httpd/htdocs/mail/conf</para>
-<para># ./conf.pl</para>
-<para/>
-<para>(измените настройки Organization, Server, и Folder для squirrelmail)</para>
-<para>(теперь вы имеете возможность залогинится в squirrelmail, снова с вашим </para>
-<para>полным email адресом, и использовать ваш новый webmail setup)</para>
-<para/>
-<para/></section><section><info><title>12. Mailman</title></info>
-<para/>
-<para>Последний шаг — mailman. Новая версия имеет великолепную поддержку виртуальных доменов, поэтому я использую его, не говоря уже о том что это просто великолепная программа. Настоятельно рекомендую прочесть документацию mailman, включающую README.POSTFIX.gz, для более полного понимания. </para>
-<para/>
-<para>Одно замечание, текущая версия mailman инсталируется в /usr/local/mailman. Если вы хотите изменить директорию инсталляции, вы можете изменить в ebuild файле переменную INSTALLDIR. </para>
-<para/>
-<para>Листинг 12.1: /usr/portage/net-mail/mailman/mailman-$ver.ebuild</para>
-<para># nano -w /usr/portage/net-mail/mailman/mailman-$ver.ebuild</para>
-<para>MAILGID="280"</para>
-<para>(задайте MAILGID для группы mailman взаммен nobody)</para>
-<para>(это необходимо для интеграции с postfix)</para>
-<para/>
-<para/>
-<para>Листинг 12.2: </para>
-<para># emerge mailman</para>
-<para>(имя этого пакета маскировано, поэтому вам надо указать emerge путь к </para>
-<para>ebuild. После инсталляции, следуйте инструкциям в README.gentoo.gz *исключая* — </para>
-<para>не добавляйте псевдонимы в /etc/mail/aliases. Вместо этого, мы укажем postfix </para>
-<para>использовать псевдонимы из базы)</para>
-<para/>
-<para># zless /usr/share/doc/mailman-$ver/README.gentoo.gz</para>
-<para/>
-<para/>
-<para>Листинг 12.3: Настройки по умолчанию: Mailman/Defaults.py</para>
-<para>#  nano -w /var/mailman/Mailman/Defaults.py</para>
-<para>(измените значения приведенные ниже на ваши, дальше будем настраивать </para>
-<para>виртуальные домены)</para>
-<para>DEFAULT_EMAIL_HOST = 'domain.com'</para>
-<para>DEFAULT_URL_HOST = 'www.domain.com'</para>
-<para/>
-<para/>
-<para>Листинг 12.4: настройка mailman: mm_cfg.py</para>
-<para># nano -w /var/mailman/Mailman/mm_cfg.py</para>
-<para>MTA = "Postfix"</para>
-<para>POSTFIX_STYLE_VIRTUAL_DOMAINS = ['virt-domain.com', 'virt.domain2.com']</para>
-<para>add_virtualhost('www.virt.domain.com', 'virt.domain.com')</para>
-<para>add_virtualhost('www.virt.domain2.com', 'virt.domain2.com')</para>
-<para>(это нужно для работы mailman с виртуальными доменами)</para>
-<para/>
-<para/>
-<para>Листинг 12.5: </para>
-<para>(создадим свой первый список рассылки)</para>
-<para/>
-<para># su mailman</para>
-<para># cd ~</para>
-<para># bin/newlist test</para>
-<para>Enter the email of the person running the list: your@email.address</para>
-<para>Initial test password:</para>
-<para>Hit enter to continue with test owner notification...</para>
-<para>(листы виртуального домена могут быть указаны в виде list@domain.com)</para>
-<para># bin/genaliases</para>
-<para>(теперь ваши псевдонимы сгенерированы, проверьте, что они добавлены правильно)</para>
-<para/>
-<para># nano -w data/aliases</para>
-<para># STANZA START: test</para>
-<para># CREATED:</para>
-<para>test:             "|/var/mailman/mail/mailman post test"</para>
-<para>test-admin:       "|/var/mailman/mail/mailman admin test"</para>
-<para>test-bounces:     "|/var/mailman/mail/mailman bounces test"</para>
-<para>test-confirm:     "|/var/mailman/mail/mailman confirm test"</para>
-<para>test-join:        "|/var/mailman/mail/mailman join test"</para>
-<para>test-leave:       "|/var/mailman/mail/mailman leave test"</para>
-<para>test-owner:       "|/var/mailman/mail/mailman owner test"</para>
-<para>test-request:     "|/var/mailman/mail/mailman request test"</para>
-<para>test-subscribe:   "|/var/mailman/mail/mailman subscribe test"</para>
-<para>test-unsubscribe: "|/var/mailman/mail/mailman unsubscribe test"</para>
-<para># STANZA END: test</para>
-<para/>
-<para># /etc/init.d/mailman start</para>
-<para># rc-update add mailman default</para>
-<para>(для запуска mailman при каждой загрузке)</para>
-<para/>
-<para/>
-<para>Листинг 12.6: Добавление поддержки псевдонимов mailman в postfix</para>
-<para># nano -w /etc/postfix/main.cf</para>
-<para>owner_request_special = no</para>
-<para>recipient_delimiter = +</para>
-<para>(прочтите README.POSTFIX.gz для более детальной информации)</para>
-<para/>
-<para>alias_maps     =</para>
-<para>        hash:/var/mailman/data/aliases,</para>
-<para>        mysql:/etc/postfix/mysql-aliases.cf</para>
-<para/>
-<para>virtual_alias_maps =</para>
-<para>        hash:/var/mailman/data/virtual-mailman,</para>
-<para>        mysql:/etc/postfix/mysql-virtual.cf</para>
-<para>(это добавит поддержку файлов псевдонимов mailman'a в postfix, конечно</para>
-<para>вы можете использовать таблицу в mysql для этого, но я ненавижу делать это руками. </para>
-<para>Также если вы не используете виртуальных доменов, добавление псевдонимов, может</para>
-<para>привести к проблемам)</para>
-<para/>
-<para/>
-<para>Теперь вы можете создавать листы рассылок для каждого домена в вашей системе. Последнее замечание, убедитесь, что mailman запущен из под пользователя mailman (su mailman) иначе у вас будут проблемы с разрешениями. прочтите документацию mailman для более детальной информации по управлению листами рассылки. </para>
-<para/></section><section><info><title>13. Фильтрация содержимого и Anti-Virus</title></info>
-<para/>
-<para>Скоро будет,... это уже существует, но я должен еще немного разобраться в perl'e и протестировать результат. Если вы хотите помочь с этим, свяжитесь со мной. </para>
-<para/></section><section><info><title>14. Окончание</title></info>
-<para>Итак,. Вы все сделали, теперь поправьте /etc/postfix/master.cf и отключите режим verbose. Возможно вы захотите довавить сервис в автозагрузку. Убедитесь что вы добавили в автозагрузку все сервисы которые используете - apache, mysql, saslauthd, postfix, courier-imapd, courier-imapd-ssl, courier-pop3d, и courier-pop3d-ssl, все зависит от вашего решения какие сервисы предоставлять. Обычно я разрешаю все сервисы. </para>
-<para/>
-<para>Листинг 14.1: Окончание</para>
-<para># postfix reload</para>
-<para># rc-update add $service default</para>
-<para/>
-<para/>
-<para>Вобщем инджой и хэв фан! </para>
-<para/></section><section><info><title>15. Troubleshooting</title></info>
-<para/>
-<para>Введение</para>
-<para/>
-<para>Troubleshooting: Это небольшой список решений для проблем, наиболее часто возникающих в ходе установки. Это не исчерпывающая информация, но вы можете начать поиск решения граблей отсюда. Такая запутанная настройка и инсталляция как в этом документе, может привести к тому что некоторые компоненты будут работать неправильно. Вообще советую сделать несколько следующих шагов. Запустите систему в базовой конфигурации, добавляя компонент за компонентом, чтобы выяснить какой из них сбоит. </para>
-<para/>
-<para>Шаг 1: Проверьте ваши файлы конфигурации. </para>
-<para/>
-<para>Опечатки — главный враг, особенно когда идет речь о системе авторизации. Проверьте ваши конфигурационные файлы и базу данных на предмет опечаток. Если вы делаете изменения настроек для сервиса, убедитесь, что вы перезапустили сервиса, дабы изменения вступили в силу. </para>
-<para/>
-<para>Листинг 15.1: </para>
-<para># /etc/init.d/service restart</para>
-<para/>
-<para/>
-<para>Шаг 2: Все необходимые сервисы запущены и работают?</para>
-<para/>
-<para>Если не запущены, запустите. Крайне сложно отлаживать программу если она не запущена. Иногда сервис запускается, но не функционирует. Иногда, когда используется неправильный файл конфигурации сервис может использовать другой порт предназначенный другому процессу. Иногда вы можете воспользоваться netstat. Или если возможно , перезагрузите ваш сервер, это очистит любой зависший сервис. </para>
-<para/>
-<para>Листинг 15.2: </para>
-<para># /etc/init.d/$service status</para>
-<para># netstat -a | grep $service (или $port)</para>
-<para/>
-<para/>
-<para>Шаг 3: Все сервисы используют правильные файлы конфигурации?</para>
-<para/>
-<para>Если вы внесли изменения в конфигурационные файлы сервиса, убедитесь что он использует новые параметры. Некоторые программы, вроде postfix могут показывать конфигурацию их параметров. </para>
-<para/>
-<para>Листинг 15.3: </para>
-<para># apachectl fullstatus  (необходим lynx)</para>
-<para># apachectl configtest (проверка нормальной конфигурации)</para>
-<para># postconf -n (показывает текущие параметры используемые postfix)</para>
-<para># /etc/init.d/$service restart</para>
-<para/>
-<para/>
-<para>Шаг 4: Проверьте логи.</para>
-<para/>
-<para>На то логи и существуют, чтобы помочь нам выяснить причину, а иногда и подсказать решение проблемы. Просмотрите все логи, которые имеют отношение к программе, ее сбою. </para>
-<para/>
-<para>Листинг 15.4: </para>
-<para># kill -USR1 `ps -C metalog -o pid=`(для выключения metalog buffering)</para>
-<para># nano -w /var/log/mail/current</para>
-<para># cat /var/log/mysql/mysql.log</para>
-<para># tail /var/log/apache/error_log</para>
-<para/>
-<para/>
-<para>Вы также можете найти параметр debug_peer в main.cf который может быть полезен. Включение этого параметра, увеличит подробность выводящихся сообщений в логи. </para>
-<para/>
-<para>Листинг 15.5: добавление поддержки debug_peer</para>
-<para># nano -w /etc/postfix/main.cf</para>
-<para>debug_peer_level = 5</para>
-<para>debug_peer_list = $host.domain.name</para>
-<para>(раскомментируйте одну из нужных строк)</para>
-<para/>
-<para/>
-<para>Шаг 5: Попробуйте связаться с сервисом.</para>
-<para/>
-<para>SMTP, IMAP, и POP3 отвечают на telnet сессию, как вы видели немного раньше при конфигурации postfix. Иногда помогает открыть telnet сессию с сервисом, для того чтобы выяснить что случилось. </para>
-<para/>
-<para>Листинг 15.6: </para>
-<para># telnet localhost $port</para>
-<para>(SMTP на 25-м, IMAP, на 143-м, POP3 на 110-м порту. по крайней мере вы</para>
-<para>должны увидеть слово ОК. Так вы будете знать что сервис запущен, и готов к ответу.)</para>
-<para/>
-<para>Trying 127.0.0.1...</para>
-<para>Connected to localhost.</para>
-<para>Escape character is '^]'.</para>
-<para>* OK Courier-IMAP ready. Copyright 1998-2002 Double Precision, Inc.</para>
-<para/>
-<para/>
-<para>Шаг 6: Иногда только большая пушка может дать нам информацию: strace.</para>
-<para/>
-<para>Вы должны иметь эту программу всегда под рукой. Это бесценный инструмент для отлаживания программ. Вы можете запустить из командной строки starce и наблюдать все системные вызовы происходящие в программе. Часто дамп содержит огромное количество информации, так что вы можете либо наблюдать в реальном времени, за транзакцией приводящей к краху программы, или записать его в файл, для неторопливого просмотра позже. </para>
-<para/>
-<para>Листинг 15.7: </para>
-<para># emerge strace</para>
-<para># strace $command</para>
-<para># strace -p `ps -C $service -o pid=`</para>
-<para/></section>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Создание виртуальной почтовой системы</title>
+    </info>
+    <para>Ссылка на оригинал: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/virt-mail-howto.xml">http://www.gentoo.org/doc/ru/virt-mail-howto.xml</link>
+    </para>
+    <para>C версии: 1.0</para>
+    <section>
+        <title>Введение</title>
+        <para>Для большинства пользователей gentoo простого почтового клиента и fetchmail (для сбора почты) достаточно. Однако, если вы размещаете на своей системе домен, вам необходим полноценный MTA (Mail Transfer Agent). И если вы размещаете на своей системе несколько доменов, тогда вам точно необходимо что-то мощное для обработки всей почты ваших пользователей. Эта система была разработана для элегантного решения этой проблемы. </para>
+        <para>Виртуальная почтовая система должна быть способна обработать почту от многочисленных доменов с множеством пользователей через разнообразные интерфейсы. С этим связано несколько проблем, которые надо решить. Для примера, что если вы имеете двух пользователей в разных доменах, которые хотят иметь одинаковые имена? Если вы предоставляете сервисы imap и smtp-авторизации, как вы комбинируете различные демоны авторизации в одной системе? Как обеспечиваете безопасность многочисленных компонентов которая содержит система? Как вы управляете этим всем? </para>
+        <para>Это howto покажет вам, как настроить гибкую систему обработки почты из стольких доменов, сколько ваша поддерживает система, как создавать виртуальных пользователей не требующих наличия аккаунта в системе, иметь доменные имена пользователей, как авторизовать пользователей через веб, imap, smtp и pop3 снова таки из одной базы данных, использовать ssl-транспорт для безопасности, как обрабатывать списки рассылки для любого домена на машине, и контролировать все хорошей и простой базой данных mysql. </para>
+        <para>Конечно существует множество путей настройки виртуальной почтовой системы. Другой способ возможно окажется более подходящим вашим нуждам. Дополнительную информацию вы можете найти на <link xlink:href="http://www.qmail.org/">http://www.qmail.org/</link> и <link xlink:href="http://www.exim.org/">http://www.exim.org/</link>.</para>
+        <para>Мы будем использовать следующие программы: apache, courier-imap, pam_mysql, postfix, mod_php, phpmyadmin, squirrelmail, cyrus-sasl, mysql, php, и mailman. </para>
+        <para>Убедитесь что вы добавили в файле <filename>/etc/make.conf</filename> в переменную USE следующие пакеты: <code>USE="mysql imap libwww maildir sasl ssl"</code>. Иначе, возможно, вам придeтся перекомпилировать пакеты, для поддержки всех необходимых протоколов. Затем, хорошей идеей будет отключить любые другие почтовые и сетевые программы которые вам не нужны, вроде IPv6. </para>
+        <important>
+            <para>Это howto написано для postfix-2.0.x. Если вы используете postfix версии &lt; 2 некоторые переменные используемые в этом документе могут отличается. В таком случае рекомендуется обновить postfix. Некоторые пакеты используемые в этом документе зависят от версии. Вы поступите мудро, если прочтете документацию поставляемую с пакетами, при возникновении вопросов. </para>
+        </important>
+        <important>
+            <para>В нашем документе мы будем использовать apache-1.3.x. В портежах Apache-2 был помечен stable, но как бы то ни было существуют еще некоторые проблемы интеграции с php. Пока php-поддержка в apache-2.0.x не будет отмечена stable, в этом документе будем продолжать использовать apache-1.3.x. </para>
+        </important>
+        <important>
+            <para>Вам необходимо доменное имя для работы общедоступного почтового сервера, или по крайней мере иметь МХ-записи для домена. В идеале вы должны иметь контроль над двумя доменами, для извлечения пользы из функциональности новой виртуальной системы. </para>
+        </important>
+        <important>
+            <para>Убедитесь что в <filename>/etc/hostname</filename> указано правильное имя сервера, также убедитесь что в /etc/hosts нет конфликтных значений. </para>
+        </important>
+        <note>
+            <para>Рекомендуется прочесть документ полностью и ознакомится со всеми шагами настройки, перед тем как начинать инсталляцию. Если вы столкнетесь с проблемами при любом из шагов, проверьте troubleshooting guide в конце этого документа. Также не все упомянутые пакеты необходимы, просто настройка, описанная здесь, достаточна гибка. Для примера, если вам не требуется веб-интерфейса, вы свободны пропустить соответствующий раздел squirrelmail. </para>
+        </note>
+    </section>
+    <section>
+        <title>Начальная настройка postfix</title>
+        <example>
+            <title>Инсталляция postfix</title>
+            <screen><prompt>#</prompt> <userinput>emerge postfix</userinput></screen>
+        </example>
+        <warning>
+            <para>Проверьте чтобы у вас не были проинсталлированы любые другие MTA, например ssmtp, exim или qmail, иначе у вас могут быть БОЛЬШИЕ проблемы. </para>
+        </warning>
+        <para>После инсталляции postfix, время его настроить. Измените следующие настройки в /etc/postfix/main.cf: </para>
+        <example>
+            <title><filename>/etc/postfix/main.cf</filename></title>
+            <programlisting>myhostname = $host.domain.name
+mydomain = $domain.name
+inet_interfaces = all
+mydestination = $myhostname, localhost.$mydomain $mydomain
+mynetworks = my.ip.net.work/24, 127.0.0.0/8
+home_mailbox = .maildir/
+local_destination_concurrency_limit = 2
+default_destination_concurrency_limit = 10</programlisting>
+        </example>
+        <para>Следующие изменения следуют для <filename>/etc/postfix/master.cf</filename>. Они включат режим подробного протоколирования для отладки: </para>
+        <example>
+            <title>/etc/postfix/master.cf</title>
+            <screen># service type  private unpriv  chroot  wakeup  maxproc command + args
+#               (yes)   (yes)   (yes)   (never) (50)
+#
+==========================================================================
+smtp      inet  n       -       n       -       -       smtpd -v
+
+<lineannotation>(просто добавьте -v после smtpd)</lineannotation></screen>
+        </example>
+        <para>Дальше правим <filename>/etc/mail/aliases</filename> для добавления локальных псевдонимов. По крайне туда должен быть включен псевдоним для root типа: <code>root: your@email.address</code>. </para>
+        <example>
+            <title>Запуск postfix'а в первый раз</title>
+            <screen><prompt>#</prompt> <userinput>/usr/bin/newaliases</userinput>
+<lineannotation>(это создаст новые псевдонимы. Это требуется делать)
+(когда вы создаете или обновляете файл псевдонимов.)</lineannotation>
+<prompt>#</prompt> <userinput>/etc/init.d/postfix start</userinput></screen>
+        </example>
+        <para>Теперь postfix запущен, запустите вашего любимого консольного почтового клиента и пошлите самому себе письмо. Я использую mutt для всей переписки из консоли. </para>
+        <note>
+            <para>Настоятельно рекомендуется проверить, чтобы postfix доставлял почту локальным пользователям, перед тем как перейти к следующему шагу. </para>
+        </note>
+    </section>
+    <section>
+        <title>Courier-imap</title>
+        <example>
+            <title>Инсталляция courier-imap</title>
+            <screen><prompt>#</prompt> <userinput>emerge courier-imap</userinput></screen>
+        </example>
+        <example>
+            <title>Настройка courier-imap</title>
+            <screen><prompt>#</prompt> <userinput>cd /etc/courier-imap</userinput>
+<lineannotation>(если вы хотите использовать возможности ssl в courier-imap или pop3, )
+(вам необходимо создать сертификаты)
+(если вы не хотите использовать ssl, просто пропустите следующий шаг )</lineannotation>
+
+<prompt>#</prompt> <userinput>nano -w pop3d.cnf</userinput>
+<prompt>#</prompt> <userinput>nano -w imapd.cnf</userinput>
+<lineannotation>(измените значения C, ST, L, CN и адреса e-mail)</lineannotation>
+
+<prompt>#</prompt> <userinput>mkpop3dcert</userinput>
+<prompt>#</prompt> <userinput>mkimapdcert</userinput></screen>
+        </example>
+        <example>
+            <title>Запуск нужных вам сервисов courier</title>
+            <screen><prompt>#</prompt> <userinput>/etc/init.d/courier-imapd start</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/courier-imapd-ssl start</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/courier-pop3d start</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/courier-pop3d-ssl start</userinput></screen>
+        </example>
+        <para>Снова запустите ваш любимый почтовый клиент и проверьте что сервисы начали принимать и посылать почту. Теперь когда основная часть заработала, перейдем к связыванию всех компонентов, для получения спокойно работающей системы. Снова, проверьте, что все что мы сделали работает, перед тем как переходить к следующему шагу. </para>
+    </section>
+    <section>
+        <title>Cyrus-sasl</title>
+        <para>Следующим шагом будет инсталляция cyrus-sasl. Sasl на самом деле играет роль передатчика авторизационных переменных к pam (Pluggable Authentication Modules), который передаст эту информацию mysql, для авторизации smtp пользователей. Мы не будем проверять работоспособность sasl, пока не настроим mysql, и не создадим тестовых пользователей. В конечном результате, он будет авторизовать пользователей в mysql. </para>
+        <note>
+            <para>Примечание: По некоторым причинам, sasl плохо работает с pam используя shadow. Для меня долгое время это была большая проблема. Если кто-нибудь знает почему sasl не авторизирует пользователей из /etc/shadow в текущем релизе gentoo, пожалуйста напишите мне об этом, я буду очень рад услышать решение этой проблемы. <link xlink:href="mailto:ken@kickasskungfu.com">E-mail</link>. </para>
+        </note>
+        <example>
+            <title>Инсталляция и настройка cyrus-sasl</title>
+            <screen><prompt>#</prompt> <userinput>USE='-ldap -mysql' emerge cyrus-sasl</userinput>
+<lineannotation>(мы не используем ldap и мы не используем возможности sasl-mysql,
+поэтому мы отключаем их )</lineannotation></screen>
+        </example>
+        <para>Дальше правим <filename>/usr/lib/sasl2/smtp.conf</filename>. </para>
+        <example>
+            <title>Запуск sasl</title>
+            <screen><prompt>#</prompt> <userinput>nano -w /usr/lib/sasl2/smtp.conf</userinput>
+pwcheck_method: saslauthd
+mech_list: LOGIN PLAIN
+<lineannotation>(важно выключить метод авторизации который мы не используем.
+Они могут привести к граблям на некоторых почтовых клиентах)</lineannotation>
+<prompt>#</prompt> <userinput>/etc/init.d/saslauthd start</userinput></screen>
+        </example>
+    </section>
+    <section>
+        <title>SSL-сертификаты для Postfix и Apache</title>
+        <para>Дальше делаем ssl-сертификаты для posfix и apache. </para>
+        <example>
+            <title/>
+            <screen><prompt>#</prompt> <userinput>cd /etc/ssl/</userinput>
+<prompt>#</prompt> <userinput>nano -w openssl.cnf</userinput>
+<lineannotation>(измените следующие значения для вашего домена:)</lineannotation>
+countryName_default
+stateOrProvinceName_default
+localityName_default
+0.organizationName_default
+commonName_default
+emailAddress_default.
+
+<lineannotation>(если каких-то переменных нет, просто добавьте их в любое удобное место)</lineannotation>
+
+
+<prompt>#</prompt> <userinput>cd misc</userinput>
+<prompt>#</prompt> <userinput>nano -w CA.pl</userinput>
+<lineannotation>(нам необходимо добавить -nodes в код строк "# create a certificate" и
+"# create a certificate request" таким образом чтобы наши новые ssl-сертификаты
+загрузились без пароля. Иначе после перезагрузки системы ssl-сертификаты будут
+не доступны )
+(найдите эти строки в файле и измените их:)</lineannotation>
+
+# create a certificate
+system ("$REQ -new -nodes -x509 -keyout newreq.pem -out newreq.pem $DAYS");
+
+# create a certificate request
+system ("$REQ -new -nodes -keyout newreq.pem -out newreq.pem $DAYS");
+
+(далее создаем сертификат для postfix)
+
+<prompt>#</prompt> <userinput>./CA.pl -newca</userinput>
+<prompt>#</prompt> <userinput>./CA.pl -newreq</userinput>
+<prompt>#</prompt> <userinput>./CA.pl -sign</userinput>
+<prompt>#</prompt> <userinput>cp newcert.pem /etc/postfix</userinput>
+<prompt>#</prompt> <userinput>cp newreq.pem /etc/postfix</userinput>
+<prompt>#</prompt> <userinput>cp demoCA/cacert.pem /etc/postfix</userinput>
+<lineannotation>(а теперь такой же для apache)</lineannotation>
+
+<prompt>#</prompt> <userinput>openssl req -new > new.cert.csr</userinput>
+<prompt>#</prompt> <userinput>openssl rsa -in privkey.pem -out new.cert.key</userinput>
+<prompt>#</prompt> <userinput>openssl x509 -in new.cert.csr -out new.cert.cert -req -signkey new.cert.key -days 365</userinput>
+<lineannotation>(оставьте получившиеся сертификаты, мы их проинсталлируем когда будем настраивать apache )</lineannotation></screen>
+        </example>
+    </section>
+    <section>
+        <title>Добавим SSL и SASL поддержку в Postfix</title>
+        <para>Теперь поправим конфигурацию postfix чтобы включить совместимость с sasl и ssl. Добавьте следующие параметры в конец файла, где их легко потом можно будет найти. </para>
+        <example>
+            <title><filename>/etc/postfix/main.cf</filename></title>
+            <screen><prompt>#</prompt> <userinput>nano -w /etc/postfix/main.cf</userinput>
+
+smtpd_sasl_auth_enable = yes
+smtpd_sasl2_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+broken_sasl_auth_clients = yes
+smtpd_sasl_local_domain =
+
+<lineannotation>(опция broken_sasl_auth_clients и метод авторизации используется только
+для outlook и outlook express, они не документированы. Опция smtpd_sasl_local_domain
+добавляет имя домена для клиентов использующих smtp-авторизацию. Убедитесь что
+postfix отвергает пустое или просто имя пользователя, и они не могут авторизоваться )</lineannotation>
+
+smtpd_recipient_restrictions =
+        permit_sasl_authenticated,
+        permit_mynetworks,
+        reject_unauth_destination
+
+
+smtpd_use_tls = yes
+#smtpd_tls_auth_only = yes
+smtpd_tls_key_file = /etc/postfix/newreq.pem
+smtpd_tls_cert_file = /etc/postfix/newcert.pem
+smtpd_tls_CAfile = /etc/postfix/cacert.pem
+smtpd_tls_loglevel = 3
+smtpd_tls_received_header = yes
+smtpd_tls_session_cache_timeout = 3600s
+tls_random_source = dev:/dev/urandom
+
+<lineannotation>(опция smtpd_tls_auth_only закомментирована для простоты тестирования,
+вы можете включить ее позже, если захотите)</lineannotation>
+
+<prompt>#</prompt> <userinput>postfix reload</userinput></screen>
+        </example>
+        <para>Теперь мы попробуем проверить работоспособность postfix'а, и то что он прочел файлы конфигурации. </para>
+        <example>
+            <title>Проверка поддержки sasl и tls</title>
+            <screen><prompt>#</prompt> <userinput>telnet localhost 25</userinput>
+
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+220 mail.domain.com ESMTP Postfix
+<userinput>EHLO domain.com</userinput>
+250-mail.domain.com
+250-PIPELINING
+250-SIZE 10240000
+250-VRFY
+250-ETRN
+250-STARTTLS
+250-AUTH LOGIN PLAIN
+250-AUTH=LOGIN PLAIN
+250-XVERP
+250 8BITMIME
+^]
+<prompt>telnet></prompt> <userinput>quit</userinput></screen>
+        </example>
+        <para>Проверьте, что ответ postfix'а содержит линии AUTH и STARTTLS. Как уже замечалось выше, AUTH пока не будет работать, потому что sasl пытается авторизовать из sasldb, вместо shadow по неизвестным причинам. Итак мы просто пропускаем это и дальше настраиваем mysql для принятия нашей авторизации и информации о виртуальных доменах. </para>
+    </section>
+    <section>
+        <title>MySQL</title>
+        <para>Для инсталляции mysql нам необходим dump-файл <link xlink:href="http://kickasskungfu.com/~ken/genericmailsql.sql">genericmailsql.sql</link>. </para>
+        <example>
+            <title>Инсталляция и настройка MySQL</title>
+            <screen><prompt>#</prompt> <userinput>emerge mysql</userinput>
+
+<prompt>#</prompt> <userinput>/usr/bin/mysql_install_db</userinput>
+<lineannotation>(далее следуйте указаниям на экране, для добавления пароля root в
+mysql, не mysqladmin, иначе ваша база будет открыта всем ветрам )</lineannotation>
+
+<prompt>#</prompt> <userinput>/etc/init.d/mysql start</userinput>
+<prompt>#</prompt> <userinput>mysqladmin -u root -p create mailsql</userinput>
+<prompt>#</prompt> <userinput>mysql -u root -p mailsql &lt; genericmailsql.sql</userinput>
+
+<prompt>#</prompt> <userinput>mysql -u root -p mysql</userinput>
+<prompt>mysql></prompt> <userinput>GRANT SELECT,INSERT,UPDATE,DELETE</userinput>
+        ->     <userinput>ON mailsql.*</userinput>
+        ->     <userinput>TO mailsql@localhost</userinput>
+        ->     <userinput>IDENTIFIED BY '$password';</userinput>
+
+        ->     <userinput>quit</userinput>
+<lineannotation>(проверьте, что новый mailsql пользователь, может подключатся к mysql серверу )</lineannotation>
+
+<prompt>#</prompt> <userinput>mysql -u mailsql -p mailsql</userinput></screen>
+        </example>
+        <para>Ваша новая база имеет значения по умолчанию и таблицы для двух доменов. Вложены следующие таблицы: </para>
+        <orderedlist>
+            <listitem>
+                <para>alias — локальные e-mail и информация о псевдонимах для mailman</para>
+            </listitem>
+            <listitem>
+                <para>relocated — информация о адресах перемещенных пользователях</para>
+            </listitem>
+            <listitem>
+                <para>transport — информация о почтовых транспортах для всех доменов размещающихся у вас </para>
+            </listitem>
+            <listitem>
+                <para>users — информация о всех пользователях</para>
+            </listitem>
+            <listitem>
+                <para>virtual — информация о псевдонимах для виртуальных доменов</para>
+            </listitem>
+        </orderedlist>
+        <example>
+            <title>Пример таблицы псевдонимов</title>
+            <screen>id   alias    destination
+1    root     foo@bar.com
+2  postmaster foo@bar.com</screen>
+        </example>
+        <example>
+            <title>Пример таблицы пользователей</title>
+            <screen><lineannotation>(приведем для ясности строку)</lineannotation>
+id email            clear     name     uid     gid     homedir     \
+        maildir                                quota  postfix
+10 foo@virt-bar.org $password realname virtid  virtid  /home/vmail \
+        /home/vmail/virt-bar.org/foo/.maildir/        y
+13 foo@bar.com      $password realname localid localid /home/foo   \
+        /home/foo/.maildir/</screen>
+        </example>
+        <example>
+            <title>Пример таблицы транспортов</title>
+            <screen>id   domain       destination
+1    bar.com      local:
+2    virt-bar.org virtual:</screen>
+        </example>
+        <example>
+            <title>Пример таблицы псевдонимов для виртуальных доменов</title>
+            <screen>id   email            destination
+3   root@virt-bar.org other@email.address</screen>
+        </example>
+    </section>
+    <section>
+        <title>Apache и phpMyAdmin</title>
+        <para>Итак, следующим шагом мы настроим apache и создадим интерфейс для еще более простого взаимодействия с базой данных. </para>
+        <example>
+            <title>Настройка apache и phpmyadmin</title>
+            <screen><prompt>#</prompt> <userinput>emerge apache mod_php phpmyadmin</userinput></screen>
+        </example>
+        <para>Существует множество руководств по настройке apache с поддержкой php. Например, <link xlink:href="http://www.linuxguruz.org/z.php?id=31">http://www.linuxguruz.org/z.php?id=31</link>. Также многочисленные сообщения на <link xlink:href="http://forums.gentoo.org/">http://forums.gentoo.org</link> где рассматриваются решения проблем возникших в ходе инсталляции (поиск по "apache php"). Итак, я не стараюсь раскрыть эту тему здесь. Настройте apache и php, затем продолжим вместе настройку. Теперь слово для умных: .htaccess положите в директорию к phpmyadmin. Если вы не сделаете этого, поисковые системы проиндексируют страницы phpmyadmin и каждый сможет получить к нему доступ с помощью google, и изменить ваши базы, что не есть хорошо. Существует много howto как это сделать. <link xlink:href="http://docs.csoft.net/micro/black-htaccess.html">http://docs.csoft.net/micro/black-htaccess.html</link>. </para>
+        <para>Теперь мы переходим к инсталляции сертификатов для apache, созданных нами ранее. Директивы apache которые вам требуется изменить для этого: </para>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    <para>SSLCertificateFile /path/to/certs/new.cert.cert</para>
+                </listitem>
+                <listitem>
+                    <para>SSLCertificateKeyFile /path/to/certs/new.cert.key</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <example>
+            <title>Инсталляция Apache SSL сертификатов</title>
+            <screen><prompt>#</prompt> <userinput>cp /etc/ssl/misc/new.cert.cert /etc/apache/conf/ssl/</userinput>
+<prompt>#</prompt> <userinput>cp /etc/ssl/misc/new.cert.key /etc/apache/conf/ssl/</userinput>
+<prompt>#</prompt> <userinput>nano -w /etc/apache/conf/vhosts/ssl.default-vhost.conf</userinput>
+<lineannotation>(измените следующие параметры)</lineannotation>
+
+ServerName host.domain.name
+ServerAdmin your@email.address
+SSLCertificateFile /etc/apache/conf/ssl/new.cert.cert
+SSLCertificateKeyFile /etc/apache/conf/ssl/new.cert.key
+
+<prompt>#</prompt> <userinput>/etc/init.d/apache restart</userinput></screen>
+        </example>
+        <note>
+            <para>Если у вас apache уже проинсталлирован, вам вероятно придется сделать перезагрузку сервера. Проверьте логи системы на предмет корректного запуска apache. </para>
+        </note>
+        <para>Дальше настраиваем phpMyAdmin. </para>
+        <example>
+            <title>Настройка phpMyAdmin</title>
+            <screen><prompt>#</prompt> <userinput>nano -w /home/httpd/htdocs/phpmyadmin/config.inc.php</userinput>
+<lineannotation>(измените следующие параметры)</lineannotation>
+
+$cfg['Servers'][$i]['host'] = 'localhost';          // MySQL hostname
+$cfg['Servers'][$i]['controluser'] = 'mailsql';     // MySQL настройки системного аккаунта
+                                                    // (этот аккаунт должен иметь read-only
+$cfg['Servers'][$i]['controlpass'] = '$password';   // доступ к таблицам "mysql/user"
+                                                    // и "mysql/db" tables)
+$cfg['Servers'][$i]['user'] = 'mailsql';            // MySQL пользователь
+$cfg['Servers'][$i]['password'] = '$password';      // MySQL пароль</screen>
+        </example>
+        <para>Теперь введите адрес phpmyadmin страницы и просмотрите ваши таблицы в базе. Вы можете добавить локальные псевдонимы, поправить таблицу пользователей и добавить тестового пользователя, изменить таблицу транспортов для добавления информации о ваших доменах. Значений по умолчанию которые устанавливаются вместе с dump-файлом должно быть достаточно для примера, чтобы помочь вам настроить систему. Убедитесь что ввели в базу корректную информацию. Для примера, убедитесь что директории локальных пользователей существуют и указаны корректные uid/gid. Почтовые директории пользователей, должны быть созданы postfix, при первой принятой почте для пользователя. Будет неплохо, если вы пошлете "Добро пожаловать!", чтобы убедится, что <filename>.maildir</filename> создан. </para>
+    </section>
+    <section>
+        <title>Vmail-пользователь</title>
+        <para>Здесь вы можете быть удивлены, узнав, что для виртуальных акаунтов, используются пользователи и директории, и будете правы. </para>
+        <example>
+            <title>Adding the vmail user</title>
+            <screen><prompt>#</prompt> <userinput>adduser -d /home/vmail -s /bin/false vmail</userinput>
+<prompt>#</prompt> <userinput>uid=`cat /etc/passwd | grep vmail | cut -f 3 -d :`</userinput>
+<prompt>#</prompt> <userinput>groupadd -g $uid vmail</userinput>
+<prompt>#</prompt> <userinput>mkdir /home/vmail</userinput>
+<prompt>#</prompt> <userinput>chown vmail. /home/vmail</userinput></screen>
+        </example>
+        <para>Теперь, когда вы настраиваете виртуальный акаунт, используйте vmail uid, gid , и его домашнюю папку. Когда вы создаете локальный акаунт, используйте uid, gid и домашнюю папку нового пользователя, а не vmail. Мы имеем ввиду, что если вы захотите создать php-страничку для администрирования пользователей, не забывайте, что phpmyadmin в целом справляется с этой работой очень неплохо. </para>
+    </section>
+    <section>
+        <title>Настройка MySQL авторизации и виртуальных доменов</title>
+        <para>Дальше мы перенастроим нашу авторизацию, на использование mailsql базы в courier-imap и postfix. Во всех следующих примерах, замените $paasword паролем, который вы задали пользователю mailsql для mysql. </para>
+        <example>
+            <title/>
+            <screen><prompt>#</prompt> <userinput>emerge /usr/portage/sys-libs/pam_mysql/pam_mysql-$currentversion.ebuild</userinput>
+<lineannotation>(этот пакет здесь задан маской, которую вы должны заменить на текущую
+версию пакета. версию пакета вы можете посмотреть в portage )</lineannotation>
+
+<prompt>#</prompt> <userinput>nano -w /etc/pam.d/imap</userinput>
+<lineannotation>(закомментируйте существующие строки настройки авторизации, и добавьте
+указанные ниже)</lineannotation>
+
+#auth       required     pam_nologin.so
+#auth       required     pam_stack.so service=system-auth
+#account    required     pam_stack.so service=system-auth
+#session    required     pam_stack.so service=system-auth
+
+auth     optional       pam_mysql.so host=localhost db=mailsql user=mailsql \
+  passwd=$password table=users usercolumn=email passwdcolumn=clear crypt=0
+account  required       pam_mysql.so host=localhost db=mailsql user=mailsql \
+  passwd=$password table=users usercolumn=email passwdcolumn=clear crypt=0
+
+<prompt>#</prompt> <userinput>nano -w /etc/pam.d/pop3</userinput>
+<prompt>#</prompt> <userinput>nano -w /etc/pam.d/smtp</userinput>
+<lineannotation>(сделайте такие же изменения в pop3 и smtp файлах)</lineannotation></screen>
+        </example>
+        <para>Далее нам нужно поправить конфигурацию авторизации courier. </para>
+        <example>
+            <title/>
+            <screen><prompt>#</prompt> <userinput>nano -w /etc/courier-imap/authdaemonrc</userinput>
+authmodulelist="authmysql authpam"
+
+<prompt>#</prompt> <userinput>nano -w /etc/courier-imap/authdaemond.conf</userinput>
+AUTHDAEMOND="authdaemond.mysql"
+
+<prompt>#</prompt> <userinput>nano -w /etc/courier-imap/authmysqlrc</userinput>
+MYSQL_SERVER            localhost
+MYSQL_USERNAME          mailsql
+MYSQL_PASSWORD          $password
+MYSQL_DATABASE          mailsql
+MYSQL_USER_TABLE        users
+#MYSQL_CRYPT_PWFIELD    crypt <lineannotation>(эта строка должна быть закомментирована)</lineannotation>
+MYSQL_CLEAR_PWFIELD     clear
+MYSQL_UID_FIELD         uid
+MYSQL_GID_FIELD         gid
+MYSQL_LOGIN_FIELD       email
+MYSQL_HOME_FIELD        homedir
+MYSQL_NAME_FIELD        name
+MYSQL_MAILDIR_FIELD     maildir
+
+<prompt>#</prompt> <userinput>/etc/init.d/authdaemond restart</userinput>
+<prompt>#</prompt> <userinput>/etc/init.d/saslauthd restart</userinput></screen>
+        </example>
+        <para>Мы уже почти подошли к тому что вам обещал. Далее мы настроим необходимые конфиги postfix'a для связки с базой данных для всех необходимых необходимых транспортов. </para>
+        <example>
+            <title><filename>/etc/postfix/mysql-aliases.cf</filename></title>
+            <screen><prompt>#</prompt> <userinput>nano -w /etc/postfix/mysql-aliases.cf</userinput>
+# mysql-aliases.cf
+
+user            = mailsql
+password        = $password
+dbname          = mailsql
+table           = alias
+select_field    = destination
+where_field     = alias
+hosts           = unix:/var/run/mysqld/mysqld.sock</screen>
+        </example>
+        <example>
+            <title><filename>/etc/postfix/mysql-relocated.cf</filename></title>
+            <screen><prompt>#</prompt> <userinput>nano -w /etc/postfix/mysql-relocated.cf</userinput>
+# mysql-relocated.cf
+
+user            = mailsql
+password        = $password
+dbname          = mailsql
+table           = relocated
+select_field    = destination
+where_field     = email
+hosts           = unix:/var/run/mysqld/mysqld.sock</screen>
+        </example>
+        <example>
+            <title><filename>/etc/postfix/mysql-transport.cf</filename> (необязательно)</title>
+            <screen><prompt>#</prompt> <userinput>nano -w /etc/postfix/mysql-transport.cf</userinput>
+# mysql-transport.cf
+
+user            = mailsql
+password        = $password
+dbname          = mailsql
+table           = transport
+select_field    = destination
+where_field     = domain
+hosts           = unix:/var/run/mysqld/mysqld.sock</screen>
+        </example>
+        <example>
+            <title><filename>/etc/postfix/mysql-virtual-gid.cf</filename> (необязательно)</title>
+            <screen><prompt>#</prompt> <userinput>nano -w /etc/postfix/mysql-virtual-gid.cf</userinput>
+# myql-virtual-gid.cf
+
+user            = mailsql
+password        = $password
+dbname          = mailsql
+table           = users
+select_field    = gid
+where_field     = email
+additional_conditions = and postfix = 'y'
+hosts           = unix:/var/run/mysqld/mysqld.sock</screen>
+        </example>
+        <example>
+            <title><filename>/etc/postfix/mysql-virtual-maps.cf</filename></title>
+            <screen><prompt>#</prompt> <userinput>nano -w /etc/postfix/mysql-virtual-maps.cf</userinput>
+# myql-virtual-maps.cf
+
+user            = mailsql
+password        = $password
+dbname          = mailsql
+table           = users
+select_field    = maildir
+where_field     = email
+additional_conditions = and postfix = 'y'
+hosts           = unix:/var/run/mysqld/mysqld.sock</screen>
+        </example>
+        <example>
+            <title><filename>/etc/postfix/mysql-virtual-uid.cf</filename> (необязательно)</title>
+            <screen><prompt>#</prompt> <userinput>nano -w /etc/postfix/mysql-virtual-uid.cf</userinput>
+# mysql-virtual-uid.cf
+
+user            = mailsql
+password        = $password
+dbname          = mailsql
+table           = users
+select_field    = uid
+where_field     = email
+additional_conditions = and postfix = 'y'
+hosts           = unix:/var/run/mysqld/mysqld.sock</screen>
+        </example>
+        <example>
+            <title><filename>/etc/postfix/mysql-virtual.cf</filename></title>
+            <screen><prompt>#</prompt> <userinput>nano -w /etc/postfix/mysql-virtual.cf</userinput>
+# mysql-virtual.cf
+
+user            = mailsql
+password        = $password
+dbname          = mailsql
+table           = virtual
+select_field    = destination
+where_field     = email
+hosts           = unix:/var/run/mysqld/mysqld.sock</screen>
+        </example>
+        <para>И последнее, правим <filename>/etc/postfix/main.cf</filename> еще один раз. </para>
+        <example>
+            <title><filename>/etc/postfix/main.cf</filename></title>
+            <screen><prompt>#</prompt> <userinput>nano -w /etc/postfix/main.cf</userinput>
+alias_maps = mysql:/etc/postfix/mysql-aliases.cf
+relocated_maps = mysql:/etc/postfix/mysql-relocated.cf
+
+local_transport = local
+local_recipient_maps = $alias_maps $virtual_mailbox_maps unix:passwd.byname
+
+virtual_transport = virtual
+virtual_mailbox_domains =
+        virt-bar.com,
+        $other-virtual-domain.com
+
+virtual_minimum_uid = 1000
+virtual_gid_maps = static:$vmail-gid
+virtual_mailbox_maps = mysql:/etc/postfix/mysql-virtual-maps.cf
+virtual_alias_maps = mysql:/etc/postfix/mysql-virtual.cf
+virtual_uid_maps = static:$vmail-uid
+virtual_mailbox_base = /
+#virtual_mailbox_limit =</screen>
+        </example>
+        <para>Здесь видно чем значительно отличается postfix 2.0.x от 1.1.x. Сильнее всего заметно отсутствие необходимости в таблицах транспорта, virtual-gid и virtual-uid, хотя эти таблицы и вкладываются, чтобы вы могли их использовать при необходимости. </para>
+        <note>
+            <para>Рекомендуем прочесть <filename>VIRTUAL_README</filename> идущий с postfix, для большего количества информации. </para>
+        </note>
+        <example>
+            <title/>
+            <screen><prompt>#</prompt> <userinput>postfix reload</userinput></screen>
+        </example>
+        <para>Теперь, если все прошло хорошо, вы должны иметь работающий почтовый сервер. Пользователи должны быть способны авторизоватся в sql базе, использовать свой полный почтовый адрес для pop3, imap, и smtp. Настоятельно рекомендую проверить , что всё это действительно работает. Если вы столкнулись с проблемами, проверьте раздел troubleshooting в конце документа. </para>
+    </section>
+    <section><title>Squirrelmail</title><indexterm><primary>squirrelmail</primary></indexterm><example>
+            <title/>
+            <screen><prompt>#</prompt> <userinput>emerge squirrelmail</userinput>
+<lineannotation>(добавим ссылку на htdocs для более короткого пути)</lineannotation>
+
+<prompt>#</prompt> <userinput>ln -s /home/httpd/htdocs/squirrelmail/ /home/httpd/htdocs/mail</userinput>
+<prompt>#</prompt> <userinput>cd /home/httpd/htdocs/mail/conf</userinput>
+<prompt>#</prompt> <userinput>./conf.pl</userinput>
+<lineannotation>(измените настройки Organization, Server, и Folder для squirrelmail)
+(теперь вы имеете возможность залогинится в squirrelmail, снова с вашим
+полным email адресом, и использовать ваш новый webmail setup)</lineannotation></screen>
+        </example></section>
+    <section>
+        <title>Mailman</title>
+        <para><indexterm><primary>mailman</primary></indexterm>Последний шаг — mailman. Новая версия имеет великолепную поддержку виртуальных доменов, поэтому я использую его, не говоря уже о том что это просто великолепная программа. Настоятельно рекомендую прочесть документацию mailman, включающую <filename>README.POSTFIX.gz</filename>, для более полного понимания. </para>
+        <para>Одно замечание, текущая версия mailman инсталируется в /usr/local/mailman. Если вы хотите изменить директорию инсталляции, вы можете изменить в ebuild файле переменную <varname>INSTALLDIR</varname>. </para>
+        <example>
+            <title><filename>/usr/portage/net-mail/mailman/mailman-$ver.ebuild</filename></title>
+            <screen><prompt>#</prompt> <userinput>nano -w /usr/portage/net-mail/mailman/mailman-$ver.ebuild</userinput>
+MAILGID="280"
+<lineannotation>(задайте MAILGID для группы mailman взаммен nobody)
+(это необходимо для интеграции с postfix)</lineannotation></screen>
+        </example>
+        <example>
+            <title/>
+            <screen><prompt>#</prompt> <userinput>emerge mailman</userinput>
+<lineannotation>(имя этого пакета маскировано, поэтому вам надо указать emerge путь к
+ebuild. После инсталляции, следуйте инструкциям в README.gentoo.gz *исключая* —
+не добавляйте псевдонимы в /etc/mail/aliases. Вместо этого, мы укажем postfix
+использовать псевдонимы из базы)</lineannotation>
+
+<prompt>#</prompt> <userinput>zless /usr/share/doc/mailman-$ver/README.gentoo.gz</userinput></screen>
+        </example>
+        <example>
+            <title>Настройки по умолчанию: <filename>Mailman/Defaults.py</filename></title>
+            <screen><prompt>#</prompt> <userinput>nano -w /var/mailman/Mailman/Defaults.py</userinput>
+<lineannotation>(измените значения приведенные ниже на ваши, дальше будем настраивать
+виртуальные домены)</lineannotation>
+DEFAULT_EMAIL_HOST = 'domain.com'
+DEFAULT_URL_HOST = 'www.domain.com'</screen>
+        </example>
+        <example>
+            <title>Настройка mailman: mm_cfg.py</title>
+            <screen><prompt>#</prompt> <userinput>nano -w /var/mailman/Mailman/mm_cfg.py</userinput>
+MTA = "Postfix"
+POSTFIX_STYLE_VIRTUAL_DOMAINS = ['virt-domain.com', 'virt.domain2.com']
+add_virtualhost('www.virt.domain.com', 'virt.domain.com')
+add_virtualhost('www.virt.domain2.com', 'virt.domain2.com')
+<lineannotation>(это нужно для работы mailman с виртуальными доменами)</lineannotation></screen>
+        </example>
+        <example>
+            <title/>
+            <screen><lineannotation>(создадим свой первый список рассылки)</lineannotation>
+
+<prompt>#</prompt> <userinput>su mailman</userinput>
+<prompt>#</prompt> <userinput>cd ~</userinput>
+<prompt>#</prompt> <userinput>bin/newlist test</userinput>
+Enter the email of the person running the list: <userinput>your@email.address</userinput>
+Initial test password:
+Hit enter to continue with test owner notification...
+<lineannotation>(листы виртуального домена могут быть указаны в виде list@domain.com)</lineannotation>
+<prompt>#</prompt> <userinput>bin/genaliases</userinput>
+<lineannotation>(теперь ваши псевдонимы сгенерированы, проверьте, что они добавлены правильно)</lineannotation>
+
+<prompt>#</prompt> <userinput>nano -w data/aliases</userinput>
+# STANZA START: test
+# CREATED:
+test:             "|/var/mailman/mail/mailman post test"
+test-admin:       "|/var/mailman/mail/mailman admin test"
+test-bounces:     "|/var/mailman/mail/mailman bounces test"
+test-confirm:     "|/var/mailman/mail/mailman confirm test"
+test-join:        "|/var/mailman/mail/mailman join test"
+test-leave:       "|/var/mailman/mail/mailman leave test"
+test-owner:       "|/var/mailman/mail/mailman owner test"
+test-request:     "|/var/mailman/mail/mailman request test"
+test-subscribe:   "|/var/mailman/mail/mailman subscribe test"
+test-unsubscribe: "|/var/mailman/mail/mailman unsubscribe test"
+# STANZA END: test
+
+<prompt>#</prompt> <userinput>/etc/init.d/mailman start</userinput>
+<prompt>#</prompt> <userinput>rc-update add mailman default</userinput>
+<lineannotation>(для запуска mailman при каждой загрузке)</lineannotation></screen>
+        </example>
+        <example>
+            <title>Добавление поддержки псевдонимов mailman в postfix</title>
+            <screen><prompt>#</prompt> <userinput>nano -w /etc/postfix/main.cf</userinput>
+owner_request_special = no
+recipient_delimiter = +
+<lineannotation>(прочтите README.POSTFIX.gz для более детальной информации)</lineannotation>
+
+alias_maps     =
+        hash:/var/mailman/data/aliases,
+        mysql:/etc/postfix/mysql-aliases.cf
+
+virtual_alias_maps =
+        hash:/var/mailman/data/virtual-mailman,
+        mysql:/etc/postfix/mysql-virtual.cf
+<lineannotation>(это добавит поддержку файлов псевдонимов mailman'a в postfix, конечно
+вы можете использовать таблицу в mysql для этого, но я ненавижу делать это руками.
+Также если вы не используете виртуальных доменов, добавление псевдонимов, может
+привести к проблемам)</lineannotation></screen>
+        </example>
+        <para>Теперь вы можете создавать листы рассылок для каждого домена в вашей системе. Последнее замечание, убедитесь, что mailman запущен из под пользователя mailman (su mailman) иначе у вас будут проблемы с разрешениями. прочтите документацию mailman для более детальной информации по управлению листами рассылки. </para>
+    </section>
+    <section>
+        <title>Фильтрация содержимого и Anti-Virus</title>
+        <para>Скоро будет,... это уже существует, но я должен еще немного разобраться в perl'e и протестировать результат. Если вы хотите помочь с этим, свяжитесь со мной. </para>
+    </section>
+    <section>
+        <title>Окончание</title>
+        <para>Итак, Вы все сделали, теперь поправьте /etc/postfix/master.cf и отключите режим verbose. Возможно вы захотите довавить сервис в автозагрузку. Убедитесь что вы добавили в автозагрузку все сервисы которые используете - apache, mysql, saslauthd, postfix, courier-imapd, courier-imapd-ssl, courier-pop3d, и courier-pop3d-ssl, все зависит от вашего решения какие сервисы предоставлять. Обычно я разрешаю все сервисы. </para>
+        <example>
+            <title>Окончание</title>
+            <screen><prompt>#</prompt> <userinput>postfix reload</userinput>
+<prompt>#</prompt> <userinput>rc-update add $service default</userinput></screen>
+        </example>
+        <para>Вобщем инджой и хэв фан! </para>
+    </section>
+    <section>
+        <title>Troubleshooting</title>
+        <section>
+            <title>Введение</title>
+            <para>Troubleshooting: Это небольшой список решений для проблем, наиболее часто возникающих в ходе установки. Это не исчерпывающая информация, но вы можете начать поиск решения граблей отсюда. Такая запутанная настройка и инсталляция как в этом документе, может привести к тому что некоторые компоненты будут работать неправильно. Вообще советую сделать несколько следующих шагов. Запустите систему в базовой конфигурации, добавляя компонент за компонентом, чтобы выяснить какой из них сбоит. </para>
+        </section>
+        <section>
+            <title>Шаг 1: Проверьте ваши файлы конфигурации. </title>
+            <para>Опечатки — главный враг, особенно когда идет речь о системе авторизации. Проверьте ваши конфигурационные файлы и базу данных на предмет опечаток. Если вы делаете изменения настроек для сервиса, убедитесь, что вы перезапустили сервиса, дабы изменения вступили в силу. </para>
+            <example>
+                <title/>
+                <screen><prompt>#</prompt> <userinput>/etc/init.d/service restart</userinput></screen>
+            </example>
+        </section>
+        <section>
+            <title>Шаг 2: Все необходимые сервисы запущены и работают?</title>
+            <para>Если не запущены, запустите. Крайне сложно отлаживать программу если она не запущена. Иногда сервис запускается, но не функционирует. Иногда, когда используется неправильный файл конфигурации сервис может использовать другой порт предназначенный другому процессу. Иногда вы можете воспользоваться netstat. Или если возможно , перезагрузите ваш сервер, это очистит любой зависший сервис. </para>
+            <example>
+                <title/>
+                <screen><prompt>#</prompt> <userinput>/etc/init.d/$service status</userinput>
+<prompt>#</prompt> <userinput>netstat -a | grep $service</userinput> <lineannotation>(или $port)</lineannotation></screen>
+            </example>
+        </section>
+        <section>
+            <title>Шаг 3: Все сервисы используют правильные файлы конфигурации?</title>
+            <para>Если вы внесли изменения в конфигурационные файлы сервиса, убедитесь что он использует новые параметры. Некоторые программы, вроде postfix могут показывать конфигурацию их параметров. </para>
+            <example>
+                <title/>
+                <screen><prompt>#</prompt> <userinput>apachectl fullstatus</userinput>  <lineannotation>(необходим lynx)</lineannotation>
+<prompt>#</prompt> <userinput>apachectl configtest</userinput> <lineannotation>(проверка нормальной конфигурации)</lineannotation>
+<prompt>#</prompt> <userinput>postconf -n</userinput> <lineannotation>(показывает текущие параметры используемые postfix)</lineannotation>
+<prompt>#</prompt> <userinput>/etc/init.d/$service restart</userinput></screen>
+            </example>
+        </section>
+        <section>
+            <title>Шаг 4: Проверьте логи.</title>
+            <para>На то логи и существуют, чтобы помочь нам выяснить причину, а иногда и подсказать решение проблемы. Просмотрите все логи, которые имеют отношение к программе, ее сбою. </para>
+            <example>
+                <title/>
+                <screen><prompt>#</prompt> <userinput>kill -USR1 `ps -C metalog -o pid=`</userinput> <lineannotation>(для выключения metalog buffering)</lineannotation>
+<prompt>#</prompt> <userinput>nano -w /var/log/mail/current</userinput>
+<prompt>#</prompt> <userinput>cat /var/log/mysql/mysql.log</userinput>
+<prompt>#</prompt> <userinput>tail /var/log/apache/error_log</userinput></screen>
+            </example>
+            <para>Вы также можете найти параметр debug_peer в main.cf который может быть полезен. Включение этого параметра, увеличит подробность выводящихся сообщений в логи. </para>
+            <example>
+                <title>Добавление поддержки debug_peer</title>
+                <screen><prompt>#</prompt> <userinput>nano -w /etc/postfix/main.cf</userinput>
+debug_peer_level = 5
+debug_peer_list = $host.domain.name
+<lineannotation>(раскомментируйте одну из нужных строк)</lineannotation></screen>
+            </example>
+        </section>
+        <section>
+            <title>Шаг 5: Попробуйте связаться с сервисом.</title>
+            <para>SMTP, IMAP, и POP3 отвечают на telnet сессию, как вы видели немного раньше при конфигурации postfix. Иногда помогает открыть telnet сессию с сервисом, для того чтобы выяснить что случилось. </para>
+            <example>
+                <title/>
+                <screen><prompt>#</prompt> <userinput>telnet localhost $port</userinput>
+<lineannotation>(SMTP на 25-м, IMAP, на 143-м, POP3 на 110-м порту. по крайней мере вы
+должны увидеть слово ОК. Так вы будете знать что сервис запущен, и готов к ответу.)</lineannotation>
+
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+* OK Courier-IMAP ready. Copyright 1998-2002 Double Precision, Inc.</screen>
+            </example>
+        </section>
+        <section>
+            <title>Шаг 6: Иногда только большая пушка может дать нам информацию: strace.</title>
+            <para>Вы должны иметь эту программу всегда под рукой. Это бесценный инструмент для отлаживания программ. Вы можете запустить из командной строки starce и наблюдать все системные вызовы происходящие в программе. Часто дамп содержит огромное количество информации, так что вы можете либо наблюдать в реальном времени, за транзакцией приводящей к краху программы, или записать его в файл, для неторопливого просмотра позже. </para>
+            <example>
+                <title/>
+                <screen><prompt>#</prompt> <userinput>emerge strace</userinput>
+<prompt>#</prompt> <userinput>strace $command</userinput>
+<prompt>#</prompt> <userinput>strace -p `ps -C $service -o pid=`</userinput></screen>
+            </example>
+        </section>
+        <section>
+            <title>Шаг 7: Обзор</title>
+            <para>Если получив информацию, вы смогли понять и устранить проблемы — великолепно! Если нет, вам необходимо поискать в интернете информацию, которая поможет вам. Ниже приведен список сайтов, где вы можете поискать решение своей проблемы, если она была решена раньше.</para>
+            <itemizedlist>
+                <listitem>
+                    <para><link xlink:href="http://forums.gentoo.org/">http://forums.gentoo.org/</link> — великолепный форум для gentoo-пользователей</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="http://bugs.gentoo.org/">http://bugs.gentoo.org/</link> — система распределения запросов Gentoo — хорошее место для поиска специфических ошибок</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="http://postfix.state-of-mind.de/">http://postfix.state-of-mind.de/</link> — smtp-auth howto</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="http://marc.theaimsgroup.com/?l=postfix-users">http://marc.theaimsgroup.com/?l=postfix-users</link> — почтовая рассылка postfix (возможен поиск)</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="http://sourceforge.net/mailarchive/forum.php?forum_id=6705">http://sourceforge.net/mailarchive/forum.php?forum_id=6705</link> — архив почтовой рассылки courier-imap (нет возможности поиска)</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="http://www.google.com/">http://www.google.com/</link> — если ничего не помогает, всегда остается google, который еще никого не подводил. </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+    </section>
 </article>
