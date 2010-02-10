@@ -12,7 +12,7 @@
     <para>The latest version of this document can be found at <link xlink:href="http://cb.vu/unixtoolbox.xhtml">http://cb.vu/unixtoolbox.xhtml</link>.</para>
     <section>
         <info>
-            <title>SYSTEM</title>
+            <title>System</title>
         </info>
         <para>Running kernel and system information</para>
         <screen><prompt>#</prompt> <userinput>uname -a</userinput>                           <lineannotation># Get the kernel version (and BSD version)</lineannotation>
@@ -320,7 +320,7 @@ sshd is running as pid 552.
     </section>
     <section>
         <info>
-            <title>PROCESSES</title>
+            <title>Processes</title>
         </info>
         <section>
             <info>
@@ -426,7 +426,7 @@ sshd is running as pid 552.
     </section>
     <section>
         <info>
-            <title>FILE SYSTEM</title>
+            <title>File System</title>
         </info>
         <section>
             <info>
@@ -678,7 +678,7 @@ md     /memdisk     mfs     rw,-s64M    0   0         # /etc/fstab entry</screen
     </section>
     <section>
         <info>
-            <title>NETWORK</title>
+            <title>Network</title>
         </info>
         <section>
             <info>
@@ -1200,383 +1200,385 @@ Are you sure you want to continue connecting (yes/no)? yes</screen>
     </section>
     <section>
         <info>
-            <title>VPN WITH SSH</title>
+            <title>VPN with SSH</title>
         </info>
-        <para>As of version 4.3, OpenSSH can use the tun/tap device to encrypt a tunnel. This is very similar to other TLS based VPN solutions like OpenVPN. One advantage with SSH is that there is no need to install and configure additional software. Additionally the tunnel uses the SSH authentication like pre shared keys. The drawback is that the encapsulation is done over TCP which might result in poor performance on a slow link. Also the tunnel is relying on a single (fragile) TCP connection. This technique is very useful for a quick IP based VPN setup. There is no limitation as with the single TCP port forward, all layer 3/4 protocols like ICMP, TCP/UDP, etc. are forwarded over the VPN. In any case, the following options are needed in the sshd_conf</para>
-        <para>file:</para>
-        <para>PermitRootLogin yes</para>
-        <para>PermitTunnel yes</para>
+        <para>As of version 4.3, OpenSSH can use the tun/tap device to encrypt a tunnel. This is very similar to other TLS based VPN solutions like OpenVPN. One advantage with SSH is that there is no need to install and configure additional software. Additionally the tunnel uses the SSH authentication like pre shared keys. The drawback is that the encapsulation is done over TCP which might result in poor performance on a slow link. Also the tunnel is relying on a single (fragile) TCP connection. This technique is very useful for a quick IP based VPN setup. There is no limitation as with the single TCP port forward, all layer 3/4 protocols like ICMP, TCP/UDP, etc. are forwarded over the VPN. In any case, the following options are needed in the sshd_conf file:</para>
+        <programlisting>PermitRootLogin yes
+PermitTunnel yes</programlisting>
         <section>
             <info>
                 <title>Single P2P connection</title>
             </info>
-            <para>Here we are connecting two hosts, hclient and hserver with a peer to peer tunnel. The</para>
-            <para>connection is started from hclient to hserver and is done as root. The tunnel end points are 10.0.1.1 (server) and 10.0.1.2 (client) and we create a device tun5 (this could also be an other number). The procedure is very simple:</para>
-            <para>• Connect with SSH using the tunnel option -w</para>
-            <para>• Configure the IP addresses of the tunnel. Once on the server and once on the client.</para>
-            <para>Connect to the server</para>
+            <para>Here we are connecting two hosts, hclient and hserver with a peer to peer tunnel. The connection is started from hclient to hserver and is done as root. The tunnel end points are 10.0.1.1 (server) and 10.0.1.2 (client) and we create a device tun5 (this could also be an other number). The procedure is very simple:</para>
+            <itemizedlist>
+                <listitem>
+                    <para>Connect with SSH using the tunnel option -w</para>
+                </listitem>
+                <listitem>
+                    <para>Configure the IP addresses of the tunnel. Once on the server and once on the client.</para>
+                </listitem>
+            </itemizedlist>
+            <para><emphasis role="bold">Connect to the server</emphasis></para>
             <para>Connection started on the client and commands are executed on the server.</para>
-            <para>Server is on Linux</para>
-            <para>cli&gt;# ssh -w5:5 root@hserver</para>
-            <para>srv&gt;# ifconfig tun5 10.0.1.1 netmask 255.255.255.252 # Executed on the server shell</para>
-            <para>Server is on FreeBSD</para>
-            <para>cli&gt;# ssh -w5:5 root@hserver</para>
-            <para>srv&gt;# ifconfig tun5 10.0.1.1 10.0.1.2 # Executed on the server shell</para>
-            <para>Configure the client</para>
+            <para><emphasis role="italic">Server is on Linux</emphasis></para>
+            <screen>cli># ssh -w5:5 root@hserver
+srv># ifconfig tun5 10.0.1.1 netmask 255.255.255.252   # Executed on the server shell</screen>
+            <para><emphasis role="italic">Server is on FreeBSD</emphasis></para>
+            <screen>cli># ssh -w5:5 root@hserver
+srv># ifconfig tun5 10.0.1.1 10.0.1.2                  # Executed on the server shell</screen>
+            <para><emphasis role="italic">Configure the client</emphasis></para>
             <para>Commands executed on the client:</para>
-            <para/>
-            <para>cli&gt;# ifconfig tun5 10.0.1.2 netmask 255.255.255.252 # Client is on Linux</para>
-            <para>cli&gt;# ifconfig tun5 10.0.1.2 10.0.1.1 # Client is on FreeBSD</para>
-            <para>The two hosts are now connected and can transparently communicate with any layer 3/4</para>
-            <para>protocol using the tunnel IP addresses.</para>
+            <screen>cli># ifconfig tun5 10.0.1.2 netmask 255.255.255.252   # Client is on Linux
+cli># ifconfig tun5 10.0.1.2 10.0.1.1                  # Client is on FreeBSD</screen>
+            <para>The two hosts are now connected and can transparently communicate with any layer 3/4 protocol using the tunnel IP addresses.</para>
         </section>
         <section>
             <info>
                 <title>Connect two networks</title>
             </info>
-            <para>In addition to the p2p setup above, it is more useful to connect two private networks with an</para>
-            <para>SSH VPN using two gates. Suppose for the example, netA is 192.168.51.0/24 and netB</para>
-            <para>192.168.16.0/24. The procedure is similar as above, we only need to add the routing. NAT must</para>
-            <para>be activated on the private interface only if the gates are not the same as the default gateway</para>
-            <para>of their network.</para>
+            <para>In addition to the p2p setup above, it is more useful to connect two private networks with an SSH VPN using two gates. Suppose for the example, netA is 192.168.51.0/24 and netB</para>
+            <para>192.168.16.0/24. The procedure is similar as above, we only need to add the routing. NAT must be activated on the private interface only if the gates are not the same as the default gateway of their network.</para>
             <para>192.168.51.0/24 (netA)|gateA &lt;-&gt; gateB|192.168.16.0/24 (netB)</para>
-            <para>• Connect with SSH using the tunnel option -w.</para>
-            <para>• Configure the IP addresses of the tunnel. Once on the server and once on the client.</para>
-            <para>• Add the routing for the two networks.</para>
-            <para>• If necessary, activate NAT on the private interface of the gate.</para>
+            <itemizedlist>
+                <listitem>
+                    <para>Connect with SSH using the tunnel option -w.</para>
+                </listitem>
+                <listitem>
+                    <para>Configure the IP addresses of the tunnel. Once on the server and once on the client.</para>
+                </listitem>
+                <listitem>
+                    <para>Add the routing for the two networks.</para>
+                </listitem>
+                <listitem>
+                    <para>If necessary, activate NAT on the private interface of the gate.</para>
+                </listitem>
+            </itemizedlist>
             <para>The setup is started from gateA in netA.</para>
-            <para>Connect from gateA to gateB</para>
+            <para><emphasis role="bold">Connect from gateA to gateB</emphasis></para>
             <para>Connection is started from gateA and commands are executed on gateB.</para>
-            <para>gateB is on Linux</para>
-            <para>gateA&gt;# ssh -w5:5 root@gateB</para>
-            <para>gateB&gt;# ifconfig tun5 10.0.1.1 netmask 255.255.255.252 # Executed on the gateB shell</para>
-            <para>gateB&gt;# route add -net 192.168.51.0 netmask 255.255.255.0 dev tun5</para>
-            <para>gateB&gt;# echo 1 &gt; /proc/sys/net/ipv4/ip_forward # Only needed if not default gw</para>
-            <para>gateB&gt;# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</para>
-            <para>gateB is on FreeBSD</para>
-            <para>gateA&gt;# ssh -w5:5 root@gateB # Creates the tun5 devices</para>
-            <para>gateB&gt;# ifconfig tun5 10.0.1.1 10.0.1.2 # Executed on the gateB shell</para>
-            <para>gateB&gt;# route add 192.168.51.0/24 10.0.1.2</para>
-            <para>gateB&gt;# sysctl net.inet.ip.forwarding=1 # Only needed if not default gw</para>
-            <para>gateB&gt;# natd -s -m -u -dynamic -n fxp0 # see NAT (page 15)</para>
-            <para>gateA&gt;# sysctl net.inet.ip.fw.enable=1</para>
-            <para>Configure gateA</para>
+            <para><emphasis role="italic">gateB is on Linux</emphasis></para>
+            <screen>gateA># ssh -w5:5 root@gateB
+gateB># ifconfig tun5 10.0.1.1 netmask 255.255.255.252 # Executed on the gateB shell
+gateB># route add -net 192.168.51.0 netmask 255.255.255.0 dev tun5
+gateB># echo 1 > /proc/sys/net/ipv4/ip_forward        # Only needed if not default gw
+gateB># iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</screen>
+            <para><emphasis role="italic">gateB is on FreeBSD</emphasis></para>
+            <screen>gateA># ssh -w5:5 root@gateB                          # Creates the tun5 devices
+gateB># ifconfig tun5 10.0.1.1 10.0.1.2               # Executed on the gateB shell
+gateB># route add 192.168.51.0/24 10.0.1.2
+gateB># sysctl net.inet.ip.forwarding=1               # Only needed if not default gw
+gateB># natd -s -m -u -dynamic -n fxp0                # see <link xlink:href="#">NAT</link>
+gateA># sysctl net.inet.ip.fw.enable=1</screen>
+            <para><emphasis role="bold">Configure gateA</emphasis></para>
             <para>Commands executed on gateA:</para>
-            <para>gateA is on Linux</para>
-            <para>gateA&gt;# ifconfig tun5 10.0.1.2 netmask 255.255.255.252</para>
-            <para>gateA&gt;# route add -net 192.168.16.0 netmask 255.255.255.0 dev tun5</para>
-            <para>gateA&gt;# echo 1 &gt; /proc/sys/net/ipv4/ip_forward</para>
-            <para>gateA&gt;# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</para>
-            <para>gateA is on FreeBSD</para>
-            <para>gateA&gt;# ifconfig tun5 10.0.1.2 10.0.1.1</para>
-            <para>gateA&gt;# route add 192.168.16.0/24 10.0.1.2</para>
-            <para>gateA&gt;# sysctl net.inet.ip.forwarding=1</para>
-            <para>gateA&gt;# natd -s -m -u -dynamic -n fxp0 # see NAT (page 15)</para>
-            <para>gateA&gt;# sysctl net.inet.ip.fw.enable=1</para>
+            <para><emphasis role="italic">gateA is on Linux</emphasis></para>
+            <screen>gateA># ifconfig tun5 10.0.1.2 netmask 255.255.255.252
+gateA># route add -net 192.168.16.0 netmask 255.255.255.0 dev tun5
+gateA># echo 1 > /proc/sys/net/ipv4/ip_forward
+gateA># iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</screen>
+            <para><emphasis role="italic">gateA is on FreeBSD</emphasis></para>
+            <screen>gateA># ifconfig tun5 10.0.1.2 10.0.1.1
+gateA># route add 192.168.16.0/24 10.0.1.2
+gateA># sysctl net.inet.ip.forwarding=1
+gateA># natd -s -m -u -dynamic -n fxp0                # see <link xlink:href="#">NAT</link>
+gateA># sysctl net.inet.ip.fw.enable=1</screen>
             <para>The two private networks are now transparently connected via the SSH VPN. The IP forward and NAT settings are only necessary if the gates are not the default gateways. In this case the clients would not know where to forward the response, and nat must be activated.</para>
-            <para/>
         </section>
     </section>
     <section>
         <info>
             <title>RSYNC</title>
         </info>
-        <para>Rsync can almost completely replace cp and scp, furthermore interrupted transfers are</para>
-        <para>efficiently restarted. A trailing slash (and the absence thereof) has different meanings, the man page is good... Here some examples:</para>
+        <para>Rsync can almost completely replace cp and scp, furthermore interrupted transfers are efficiently restarted. A trailing slash (and the absence thereof) has different meanings, the man page is good... Here some examples:</para>
         <para>Copy the directories with full content:</para>
-        <para># rsync -a /home/colin/ /backup/colin/</para>
-        <para># rsync -a /var/ /var_bak/</para>
-        <para># rsync -aR --delete-during /home/user/ /backup/ # use relative (see below)</para>
+        <screen># rsync -a /home/colin/ /backup/colin/                # "archive" mode. e.g keep the same
+# rsync -a /var/ /var_bak/
+# rsync -aR --delete-during /home/user/ /backup/      # use relative (see below)</screen>
         <para>Same as before but over the network and with compression. Rsync uses SSH for the transport per default and will use the ssh key if they are set. Use ":" as with SCP. A typical remote copy:</para>
-        <para># rsync -axSRzv /home/user/ user@server:/backup/user/</para>
+        <screen># rsync -axSRzv /home/user/ user@server:/backup/user/ # Copy to remote
+# rsync -a 'user@server:My\ Documents' My\ Documents  # Quote AND escape spaces for the remote shell</screen>
         <para>Exclude any directory tmp within /home/user/ and keep the relative folders hierarchy, that is the remote directory will have the structure /backup/home/user/. This is typically used for backups.</para>
-        <para># rsync -azR --exclude /tmp/ /home/user/ user@server:/backup/</para>
+        <screen># rsync -azR --exclude /tmp/ /home/user/ user@server:/backup/</screen>
         <para>Use port 20022 for the ssh connection:</para>
-        <para># rsync -az -e 'ssh -p 20022' /home/colin/ user@server:/backup/colin/</para>
-        <para>Using the rsync daemon (used with "::") is much faster, but not encrypted over ssh. The</para>
-        <para>location of /backup is defined by the configuration in /etc/rsyncd.conf. The variable</para>
-        <para>RSYNC_PASSWORD can be set to avoid the need to enter the password manually.</para>
-        <para># rsync -axSRz /home/ ruser@hostname::rmodule/backup/</para>
-        <para># rsync -axSRz ruser@hostname::rmodule/backup/ /home/ # To copy back</para>
+        <screen># rsync -az -e 'ssh -p 20022' /home/colin/ user@server:/backup/colin/</screen>
+        <para>Using the rsync daemon (used with "::") is much faster, but not encrypted over ssh. The location of /backup is defined by the configuration in /etc/rsyncd.conf. The variable RSYNC_PASSWORD can be set to avoid the need to enter the password manually.</para>
+        <screen># rsync -axSRz /home/ ruser@hostname::rmodule/backup/
+# rsync -axSRz ruser@hostname::rmodule/backup/ /home/    # To copy back</screen>
         <para>Some important options:</para>
-        <para>-a, --archive archive mode; same as -rlptgoD (no -H)</para>
-        <para>-r, --recursive recurse into directories</para>
-        <para>-R, --relative use relative path names</para>
-        <para>-H, --hard-links preserve hard links</para>
-        <para>-S, --sparse handle sparse files efficiently</para>
-        <para>-x, --one-file-system don't cross file system boundaries</para>
-        <para>--exclude=PATTERN exclude files matching PATTERN</para>
-        <para>--delete-during receiver deletes during xfer, not before</para>
-        <para>--delete-after receiver deletes after transfer, not before</para>
+        <para><parameter>-a</parameter>, <parameter>--archive</parameter> archive mode; same as -rlptgoD (no -H)</para>
+        <para><parameter>-r</parameter>, <parameter>--recursive</parameter> recurse into directories</para>
+        <para><parameter>-R</parameter>, <parameter>--relative</parameter> use relative path names</para>
+        <para><parameter>-H</parameter>, <parameter>--hard-links</parameter> preserve hard links</para>
+        <para><parameter>-S</parameter>, <parameter>--sparse</parameter> handle sparse files efficiently</para>
+        <para><parameter>-x</parameter>, <parameter>--one-file-system</parameter> don't cross file system boundaries</para>
+        <para><parameter>--exclude=PATTERN</parameter> exclude files matching PATTERN</para>
+        <para><parameter>--delete-during</parameter> receiver deletes during xfer, not before</para>
+        <para><parameter>--delete-after</parameter> receiver deletes after transfer, not before</para>
         <section>
             <info>
                 <title>Rsync on Windows</title>
             </info>
-            <para>Rsync is available for Windows through cygwin or as stand-alone packaged in cwrsync7. This is very convenient for automated backups. Install one of them (not both) and add the path to the Windows system variables: # Control Panel -&gt; System -&gt; tab Advanced, button Environment</para>
-            <para>Variables. Edit the "Path" system variable and add the full path to the installed rsync, e.g.</para>
-            <para>C:\Program Files\cwRsync\bin or C:\cygwin\bin. This way the commands rsync and ssh are available in a Windows command shell.</para>
-            <para>Public key authentication</para>
-            <para>Rsync is automatically tunneled over SSH and thus uses the SSH authentication on the server.</para>
-            <para>Automatic backups have to avoid a user interaction, for this the SSH public key authentication can be used and the rsync command will run without a password.</para>
+            <para>Rsync is available for Windows through cygwin or as stand-alone packaged in cwrsync7. This is very convenient for automated backups. Install one of them (not both) and add the path to the Windows system variables: # Control Panel -&gt; System -&gt; tab Advanced, button Environment Variables. Edit the "Path" system variable and add the full path to the installed rsync, e.g. C:\Program Files\cwRsync\bin or C:\cygwin\bin. This way the commands rsync and ssh are available in a Windows command shell.</para>
+            <para><emphasis role="bold">Public key authentication</emphasis></para>
+            <para>Rsync is automatically tunneled over SSH and thus uses the SSH authentication on the server. Automatic backups have to avoid a user interaction, for this the SSH public key authentication can be used and the rsync command will run without a password.</para>
             <para>All the following commands are executed within a Windows console. In a console (Start -&gt; Run -&gt; cmd) create and upload the key as described in SSH, change "user" and "server" as appropriate. If the file authorized_keys2 does not exist yet, simply copy id_dsa.pub to authorized_keys2 and upload it.</para>
-            <para># ssh-keygen -t dsa -N '' # Creates a public and a private key</para>
-            <para># rsync user@server:.ssh/authorized_keys2 . # Copy the file locally from the server</para>
-            <para># cat id_dsa.pub &gt;&gt; authorized_keys2 # Or use an editor to add the key</para>
-            <para># rsync authorized_keys2 user@server:.ssh/ # Copy the file back to the server</para>
-            <para># del authorized_keys2 # Remove the local copy</para>
+            <screen># ssh-keygen -t dsa -N ''                   # Creates a public and a private key
+# rsync user@server:.ssh/authorized_keys2 . # Copy the file locally from the server
+# cat id_dsa.pub >> authorized_keys2        # Or use an editor to add the key
+# rsync authorized_keys2 user@server:.ssh/  # Copy the file back to the server
+# del authorized_keys2                      # Remove the local copy</screen>
             <para>Now test it with (in one line):</para>
-            <para>rsync -rv "/cygdrive/c/Documents and Settings/%USERNAME%/My Documents/" \</para>
-            <para>'user@server:My\ Documents/'</para>
-            <para>Automatic backup</para>
-            <para>Use a batch file to automate the backup and add the file in the scheduled tasks (Programs -&gt; Accessories -&gt; System Tools -&gt; Scheduled Tasks). For example create the file backup.bat and</para>
-            <para>replace user@server.</para>
-            <para>@ECHO OFF</para>
-            <para>REM rsync the directory My Documents</para>
-            <para>SETLOCAL</para>
-            <para>SET CWRSYNCHOME=C:\PROGRAM FILES\CWRSYNC</para>
-            <para>SET CYGWIN=nontsec</para>
-            <para>SET CWOLDPATH=%PATH%</para>
-            <para>REM uncomment the next line when using cygwin</para>
-            <para>SET PATH=%CWRSYNCHOME%\BIN;%PATH%</para>
-            <para>echo Press Control-C to abort</para>
-            <para>rsync -av "/cygdrive/c/Documents and Settings/%USERNAME%/My Documents/" \</para>
-            <para>'user@server:My\ Documents/'</para>
-            <para>pause</para>
+            <screen>rsync -rv "/cygdrive/c/Documents and Settings/%USERNAME%/My Documents/" \
+'user@server:My\ Documents/'</screen>
+            <para><emphasis role="bold">Automatic backup</emphasis></para>
+            <para>Use a batch file to automate the backup and add the file in the scheduled tasks (Programs -&gt; Accessories -&gt; System Tools -&gt; Scheduled Tasks). For example create the file backup.bat and replace user@server.</para>
+            <programlisting>@ECHO OFF
+REM rsync the directory My Documents
+SETLOCAL
+SET CWRSYNCHOME=C:\PROGRAM FILES\CWRSYNC
+SET CYGWIN=nontsec
+SET CWOLDPATH=%PATH%
+REM uncomment the next line when using cygwin
+SET PATH=%CWRSYNCHOME%\BIN;%PATH%
+echo Press Control-C to abort
+rsync -av "/cygdrive/c/Documents and Settings/%USERNAME%/My Documents/" \
+'user@server:My\ Documents/'
+pause</programlisting>
         </section>
     </section>
     <section>
         <info>
             <title>SUDO</title>
         </info>
-        <para>Sudo is a standard way to give users some administrative rights without giving out the root password. Sudo is very useful in a multi user environment with a mix of server and</para>
-        <para>workstations. Simply call the command with sudo:</para>
-        <para># sudo /etc/init.d/dhcpd restart # Run the rc script as root</para>
-        <para># sudo -u sysadmin whoami # Run cmd as an other user</para>
+        <para>Sudo is a standard way to give users some administrative rights without giving out the root password. Sudo is very useful in a multi user environment with a mix of server and workstations. Simply call the command with sudo:</para>
+        <screen># sudo /etc/init.d/dhcpd restart            # Run the rc script as root
+# sudo -u sysadmin whoami                   # Run cmd as an other user</screen>
         <section>
             <info>
                 <title>Configuration</title>
             </info>
-            <para>Sudo is configured in /etc/sudoers and must only be edited with visudo. The basic syntax is</para>
-            <para>(the lists are comma separated):</para>
-            <para>user hosts = (runas) commands # In /etc/sudoers</para>
-            <para>users one or more users or %group (like %wheel) to gain the rights</para>
-            <para>hosts list of hosts (or ALL)</para>
-            <para>runas list of users (or ALL) that the command rule can be run as. It is enclosed in ( )!</para>
-            <para>commands list of commands (or ALL) that will be run as root or as (runas)</para>
+            <para>Sudo is configured in /etc/sudoers and must only be edited with visudo. The basic syntax is (the lists are comma separated):</para>
+            <screen>user hosts = (runas) commands          # In /etc/sudoers</screen>
+            <para><parameter>users</parameter> one or more users or %group (like %wheel) to gain the rights</para>
+            <para><parameter>hosts</parameter> list of hosts (or ALL)</para>
+            <para><parameter>runas</parameter> list of users (or ALL) that the command rule can be run as. It is enclosed in ( )!</para>
+            <para><parameter>commands</parameter> list of commands (or ALL) that will be run as root or as (runas)</para>
             <para>Additionally those keywords can be defined as alias, they are called User_Alias, Host_Alias, Runas_Alias and Cmnd_Alias. This is useful for larger setups. Here a sudoers example:</para>
-            <para># cat /etc/sudoers</para>
-            <para># Host aliases are subnets or hostnames.</para>
-            <para>Host_Alias DMZ = 212.118.81.40/28</para>
-            <para>User_Alias ADMINS = colin, luca, admin</para>
-            <para>User_Alias DEVEL = joe, jack, julia</para>
-            <para>Runas_Alias DBA = oracle,pgsql</para>
-            <para># Command aliases define the full path of a list of commands</para>
-            <para>Cmnd_Alias SYSTEM = /sbin/reboot,/usr/bin/kill,/sbin/halt,/sbin/shutdown,/etc/init.d/</para>
-            <para>Cmnd_Alias PW = /usr/bin/passwd [A-z]*, !/usr/bin/passwd root # Not root pwd!</para>
-            <para>Cmnd_Alias DEBUG = /usr/sbin/tcpdump,/usr/bin/wireshark,/usr/bin/nmap</para>
-            <para># The actual rules</para>
-            <para>root,ADMINS ALL = (ALL) NOPASSWD: ALL # ADMINS can do anything w/o a password.</para>
-            <para>DEVEL DESKTOP = (ALL) NOPASSWD: ALL # Developers have full right on desktops</para>
-            <para>DEVEL DMZ = (ALL) NOPASSWD: DEBUG # Developers can debug the DMZ servers.</para>
-            <para># User sysadmin can mess around in the DMZ servers with some commands.</para>
-            <para>sysadmin DMZ = (ALL) NOPASSWD: SYSTEM,PW,DEBUG</para>
-            <para>sysadmin ALL,!DMZ = (ALL) NOPASSWD: ALL # Can do anything outside the DMZ.</para>
-            <para>%dba ALL = (DBA) ALL # Group dba can run as database user.</para>
-            <para># anyone can mount/unmount a cd-rom on the desktop machines</para>
-            <para>ALL DESKTOP = NOPASSWD: /sbin/mount /cdrom,/sbin/umount /cdrom</para>
+            <screen># cat /etc/sudoers
+# Host aliases are subnets or hostnames.
+Host_Alias   DMZ     = 212.118.81.40/28
+Host_Alias   DESKTOP = work1, work2
+
+# User aliases are a list of users which can have the same rights
+User_Alias   ADMINS  = colin, luca, admin
+User_Alias   DEVEL   = joe, jack, julia
+Runas_Alias  DBA     = oracle,pgsql
+
+# Command aliases define the full path of a list of commands
+Cmnd_Alias   SYSTEM  = /sbin/reboot,/usr/bin/kill,/sbin/halt,/sbin/shutdown,/etc/init.d/
+Cmnd_Alias   PW      = /usr/bin/passwd [A-z]*, !/usr/bin/passwd root # Not root pwd!
+Cmnd_Alias   DEBUG   = /usr/sbin/tcpdump,/usr/bin/wireshark,/usr/bin/nmap
+# The actual rules
+root,ADMINS  ALL     = (ALL) NOPASSWD: ALL    # ADMINS can do anything w/o a password.
+DEVEL        DESKTOP = (ALL) NOPASSWD: ALL    # Developers have full right on desktops
+DEVEL        DMZ     = (ALL) NOPASSWD: DEBUG  # Developers can debug the DMZ servers.
+
+# User sysadmin can mess around in the DMZ servers with some commands.
+sysadmin     DMZ     = (ALL) NOPASSWD: SYSTEM,PW,DEBUG
+sysadmin     ALL,!DMZ = (ALL) NOPASSWD: ALL   # Can do anything outside the DMZ.
+%dba         ALL     = (DBA) ALL              # Group dba can run as database user.
+
+# anyone can mount/unmount a cd-rom on the desktop machines
+ALL          DESKTOP = NOPASSWD: /sbin/mount /cdrom,/sbin/umount /cdrom</screen>
         </section>
     </section>
     <section>
         <info>
-            <title>ENCRYPT FILES</title>
+            <title>Encrypt Files</title>
         </info>
         <section>
             <info>
                 <title>A single file</title>
             </info>
             <para>Encrypt and decrypt:</para>
-            <para># openssl des -salt -in file -out file.des</para>
-            <para># openssl des -d -salt -in file.des -out file</para>
+            <screen># openssl aes-128-cbc -salt -in file -out file.aes
+# openssl aes-128-cbc -d -salt -in file.aes -out file</screen>
             <para>Note that the file can of course be a tar archive.</para>
         </section>
         <section>
             <info>
                 <title>tar and encrypt a whole directory</title>
             </info>
-            <para># tar -cf - directory | openssl des -salt -out directory.tar.des # Encrypt</para>
-            <para># openssl des -d -salt -in directory.tar.des | tar -x # Decrypt</para>
+            <screen># tar -cf - directory | openssl aes-128-cbc -salt -out directory.tar.aes      # Encrypt
+# openssl aes-128-cbc -d -salt -in directory.tar.aes | tar -x -f -            # Decrypt</screen>
         </section>
         <section>
             <info>
                 <title>tar zip and encrypt a whole directory</title>
             </info>
-            <para># tar -zcf - directory | openssl des -salt -out directory.tar.gz.des # Encrypt</para>
-            <para># openssl des -d -salt -in directory.tar.gz.des | tar -xz # Decrypt</para>
-            <para>• Use -k mysecretpassword after des to avoid the interactive password request. However note that this is highly insecure.</para>
-            <para>• Use des3 instead of des to get even stronger encryption (Triple-DES Cipher). This uses also more CPU.</para>
+            <screen># tar -zcf - directory | openssl aes-128-cbc -salt -out directory.tar.gz.aes  # Encrypt
+# openssl aes-128-cbc -d -salt -in directory.tar.gz.aes | tar -xz -f -        # Decrypt</screen>
+            <itemizedlist>
+                <listitem>
+                    <para>Use -k mysecretpassword after des to avoid the interactive password request. However note that this is highly insecure.</para>
+                </listitem>
+                <listitem>
+                    <para>Use des3 instead of des to get even stronger encryption (Triple-DES Cipher). This uses also more CPU.</para>
+                </listitem>
+            </itemizedlist>
         </section>
     </section>
     <section>
         <info>
-            <title>ENCRYPT PARTITIONS</title>
+            <title>Encrypt Partitions</title>
         </info>
-        <para>There are (many) other alternative methods to encrypt disks, I only show here the methods I know and use. Keep in mind that the security is only good as long the OS has not been tempered with. An intruder could easily record the password from the keyboard events.</para>
-        <para>Furthermore the data is freely accessible when the partition is attached and will not prevent an intruder to have access to it in this state.</para>
-        <para/>
+        <para>There are (many) other alternative methods to encrypt disks, I only show here the methods I know and use. Keep in mind that the security is only good as long the OS has not been tempered with. An intruder could easily record the password from the keyboard events. Furthermore the data is freely accessible when the partition is attached and will not prevent an intruder to have access to it in this state.</para>
         <section>
             <info>
                 <title>Linux</title>
             </info>
-            <para>Those instructions use the Linux dm-crypt (device-mapper) facility available on the 2.6 kernel.</para>
-            <para>In this example, lets encrypt the partition /dev/sdc1, it could be however any other partition or disk, or USB or a file based partition created with losetup. In this case we would use /dev/loop0. See file image partition. The device mapper uses labels to identify a partition. We use sdc1 in this example, but it could be any string.</para>
-            <para>dm-crypt with LUKS</para>
-            <para>LUKS with dm-crypt has better encryption and makes it possible to have multiple passphrase for the same partition or to change the password easily. To test if LUKS is available, simply type #</para>
-            <para>cryptsetup --help, if nothing about LUKS shows up, use the instructions below Without LUKS.</para>
-            <para>First create a partition if necessary: fdisk /dev/sdc.</para>
-            <para>Create encrypted partition</para>
-            <para># dd if=/dev/urandom of=/dev/sdc1 # Optional. For paranoids only (takes days)</para>
-            <para># cryptsetup -y luksFormat /dev/sdc1 # This destroys any data on sdc1</para>
-            <para># cryptsetup luksOpen /dev/sdc1 sdc1</para>
-            <para># mkfs.ext3 /dev/mapper/sdc1 # create ext3 file system</para>
-            <para># mount -t ext3 /dev/mapper/sdc1 /mnt</para>
-            <para># umount /mnt</para>
-            <para># cryptsetup luksClose sdc1 # Detach the encrypted partition</para>
-            <para>Attach</para>
-            <para># cryptsetup luksOpen /dev/sdc1 sdc1</para>
-            <para># mount -t ext3 /dev/mapper/sdc1 /mnt</para>
-            <para>Detach</para>
-            <para># umount /mnt</para>
-            <para># cryptsetup luksClose sdc1</para>
-            <para>dm-crypt without LUKS</para>
-            <para># cryptsetup -y create sdc1 /dev/sdc1 # or any other partition like /dev/loop0</para>
-            <para># dmsetup ls # check it, will display: sdc1 (254, 0)</para>
-            <para># mkfs.ext3 /dev/mapper/sdc1 # This is done only the first time!</para>
-            <para># mount -t ext3 /dev/mapper/sdc1 /mnt</para>
-            <para># umount /mnt/</para>
-            <para># cryptsetup remove sdc1 # Detach the encrypted partition</para>
+            <para>Those instructions use the Linux dm-crypt (device-mapper) facility available on the 2.6 kernel. In this example, lets encrypt the partition /dev/sdc1, it could be however any other partition or disk, or USB or a file based partition created with losetup. In this case we would use /dev/loop0. See file image partition. The device mapper uses labels to identify a partition. We use sdc1 in this example, but it could be any string.</para>
+            <para><emphasis role="bold">dm-crypt with LUKS</emphasis></para>
+            <para>LUKS with dm-crypt has better encryption and makes it possible to have multiple passphrase for the same partition or to change the password easily. To test if LUKS is available, simply type # cryptsetup --help, if nothing about LUKS shows up, use the instructions below Without LUKS. First create a partition if necessary: fdisk /dev/sdc.</para>
+            <para><emphasis role="italic">Create encrypted partition</emphasis></para>
+            <screen># dd if=/dev/urandom of=/dev/sdc1          # Optional. For paranoids only (takes days)
+# cryptsetup -y luksFormat /dev/sdc1       # This destroys any data on sdc1
+# cryptsetup luksOpen /dev/sdc1 sdc1
+# mkfs.ext3 /dev/mapper/sdc1               # create ext3 file system
+# mount -t ext3 /dev/mapper/sdc1 /mnt
+# umount /mnt
+# cryptsetup luksClose sdc1                # Detach the encrypted partition</screen>
+            <para><emphasis role="italic">Attach</emphasis></para>
+            <screen># cryptsetup luksOpen /dev/sdc1 sdc1
+# mount -t ext3 /dev/mapper/sdc1 /mnt</screen>
+            <para><emphasis role="italic">Detach</emphasis></para>
+            <screen># umount /mnt
+# cryptsetup luksClose sdc1</screen>
+            <para><emphasis role="bold">dm-crypt without LUKS</emphasis></para>
+            <screen># cryptsetup -y create sdc1 /dev/sdc1      # or any other partition like /dev/loop0
+# dmsetup ls                               # check it, will display: sdc1 (254, 0)
+# mkfs.ext3 /dev/mapper/sdc1               # This is done only the first time!
+# mount -t ext3 /dev/mapper/sdc1 /mnt
+# umount /mnt/
+# cryptsetup remove sdc1                   # Detach the encrypted partition</screen>
             <para>Do exactly the same (without the mkfs part!) to re-attach the partition. If the password is not correct, the mount command will fail. In this case simply remove the map sdc1 (cryptsetup remove sdc1) and create it again.</para>
         </section>
         <section>
             <info>
                 <title>FreeBSD</title>
             </info>
-            <para>The two popular FreeBSD disk encryption modules are gbde and geli. I now use geli because it is faster and also uses the crypto device for hardware acceleration. See The FreeBSD handbook Chapter 18.68 for all the details. The geli module must be loaded or compiled into the kernel:</para>
-            <para>options GEOM_ELI</para>
-            <para>device crypto # or as module:</para>
-            <para># echo 'geom_eli_load="YES"' &gt;&gt; /boot/loader.conf # or do: kldload geom_eli</para>
-            <para>8.http://www.freebsd.org/handbook/disks-encrypting.html</para>
-            <para/>
-            <para>Use password and key</para>
+            <para>The two popular FreeBSD disk encryption modules are gbde and geli. I now use geli because it is faster and also uses the crypto device for hardware acceleration. See <link xlink:href="http://www.freebsd.org/handbook/disks-encrypting.html">The FreeBSD handbook Chapter 18.6</link> for all the details. The geli module must be loaded or compiled into the kernel:</para>
+            <screen>options GEOM_ELI
+device crypto                                       # or as module:
+# echo 'geom_eli_load="YES"' >> /boot/loader.conf   # or do: kldload geom_eli</screen>
+            <para><emphasis role="bold">Use password and key</emphasis></para>
             <para>I use those settings for a typical disk encryption, it uses a passphrase AND a key to encrypt the master key.  That is you need both the password and the generated key /root/ad1.key to attach the partition. The master key is stored inside the partition and is not visible. See below for typical USB or file based image.</para>
-            <para>Create encrypted partition</para>
-            <para># dd if=/dev/random of=/root/ad1.key bs=64 count=1 # this key encrypts the mater key</para>
-            <para># geli init -s 4096 -K /root/ad1.key /dev/ad1 # -s 8192 is also OK for disks</para>
-            <para># geli attach -k /root/ad1.key /dev/ad1 # DO make a backup of /root/ad1.key</para>
-            <para># dd if=/dev/random of=/dev/ad1.eli bs=1m # Optional and takes a long time</para>
-            <para># newfs /dev/ad1.eli # Create file system</para>
-            <para># mount /dev/ad1.eli /mnt</para>
-            <para>Attach</para>
-            <para># geli attach -k /root/ad1.key /dev/ad1</para>
-            <para># fsck -ny -t ffs /dev/ad1.eli # In doubt check the file system</para>
-            <para># mount /dev/ad1.eli /mnt</para>
-            <para>Detach</para>
+            <para><emphasis role="italic">Create encrypted partition</emphasis></para>
+            <screen># dd if=/dev/random of=/root/ad1.key bs=64 count=1  # this key encrypts the mater key
+# geli init -s 4096 -K /root/ad1.key /dev/ad1       # -s 8192 is also OK for disks
+# geli attach -k /root/ad1.key /dev/ad1             # DO make a backup of /root/ad1.key
+# dd if=/dev/random of=/dev/ad1.eli bs=1m           # Optional and takes a long time
+# newfs /dev/ad1.eli                                # Create file system
+# mount /dev/ad1.eli /mnt</screen>
+            <para><emphasis role="italic">Attach</emphasis></para>
+            <screen># geli attach -k /root/ad1.key /dev/ad1
+# fsck -ny -t ffs /dev/ad1.eli                      # In doubt check the file system
+# mount /dev/ad1.eli /mnt</screen>
+            <para><emphasis role="italic">Detach</emphasis></para>
             <para>The detach procedure is done automatically on shutdown.</para>
-            <para># umount /mnt</para>
-            <para># geli detach /dev/ad1.eli</para>
-            <para>/etc/fstab</para>
-            <para>The encrypted partition can be configured to be mounted with /etc/fstab. The password will be</para>
-            <para>prompted when booting. The following settings are required for this example:</para>
-            <para># grep geli /etc/rc.conf</para>
-            <para>geli_devices="ad1"</para>
-            <para>geli_ad1_flags="-k /root/ad1.key"</para>
-            <para># grep geli /etc/fstab</para>
-            <para>/dev/ad1.eli /home/private ufs rw 0 0</para>
-            <para>Use password only</para>
-            <para>It is more convenient to encrypt a USB stick or file based image with a passphrase only and no key. In this case it is not necessary to carry the additional key file around. The procedure is very much the same as above, simply without the key file. Let's encrypt a file based image</para>
-            <para>/cryptedfile of 1 GB.</para>
-            <para># dd if=/dev/zero of=/cryptedfile bs=1M count=1000 # 1 GB file</para>
-            <para># mdconfig -at vnode -f /cryptedfile</para>
-            <para># geli init /dev/md0 # encrypts with password only</para>
-            <para># geli attach /dev/md0</para>
-            <para># newfs -U -m 0 /dev/md0.eli</para>
-            <para># mount /dev/md0.eli /mnt</para>
-            <para># umount /dev/md0.eli</para>
-            <para># geli detach md0.eli</para>
+            <screen># umount /mnt
+# geli detach /dev/ad1.eli</screen>
+            <para><emphasis role="italic">/etc/fstab</emphasis></para>
+            <para>The encrypted partition can be configured to be mounted with /etc/fstab. The password will be prompted when booting. The following settings are required for this example:</para>
+            <screen># grep geli /etc/rc.conf
+geli_devices="ad1"
+geli_ad1_flags="-k /root/ad1.key"
+# grep geli /etc/fstab
+/dev/ad1.eli         /home/private              ufs             rw      0       0</screen>
+            <para><emphasis role="bold">Use password only</emphasis></para>
+            <para>It is more convenient to encrypt a USB stick or file based image with a passphrase only and no key. In this case it is not necessary to carry the additional key file around. The procedure is very much the same as above, simply without the key file. Let's encrypt a file based image /cryptedfile of 1 GB.</para>
+            <screen># dd if=/dev/zero of=/cryptedfile bs=1M count=1000  # 1 GB file
+# mdconfig -at vnode -f /cryptedfile
+# geli init /dev/md0                                # encrypts with password only
+# geli attach /dev/md0
+# newfs -U -m 0 /dev/md0.eli
+# mount /dev/md0.eli /mnt
+# umount /dev/md0.eli
+# geli detach md0.eli</screen>
             <para>It is now possible to mount this image on an other system with the password only.</para>
-            <para># mdconfig -at vnode -f /cryptedfile</para>
-            <para># geli attach /dev/md0</para>
-            <para># mount /dev/md0.eli /mnt</para>
-            <para>— Encrypt Partitions —</para>
-            <para>29</para>
+            <screen># mdconfig -at vnode -f /cryptedfile
+# geli attach /dev/md0
+# mount /dev/md0.eli /mnt</screen>
         </section>
     </section>
     <section>
         <info>
-            <title>SSL CERTIFICATES</title>
+            <title>SSL Certificates</title>
         </info>
         <para>So called SSL/TLS certificates are cryptographic public key certificates and are composed of a public and a private key. The certificates are used to authenticate the endpoints and encrypt the data. They are used for example on a web server (https) or mail server (imaps).</para>
         <section>
             <info>
                 <title>Procedure</title>
             </info>
-            <para>• We need a certificate authority to sign our certificate. This step is usually provided by a vendor like Thawte, Verisign, etc., however we can also create our own.</para>
-            <para>• Create a certificate signing request. This request is like an unsigned certificate (the</para>
-            <para>public part) and already contains all necessary information. The certificate request is</para>
-            <para>normally sent to the authority vendor for signing. This step also creates the private key</para>
-            <para>on the local machine.</para>
-            <para>• Sign the certificate with the certificate authority.</para>
-            <para>• If necessary join the certificate and the key in a single file to be used by the application</para>
-            <para>(web server, mail server etc.).</para>
+            <itemizedlist>
+                <listitem>
+                    <para>We need a certificate authority to sign our certificate. This step is usually provided by a vendor like Thawte, Verisign, etc., however we can also create our own.</para>
+                </listitem>
+                <listitem>
+                    <para>Create a certificate signing request. This request is like an unsigned certificate (the public part) and already contains all necessary information. The certificate request is normally sent to the authority vendor for signing. This step also creates the private key on the local machine.</para>
+                </listitem>
+                <listitem>
+                    <para>Sign the certificate with the certificate authority.</para>
+                </listitem>
+                <listitem>
+                    <para>If necessary join the certificate and the key in a single file to be used by the application (web server, mail server etc.).</para>
+                </listitem>
+            </itemizedlist>
         </section>
         <section>
             <info>
                 <title>Configure OpenSSL</title>
             </info>
-            <para>We use /usr/local/certs as directory for this example check or edit /etc/ssl/openssl.cnf</para>
-            <para>accordingly to your settings so you know where the files will be created. Here are the relevant part of openssl.cnf:</para>
-            <para>[ CA_default ]</para>
-            <para>dir = /usr/local/certs/CA # Where everything is kept</para>
-            <para>certs = $dir/certs # Where the issued certs are kept</para>
-            <para>crl_dir = $dir/crl # Where the issued crl are kept</para>
-            <para>database = $dir/index.txt # database index file.</para>
+            <para>We use /usr/local/certs as directory for this example check or edit /etc/ssl/openssl.cnf accordingly to your settings so you know where the files will be created. Here are the relevant part of openssl.cnf:</para>
+            <programlisting>[ CA_default ]
+dir             = /usr/local/certs/CA       # Where everything is kept
+certs           = $dir/certs                # Where the issued certs are kept
+crl_dir         = $dir/crl                  # Where the issued crl are kept
+database        = $dir/index.txt            # database index file.</programlisting>
             <para>Make sure the directories exist or create them</para>
-            <para># mkdir -p /usr/local/certs/CA</para>
-            <para># cd /usr/local/certs/CA</para>
-            <para># mkdir certs crl newcerts private</para>
-            <para># echo "01" &gt; serial # Only if serial does not exist</para>
-            <para># touch index.txt</para>
+            <screen># mkdir -p /usr/local/certs/CA
+# cd /usr/local/certs/CA
+# mkdir certs crl newcerts private
+# echo "01" > serial                        # Only if serial does not exist
+# touch index.txt</screen>
         </section>
         <section>
             <info>
                 <title>Create a certificate authority</title>
             </info>
-            <para>If you do not have a certificate authority from a vendor, you'll have to create your own. This</para>
-            <para>step is not necessary if one intend to use a vendor to sign the request. To make a certificate</para>
-            <para>authority (CA):</para>
-            <para># openssl req -new -x509 -days 730 -config /etc/ssl/openssl.cnf \</para>
-            <para>-keyout CA/private/cakey.pem -out CA/cacert.pem</para>
+            <para>If you do not have a certificate authority from a vendor, you'll have to create your own. This step is not necessary if one intend to use a vendor to sign the request. To make a certificate authority (CA):</para>
+            <screen># openssl req -new -x509 -days 730 -config /etc/ssl/openssl.cnf \
+-keyout CA/private/cakey.pem -out CA/cacert.pem</screen>
         </section>
         <section>
             <info>
                 <title>Create a certificate signing request</title>
             </info>
             <para>To make a new certificate (for mail server or web server for example), first create a request certificate with its private key. If your application do not support encrypted private key (for example UW-IMAP does not), then disable encryption with -nodes.</para>
-            <para># openssl req -new -keyout newkey.pem -out newreq.pem \</para>
-            <para>-config /etc/ssl/openssl.cnf</para>
-            <para># openssl req -nodes -new -keyout newkey.pem -out newreq.pem \</para>
-            <para>-config /etc/ssl/openssl.cnf # No encryption for the key</para>
-            <para>— SSL Certificates —</para>
-            <para>30</para>
+            <screen># openssl req -new -keyout newkey.pem -out newreq.pem \
+-config /etc/ssl/openssl.cnf
+# openssl req -nodes -new -keyout newkey.pem -out newreq.pem \
+-config /etc/ssl/openssl.cnf                # No encryption for the key</screen>
         </section>
         <section>
             <info>
                 <title>Sign the certificate</title>
             </info>
             <para>The certificate request has to be signed by the CA to be valid, this step is usually done by the vendor. Note: replace "servername" with the name of your server in the next commands.</para>
-            <para># cat newreq.pem newkey.pem &gt; new.pem</para>
-            <para># openssl ca -policy policy_anything -out servernamecert.pem \</para>
-            <para>-config /etc/ssl/openssl.cnf -infiles new.pem</para>
-            <para># mv newkey.pem servernamekey.pem</para>
+            <screen># cat newreq.pem newkey.pem > new.pem
+# openssl ca -policy policy_anything -out servernamecert.pem \
+-config /etc/ssl/openssl.cnf -infiles new.pem
+# mv newkey.pem servernamekey.pem</screen>
             <para>Now servernamekey.pem is the private key and servernamecert.pem is the server certificate.</para>
         </section>
         <section>
@@ -1584,16 +1586,21 @@ Are you sure you want to continue connecting (yes/no)? yes</screen>
                 <title>Create united certificate</title>
             </info>
             <para>The IMAP server wants to have both private key and server certificate in the same file. And in general, this is also easier to handle, but the file has to be kept securely!. Apache also can deal with it well. Create a file servername.pem containing both the certificate and key. </para>
-            <para>• Open the private key (servernamekey.pem) with a text editor and copy the private key</para>
-            <para>into the "servername.pem" file.</para>
-            <para>• Do the same with the server certificate (servernamecert.pem).</para>
+            <itemizedlist>
+                <listitem>
+                    <para>Open the private key (servernamekey.pem) with a text editor and copy the private key into the "servername.pem" file.</para>
+                </listitem>
+                <listitem>
+                    <para>Do the same with the server certificate (servernamecert.pem).</para>
+                </listitem>
+            </itemizedlist>
             <para>The final servername.pem file should look like this:</para>
-            <para>-----BEGIN RSA PRIVATE KEY-----</para>
-            <para>MIICXQIBAAKBgQDutWy+o/XZ/[...]qK5LqQgT3c9dU6fcR+WuSs6aejdEDDqBRQ</para>
-            <para>-----END RSA PRIVATE KEY-----</para>
-            <para>-----BEGIN CERTIFICATE-----</para>
-            <para>MIIERzCCA7CgAwIBAgIBBDANB[...]iG9w0BAQQFADCBxTELMAkGA1UEBhMCREUx</para>
-            <para>-----END CERTIFICATE-----</para>
+            <programlisting>-----BEGIN RSA PRIVATE KEY-----
+MIICXQIBAAKBgQDutWy+o/XZ/[...]qK5LqQgT3c9dU6fcR+WuSs6aejdEDDqBRQ
+-----END RSA PRIVATE KEY-----
+-----BEGIN CERTIFICATE-----
+MIIERzCCA7CgAwIBAgIBBDANB[...]iG9w0BAQQFADCBxTELMAkGA1UEBhMCREUx
+-----END CERTIFICATE-----</programlisting>
             <para>What we have now in the directory /usr/local/certs/:</para>
             <para>CA/private/cakey.pem (CA server private key)</para>
             <para>CA/cacert.pem (CA server public key)</para>
@@ -1607,255 +1614,242 @@ Are you sure you want to continue connecting (yes/no)? yes</screen>
                 <title>View certificate information</title>
             </info>
             <para>To view the certificate information simply do:</para>
-            <para># openssl x509 -text -in servernamecert.pem # View the certificate info</para>
-            <para># openssl req -noout -text -in server.csr # View the request info</para>
+            <screen># openssl x509 -text -in servernamecert.pem      # View the certificate info
+# openssl req -noout -text -in server.csr        # View the request info
+# openssl s_client -connect cb.vu:443            # Check a web server certificate</screen>
         </section>
     </section>
     <section>
         <info>
             <title>CVS</title>
         </info>
-        <para/>
         <section>
             <info>
                 <title>Server setup</title>
             </info>
-            <para>Initiate the CVS</para>
-            <para>Decide where the main repository will rest and create a root cvs. For example /usr/local/cvs (as</para>
-            <para>root):</para>
-            <para># mkdir -p /usr/local/cvs</para>
-            <para># setenv CVSROOT /usr/local/cvs # Set CVSROOT to the new location (local)</para>
-            <para># cvs init # Creates all internal CVS config files</para>
-            <para># cvs checkout CVSROOT # Checkout the config files to modify them</para>
-            <para># cd CVSROOT</para>
-            <para>edit config ( fine as it is)</para>
-            <para># cvs commit config</para>
-            <para>cat &gt;&gt; writers # Create a writers file (optionally also readers)</para>
-            <para>colin</para>
-            <para>^D # Use [Control][D] to quit the edit</para>
-            <para># cvs add writers # Add the file writers into the repository</para>
-            <para># cvs edit checkoutlist</para>
-            <para># cat &gt;&gt; checkoutlist</para>
-            <para>writers</para>
-            <para>^D # Use [Control][D] to quit the edit</para>
-            <para># cvs commit # Commit all the configuration changes</para>
+            <para><emphasis role="bold">Initiate the CVS</emphasis></para>
+            <para>Decide where the main repository will rest and create a root cvs. For example /usr/local/cvs (as root):</para>
+            <screen># mkdir -p /usr/local/cvs
+# setenv CVSROOT /usr/local/cvs      # Set CVSROOT to the new location (local)
+# cvs init                           # Creates all internal CVS config files
+# cd /root
+# cvs checkout CVSROOT               # Checkout the config files to modify them
+# cd CVSROOT
+edit config ( fine as it is)
+# cvs commit config
+cat >> writers                       # Create a writers file (optionally also readers)
+colin
+^D                                   # Use [Control][D] to quit the edit
+# cvs add writers                    # Add the file writers into the repository
+# cvs edit checkoutlist
+# cat >> checkoutlist
+writers
+^D                                   # Use [Control][D] to quit the edit
+# cvs commit                         # Commit all the configuration changes</screen>
             <para>Add a readers file if you want to differentiate read and write permissions Note: Do not (ever) edit files directly into the main cvs, but rather checkout the file, modify it and check it in. We did this with the file writers to define the write access.</para>
-            <para>There are three popular ways to access the CVS at this point. The first two don't need any</para>
-            <para>further configuration. See the examples on CVSROOT below for how to use them:</para>
-            <para>• Direct local access to the file system. The user(s) need sufficient file permission to</para>
-            <para>access the CS directly and there is no further authentication in addition to the OS login.</para>
-            <para>However this is only useful if the repository is local.</para>
-            <para>• Remote access with ssh with the ext protocol. Any use with an ssh shell account and</para>
-            <para>read/write permissions on the CVS server can access the CVS directly with ext over ssh</para>
-            <para>without any additional tunnel. There is no server process running on the CVS for this to</para>
-            <para>work. The ssh login does the authentication.</para>
-            <para>• Remote access with pserver. This is the preferred use for larger user base as the users</para>
-            <para>are authenticated by the CVS pserver with a dedicated password database, there is</para>
-            <para>therefore no need for local users accounts. This setup is explained below.</para>
-            <para>Network setup with inetd</para>
-            <para>The CVS can be run locally only if a network access is not needed. For a remote access, the</para>
-            <para>daemon inetd can start the pserver with the following line in /etc/inetd.conf (/etc/xinetd.d/cvs</para>
-            <para>on SuSE):</para>
-            <para>cvspserver stream tcp nowait cvs /usr/bin/cvs cvs \</para>
-            <para>--allow-root=/usr/local/cvs pserver</para>
-            <para>It is a good idea to block the cvs port from the Internet with the firewall and use an ssh tunnel</para>
-            <para>to access the repository remotely.</para>
-            <para>Separate authentication</para>
+            <para>There are three popular ways to access the CVS at this point. The first two don't need any further configuration. See the examples on CVSROOT below for how to use them:</para>
+            <itemizedlist>
+                <listitem>
+                    <para>Direct local access to the file system. The user(s) need sufficient file permission to access the CS directly and there is no further authentication in addition to the OS login. However this is only useful if the repository is local.</para>
+                </listitem>
+                <listitem>
+                    <para>Remote access with ssh with the ext protocol. Any use with an ssh shell account and read/write permissions on the CVS server can access the CVS directly with ext over ssh without any additional tunnel. There is no server process running on the CVS for this to work. The ssh login does the authentication.</para>
+                </listitem>
+                <listitem>
+                    <para>Remote access with pserver. This is the preferred use for larger user base as the users are authenticated by the CVS pserver with a dedicated password database, there is therefore no need for local users accounts. This setup is explained below.</para>
+                </listitem>
+            </itemizedlist>
+            <para><emphasis role="bold">Network setup with inetd</emphasis></para>
+            <para>The CVS can be run locally only if a network access is not needed. For a remote access, the daemon inetd can start the pserver with the following line in /etc/inetd.conf (/etc/xinetd.d/cvs on SuSE):</para>
+            <programlisting>cvspserver	stream  tcp  nowait  cvs  /usr/bin/cvs	cvs \
+--allow-root=/usr/local/cvs pserver</programlisting>
+            <para>It is a good idea to block the cvs port from the Internet with the firewall and use an ssh tunnel to access the repository remotely.</para>
+            <para><emphasis role="bold">Separate authentication</emphasis></para>
             <para>It is possible to have cvs users which are not part of the OS (no local users). This is actually probably wanted too from the security point of view. Simply add a file named passwd (in the CVSROOT directory) containing the users login and password in the crypt format. This is can be done with the apache htpasswd tool.</para>
-            <para>Note: This passwd file is the only file which has to be edited directly in the CVSROOT directory.</para>
-            <para>Also it won't be checked out. More info with htpasswd --help</para>
-            <para># htpasswd -cb passwd user1 password1 # -c creates the file</para>
-            <para># htpasswd -b passwd user2 password2</para>
-            <para>Now add :cvs at the end of each line to tell the cvs server to change the user to cvs (or</para>
-            <para>whatever your cvs server is running under). It looks like this:</para>
-            <para># cat passwd</para>
-            <para>user1:xsFjhU22u8Fuo:cvs</para>
-            <para/>
+            <note>
+                <para>This passwd file is the only file which has to be edited directly in the CVSROOT directory. Also it won't be checked out. More info with htpasswd --help</para>
+            </note>
+            <screen># htpasswd -cb passwd user1 password1  # -c creates the file
+# htpasswd -b passwd user2 password2</screen>
+            <para>Now add :cvs at the end of each line to tell the cvs server to change the user to cvs (or whatever your cvs server is running under). It looks like this:</para>
+            <screen># cat passwd
+user1:xsFjhU22u8Fuo:cvs
+user2:vnefJOsnnvToM:cvs</screen>
         </section>
         <section>
             <info>
                 <title>Test it</title>
             </info>
             <para>Test the login as normal user (for example here me)</para>
-            <para># cvs -d :pserver:colin@192.168.50.254:/usr/local/cvs login</para>
-            <para>Logging in to :pserver:colin@192.168.50.254:2401/usr/local/cvs</para>
-            <para>CVS password:</para>
-            <para>CVSROOT variable</para>
-            <para>This is an environment variable used to specify the location of the repository we're doing operations on. For local use, it can be just set to the directory of the repository. For use over the network, the transport protocol must be specified. Set the CVSROOT variable with setenv</para>
-            <para>CVSROOT string on a csh, tcsh shell, or with export CVSROOT=string on a sh, bash shell.</para>
-            <para># setenv CVSROOT :pserver:&lt;username&gt;@&lt;host&gt;:/cvsdirectory</para>
+            <screen># cvs -d :pserver:colin@192.168.50.254:/usr/local/cvs login
+Logging in to :pserver:colin@192.168.50.254:2401/usr/local/cvs
+CVS password:</screen>
+            <para><emphasis role="bold">CVSROOT variable</emphasis></para>
+            <para>This is an environment variable used to specify the location of the repository we're doing operations on. For local use, it can be just set to the directory of the repository. For use over the network, the transport protocol must be specified. Set the CVSROOT variable with setenv CVSROOT string on a csh, tcsh shell, or with export CVSROOT=string on a sh, bash shell.</para>
+            <screen># setenv CVSROOT :pserver:&lt;username&gt;@&lt;host&gt;:/cvsdirectory</screen>
             <para>For example:</para>
-            <para># setenv CVSROOT /usr/local/cvs # Used locally only</para>
-            <para># setenv CVSROOT :local:/usr/local/cvs # Same as above</para>
-            <para># setenv CVSROOT :ext:user@cvsserver:/usr/local/cvs # Direct access with SSH</para>
-            <para># setenv CVS_RSH ssh # for the ext access</para>
-            <para># setenv CVSROOT :pserver:user@cvsserver.254:/usr/local/cvs # network with pserver</para>
-            <para>When the login succeeded one can import a new project into the repository: cd into your</para>
-            <para>project root directory</para>
-            <para>cvs import &lt;module name&gt; &lt;vendor tag&gt; &lt;initial tag&gt;</para>
-            <para>cvs -d :pserver:colin@192.168.50.254:/usr/local/cvs import MyProject MyCompany START</para>
-            <para>Where MyProject is the name of the new project in the repository (used later to checkout). Cvs</para>
-            <para>will import the current directory content into the new project.</para>
+            <screen># setenv CVSROOT /usr/local/cvs                               # Used locally only
+# setenv CVSROOT :local:/usr/local/cvs                        # Same as above
+# setenv CVSROOT :ext:user@cvsserver:/usr/local/cvs           # Direct access with SSH
+# setenv CVS_RSH ssh                                          # for the ext access
+# setenv CVSROOT :pserver:user@cvsserver.254:/usr/local/cvs   # network with pserver</screen>
+            <para>When the login succeeded one can import a new project into the repository: cd into your project root directory</para>
+            <screen># cvs import &lt;module name> &lt;vendor tag> &lt;initial tag>
+# cvs -d :pserver:colin@192.168.50.254:/usr/local/cvs import MyProject MyCompany START</screen>
+            <para>Where MyProject is the name of the new project in the repository (used later to checkout). CVS will import the current directory content into the new project.</para>
             <para>To checkout:</para>
-            <para># cvs -d :pserver:colin@192.168.50.254:/usr/local/cvs checkout MyProject</para>
-            <para>or</para>
-            <para># setenv CVSROOT :pserver:colin@192.168.50.254:/usr/local/cvs</para>
-            <para># cvs checkout MyProject</para>
+            <screen># cvs -d :pserver:colin@192.168.50.254:/usr/local/cvs checkout MyProject
+or
+# setenv CVSROOT :pserver:colin@192.168.50.254:/usr/local/cvs
+# cvs checkout MyProject</screen>
         </section>
         <section>
             <info>
                 <title>SSH tunneling for CVS</title>
             </info>
-            <para>We need 2 shells for this. On the first shell we connect to the cvs server with ssh and</para>
-            <para>port-forward the cvs connection. On the second shell we use the cvs normally as if it where</para>
-            <para>running locally.</para>
+            <para>We need 2 shells for this. On the first shell we connect to the cvs server with ssh and port-forward the cvs connection. On the second shell we use the cvs normally as if it where running locally.</para>
             <para>on shell 1:</para>
-            <para># ssh -L2401:localhost:2401 colin@cvs_server # Connect directly to the CVS server. Or:</para>
-            <para># ssh -L2401:cvs_server:2401 colin@gateway # Use a gateway to reach the CVS</para>
+            <screen># ssh -L2401:localhost:2401 colin@cvs_server   # Connect directly to the CVS server. Or:
+# ssh -L2401:cvs_server:2401 colin@gateway     # Use a gateway to reach the CVS</screen>
             <para>on shell 2:</para>
-            <para># setenv CVSROOT :pserver:colin@localhost:/usr/local/cvs</para>
-            <para># cvs login</para>
-            <para>Logging in to :pserver:colin@localhost:2401/usr/local/cvs</para>
-            <para>CVS password:</para>
-            <para># cvs checkout MyProject/src</para>
-            <para/>
+            <screen># setenv CVSROOT :pserver:colin@localhost:/usr/local/cvs
+# cvs login
+Logging in to :pserver:colin@localhost:2401/usr/local/cvs
+CVS password:
+# cvs checkout MyProject/src</screen>
         </section>
         <section>
             <info>
                 <title>CVS commands and usage</title>
             </info>
-            <para>Import</para>
-            <para>The import command is used to add a whole directory, it must be run from within the directory to be imported. Say the directory /devel/ contains all files and subdirectories to be imported.</para>
-            <para>The directory name on the CVS (the module) will be called "myapp".</para>
-            <para># cvs import [options] directory-name vendor-tag release-tag</para>
-            <para># cd /devel # Must be inside the project to import it</para>
-            <para># cvs import myapp Company R1_0 # Release tag can be anything in one word</para>
+            <para><emphasis role="bold">Import</emphasis></para>
+            <para>The import command is used to add a whole directory, it must be run from within the directory to be imported. Say the directory /devel/ contains all files and subdirectories to be imported. The directory name on the CVS (the module) will be called "myapp".</para>
+            <screen># cvs import [options] directory-name vendor-tag release-tag
+# cd /devel                          # Must be inside the project to import it
+# cvs import myapp Company R1_0      # Release tag can be anything in one wor</screen>
             <para>After a while a new directory "/devel/tools/" was added and it has to be imported too.</para>
-            <para># cd /devel/tools</para>
-            <para># cvs import myapp/tools Company R1_0</para>
-            <para>Checkout update add commit</para>
-            <para># cvs co myapp/tools # Will only checkout the directory tools</para>
-            <para># cvs co -r R1_1 myapp # Checkout myapp at release R1_1 (is sticky)</para>
-            <para># cvs -q -d update -P # A typical CVS update</para>
-            <para># cvs update -A # Reset any sticky tag (or date, option)</para>
-            <para># cvs add newfile # Add a new file</para>
-            <para># cvs add -kb newfile # Add a new binary file</para>
-            <para># cvs commit file1 file2 # Commit the two files only</para>
-            <para># cvs commit -m "message" # Commit all changes done with a message</para>
-            <para>Create a patch</para>
+            <screen># cd /devel/tools
+# cvs import myapp/tools Company R1_0</screen>
+            <para><emphasis role="bold">Checkout update add commit</emphasis></para>
+            <screen># cvs co myapp/tools                 # Will only checkout the directory tools
+# cvs co -r R1_1 myapp               # Checkout myapp at release R1_1 (is sticky)
+# cvs -q -d update -P                # A typical CVS update
+# cvs update -A                      # Reset any sticky tag (or date, option)
+# cvs add newfile                    # Add a new file
+# cvs add -kb newfile                # Add a new binary file
+# cvs commit file1 file2             # Commit the two files only
+# cvs commit -m "message"            # Commit all changes done with a message</screen>
+            <para><emphasis role="bold">Create a patch</emphasis></para>
             <para>It is best to create and apply a patch from the working development directory related to the project, or from within the source directory.</para>
-            <para># cd /devel/project</para>
-            <para># diff -Naur olddir newdir &gt; patchfile # Create a patch from a directory or a file</para>
-            <para># diff -Naur oldfile newfile &gt; patchfile</para>
-            <para>Apply a patch</para>
+            <screen># cd /devel/project
+# diff -Naur olddir newdir > patchfile # Create a patch from a directory or a file
+# diff -Naur oldfile newfile > patchfile</screen>
+            <para><emphasis role="bold">Apply a patch</emphasis></para>
             <para>Sometimes it is necessary to strip a directory level from the patch, depending how it was created. In case of difficulties, simply look at the first lines of the patch and try -p0, -p1 or -p2.</para>
-            <para># cd /devel/project</para>
-            <para># patch --dry-run -p0 &lt; patchfile # Test the path without applying it</para>
-            <para># patch -p0 &lt; patchfile</para>
-            <para># patch -p1 &lt; patchfile # strip off the 1st level from the path</para>
+            <screen># cd /devel/project
+# patch --dry-run -p0 &lt; patchfile    # Test the path without applying it
+# patch -p0 &lt; patchfile
+# patch -p1 &lt; patchfile              # strip off the 1st level from the path</screen>
         </section>
     </section>
     <section>
         <info>
             <title>SVN</title>
         </info>
-        <para>Subversion (SVN)9 is a version control system designed to be the successor of CVS (Concurrent</para>
-        <para>Versions System). The concept is similar to CVS, but many shortcomings where improved. See also the SVN book10.</para>
+        <para><link xlink:href="http://subversion.tigris.org/">Subversion (SVN)</link> is a version control system designed to be the successor of CVS (Concurrent Versions System). The concept is similar to CVS, but many shortcomings where improved. See also the <link xlink:href="http://svnbook.red-bean.com/en/1.4/">SVN book</link>.</para>
         <section>
             <info>
                 <title>Server setup</title>
             </info>
             <para>The initiation of the repository is fairly simple (here for example /home/svn/ must exist):</para>
-            <para># svnadmin create --fs-type fsfs /home/svn/project1</para>
-            <para>9.http://subversion.tigris.org/</para>
-            <para>10.http://svnbook.red-bean.com/en/1.4/</para>
-            <para/>
+            <screen># svnadmin create --fs-type fsfs /home/svn/project1</screen>
             <para>Now the access to the repository is made possible with:</para>
-            <para>• file:// Direct file system access with the svn client with. This requires local</para>
-            <para>permissions on the file system.</para>
-            <para>• svn:// or svn+ssh:// Remote access with the svnserve server (also over SSH). This</para>
-            <para>requires local permissions on the file system.</para>
-            <para>• http:// Remote access with webdav using apache. No local users are necessary for this</para>
-            <para>method.</para>
-            <para>Using the local file system, it is now possible to import and then check out an existing project.</para>
-            <para>Unlike with CVS it is not necessary to cd into the project directory, simply give the full path:</para>
-            <para># svn import /project1/ file:///home/svn/project1/trunk -m 'Initial import'</para>
-            <para># svn checkout file:///home/svn/project1</para>
+            <itemizedlist>
+                <listitem>
+                    <para>file:// Direct file system access with the svn client with. This requires local permissions on the file system.</para>
+                </listitem>
+                <listitem>
+                    <para>svn:// or svn+ssh:// Remote access with the svnserve server (also over SSH). This requires local permissions on the file system.</para>
+                </listitem>
+                <listitem>
+                    <para>http:// Remote access with webdav using apache. No local users are necessary for this method.</para>
+                </listitem>
+            </itemizedlist>
+            <para>Using the local file system, it is now possible to import and then check out an existing project. Unlike with CVS it is not necessary to cd into the project directory, simply give the full path:</para>
+            <screen># svn import /project1/ file:///home/svn/project1/trunk -m 'Initial import'
+# svn checkout file:///home/svn/project1</screen>
             <para>The new directory "trunk" is only a convention, this is not required.</para>
-            <para>Remote access with ssh</para>
-            <para>No special setup is required to access the repository via ssh, simply replace file:// with</para>
-            <para>svn+ssh/hostname. For example:</para>
-            <para># svn checkout svn+ssh://hostname/home/svn/project1</para>
+            <para><emphasis role="bold">Remote access with ssh</emphasis></para>
+            <para>No special setup is required to access the repository via ssh, simply replace file:// with svn+ssh/hostname. For example:</para>
+            <screen># svn checkout svn+ssh://hostname/home/svn/project1</screen>
             <para>As with the local file access, every user needs an ssh access to the server (with a local account) and also read/write access. This method might be suitable for a small group. All users could belong to a subversion group which owns the repository, for example:</para>
-            <para># groupadd subversion</para>
-            <para># groupmod -A user1 subversion</para>
-            <para># chown -R root:subversion /home/svn</para>
-            <para># chmod -R 770 /home/svn</para>
-            <para>Remote access with http (apache)</para>
-            <para>Remote access over http (https) is the only good solution for a larger user group. This method</para>
-            <para>uses the apache authentication, not the local accounts. This is a typical but small apache</para>
-            <para>configuration:</para>
-            <para>LoadModule dav_module modules/mod_dav.so</para>
-            <para>LoadModule dav_svn_module modules/mod_dav_svn.so</para>
-            <para>LoadModule authz_svn_module modules/mod_authz_svn.so # Only for access control</para>
-            <para>&lt;Location /svn&gt;</para>
-            <para>DAV svn</para>
-            <para># any "/svn/foo" URL will map to a repository /home/svn/foo</para>
-            <para>SVNParentPath /home/svn</para>
-            <para>AuthType Basic</para>
-            <para>AuthName "Subversion repository"</para>
-            <para>AuthzSVNAccessFile /etc/apache2/svn.acl</para>
-            <para>AuthUserFile /etc/apache2/svn-passwd</para>
-            <para>Require valid-user</para>
-            <para>&lt;/Location&gt;</para>
+            <screen># groupadd subversion
+# groupmod -A user1 subversion
+# chown -R root:subversion /home/svn
+# chmod -R 770 /home/svn</screen>
+            <para><emphasis role="bold">Remote access with http (apache)</emphasis></para>
+            <para>Remote access over http (https) is the only good solution for a larger user group. This method uses the apache authentication, not the local accounts. This is a typical but small apache configuration:</para>
+            <programlisting>LoadModule dav_module         modules/mod_dav.so
+LoadModule dav_svn_module     modules/mod_dav_svn.so
+LoadModule authz_svn_module   modules/mod_authz_svn.so    # Only for access control</programlisting>
+            <programlisting>&lt;Location /svn>
+  DAV svn
+  # any "/svn/foo" URL will map to a repository /home/svn/foo
+  SVNParentPath /home/svn
+  AuthType Basic
+  AuthName "Subversion repository"
+  AuthzSVNAccessFile /etc/apache2/svn.acl
+  AuthUserFile /etc/apache2/svn-passwd
+  Require valid-user
+&lt;/Location></programlisting>
             <para>The apache server needs full access to the repository:</para>
-            <para># chown -R www:www /home/svn</para>
+            <screen># chown -R www:www /home/svn</screen>
             <para>Create a user with htpasswd2:</para>
-            <para># htpasswd -c /etc/svn-passwd user1 # -c creates the file</para>
+            <screen># htpasswd -c /etc/svn-passwd user1  # -c creates the file</screen>
             <para>Access control svn.acl example</para>
-            <para># Default it read access. "* =" would be default no access</para>
-            <para>[/]</para>
-            <para>* = r</para>
-            <para>project1-developers = joe, jack, jane</para>
-            <para># Give write access to the developers</para>
-            <para>[project1:]</para>
-            <para>@project1-developers = rw</para>
+            <programlisting># Default it read access. "* =" would be default no access
+[/]
+* = r
+[groups]
+project1-developers = joe, jack, jane
+# Give write access to the developers
+[project1:]
+@project1-developers = rw</programlisting>
         </section>
         <section>
             <info>
                 <title>SVN commands and usage</title>
             </info>
-            <para>See also the Subversion Quick Reference Card11. Tortoise SVN12 is a nice Windows interface.</para>
-            <para>Import</para>
+            <para>See also the <link xlink:href="http://www.cs.put.poznan.pl/csobaniec/Papers/svn-refcard.pdf">Subversion Quick Reference Card</link>. <link xlink:href="http://tortoisesvn.tigris.org/">Tortoise SVN</link> is a nice Windows interface.</para>
+            <para><emphasis role="bold">Import</emphasis></para>
             <para>A new project, that is a directory with some files, is imported into the repository with the import command. Import is also used to add a directory with its content to an existing project.</para>
-            <para># svn help import # Get help for any command</para>
-            <para># Add a new directory (with content) into the src dir on project1</para>
-            <para># svn import /project1/newdir http://host.url/svn/project1/trunk/src -m 'add newdir'</para>
-            <para>Typical SVN commands</para>
-            <para># svn co http://host.url/svn/project1/trunk # Checkout the most recent version</para>
-            <para># Tags and branches are created by copying</para>
-            <para># svn mkdir http://host.url/svn/project1/tags/ # Create the tags directory</para>
-            <para># svn copy -m "Tag rc1 rel." http://host.url/svn/project1/trunk \</para>
-            <para>http://host.url/svn/project1/tags/1.0rc1</para>
-            <para># svn status [--verbose] # Check files status into working dir</para>
-            <para># svn add src/file.h src/file.cpp # Add two files</para>
-            <para># svn commit -m 'Added new class file' # Commit the changes with a message</para>
-            <para># svn ls http://host.url/svn/project1/tags/ # List all tags</para>
-            <para># svn move foo.c bar.c # Move (rename) files</para>
-            <para># svn delete some_old_file # Delete files</para>
+            <screen># svn help import                                # Get help for any command
+    # Add a new directory (with content) into the src dir on project1
+# svn import /project1/newdir http://host.url/svn/project1/trunk/src -m 'add newdir'</screen>
+            <para><emphasis role="bold">Typical SVN commands</emphasis></para>
+            <screen># svn co http://host.url/svn/project1/trunk      # Checkout the most recent version
+    # Tags and branches are created by copying
+# svn mkdir http://host.url/svn/project1/tags/   # Create the tags directory
+# svn copy -m "Tag rc1 rel." http://host.url/svn/project1/trunk \
+                             http://host.url/svn/project1/tags/1.0rc1
+# svn status [--verbose]                         # Check files status into working dir
+# svn add src/file.h src/file.cpp                # Add two files
+# svn commit -m 'Added new class file'           # Commit the changes with a message
+# svn ls http://host.url/svn/project1/tags/      # List all tags
+# svn move foo.c bar.c                           # Move (rename) files
+# svn delete some_old_file                       # Delete files</screen>
         </section>
     </section>
     <section>
         <info>
-            <title>USEFUL COMMANDS</title>
+            <title>Useful Commands</title>
         </info>
-        <para/>
         <section>
             <info>
                 <title>less</title>
             </info>
             <para>The less command displays a text document on the console. It is present on most installation.</para>
-            <para># less unixtoolbox.xhtml</para>
+            <screen># less unixtoolbox.xhtml</screen>
             <para>Some important commands are (^N stands for [control]-[N]):</para>
             <para>h H good help on display</para>
             <para>f ^F ^V SPACE Forward one window (or N lines).</para>
@@ -1866,20 +1860,17 @@ Are you sure you want to continue connecting (yes/no)? yes</screen>
             <para>n Repeat previous search (for N-th occurrence).</para>
             <para>N Repeat previous search in reverse direction.</para>
             <para>q quit</para>
-            <para>11.http://www.cs.put.poznan.pl/csobaniec/Papers/svn-refcard.pdf</para>
-            <para>12.http://tortoisesvn.tigris.org</para>
-            <para/>
         </section>
         <section>
             <info>
                 <title>vi</title>
             </info>
             <para>Vi is present on ANY Linux/Unix installation and it is therefore useful to know some basic commands. There are two modes: command mode and insertion mode. The commands mode is accessed with [ESC], the insertion mode with i.</para>
-            <para>Quit</para>
+            <para><emphasis role="bold">Quit</emphasis></para>
             <para>:w newfilename save the file to newfilename</para>
             <para>:wq or :x save and quit</para>
             <para>:q! quit without saving</para>
-            <para>Search and move</para>
+            <para><emphasis role="bold">Search and move</emphasis></para>
             <para>/string Search forward for string</para>
             <para>?string Search back for string</para>
             <para>n Search for next instance of string</para>
@@ -1890,7 +1881,7 @@ Are you sure you want to continue connecting (yes/no)? yes</screen>
             <para>nG Move to the n th line of the file</para>
             <para>G Move to the last line of the file</para>
             <para>:%s/OLD/NEW/g Search and replace every occurrence</para>
-            <para>Delete text</para>
+            <para><emphasis role="bold">Delete text</emphasis></para>
             <para>dd delete current line</para>
             <para>D Delete to the end of the line</para>
             <para>dw Delete word</para>
@@ -1902,18 +1893,16 @@ Are you sure you want to continue connecting (yes/no)? yes</screen>
             <info>
                 <title>mail</title>
             </info>
-            <para>The mail command is a basic application to read and send email, it is usually installed. To send</para>
-            <para>an email simply type "mail user@domain". The first line is the subject, then the mail content.</para>
-            <para>Terminate and send the email with a single dot (.) in a new line. Example:</para>
-            <para># mail c@cb.vu</para>
-            <para>Subject: Your text is full of typos</para>
-            <para>"For a moment, nothing happened. Then, after a second or so,</para>
-            <para>nothing continued to happen."</para>
-            <para>.</para>
-            <para>EOT</para>
-            <para>#</para>
+            <para>The mail command is a basic application to read and send email, it is usually installed. To send an email simply type "mail user@domain". The first line is the subject, then the mail content. Terminate and send the email with a single dot (.) in a new line. Example:</para>
+            <screen># mail c@cb.vu
+Subject: Your text is full of typos
+"For a moment, nothing happened. Then, after a second or so, 
+nothing continued to happen."
+.
+EOT
+#</screen>
             <para>This is also working with a pipe:</para>
-            <para># echo "This is the mail body" | mail c@cb.vu</para>
+            <screen># echo "This is the mail body" | mail c@cb.vu</screen>
             <para>This is also a simple way to test the mail server.</para>
         </section>
         <section>
@@ -1921,100 +1910,117 @@ Are you sure you want to continue connecting (yes/no)? yes</screen>
                 <title>tar</title>
             </info>
             <para>The command tar (tape archive) creates and extracts archives of file and directories. The archive .tar is uncompressed, a compressed archive has the extension .tgz or .tar.gz (zip) or .tbz (bzip2). Do not use absolute path when creating an archive, you probably want to unpack it</para>
-            <para/>
-            <para>Create</para>
-            <para># cd /</para>
-            <para># tar -cf home.tar home/ # archive the whole /home directory (c for create)</para>
-            <para># tar -czf home.tgz home/ # same with zip compression</para>
-            <para># tar -cjf home.tbz home/ # same with bzip2 compression</para>
-            <para>Only include one (or two) directories from a tree, but keep the relative structure. For example</para>
-            <para>archive /usr/local/etc and /usr/local/www and the first directory in the archive should be local/.</para>
-            <para># tar -C /usr -czf local.tgz local/etc local/www</para>
-            <para># tar -C /usr -xzf local.tgz # To untar the local dir into /usr</para>
-            <para># cd /usr; tar -xzf local.tgz # Is the same as above</para>
-            <para>Extract</para>
-            <para># tar -tzf home.tgz # look inside the archive without extracting (list)</para>
-            <para># tar -xf home.tar # extract the archive here (x for extract)</para>
-            <para># tar -xzf home.tgz # same with zip compression</para>
-            <para># tar -xjf home.tgz # same with bzip2 compression</para>
-            <para># tar -xjf home.tgz home/colin/file.txt # Restore a single file</para>
-            <para>More advanced</para>
-            <para># tar c dir/ | gzip | ssh user@remote 'dd of=dir.tgz' # arch dir/ and store remotely.</para>
-            <para># tar cvf - `find . -print` &gt; backup.tar # arch the current directory.</para>
-            <para># tar -cf - -C /etc . | tar xpf - -C /backup/etc # Copy directories</para>
-            <para># tar -cf - -C /etc . | ssh user@remote tar xpf - -C /backup/etc # Remote copy.</para>
-            <para># tar -czf home.tgz --exclude '*.o' --exclude 'tmp/' home/</para>
+            <para><emphasis role="bold">Create</emphasis></para>
+            <screen># cd /
+# tar -cf home.tar home/        # archive the whole /home directory (c for create)
+# tar -czf home.tgz home/       # same with zip compression
+# tar -cjf home.tbz home/       # same with bzip2 compression</screen>
+            <para>Only include one (or two) directories from a tree, but keep the relative structure. For example archive /usr/local/etc and /usr/local/www and the first directory in the archive should be local/.</para>
+            <screen># tar -C /usr -czf local.tgz local/etc local/www
+# tar -C /usr -xzf local.tgz    # To untar the local dir into /usr
+# cd /usr; tar -xzf local.tgz   # Is the same as above</screen>
+            <para><emphasis role="bold">Extract</emphasis></para>
+            <screen># tar -tzf home.tgz             # look inside the archive without extracting (list)
+# tar -xf home.tar              # extract the archive here (x for extract)
+# tar -xzf home.tgz             # same with zip compression (-xjf for bzip2 compression)
+                                # remove leading path gallery2 and extract into gallery
+# tar --strip-components 1 -zxvf gallery2.tgz -C gallery/ 
+# tar -xjf home.tbz home/colin/file.txt    # Restore a single file</screen>
+            <para><emphasis role="bold">More advanced</emphasis></para>
+            <screen># tar c dir/ | gzip | ssh user@remote 'dd of=dir.tgz' # arch dir/ and store remotely.
+# tar cvf - `find . -print` > backup.tar              # arch the current directory.
+# tar -cf - -C /etc . | tar xpf - -C /backup/etc      # Copy directories
+# tar -cf - -C /etc . | ssh user@remote tar xpf - -C /backup/etc      # Remote copy.
+# tar -czf home.tgz --exclude '*.o' --exclude 'tmp/' home/</screen>
         </section>
         <section>
             <info>
                 <title>dd</title>
             </info>
-            <para>The program dd (disk dump) is used to copy partitions and disks and for other copy tricks.</para>
-            <para>Typical usage:</para>
-            <para># dd if=&lt;source&gt; of=&lt;target&gt; bs=&lt;byte size&gt; conv=&lt;conversion&gt;</para>
+            <para>The program dd (disk dump) is used to copy partitions and disks and for other copy tricks. Typical usage:</para>
+            <screen># dd if=&lt;source&gt; of=&lt;target&gt; bs=&lt;byte size&gt; conv=&lt;conversion&gt;</screen>
             <para>Important conv options:</para>
-            <para>notrunc do not truncate the output file, all zeros will be written as zeros.</para>
-            <para>noerror continue after read errors (e.g. bad blocks)</para>
-            <para>sync pad every input block with Nulls to ibs-size</para>
+            <para><option>notrunc</option> do not truncate the output file, all zeros will be written as zeros.</para>
+            <para><option>noerror</option> continue after read errors (e.g. bad blocks)</para>
+            <para><option>sync</option> pad every input block with Nulls to ibs-size</para>
             <para>The default byte size is 512 (one block). The MBR, where the partiton table is located, is on the first block, the first 63 blocks of a disk are empty. Larger byte sizes are faster to copy but require also more memory.</para>
-            <para>Backup and restore</para>
-            <para># dd if=/dev/hda of=/dev/hdc bs=16065b # Copy disk to disk (same size)</para>
-            <para># dd if=/dev/sda7 of /home/root.img bs=4096 conv=notrunc,noerror # Backup /</para>
-            <para># dd if /home/root.img of=/dev/sda7 bs=4096 conv=notrunc,noerror # Restore /</para>
-            <para># dd bs=1M if=/dev/ad4s3e | gzip -c &gt; ad4s3e.gz # Zip the backup</para>
-            <para># gunzip -dc ad4s3e.gz | dd of=/dev/ad0s3e bs=1M # Restore the zip</para>
-            <para># dd bs=1M if=/dev/ad4s3e | gzip | ssh eedcoba@fry 'dd of=ad4s3e.gz' # also remote</para>
-            <para># gunzip -dc ad4s3e.gz | ssh eedcoba@host 'dd of=/dev/ad0s3e bs=1M'</para>
-            <para># dd if=/dev/ad0 of=/dev/ad2 skip=1 seek=1 bs=4k conv=noerror # Skip MBR</para>
-            <para># This is necessary if the destination (ad2) is smaller.</para>
-            <para>Recover</para>
+            <para><emphasis role="bold">Backup and restore</emphasis></para>
+            <screen># dd if=/dev/hda of=/dev/hdc bs=16065b                # Copy disk to disk (same size)
+# dd if=/dev/sda7 of=/home/root.img bs=4096 conv=notrunc,noerror # Backup /
+# dd if=/home/root.img of=/dev/sda7 bs=4096 conv=notrunc,noerror # Restore /
+# dd bs=1M if=/dev/ad4s3e | gzip -c > ad4s3e.gz                  # Zip the backup
+# gunzip -dc ad4s3e.gz | dd of=/dev/ad0s3e bs=1M                 # Restore the zip
+# dd bs=1M if=/dev/ad4s3e | gzip | ssh eedcoba@fry 'dd of=ad4s3e.gz' # also remote
+# gunzip -dc ad4s3e.gz | ssh eedcoba@host 'dd of=/dev/ad0s3e bs=1M'
+# dd if=/dev/ad0 of=/dev/ad2 skip=1 seek=1 bs=4k conv=noerror    # Skip MBR
+    # This is necessary if the destination (ad2) is smaller.</screen>
+            <para><emphasis role="bold">Recover</emphasis></para>
             <para>The command dd will read every single block of the partiton, even the blocks. In case of problems it is better to use the option conv=sync,noerror so dd will skip the bad block and write zeros at the destination. Accordingly it is important to set the block size equal or smaller than the disk block size. A 1k size seems safe, set it with bs=1k. If a disk has bad sectors and the data should be recovered from a partiton, create an image file with dd, mount the image and copy the content to a new disk. With the option noerror, dd will skip the bad sectors and write zeros instead, thus only the data contained in the bad sectors will be lost.</para>
-            <para># dd if=/dev/hda of=/dev/null bs=1m # Check for bad blocks</para>
-            <para># dd bs=1k if=/dev/hda1 conv=sync,noerror,notrunc | gzip | ssh \ # Send to remote</para>
-            <para>root@fry 'dd of=hda1.gz bs=1k'</para>
-            <para># dd bs=1k if=/dev/hda1 conv=sync,noerror,notrunc of=hda1.img # Store into an image</para>
-            <para># mount -o loop /hda1.img /mnt # Mount the image (page 12)</para>
-            <para># rsync -ax /mnt/ /newdisk/ # Copy on a new disk</para>
-            <para># dd if=/dev/hda of=/dev/hda # Refresh the magnetic state</para>
-            <para># The above is useful to refresh a disk. It is perfectly safe, but must be unmounted.</para>
-            <para>Delete</para>
-            <para># dd if=/dev/zero of=/dev/hdc count=1 # Delete MBR and partiton table</para>
-            <para># dd if=/dev/zero of=/dev/hdc # Delete full disk</para>
-            <para># dd if=/dev/urandom of=/dev/hdc # Delete full disk better</para>
-            <para># kill -USR1 PID # View dd progress (Linux only!)</para>
+            <screen># dd if=/dev/hda of=/dev/null bs=1m                   # Check for bad blocks
+# dd bs=1k if=/dev/hda1 conv=sync,noerror,notrunc | gzip | ssh \ # Send to remote
+root@fry 'dd of=hda1.gz bs=1k'
+# dd bs=1k if=/dev/hda1 conv=sync,noerror,notrunc of=hda1.img    # Store into an image
+# mount -o loop /hda1.img /mnt                        # <link xlink:href="#">Mount the image</link>
+# rsync -ax /mnt/ /newdisk/                           # Copy on a new disk
+# dd if=/dev/hda of=/dev/hda                          # Refresh the magnetic state
+  # The above is useful to refresh a disk. It is perfectly safe, but must be unmounted.</screen>
+            <para><emphasis role="bold">Delete</emphasis></para>
+            <screen># dd if=/dev/zero of=/dev/hdc                         # Delete full disk
+# dd if=/dev/urandom of=/dev/hdc                      # Delete full disk better
+# kill -USR1 PID                                      # View dd progress (Linux)
+# kill -INFO PID                                      # View dd progress (FreeBSD)</screen>
         </section>
         <section>
             <info>
                 <title>screen</title>
             </info>
-            <para>Screen has two main functionalities:</para>
-            <para>• Run multiple terminal session within a single terminal.</para>
-            <para>• A started program is decoupled from the real terminal and can thus run in the</para>
-            <para>background. The real terminal can be closed and reattached later.</para>
-            <para>Short start example</para>
+            <para>Screen (a must have) has two main functionalities:</para>
+            <itemizedlist>
+                <listitem>
+                    <para>• Run multiple terminal session within a single terminal.</para>
+                </listitem>
+                <listitem>
+                    <para>• A started program is decoupled from the real terminal and can thus run in the background. The real terminal can be closed and reattached later.</para>
+                </listitem>
+            </itemizedlist>
+            <para><emphasis role="bold">Short start example</emphasis></para>
             <para>start screen with:</para>
-            <para># screen</para>
-            <para>Within the screen session we can start a long lasting program (like top). Detach the terminal</para>
-            <para>and reattach the same terminal from an other machine (over ssh for example).</para>
-            <para># top</para>
+            <screen># screen</screen>
+            <para>Within the screen session we can start a long lasting program (like top). Detach the terminal and reattach the same terminal from an other machine (over ssh for example).</para>
+            <screen># top</screen>
             <para>Now detach with Ctrl-a Ctrl-d. Reattach the terminal with</para>
-            <para># screen -r</para>
+            <screen># screen -r</screen>
             <para>or better:</para>
-            <para># screen -R -D</para>
+            <screen># screen -R -D</screen>
             <para>Attach here and now. In detail this means: If a session is running, then reattach. If necessary detach and logout remotely first. If it was not running create it and notify the user.</para>
-            <para>Screen commands (within screen)</para>
+            <para><emphasis role="bold">Screen commands (within screen)</emphasis></para>
             <para>All screen commands start with Ctrl-a.</para>
-            <para>• Ctrl-a ? help and summary of functions</para>
-            <para>• Ctrl-a c create an new window (terminal)</para>
-            <para>• Ctrl-a Ctrl-n and Ctrl-a Ctrl-p to switch to the next or previous window in the list, by</para>
-            <para>number.</para>
-            <para>• Ctrl-a Ctrl-N where N is a number from 0 to 9, to switch to the corresponding window.</para>
-            <para>• Ctrl-a " to get a navigable list of running windows</para>
-            <para>• Ctrl-a a to clear a missed Ctrl-a</para>
-            <para>• Ctrl-a Ctrl-d to disconnect and leave the session running in the background</para>
-            <para>• Ctrl-a x lock the screen terminal with a password</para>
-            <para>— Useful Commands —</para>
-            <para>39</para>
+            <itemizedlist>
+                <listitem>
+                    <para>Ctrl-a ? help and summary of functions</para>
+                </listitem>
+                <listitem>
+                    <para>Ctrl-a c create an new window (terminal)</para>
+                </listitem>
+                <listitem>
+                    <para>Ctrl-a Ctrl-n and Ctrl-a Ctrl-p to switch to the next or previous window in the list, by number.</para>
+                </listitem>
+                <listitem>
+                    <para>Ctrl-a Ctrl-N where N is a number from 0 to 9, to switch to the corresponding window.</para>
+                </listitem>
+                <listitem>
+                    <para>Ctrl-a " to get a navigable list of running windows</para>
+                </listitem>
+                <listitem>
+                    <para>Ctrl-a a to clear a missed Ctrl-a</para>
+                </listitem>
+                <listitem>
+                    <para>Ctrl-a Ctrl-d to disconnect and leave the session running in the background</para>
+                </listitem>
+                <listitem>
+                    <para>Ctrl-a x lock the screen terminal with a password</para>
+                </listitem>
+            </itemizedlist>
             <para>The screen session is terminated when the program within the running terminal is closed and you logout from the terminal.</para>
         </section>
         <section>
@@ -2022,104 +2028,119 @@ Are you sure you want to continue connecting (yes/no)? yes</screen>
                 <title>Find</title>
             </info>
             <para>Some important options:</para>
-            <para>-x (on BSD) -xdev (on Linux) Stay on the same file system (dev in fstab).</para>
-            <para>-exec cmd {} \; Execute the command and replace {} with the full path</para>
-            <para>-iname Like -name but is case insensitive</para>
-            <para>-ls Display information about the file (like ls -la)</para>
-            <para>-size n n is +-n (k M G T P)</para>
-            <para>-cmin n File's status was last changed n minutes ago.</para>
-            <para># find . -type f ! -perm -444 # Find files not readable by all</para>
-            <para># find . -type d ! -perm -111 # Find dirs not accessible by all</para>
-            <para># find /home/user/ -cmin 10 -print # Files created or modified in the last 10 min.</para>
-            <para># find . -name '*.[ch]' | xargs grep -E 'expr' # Search 'expr' in this dir and below.</para>
-            <para># find / -name "*.core" | xargs rm # Find core dumps and delete them</para>
-            <para># find / -name "*.core" -print -exec rm {} \; # Other syntax</para>
-            <para># find . \( -name "*.png" -o -name "*.jpg" \) -print</para>
-            <para># iname is not case sensitive</para>
-            <para># find . \( -iname "*.png" -o -iname "*.jpg" \) -print -exec tar -rf images.tar {} \;</para>
-            <para># find . -type f -name "*.txt" ! -name README.txt -print # Exclude README.txt files</para>
-            <para># find /var/ -size +1M -exec ls -lh {} \;</para>
-            <para># find /var/ -size +1M -ls # This is simpler</para>
-            <para># find . -size +10M -size -50M -print</para>
-            <para># find /usr/ports/ -name work -type d -print -exec rm -rf {} \; # Clean the ports</para>
-            <para>Find files with SUID; those file have to be kept secure</para>
-            <para># find / -type f -user root -perm -4000 -exec ls -l {} \;</para>
+            <para><option>-x</option> (on BSD) <option>-xdev</option> (on Linux) Stay on the same file system (dev in fstab).</para>
+            <para><option>-exec cmd {} \;</option> Execute the command and replace {} with the full path</para>
+            <para><option>-iname</option> Like -name but is case insensitive</para>
+            <para><option>-ls</option> Display information about the file (like ls -la)</para>
+            <para><option>-size n</option> n is +-n (k M G T P)</para>
+            <para><option>-cmin n</option> File's status was last changed n minutes ago.</para>
+            <screen># find . -type f ! -perm -444        # Find files not readable by all
+# find . -type d ! -perm -111        # Find dirs not accessible by all
+# find /home/user/ -cmin 10 -print   # Files created or modified in the last 10 min.
+# find . -name '*.[ch]' | xargs grep -E 'expr' # Search 'expr' in this dir and below.
+# find / -name "*.core" | xargs rm   # Find core dumps and delete them (also try core.*)
+# find / -name "*.core" -print -exec rm {} \;  # Other syntax
+      # Find images and create an archive, iname is not case sensitive. -r for append
+# find . \( -iname "*.png" -o -iname "*.jpg" \) -print -exec tar -rf images.tar {} \;
+# find . -type f -name "*.txt" ! -name README.txt -print  # Exclude README.txt files
+# find /var/ -size +10M -exec ls -lh {} \;     # Find large files > 10 MB
+# find /var/ -size +10M -ls           # This is simpler
+# find . -size +10M -size -50M -print
+# find /usr/ports/ -name work -type d -print -exec rm -rf {} \;  # Clean the ports
+      # Find files with SUID; those file are vulnerable and must be kept secure
+# find / -type f -user root -perm -4000 -exec ls -l {} \; </screen>
+            <para>Be careful with xarg or exec as it might or might not honor quotings and can return wrong results when files or directories contain spaces. In doubt use "-print0 | xargs -0" instead of "| xargs". The option -print0 must be the last in the find command. See this nice mini tutorial for find.</para>
+            <screen># find . -type f | xargs ls -l       # Will not work with spaces in names
+# find . -type f -print0 | xargs -0 ls -l  # Will work with spaces in names
+# find . -type f -exec ls -l '{}' \; # Or use quotes '{}' with -exec</screen>
         </section>
         <section>
             <info>
                 <title>Miscellaneous</title>
             </info>
-            <para># which command # Show full path name of command</para>
-            <para># time command # See how long a command takes to execute</para>
-            <para># time cat # Use time as stopwatch. Ctrl-c to stop</para>
-            <para># set | grep $USER # List the current environment</para>
-            <para># cal -3 # Display a three month calendar</para>
-            <para># date [-u|--utc|--universal] [MMDDhhmm[[CC]YY][.ss]]</para>
-            <para># date 10022155 # Set date and time</para>
-            <para># whatis grep # Display a short info on the command or word</para>
-            <para># whereis java # Search path and standard directories for word</para>
-            <para># setenv varname value # Set env. variable varname to value (csh/tcsh)</para>
-            <para># export varname="value" # set env. variable varname to value (sh/ksh/bash)</para>
-            <para># pwd # Print working directory</para>
-            <para># mkdir -p /path/to/dir # no error if existing, make parent dirs as needed</para>
-            <para># rmdir /path/to/dir # Remove directory</para>
-            <para># rm -rf /path/to/dir # Remove directory and its content (force)</para>
-            <para># cp -la /dir1 /dir2 # Archive and hard link files instead of copy</para>
-            <para># cp -lpR /dir1 /dir2 # Same for FreeBSD</para>
-            <para># mv /dir1 /dir2 # Rename a directory</para>
+            <screen># which command                      # Show full path name of command
+# time command                       # See how long a command takes to execute
+# time cat                           # Use time as stopwatch. Ctrl-c to stop
+# set | grep $USER                   # List the current environment
+# cal -3                             # Display a three month calendar
+# date [-u|--utc|--universal] [MMDDhhmm[[CC]YY][.ss]]
+# date 10022155                      # Set date and time
+# whatis grep                        # Display a short info on the command or word
+# whereis java                       # Search path and standard directories for word
+# setenv varname value               # Set env. variable varname to value (csh/tcsh)
+# export varname="value"             # set env. variable varname to value (sh/ksh/bash)
+# pwd                                # Print working directory
+# mkdir -p /path/to/dir              # no error if existing, make parent dirs as needed
+# mkdir -p project/{bin,src,obj,doc/{html,man,pdf},debug/some/more/dirs}
+# rmdir /path/to/dir                 # Remove directory
+# rm -rf /path/to/dir                # Remove directory and its content (force)
+# cp -la /dir1 /dir2                 # Archive and hard link files instead of copy
+# cp -lpR /dir1 /dir2                # Same for FreeBSD
+# cp unixtoolbox.xhtml{,.bak}        # Short way to copy the file with a new extension
+# mv /dir1 /dir2                     # Rename a directory
+# ls -1                              # list one file per line
+# history | tail -50                 # Display the last 50 used commands</screen>
+            <para>Check file hashes with openssl. This is a nice alternative to the commands md5sum or sha1sum (FreeBSD uses md5 and sha1) which are not always installed.</para>
+            <screen># openssl md5 file.tar.gz            # Generate an md5 checksum from file
+# openssl sha1 file.tar.gz           # Generate an sha1 checksum from file
+# openssl rmd160 file.tar.gz         # Generate a RIPEMD-160 checksum from file</screen>
         </section>
     </section>
     <section>
         <info>
-            <title>INSTALL SOFTWARE</title>
+            <title>Install Software</title>
         </info>
         <section>
             <info>
                 <title>List installed packages</title>
             </info>
-            <para># rpm -qa # List installed packages (RH, SuSE, RPM based)</para>
-            <para># dpkg -l # Debian, Ubuntu</para>
-            <para># pkg_info -W smbd # FreeBSD show which package smbd belongs to</para>
-            <para># pkginfo # Solaris</para>
+            <screen># rpm -qa                            # List installed packages (RH, SuSE, RPM based)
+# dpkg -l                            # Debian, Ubuntu
+# pkg_info                           # FreeBSD list all installed packages
+# pkg_info -W smbd                   # FreeBSD show which package smbd belongs to
+# pkginfo                            # Solaris</screen>
         </section>
         <section>
             <info>
                 <title>Add/remove software</title>
             </info>
             <para>Front ends: yast2/yast for SuSE, redhat-config-packages for Red Hat.</para>
-            <para># rpm -i pkgname.rpm # install the package (RH, SuSE, RPM based)</para>
-            <para># rpm -e pkgname # Remove package</para>
-            <para>Debian</para>
-            <para># apt-get update # First update the package lists</para>
-            <para># apt-get install emacs # Install the package emacs</para>
-            <para># dpkg --remove emacs # Remove the package emacs</para>
-            <para>FreeBSD</para>
-            <para># pkg_add -r rsync # Fetch and install rsync.</para>
-            <para># pkg_delete /var/db/pkg/rsync-xx # Delete the rsync package</para>
+            <screen># rpm -i pkgname.rpm                 # install the package (RH, SuSE, RPM based)
+# rpm -e pkgname                     # Remove package</screen>
+            <para><emphasis role="bold">Debian</emphasis></para>
+            <screen># apt-get update                     # First update the package lists
+# apt-get install emacs              # Install the package emacs
+# dpkg --remove emacs                # Remove the package emacs
+# dpkg -S file                       # find what package a file belongs to</screen>
+            <para><emphasis role="bold">FreeBSD</emphasis></para>
+            <screen># pkg_add -r rsync                   # Fetch and install rsync.
+# pkg_delete /var/db/pkg/rsync-xx    # Delete the rsync package</screen>
             <para>Set where the packages are fetched from with the PACKAGESITE variable. For example:</para>
-            <para># export PACKAGESITE=ftp://ftp.freebsd.org/pub/FreeBSD/ports/i386/packages/Latest/</para>
-            <para># or ftp://ftp.freebsd.org/pub/FreeBSD/ports/i386/packages-6-stable/Latest/</para>
-            <para>FreeBSD ports. The port tree /usr/ports/ is a collection of software ready to compile and install. The ports are updated with the program portsnap.</para>
-            <para># portsnap fetch extract # Create the tree when running the first time</para>
-            <para># portsnap fetch update # Update the port tree</para>
-            <para># cd /usr/ports/net/rsync/ # Select the package to install</para>
-            <para># make install distclean # Install and cleanup (also see man ports)</para>
-            <para># make package # Make a binary package for the port</para>
+            <screen># export PACKAGESITE=ftp://ftp.freebsd.org/pub/FreeBSD/ports/i386/packages/Latest/ 
+# or ftp://ftp.freebsd.org/pub/FreeBSD/ports/i386/packages-6-stable/Latest/</screen>
+            <para><emphasis role="bold">FreeBSD <link xlink:href="http://www.freebsd.org/handbook/ports.html">ports</link>.</emphasis></para>
+            <para>The port tree /usr/ports/ is a collection of software ready to compile and install. The ports are updated with the program portsnap.</para>
+            <screen># portsnap fetch extract             # Create the tree when running the first time
+# portsnap fetch update              # Update the port tree
+# cd /usr/ports/net/rsync/           # Select the package to install
+# make install distclean             # Install and cleanup (also see man ports)
+# make package                       # Make a binary package of this port
+# pkgdb -F                           # Fix the package registry database</screen>
         </section>
         <section>
             <info>
                 <title>Library path</title>
             </info>
             <para>Due to complex dependencies and runtime linking, programs are difficult to copy to an other system or distribution. However for small programs with little dependencies, the missing libraries can be copied over. The runtime libraries (and the missing one) are checked with ldd and managed with ldconfig.</para>
-            <para># ldd /usr/bin/rsync # List all needed runtime libraries</para>
-            <para># ldconfig -n /path/to/libs/ # Add a path to the shared libraries directories</para>
-            <para># ldconfig -m /path/to/libs/ # FreeBSD</para>
-            <para># LD_LIBRARY_PATH # The variable set the link library path</para>
+            <screen># ldd /usr/bin/rsync                 # List all needed runtime libraries
+# ldconfig -n /path/to/libs/         # Add a path to the shared libraries directories
+# ldconfig -m /path/to/libs/         # FreeBSD
+# LD_LIBRARY_PATH                    # The variable set the link library path</screen>
         </section>
     </section>
     <section>
         <info>
-            <title>CONVERT MEDIA</title>
+            <title>Convert Media</title>
         </info>
         <para>Sometimes one simply need to convert a video, audio file or document to another format.</para>
         <section>
@@ -2127,181 +2148,176 @@ Are you sure you want to continue connecting (yes/no)? yes</screen>
                 <title>Text encoding</title>
             </info>
             <para>Text encoding can get totally wrong, specially when the language requires special characters like адз. The command iconv can convert from one encoding to an other.</para>
-            <para/>
-            <para># iconv -f &lt;from_encoding&gt; -t &lt;to_encoding&gt; &lt;input_file&gt;</para>
-            <para># iconv -f ISO8859-1 -t UTF-8 -o file.input &gt; file_utf8</para>
-            <para># iconv -l # List known coded character sets</para>
+            <screen># iconv -f &lt;from_encoding> -t &lt;to_encoding> &lt;input_file>
+# iconv -f ISO8859-1 -t UTF-8 -o file.input > file_utf8
+# iconv -l                           # List known coded character sets</screen>
             <para>Without the -f option, iconv will use the local char-set, which is usually fine if the document displays well.</para>
         </section>
         <section>
             <info>
                 <title>Unix - DOS newlines</title>
             </info>
-            <para>Convert DOS (CR/LF) to Unix (LF) newlines within a Unix shell. See also dos2unix and unix2dos</para>
-            <para>if you have them.</para>
-            <para># sed 's/.$//' dosfile.txt &gt; unixfile.txt</para>
+            <para>Convert DOS (CR/LF) to Unix (LF) newlines within a Unix shell. See also dos2unix and unix2dos if you have them.</para>
+            <screen># sed 's/.$//' dosfile.txt > unixfile.txt                  # DOS to UNIX
+# awk '{sub(/\r$/,"");print}' dosfile.txt > unixfile.txt   # DOS to UNIX
+# awk '{sub(/$/,"\r");print}' unixfile.txt > dosfile.txt   # UNIX to DOS</screen>
             <para>Convert Unix to DOS newlines within a Windows environment. Use sed from mingw or cygwin.</para>
-            <para># sed -n p unixfile.txt &gt; dosfile.txt</para>
+            <screen># sed -n p unixfile.txt > dosfile.txt
+# awk 1 unixfile.txt > dosfile.txt   # UNIX to DOS (with a cygwin shell)</screen>
         </section>
         <section>
             <info>
                 <title>PDF to Jpeg and concatenate PDF files</title>
             </info>
-            <para>Convert a PDF document with gs (GhostScript) to jpeg (or png) images for each page. Also</para>
-            <para>much shorter with convert (from ImageMagick or GraphicsMagick).</para>
-            <para># gs -dBATCH -dNOPAUSE -sDEVICE=jpeg -r150 -dTextAlphaBits=4 -dGraphicsAlphaBits=4 \</para>
-            <para>-dMaxStripSize=8192 -sOutputFile=unixtoolbox_%d.jpg unixtoolbox.pdf</para>
-            <para># convert unixtoolbox.pdf unixtoolbox-%03d.png</para>
-            <para># convert *.jpeg images.pdf # Create a simple PDF with all pictures</para>
+            <para>Convert a PDF document with gs (GhostScript) to jpeg (or png) images for each page. Also much shorter with convert (from ImageMagick or GraphicsMagick).</para>
+            <screen># gs -dBATCH -dNOPAUSE -sDEVICE=jpeg -r150 -dTextAlphaBits=4 -dGraphicsAlphaBits=4 \
+ -dMaxStripSize=8192 -sOutputFile=unixtoolbox_%d.jpg unixtoolbox.pdf
+# convert unixtoolbox.pdf unixtoolbox-%03d.png
+# convert *.jpeg images.pdf          # Create a simple PDF with all pictures
+# convert image000* -resample 120x120 -compress JPEG -quality 80 images.pdf
+# mogrify -format png *.ppm          # convert all ppm images to png format</screen>
             <para>Ghostscript can also concatenate multiple pdf files into a single one.</para>
-            <para># gs -q -sPAPERSIZE=a4 -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=all.pdf \</para>
-            <para>file1.pdf file2.pdf ... # On Windows use '#' instead of '='</para>
+            <screen># gs -q -sPAPERSIZE=a4 -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=all.pdf \
+file1.pdf file2.pdf ...              # On Windows use '#' instead of '='</screen>
         </section>
         <section>
             <info>
                 <title>Convert video</title>
             </info>
             <para>Compress the Canon digicam video with an mpeg4 codec and repair the crappy sound.</para>
-            <para># mencoder -o videoout.avi -oac mp3lame -ovc lavc -srate 11025 \</para>
-            <para>-channels 1 -af-adv force=1 -lameopts preset=medium -lavcopts \</para>
-            <para>vcodec=msmpeg4v2:vbitrate=600 -mc 0 vidoein.AVI</para>
+            <screen># mencoder -o videoout.avi -oac mp3lame -ovc lavc -srate 11025 \
+-channels 1 -af-adv force=1 -lameopts preset=medium -lavcopts \
+vcodec=msmpeg4v2:vbitrate=600 -mc 0 vidoein.AVI</screen>
         </section>
         <section>
             <info>
                 <title>Copy an audio cd</title>
             </info>
-            <para>The program cdparanoia13 can save the audio tracks (FreeBSD port in  audio/cdparanoia/),</para>
-            <para>oggenc can encode in Ogg Vorbis format, lame converts to mp3.</para>
-            <para># cdparanoia -B # Copy the tracks to wav files in current dir</para>
-            <para># lame -b 256 in.wav out.mp3 # Encode in mp3 256 kb/s</para>
-            <para># for i in *.wav; do lame -b 256 $i `basename $i .wav`.mp3; done</para>
-            <para># oggenc in.wav -b 256 out.ogg # Encode in Ogg Vorbis 256 kb/s</para>
-            <para>13.http://xiph.org/paranoia/</para>
-            <para/>
+            <para>The program <link xlink:href="http://xiph.org/paranoia/">cdparanoia</link> can save the audio tracks (FreeBSD port in  audio/cdparanoia/), oggenc can encode in Ogg Vorbis format, lame converts to mp3.</para>
+            <screen># cdparanoia -B                      # Copy the tracks to wav files in current dir
+# lame -b 256 in.wav out.mp3         # Encode in mp3 256 kb/s
+# for i in *.wav; do lame -b 256 $i `basename $i .wav`.mp3; done
+# oggenc in.wav -b 256 out.ogg       # Encode in Ogg Vorbis 256 kb/s</screen>
         </section>
     </section>
     <section>
         <info>
-            <title>PRINTING</title>
+            <title>Printing</title>
         </info>
         <section>
             <info>
                 <title>Print with lpr</title>
             </info>
-            <para># lpr unixtoolbox.ps # Print on default printer</para>
-            <para># export PRINTER=hp4600 # Change the default printer</para>
-            <para># lpr -Php4500 #2 unixtoolbox.ps # Use printer hp4500 and print 2 copies</para>
-            <para># lpr -o Duplex=DuplexNoTumble ... # Print duplex along the long side</para>
-            <para># lpr -o PageSize=A4,Duplex=DuplexNoTumble ...</para>
-            <para># lpq # Check the queue on default printer</para>
-            <para># lpq -l -Php4500 # Queue on printer hp4500 with verbose</para>
-            <para># lprm - # Remove all users jobs on default printer</para>
-            <para># lprm -Php4500 3186 # Remove job 3186. Find job nbr with lpq</para>
-            <para># lpc status # List all available printers</para>
-            <para># lpc status hp4500 # Check if printer is online and queue length</para>
+            <screen># lpr unixtoolbox.ps                 # Print on default printer
+# export PRINTER=hp4600              # Change the default printer
+# lpr -Php4500 #2 unixtoolbox.ps     # Use printer hp4500 and print 2 copies
+# lpr -o Duplex=DuplexNoTumble ...   # Print duplex along the long side
+# lpr -o PageSize=A4,Duplex=DuplexNoTumble ...</screen>
+            <screen># lpq                                # Check the queue on default printer
+# lpq -l -Php4500                    # Queue on printer hp4500 with verbose
+# lprm -                             # Remove all users jobs on default printer
+# lprm -Php4500 3186                 # Remove job 3186. Find job nbr with lpq
+# lpc status                         # List all available printers
+# lpc status hp4500                  # Check if printer is online and queue length</screen>
+            <para>Some devices are not postscript and will print garbage when fed with a pdf file. This might be solved with:</para>
+            <screen># gs -dSAFER -dNOPAUSE -sDEVICE=deskjet -sOutputFile=\|lpr file.pdf</screen>
+            <para>Print to a PDF file even if the application does not support it. Use gs on the print command instead of lpr.</para>
+            <screen># gs -q -sPAPERSIZE=a4 -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/path/file.pdf </screen>
         </section>
     </section>
     <section>
         <info>
-            <title>DATABASES</title>
+            <title>Databases</title>
         </info>
         <section>
             <info>
                 <title>PostgreSQL</title>
             </info>
-            <para>Change root or a username password</para>
-            <para># psql -d template1 -U pgsql</para>
-            <para>&gt; alter user pgsql with password 'pgsql_password'; # Use username instead of "pgsql"</para>
-            <para>Create user and database</para>
-            <para>The commands createuser, dropuser, createdb and dropdb are convenient shortcuts</para>
-            <para>equivalent to the SQL commands. The new user is bob with database bobdb ; use as root with</para>
-            <para>pgsql the database super user:</para>
-            <para># createuser -U pgsql -P bob # -P will ask for password</para>
-            <para># createdb -U pgsql -O bob bobdb # new bobdb is owned by bob</para>
-            <para># dropdb bobdb # Delete database bobdb</para>
-            <para># dropuser bob # Delete user bob</para>
+            <para><emphasis role="bold">Change root or a username password</emphasis></para>
+            <screen># psql -d template1 -U pgsql
+> alter user pgsql with password 'pgsql_password';  # Use username instead of "pgsql"</screen>
+            <para><emphasis role="bold">Create user and database</emphasis></para>
+            <para>The commands createuser, dropuser, createdb and dropdb are convenient shortcuts equivalent to the SQL commands. The new user is bob with database bobdb ; use as root with pgsql the database super user:</para>
+            <screen># createuser -U pgsql -P bob         # -P will ask for password
+# createdb -U pgsql -O bob bobdb     # new bobdb is owned by bob
+# dropdb bobdb                       # Delete database bobdb
+# dropuser bob                       # Delete user bob</screen>
             <para>The general database authentication mechanism is configured in pg_hba.conf</para>
-            <para>Grant remote access</para>
-            <para>The file $PGSQL_DATA_D/postgresql.conf specifies the address to bind to. Typically</para>
-            <para>listen_addresses = '*' for Postgres 8.x.</para>
+            <para><emphasis role="bold">Grant remote access</emphasis></para>
+            <para>The file $PGSQL_DATA_D/postgresql.conf specifies the address to bind to. Typically listen_addresses = '*' for Postgres 8.x.</para>
             <para>The file $PGSQL_DATA_D/pg_hba.conf defines the access control. Examples:</para>
-            <para># TYPE DATABASE USER IP-ADDRESS IP-MASK METHOD</para>
-            <para>host bobdb bob 212.117.81.42 255.255.255.255 password</para>
-            <para>host all all 0.0.0.0/0 password</para>
-            <para>Backup and restore</para>
-            <para>The backups and restore are done with the user pgsql or postgres. Backup and restore a single</para>
-            <para>database:</para>
-            <para># pg_dump --clean dbname &gt; dbname_sql.dump</para>
-            <para># psql dbname &lt; dbname_sql.dump</para>
+            <programlisting># TYPE  DATABASE    USER        IP-ADDRESS        IP-MASK          METHOD
+host    bobdb       bob        212.117.81.42     255.255.255.255   password
+host    all         all        0.0.0.0/0                           password</programlisting>
+            <para><emphasis role="bold">Backup and restore</emphasis></para>
+            <para>The backups and restore are done with the user pgsql or postgres. Backup and restore a single database:</para>
+            <screen># pg_dump --clean dbname > dbname_sql.dump
+# psql dbname &lt; dbname_sql.dump</screen>
             <para>Backup and restore all databases (including users):</para>
-            <para># pg_dumpall --clean &gt; full.dump</para>
-            <para># psql -f full.dump postgres</para>
+            <screen># pg_dumpall --clean > full.dump
+# psql -f full.dump postgres</screen>
             <para>In this case the restore is started with the database postgres which is better when reloading an empty cluster.</para>
         </section>
         <section>
             <info>
                 <title>MySQL</title>
             </info>
-            <para>Change mysql root or username password</para>
-            <para>Method 1</para>
-            <para># /etc/init.d/mysql stop</para>
-            <para>or</para>
-            <para># killall mysqld</para>
-            <para># mysqld --skip-grant-tables</para>
-            <para># mysqladmin -u root password 'newpasswd'</para>
-            <para># /etc/init.d/mysql start</para>
-            <para>Method 2</para>
-            <para># mysql -u root mysql</para>
-            <para>mysql&gt; UPDATE USER SET PASSWORD=PASSWORD("newpassword") where user='root';</para>
-            <para>mysql&gt; FLUSH PRIVILEGES; # Use username instead of "root"</para>
-            <para>mysql&gt; quit</para>
-            <para>Create user and database</para>
-            <para># mysql -u root mysql</para>
-            <para>mysql&gt; CREATE DATABASE bobdb;</para>
-            <para>mysql&gt; GRANT ALL ON *.* TO 'bob'@'%' IDENTIFIED BY 'pwd'; # Use localhost instead of %</para>
-            <para># to restrict the network access</para>
-            <para>mysql&gt; DROP DATABASE bobdb; # Delete database</para>
-            <para>mysql&gt; DROP USER bob; # Delete user</para>
-            <para>mysql&gt; DELETE FROM mysql.user WHERE user='bob and host='hostname'; # Alt. command</para>
-            <para>mysql&gt; FLUSH PRIVILEGES;</para>
-            <para>Grant remote access</para>
-            <para>Remote access is typically permitted for a database, and not all databases. The file /etc/my.cnf</para>
-            <para>contains the IP address to bind to. Typically comment the line bind-address = out.</para>
-            <para># mysql -u root mysql</para>
-            <para>mysql&gt; GRANT ALL ON bobdb.* TO bob@'xxx.xxx.xxx.xxx' IDENTIFIED BY 'PASSWORD';</para>
-            <para>mysql&gt; REVOKE GRANT OPTION ON foo.* FROM bar@'xxx.xxx.xxx.xxx';</para>
-            <para>mysql&gt; FLUSH PRIVILEGES; # Use 'hostname' or also '%' for full access</para>
-            <para>Backup and restore</para>
+            <para><emphasis role="bold">Change mysql root or username password</emphasis></para>
+            <para><emphasis role="italic">Method 1</emphasis></para>
+            <screen># /etc/init.d/mysql stop
+or
+# killall mysqld
+# mysqld --skip-grant-tables
+# mysqladmin -u root password 'newpasswd'
+# /etc/init.d/mysql start</screen>
+            <para><emphasis role="italic">Method 2</emphasis></para>
+            <screen># mysql -u root mysql
+mysql> UPDATE USER SET PASSWORD=PASSWORD("newpassword") where user='root';
+mysql> FLUSH PRIVILEGES;                           # Use username instead of "root"
+mysql> quit</screen>
+            <para><emphasis role="bold">Create user and database</emphasis></para>
+            <screen># mysql -u root mysql
+mysql> CREATE USER 'bob'@'localhost' IDENTIFIED BY 'pwd'; # create only a user
+mysql> CREATE DATABASE bobdb;
+mysql> GRANT ALL ON *.* TO 'bob'@'%' IDENTIFIED BY 'pwd'; # Use localhost instead of %
+                                                   # to restrict the network access
+mysql> DROP DATABASE bobdb;                        # Delete database
+mysql> DROP USER bob;                              # Delete user
+mysql> DELETE FROM mysql.user WHERE user='bob and host='hostname'; # Alt. command
+mysql> FLUSH PRIVILEGES;</screen>
+            <para><emphasis role="bold">Grant remote access</emphasis></para>
+            <para>Remote access is typically permitted for a database, and not all databases. The file /etc/my.cnf contains the IP address to bind to. Typically comment the line bind-address = out.</para>
+            <screen># mysql -u root mysql
+mysql> GRANT ALL ON bobdb.* TO bob@'xxx.xxx.xxx.xxx' IDENTIFIED BY 'PASSWORD';
+mysql> REVOKE GRANT OPTION ON foo.* FROM bar@'xxx.xxx.xxx.xxx';
+mysql> FLUSH PRIVILEGES;                  # Use 'hostname' or also '%' for full access</screen>
+            <para><emphasis role="bold">Backup and restore</emphasis></para>
             <para>Backup and restore a single database:</para>
-            <para># mysqldump -u root -psecret --add-drop-database dbname &gt; dbname_sql.dump</para>
-            <para># mysql -u root -psecret -D dbname &lt; dbname_sql.dump</para>
+            <screen># mysqldump -u root -psecret --add-drop-database dbname > dbname_sql.dump
+# mysql -u root -psecret -D dbname &lt; dbname_sql.dump</screen>
             <para>Backup and restore all databases:</para>
-            <para># mysqldump -u root -psecret --add-drop-database --all-databases &gt; full.dump</para>
-            <para># mysql -u root -psecret &lt; full.dump</para>
-            <para>Here is "secret" the mysql root password, there is no space after -p. When the -p option is used</para>
-            <para>alone (w/o password), the password is asked at the command prompt.</para>
+            <screen># mysqldump -u root -psecret --add-drop-database --all-databases > full.dump
+# mysql -u root -psecret &lt; full.dump</screen>
+            <para>Here is "secret" the mysql root password, there is no space after -p. When the -p option is used alone (w/o password), the password is asked at the command prompt.</para>
         </section>
         <section>
             <info>
                 <title>SQLite</title>
             </info>
-            <para>SQLite14 is a small powerfull self-contined, serverless, zero-configuration SQL database.</para>
-            <para>14.http://www.sqlite.org</para>
-            <para>— Databases —</para>
-            <para>44</para>
-            <para>Dump and restore</para>
-            <para>It can be useful to dump and restore an SQLite database. For example you can edit the dump</para>
-            <para>file to change a column attribute or type and then restore the database. This is easier than</para>
-            <para>messing with SQL commands. Use the command sqlite3 for a 3.x database.</para>
-            <para># sqlite database.db .dump &gt; dump.sql # dump</para>
-            <para># sqlite database.db &lt; dump.sql # restore</para>
-            <para>Convert 2.x to 3.x database</para>
-            <para>sqlite database_v2.db .dump | sqlite3 database_v3.db</para>
+            <para><indexterm>
+                    <primary>SQLite</primary>
+                </indexterm><link xlink:href="http://www.sqlite.org/">SQLite</link> is a small powerfull self-contined, serverless, zero-configuration SQL database.</para>
+            <para><emphasis role="bold">Dump and restore</emphasis></para>
+            <para>It can be useful to dump and restore an SQLite database. For example you can edit the dump file to change a column attribute or type and then restore the database. This is easier than messing with SQL commands. Use the command sqlite3 for a 3.x database.</para>
+            <screen># sqlite database.db .dump > dump.sql              # dump
+# sqlite database.db &lt; dump.sql                    # restore</screen>
+            <para><emphasis role="bold">Convert 2.x to 3.x database</emphasis></para>
+            <screen># sqlite database_v2.db .dump | sqlite3 database_v3.db</screen>
         </section>
     </section>
     <section>
         <info>
-            <title>DISK QUOTA</title>
+            <title>Disk Quota</title>
         </info>
         <para>A disk quota allows to limit the amount of disk space and/or the number of files a user or (or member of group) can use. The quotas are allocated on a per-file system basis and are enforced by the kernel.</para>
         <section>
@@ -2309,145 +2325,133 @@ Are you sure you want to continue connecting (yes/no)? yes</screen>
                 <title>Linux setup</title>
             </info>
             <para>The quota tools package usually needs to be installed, it contains the command line tools. Activate the user quota in the fstab and remount the partition. If the partition is busy, either all locked files must be closed, or the system must be rebooted. Add usrquota to the fstab mount options, for example:</para>
-            <para>/dev/sda2 /home reiserfs rw,acl,user_xattr,usrquota 1 1</para>
-            <para># mount -o remount /home</para>
-            <para># mount # Check if usrquota is active, otherwise reboot</para>
+            <programlisting>/dev/sda2     /home    reiserfs     rw,acl,user_xattr,usrquota 1 1</programlisting>
+            <screen># mount -o remount /home
+# mount                              # Check if usrquota is active, otherwise reboot</screen>
             <para>Initialize the quota.user file with quotacheck.</para>
-            <para># quotacheck -vum /home</para>
-            <para># chmod 644 /home/aquota.user # To let the users check their own quota</para>
-            <para>Activate the quota either with the provided script (e.g. /etc/init.d/quotad on SuSE) or with</para>
-            <para>quotaon:</para>
-            <para>quotaon -vu /home</para>
+            <screen># quotacheck -vum /home
+# chmod 644 /home/aquota.user        # To let the users check their own quota</screen>
+            <para>Activate the quota either with the provided script (e.g. /etc/init.d/quotad on SuSE) or with quotaon:</para>
+            <screen>quotaon -vu /home</screen>
             <para>Check that the quota is active with:</para>
-            <para>quota -v</para>
+            <screen>quota -v</screen>
         </section>
         <section>
             <info>
                 <title>FreeBSD setup</title>
             </info>
-            <para>The quota tools are part of the base system, however the kernel needs the option quota. If it is</para>
-            <para>not there, add it and recompile the kernel.</para>
-            <para>options QUOTA</para>
+            <para>The quota tools are part of the base system, however the kernel needs the option quota. If it is not there, add it and recompile the kernel.</para>
+            <programlisting>options QUOTA</programlisting>
             <para>As with Linux, add the quota to the fstab options (userquota, not usrquota):</para>
-            <para>/dev/ad0s1d /home ufs rw,noatime,userquota 2 2</para>
-            <para># mount /home # To remount the partition</para>
+            <programlisting>/dev/ad0s1d    /home    ufs     rw,noatime,userquota    2  2</programlisting>
+            <screen># mount /home                        # To remount the partition</screen>
             <para>Enable disk quotas in /etc/rc.conf and start the quota.</para>
-            <para># grep quotas /etc/rc.conf</para>
-            <para>enable_quotas="YES" # turn on quotas on startup (or NO).</para>
-            <para>check_quotas="YES" # Check quotas on startup (or NO).</para>
-            <para># /etc/rc.d/quota start</para>
-            <para/>
+            <screen># grep quotas /etc/rc.conf
+enable_quotas="YES"                  # turn on quotas on startup (or NO).
+check_quotas="YES"                   # Check quotas on startup (or NO).
+# /etc/rc.d/quota start</screen>
         </section>
         <section>
             <info>
                 <title>Assign quota limits</title>
             </info>
-            <para>The quotas are not limited per default (set to 0). The limits are set with edquota for single</para>
-            <para>users. A quota can be also duplicated to many users. The file structure is different between the</para>
-            <para>quota implementations, but the principle is the same: the values of blocks and inodes can be</para>
-            <para>limited. Only change the values of soft and hard. If not specified, the blocks are 1k. The grace</para>
-            <para>period is set with edquota -t. For example:</para>
-            <para># edquota -u colin</para>
-            <para>Linux</para>
-            <para>Disk quotas for user colin (uid 1007):</para>
-            <para>Filesystem blocks soft hard inodes soft hard</para>
-            <para>/dev/sda8 108 1000 2000 1 0 0</para>
-            <para>FreeBSD</para>
+            <para>The quotas are not limited per default (set to 0). The limits are set with edquota for single users. A quota can be also duplicated to many users. The file structure is different between the quota implementations, but the principle is the same: the values of blocks and inodes can be limited. Only change the values of soft and hard. If not specified, the blocks are 1k. The grace period is set with edquota -t. For example:</para>
+            <screen># edquota -u colin</screen>
+            <para><emphasis role="bold">Linux</emphasis></para>
+            <screen>Disk quotas for user colin (uid 1007):
+  Filesystem         blocks       soft       hard     inodes     soft     hard
+  /dev/sda8            108       1000       2000          1        0        0</screen>
+            <para><emphasis role="bold">FreeBSD</emphasis></para>
             <para>Quotas for user colin:</para>
-            <para>/home: kbytes in use: 504184, limits (soft = 700000, hard = 800000)</para>
-            <para>inodes in use: 1792, limits (soft = 0, hard = 0)</para>
-            <para>For many users</para>
-            <para>The command edquota -p is used to duplicate a quota to other users. For example to duplicate</para>
-            <para>a reference quota to all users:</para>
-            <para># edquota -p refuser `awk -F: '$3 &gt; 499 {print $1}' /etc/passwd`</para>
-            <para># edquota -p refuser user1 user2 # Duplicate to 2 users</para>
-            <para>Checks</para>
-            <para>Users can check their quota by simply typing quota (the file quota.user must be readable). Root</para>
-            <para>can check all quotas.</para>
-            <para># quota -u colin # Check quota for a user</para>
-            <para># repquota /home # Full report for the partition for all users</para>
+            <screen>Quotas for user colin:
+/home: kbytes in use: 504184, limits (soft = 700000, hard = 800000)
+   inodes in use: 1792, limits (soft = 0, hard = 0)</screen>
+            <para><emphasis role="bold">For many users</emphasis></para>
+            <para>The command edquota -p is used to duplicate a quota to other users. For example to duplicate a reference quota to all users:</para>
+            <screen># edquota -p refuser `awk -F: '$3 > 499 {print $1}' /etc/passwd`
+# edquota -p refuser user1 user2     # Duplicate to 2 users</screen>
+            <para><emphasis role="bold">Checks</emphasis></para>
+            <para>Users can check their quota by simply typing quota (the file quota.user must be readable). Root can check all quotas.</para>
+            <screen># quota -u colin                     # Check quota for a user
+# repquota /home                     # Full report for the partition for all users</screen>
         </section>
     </section>
     <section>
         <info>
-            <title>SHELLS</title>
+            <title>Shells</title>
         </info>
-        <para>Most Linux distributions use the bash shell while the BSDs use tcsh, the bourne shell is only</para>
-        <para>used for scripts. Filters are very useful and can be piped:</para>
-        <para>grep Pattern matching</para>
-        <para>sed Search and Replace strings or characters</para>
-        <para>cut Print specific columns from a marker</para>
-        <para>sort Sort alphabetically or numerically</para>
-        <para>uniq Remove duplicate lines from a file</para>
+        <para>Most Linux distributions use the bash shell while the BSDs use tcsh, the bourne shell is only used for scripts. Filters are very useful and can be piped:</para>
+        <para><command>grep</command> Pattern matching</para>
+        <para><command>sed</command> Search and Replace strings or characters</para>
+        <para><command>cut</command> Print specific columns from a marker</para>
+        <para><command>sort</command> Sort alphabetically or numerically</para>
+        <para><command>uniq</command> Remove duplicate lines from a file</para>
         <para>For example used all at once:</para>
-        <para># ifconfig | sed 's/ / /g' | cut -d" " -f1 | uniq | grep -E "[a-z0-9]+" | sort -r</para>
-        <para># ifconfig | sed '/.*inet addr:/!d;s///;s/ .*//'|sort -t. -k1,1n -k2,2n -k3,3n -k4,4n</para>
+        <screen># ifconfig | sed 's/  / /g' | cut -d" " -f1 | uniq | grep -E "[a-z0-9]+" | sort -r
+# ifconfig | sed '/.*inet addr:/!d;s///;s/ .*//'|sort -t. -k1,1n -k2,2n -k3,3n -k4,4n</screen>
         <para>The first character in the sed pattern is a tab. To write a tab on the console, use ctrl-v ctrl-tab.</para>
         <section>
             <info>
                 <title>bash</title>
             </info>
             <para>Redirects and pipes for bash and sh:</para>
-            <para># cmd 1&gt; file # Redirect stdout to file.</para>
-            <para># cmd 2&gt; file # Redirect stderr to file.</para>
-            <para># cmd 1&gt;&gt; file # Redirect and append stdout to file.</para>
-            <para># cmd &amp;&gt; file # Redirect both stdout and stderr to file.</para>
-            <para># cmd &gt;file 2&gt;&amp;1 # Redirects stderr to stdout and then to file.</para>
-            <para># cmd1 | cmd2 # pipe stdout to cmd2</para>
-            <para># cmd1 2&gt;&amp;1 | cmd2 # pipe stdout and stderr to cmd2</para>
+            <screen># cmd 1> file                         # Redirect stdout to file.
+# cmd 2> file                         # Redirect stderr to file.
+# cmd 1>> file                        # Redirect and append stdout to file.
+# cmd &amp;> file                         # Redirect both stdout and stderr to file.
+# cmd >file 2>&amp;1                      # Redirects stderr to stdout and then to file.
+# cmd1 | cmd2                         # pipe stdout to cmd2
+# cmd1 2>&amp;1 | cmd2                    # pipe stdout and stderr to cmd2</screen>
             <para>Modify your configuration in ~/.bashrc (it can also be ~/.bash_profile). The following entries are useful, reload with ". .bashrc".</para>
-            <para># in .bashrc</para>
-            <para>bind '"\e[A"':history-search-backward # Use up and down arrow to search</para>
-            <para>bind '"\e[B"':history-search-forward # the history. Invaluable!</para>
-            <para>set -o emacs # Set emacs mode in bash (see below)</para>
-            <para>set bell-style visible # Do not beep, inverse colors</para>
-            <para># Set a nice prompt like [user@host]/path/todir&gt;</para>
-            <para>PS1="\[\033[1;30m\][\[\033[1;34m\]\u\[\033[1;30m\]"</para>
-            <para>PS1="$PS1@\[\033[0;33m\]\h\[\033[1;30m\]]\[\033[0;37m\]"</para>
-            <para>PS1="$PS1\w\[\033[1;30m\]&gt;\[\033[0m\]"</para>
-            <para># To check the currently active aliases, simply type alias</para>
-            <para>alias ls='ls -aF' # Append indicator (one of */=&gt;@|)</para>
-            <para>alias ll='ls -aFls' # Listing</para>
-            <para>alias la='ls -all'</para>
-            <para>alias ..='cd ..'</para>
-            <para>alias ...='cd ../..'</para>
-            <para>export HISTFILESIZE=5000 # Larger history</para>
-            <para>export CLICOLOR=1 # Use colors (if possible)</para>
-            <para>export LSCOLORS=ExGxFxdxCxDxDxBxBxExEx</para>
+            <screen># in .bashrc
+bind '"\e[A"':history-search-backward # Use up and down arrow to search
+bind '"\e[B"':history-search-forward  # the history. Invaluable!
+set -o emacs                          # Set emacs mode in bash (see below)
+set bell-style visible                # Do not beep, inverse colors
+    # Set a nice prompt like [user@host]/path/todir>
+PS1="\[\033[1;30m\][\[\033[1;34m\]\u\[\033[1;30m\]"
+PS1="$PS1@\[\033[0;33m\]\h\[\033[1;30m\]]\[\033[0;37m\]"
+PS1="$PS1\w\[\033[1;30m\]>\[\033[0m\]</screen>
+            <programlisting># To check the currently active aliases, simply type alias
+alias  ls='ls -aF'                    # Append indicator (one of */=>@|)
+alias  ll='ls -aFls'                  # Listing
+alias  la='ls -all'
+alias ..='cd ..'
+alias ...='cd ../..'
+export HISTFILESIZE=5000              # Larger history
+export CLICOLOR=1                     # Use colors (if possible)
+export LSCOLORS=ExGxFxdxCxDxDxBxBxExEx</programlisting>
         </section>
         <section>
             <info>
                 <title>tcsh</title>
             </info>
             <para>Redirects and pipes for tcsh and csh (simple &gt; and &gt;&gt; are the same as sh):</para>
-            <para># cmd &gt;&amp; file # Redirect both stdout and stderr to file.</para>
-            <para># cmd &gt;&gt;&amp; file # Append both stdout and stderr to file.</para>
-            <para># cmd1 | cmd2 # pipe stdout to cmd2</para>
-            <para># cmd1 |&amp; cmd2 # pipe stdout and stderr to cmd2</para>
+            <screen># cmd >&amp; file                         # Redirect both stdout and stderr to file.
+# cmd >>&amp; file                        # Append both stdout and stderr to file.
+# cmd1 | cmd2                         # pipe stdout to cmd2
+# cmd1 |&amp; cmd2                        # pipe stdout and stderr to cmd2</screen>
             <para>The settings for csh/tcsh are set in ~/.cshrc, reload with "source .cshrc". Examples:</para>
-            <para># in .cshrc</para>
-            <para>alias ls 'ls -aF'</para>
-            <para>alias ll 'ls -aFls'</para>
-            <para>alias la 'ls -all'</para>
-            <para>alias .. 'cd ..'</para>
-            <para>alias ... 'cd ../..'</para>
-            <para>set prompt = "%B%n%b@%B%m%b%/&gt; " # like user@host/path/todir&gt;</para>
-            <para>set history = 5000</para>
-            <para>set savehist = ( 6000 merge )</para>
-            <para>set autolist # Report possible completions with tab</para>
-            <para>set visiblebell # Do not beep, inverse colors</para>
-            <para># Bindkey and colors</para>
-            <para>bindkey -e Select Emacs bindings # Use emacs keys to edit the command prompt</para>
-            <para>bindkey -k up history-search-backward # Use up and down arrow to search</para>
-            <para>bindkey -k down history-search-forward</para>
-            <para>setenv CLICOLOR 1 # Use colors (if possible)</para>
-            <para>setenv LSCOLORS ExGxFxdxCxDxDxBxBxExEx</para>
-            <para>The emacs mode enables to use the emacs keys shortcuts to modify the command prompt line.</para>
-            <para>This is extremely useful (not only for emacs users). The most used commands are:</para>
+            <screen># in .cshrc
+alias  ls      'ls -aF'
+alias  ll      'ls -aFls'
+alias  la      'ls -all'
+alias  ..      'cd ..'
+alias  ...     'cd ../..'
+set   prompt    = "%B%n%b@%B%m%b%/> " # like user@host/path/todir>
+set   history   =  5000
+set   savehist  = ( 6000 merge )
+set   autolist                        # Report possible completions with tab
+set   visiblebell                     # Do not beep, inverse colors</screen>
+            <programlisting># Bindkey and colors
+bindkey -e     Select Emacs bindings  # Use emacs keys to edit the command prompt
+bindkey -k up history-search-backward # Use up and down arrow to search
+bindkey -k down history-search-forward
+setenv CLICOLOR 1                     # Use colors (if possible)
+setenv LSCOLORS ExGxFxdxCxDxDxBxBxExEx</programlisting>
+            <para>The emacs mode enables to use the emacs keys shortcuts to modify the command prompt line. This is extremely useful (not only for emacs users). The most used commands are:</para>
             <para>C-a Move cursor to beginning of line</para>
             <para>C-e Move cursor to end of line</para>
-            <para>— Shells —</para>
-            <para>47</para>
             <para>M-b Move cursor back one word</para>
             <para>M-f Move cursor forward one word</para>
             <para>M-d Cut the next word</para>
@@ -2461,263 +2465,278 @@ Are you sure you want to continue connecting (yes/no)? yes</screen>
     </section>
     <section>
         <info>
-            <title>SCRIPTING</title>
+            <title>Scripting</title>
         </info>
-        <para/>
-        <para>The Bourne shell (/bin/sh) is present on all Unix installations and scripts written in this language</para>
-        <para>are (quite) portable; man 1 sh is a good reference.</para>
+        <para>The Bourne shell (/bin/sh) is present on all Unix installations and scripts written in this language are (quite) portable; man 1 sh is a good reference.</para>
         <section>
             <info>
                 <title>Basics</title>
             </info>
-            <para>Variables and arguments</para>
+            <para><emphasis role="bold">Variables and arguments</emphasis></para>
             <para>Assign with variable=value and get content with $variable</para>
-            <para>MESSAGE="Hello World" # Assign a string</para>
-            <para>PI=3.1415 # Assign a decimal number</para>
-            <para>N=8</para>
-            <para>TWON=`expr $N * 2` # Arithmetic expression (only integers)</para>
-            <para>TWON=$(($N * 2)) # Other syntax</para>
-            <para>TWOPI=`echo "$PI * 2" | bc -l` # Use bc for floating point operations</para>
-            <para>ZERO=`echo "c($PI/4)-sqrt(2)/2" | bc -l`</para>
+            <programlisting>MESSAGE="Hello World"                        # Assign a string
+PI=3.1415                                    # Assign a decimal number
+N=8
+TWON=`expr $N * 2`                           # Arithmetic expression (only integers)
+TWON=$(($N * 2))                             # Other syntax
+TWOPI=`echo "$PI * 2" | bc -l`               # Use bc for floating point operations
+ZERO=`echo "c($PI/4)-sqrt(2)/2" | bc -l`</programlisting>
             <para>The command line arguments are</para>
-            <para>$0, $1, $2, ... # $0 is the command itself</para>
-            <para>$# # The number of arguments</para>
-            <para>$* # All arguments (also $@)</para>
-            <para>Special Variables</para>
-            <para>$$ # The current process ID</para>
-            <para>$? # exit status of last command</para>
-            <para>command</para>
-            <para>if [ $? != 0 ]; then</para>
-            <para>echo "command failed"</para>
-            <para>fi</para>
-            <para>mypath=`pwd`</para>
-            <para>mypath=${mypath}/file.txt</para>
-            <para>echo ${mypath##*/} # Display the filename only</para>
-            <para>echo ${mypath%%.*} # Full path without extention</para>
-            <para>var2=${var:=string} # Use var if set, otherwise use string</para>
-            <para># assign string to var and then to var2.</para>
-            <para>Constructs</para>
-            <para>for file in `ls`</para>
-            <para>do</para>
-            <para>echo $file</para>
-            <para>done</para>
-            <para>count=0</para>
-            <para>while [ $count -lt 5 ]; do</para>
-            <para>echo $count</para>
-            <para>sleep 1</para>
-            <para>count=$(($count + 1))</para>
-            <para>done</para>
-            <para>myfunction() {</para>
-            <para>find . -type f -name "*.$1" -print # $1 is first argument of the function</para>
-            <para>}</para>
-            <para>myfunction "txt"</para>
-            <para>Generate a file</para>
-            <para>MYHOME=/home/colin</para>
-            <para>cat &gt; testhome.sh &lt;&lt; _EOF</para>
-            <para># All of this goes into the file testhome.sh</para>
-            <para>if [ -d "$MYHOME" ] ; then</para>
-            <para>echo $MYHOME exists</para>
-            <para>else</para>
-            <para>echo $MYHOME does not exist</para>
-            <para>fi</para>
-            <para>_EOF</para>
-            <para>sh testhome.sh</para>
+            <programlisting>$0, $1, $2, ...                              # $0 is the command itself
+$#                                           # The number of arguments
+$*                                           # All arguments (also $@)</programlisting>
+            <para><emphasis role="bold">Special Variables</emphasis></para>
+            <programlisting>$$                                           # The current process ID
+$?                                           # exit status of last command
+  command
+  if [ $? != 0 ]; then
+    echo "command failed"
+  fi
+mypath=`pwd`
+mypath=${mypath}/file.txt
+echo ${mypath##*/}                           # Display the filename only
+echo ${mypath%%.*}                           # Full path without extention
+var2=${var:=string}                          # Use var if set, otherwise use string
+                                             # assign string to var and then to var2.</programlisting>
+            <para><emphasis role="bold">Constructs</emphasis></para>
+            <programlisting>for file in `ls`
+do
+    echo $file
+done
+
+count=0
+while [ $count -lt 5 ]; do
+    echo $count
+    sleep 1
+    count=$(($count + 1))
+done
+
+myfunction() {
+    find . -type f -name "*.$1" -print       # $1 is first argument of the function
+}
+myfunction "txt"</programlisting>
+            <para><emphasis role="italic">Generate a file</emphasis></para>
+            <programlisting>MYHOME=/home/colin
+cat > testhome.sh &lt;&lt; _EOF
+# All of this goes into the file testhome.sh
+if [ -d "$MYHOME" ] ; then
+    echo $MYHOME exists
+else
+    echo $MYHOME does not exist
+fi
+_EOF
+sh testhome.sh</programlisting>
         </section>
         <section>
             <info>
                 <title>Bourne script example</title>
             </info>
             <para>As a small example, the script used to create a PDF booklet from this xhtml document:</para>
-            <para>#!/bin/sh</para>
-            <para># This script creates a book in pdf format ready to print on a duplex printer</para>
-            <para>if [ $# -ne 1 ]; then # Check the argument</para>
-            <para>echo 1&gt;&amp;2 "Usage: $0 HtmlFile"</para>
-            <para>exit 1 # non zero exit if error</para>
-            <para>fi</para>
-            <para>file=$1 # Assign the filename</para>
-            <para>fname=${file%.*} # Get the name of the file only</para>
-            <para>fext=${file#*.} # Get the extension of the file</para>
-            <para>prince $file -o $fname.pdf # from www.princexml.com</para>
-            <para>pdftops -paper A4 -noshrink $fname.pdf $fname.ps # create postscript booklet</para>
-            <para>cat $fname.ps |psbook|psnup -Pa4 -2 |pstops -b "2:0,1U(21cm,29.7cm)" &gt; $fname.book.ps</para>
-            <para>ps2pdf13 -sPAPERSIZE=a4 -sAutoRotatePages=None $fname.book.ps $fname.book.pdf</para>
-            <para># use #a4 and #None on Windows!</para>
-            <para>exit 0 # exit 0 means successful</para>
+            <programlisting>#!/bin/sh
+# This script creates a book in pdf format ready to print on a duplex printer
+if [ $# -ne 1 ]; then                        # Check the argument
+  echo 1>&amp;2 "Usage: $0 HtmlFile"
+  exit 1                                     # non zero exit if error
+fi
+
+file=$1                                      # Assign the filename
+fname=${file%.*}                             # Get the name of the file only
+fext=${file#*.}                              # Get the extension of the file
+
+prince $file -o $fname.pdf                   # from www.princexml.com
+pdftops -paper A4 -noshrink $fname.pdf $fname.ps # create postscript booklet
+cat $fname.ps |psbook|psnup -Pa4 -2 |pstops -b "2:0,1U(21cm,29.7cm)" > $fname.book.ps
+
+ps2pdf13 -sPAPERSIZE=a4 -sAutoRotatePages=None $fname.book.ps $fname.book.pdf
+                                             # use #a4 and #None on Windows!
+exit 0                                       # exit 0 means successful</programlisting>
         </section>
         <section>
             <info>
                 <title>Some sed commands</title>
             </info>
-            <para>sed 's/string1/string2/g' # Replace string1 with string2</para>
-            <para>sed -i 's/wroong/wrong/g' *.txt # Replace a recurring word with g</para>
-            <para>sed 's/\(.*\)1/\12/g' # Modify anystring1 to anystring2</para>
-            <para>sed '/&lt;p&gt;/,/&lt;\/p&gt;/d' t.xhtml # Delete lines that start with &lt;p&gt;</para>
-            <para># and end with &lt;/p&gt;</para>
-            <para>sed '/ *#/d; /^ *$/d' # Remove comments and blank lines</para>
-            <para>sed 's/[ \t]*$//' # Remove trailing spaces (use tab as \t)</para>
-            <para>sed 's/^[ \t]*//;s/[ \t]*$//' # Remove leading and trailing spaces</para>
-            <para>sed 's/[^*]/[&amp;]/' # Enclose first char with [] top-&gt;[t]op</para>
-            <para/>
+            <screen>sed 's/string1/string2/g'                    # Replace string1 with string2
+sed -i 's/wroong/wrong/g' *.txt              # Replace a recurring word with g
+sed 's/\(.*\)1/\12/g'                        # Modify anystring1 to anystring2
+sed '/&lt;p>/,/&lt;\/p>/d' t.xhtml                 # Delete lines that start with &lt;p>
+                                             # and end with &lt;/p>
+sed '/ *#/d; /^ *$/d'                        # Remove comments and blank lines
+sed 's/[ \t]*$//'                            # Remove trailing spaces (use tab as \t)
+sed 's/^[ \t]*//;s/[ \t]*$//'                # Remove leading and trailing spaces
+sed 's/[^*]/[&amp;]/'                            # Enclose first char with [] top->[t]op
+sed = file | sed 'N;s/\n/\t/' > file.num     # Number lines on a fil</screen>
         </section>
         <section>
             <info>
                 <title>Some useful commands</title>
             </info>
-            <para>sort -t. -k1,1n -k2,2n -k3,3n -k4,4n # Sort IPv4 ip addresses</para>
-            <para>echo 'Test' | tr '[:lower:]' '[:upper:]' # Case conversion</para>
-            <para>echo foo.bar | cut -d . -f 1 # Returns foo</para>
-            <para>PID=$(ps | grep script.sh | grep bin | awk '{print $1}') # PID of a running script</para>
-            <para>PID=$(ps axww | grep [p]ing | awk '{print $1}') # PID of ping (w/o grep pid)</para>
-            <para>IP=$(ifconfig $INTERFACE | sed '/.*inet addr:/!d;s///;s/ .*//') # Linux</para>
-            <para>IP=$(ifconfig $INTERFACE | sed '/.*inet /!d;s///;s/ .*//') # FreeBSD</para>
-            <para>if [ `diff file1 file2 | wc -l` != 0 ]; then [...] fi # File changed?</para>
-            <para>cat /etc/master.passwd | grep -v root | grep -v \*: | awk -F":" \ # Create http passwd</para>
-            <para>'{ printf("%s:%s\n", $1, $2) }' &gt; /usr/local/etc/apache2/passwd</para>
-            <para>testuser=$(cat /usr/local/etc/apache2/passwd | grep -v \ # Check user in passwd</para>
-            <para>root | grep -v \*: | awk -F":" '{ printf("%s\n", $1) }' | grep ^user$)</para>
+            <para>The following commands are useful to include in a script or as one liners.</para>
+            <screen>sort -t. -k1,1n -k2,2n -k3,3n -k4,4n         # Sort IPv4 ip addresses
+echo 'Test' | tr '[:lower:]' '[:upper:]'     # Case conversion
+echo foo.bar | cut -d . -f 1                 # Returns foo
+PID=$(ps | grep script.sh | grep bin | awk '{print $1}')    # PID of a running script
+PID=$(ps axww | grep [p]ing | awk '{print $1}')             # PID of ping (w/o grep pid)
+IP=$(ifconfig $INTERFACE | sed '/.*inet addr:/!d;s///;s/ .*//')   # Linux
+IP=$(ifconfig $INTERFACE | sed '/.*inet /!d;s///;s/ .*//')        # FreeBSD
+if [ `diff file1 file2 | wc -l` != 0 ]; then [...] fi       # File changed?
+cat /etc/master.passwd | grep -v root | grep -v \*: | awk -F":" \ # Create http passwd
+'{ printf("%s:%s\n", $1, $2) }' > /usr/local/etc/apache2/passwd
+
+testuser=$(cat /usr/local/etc/apache2/passwd | grep -v \    # Check user in passwd
+root | grep -v \*: | awk -F":" '{ printf("%s\n", $1) }' | grep ^user$)
+:(){ :|:&amp; };:                                # bash fork bomb. Will kill your machine
+tail +2 file > file2                         # remove the first line from file</screen>
         </section>
     </section>
     <section>
         <info>
-            <title>PROGRAMMING</title>
+            <title>Programming</title>
         </info>
         <section>
             <info>
                 <title>C basics</title>
             </info>
-            <para>strcpy(newstr,str) /* copy str to newstr */</para>
-            <para>expr1 ? expr2 : expr3 /* if (expr1) expr2 else expr3 */</para>
-            <para>x = (y &gt; z) ? y : z; /* if (y &gt; z) x = y; else x = z; */</para>
-            <para>int a[]={0,1,2}; /* Initialized array (or a[3]={0,1,2}; */</para>
-            <para>int a[2][3]={{1,2,3},{4,5,6}}; /* Array of array of ints */</para>
-            <para>int i = 12345; /* Convert in i to char str */</para>
-            <para>char str[10];</para>
-            <para>sprintf(str, "%d", i);</para>
+            <programlisting>strcpy(newstr,str)                        /* copy str to newstr */
+expr1 ? expr2 : expr3                     /* if (expr1) expr2 else expr3 */
+x = (y > z) ? y : z;                      /* if (y > z) x = y; else x = z; */
+int a[]={0,1,2};                          /* Initialized array (or a[3]={0,1,2}; */
+int a[2][3]={{1,2,3},{4,5,6}};            /* Array of array of ints */
+int i = 12345;                            /* Convert in i to char str */
+char str[10];
+sprintf(str, "%d", i);</programlisting>
         </section>
         <section>
             <info>
                 <title>C example</title>
             </info>
             <para>A minimal c program simple.c:</para>
-            <para>#include &lt;stdio.h&gt;</para>
-            <para>main() {</para>
-            <para>int number=42;</para>
-            <para>printf("The answer is %i\n", number);</para>
-            <para>}</para>
+            <programlisting>#include &lt;stdio.h>
+main() {
+    int number=42;
+    printf("The answer is %i\n", number);
+}</programlisting>
             <para>Compile with:</para>
-            <para># gcc simple.c -o simple</para>
-            <para># ./simple</para>
-            <para>The answer is 42</para>
+            <screen># gcc simple.c -o simple
+# ./simple
+The answer is 42</screen>
         </section>
         <section>
             <info>
                 <title>C++ basics</title>
             </info>
-            <para>*pointer // Object pointed to by pointer</para>
-            <para>&amp;obj // Address of object obj</para>
-            <para>obj.x // Member x of class obj (object obj)</para>
-            <para>pobj-&gt;x // Member x of class pointed to by pobj</para>
-            <para>// (*pobj).x and pobj-&gt;x are the same</para>
+            <programlisting>*pointer                                  // Object pointed to by pointer
+&amp;obj                                      // Address of object obj
+obj.x                                     // Member x of class obj (object obj)
+pobj->x                                   // Member x of class pointed to by pobj
+                                          // (*pobj).x and pobj->x are the same</programlisting>
         </section>
         <section>
             <info>
                 <title>C++ example</title>
             </info>
-            <para>As a slightly more realistic program in C++, let's create a class in its own header (IPv4.h) and</para>
-            <para>implementation (IPv4.cpp) and create a program which uses the class functionality. The class has a member to convert an IP address in integer format to the known quad format. This is a minimal c++ program with a class and multi-source compile.</para>
-            <para>IPv4 class</para>
-            <para>IPv4.h:</para>
-            <para>#ifndef IPV4_H</para>
-            <para>#define IPV4_H</para>
-            <para>#include &lt;string&gt;</para>
-            <para>namespace GenericUtils { // create a namespace</para>
-            <para>class IPv4 { // class definition</para>
-            <para>public:</para>
-            <para>IPv4();</para>
-            <para>~IPv4();</para>
-            <para>std::string IPint_to_IPquad(unsigned long ip);// member interface</para>
-            <para>};</para>
-            <para>} //namespace GenericUtils</para>
-            <para>#endif // IPV4_H</para>
-            <para>IPv4.cpp:</para>
-            <para>#include "IPv4.h"</para>
-            <para>#include &lt;string&gt;</para>
-            <para>#include &lt;sstream&gt;</para>
-            <para>using namespace std; // use the namespaces</para>
-            <para>using namespace GenericUtils;</para>
-            <para>IPv4::IPv4() {} // default constructor/destructor</para>
-            <para>IPv4::~IPv4() {}</para>
-            <para>string IPv4::IPint_to_IPquad(unsigned long ip) { // member implementation</para>
-            <para>ostringstream ipstr; // use a stringstream</para>
-            <para>ipstr &lt;&lt; ((ip &amp;0xff000000) &gt;&gt; 24) // Bitwise right shift</para>
-            <para>&lt;&lt; "." &lt;&lt; ((ip &amp;0x00ff0000) &gt;&gt; 16)</para>
-            <para>&lt;&lt; "." &lt;&lt; ((ip &amp;0x0000ff00) &gt;&gt; 8)</para>
-            <para>&lt;&lt; "." &lt;&lt; ((ip &amp;0x000000ff));</para>
-            <para>return ipstr.str();</para>
-            <para>}</para>
-            <para>The program simplecpp.cpp</para>
-            <para>#include "IPv4.h"</para>
-            <para>#include &lt;iostream&gt;</para>
-            <para>#include &lt;string&gt;</para>
-            <para>using namespace std;</para>
-            <para>int main (int argc, char* argv[]) {</para>
-            <para>string ipstr; // define variables</para>
-            <para>unsigned long ipint = 1347861486; // The IP in integer form</para>
-            <para>GenericUtils::IPv4 iputils; // create an object of the class</para>
-            <para>ipstr = iputils.IPint_to_IPquad(ipint); // call the class member</para>
-            <para>cout &lt;&lt; ipint &lt;&lt; " = " &lt;&lt; ipstr &lt;&lt; endl; // print the result</para>
-            <para>return 0;</para>
-            <para>}</para>
+            <para>As a slightly more realistic program in C++, let's create a class in its own header (IPv4.h) and implementation (IPv4.cpp) and create a program which uses the class functionality. The class has a member to convert an IP address in integer format to the known quad format. This is a minimal c++ program with a class and multi-source compile.</para>
+            <para><emphasis role="bold">IPv4 class</emphasis></para>
+            <para><filename>IPv4.h</filename>:</para>
+            <programlisting>#ifndef IPV4_H
+#define IPV4_H
+#include &lt;string>
+
+namespace GenericUtils {                          // create a namespace
+class IPv4 {                                      // class definition
+public:
+    IPv4(); ~IPv4();
+    std::string IPint_to_IPquad(unsigned long ip);// member interface
+};
+} //namespace GenericUtils
+#endif // IPV4_H</programlisting>
+            <para><filename>IPv4.cpp</filename>:</para>
+            <programlisting>#include "IPv4.h"
+#include &lt;string>
+#include &lt;sstream>
+using namespace std;                              // use the namespaces
+using namespace GenericUtils;
+
+IPv4::IPv4() {}                                   // default constructor/destructor
+IPv4::~IPv4() {}
+string IPv4::IPint_to_IPquad(unsigned long ip) {  // member implementation
+    ostringstream ipstr;                          // use a stringstream
+    ipstr &lt;&lt; ((ip &amp;0xff000000) >> 24)             // Bitwise right shift
+          &lt;&lt; "." &lt;&lt; ((ip &amp;0x00ff0000) >> 16)
+          &lt;&lt; "." &lt;&lt; ((ip &amp;0x0000ff00) >> 8)
+          &lt;&lt; "." &lt;&lt; ((ip &amp;0x000000ff));
+    return ipstr.str();
+}</programlisting>
+            <para><emphasis role="bold">The program simplecpp.cpp</emphasis></para>
+            <programlisting>#include "IPv4.h"
+#include &lt;iostream>
+#include &lt;string>
+using namespace std;
+int main (int argc, char* argv[]) {
+    string ipstr;                                 // define variables
+    unsigned long ipint = 1347861486;             // The IP in integer form
+    GenericUtils::IPv4 iputils;                   // create an object of the class
+    ipstr = iputils.IPint_to_IPquad(ipint);       // call the class member
+    cout &lt;&lt; ipint &lt;&lt; " = " &lt;&lt; ipstr &lt;&lt; endl;      // print the result
+
+    return 0;
+}</programlisting>
             <para>Compile and execute with:</para>
-            <para># g++ -c IPv4.cpp simplecpp.cpp # Compile in objects</para>
-            <para># g++ IPv4.o simplecpp.o -o simplecpp.exe # Link the objects to final executable</para>
-            <para># ./simplecpp.exe</para>
-            <para>1347861486 = 80.86.187.238</para>
+            <screen># g++ -c IPv4.cpp simplecpp.cpp                # Compile in objects
+# g++ IPv4.o simplecpp.o -o simplecpp.exe      # Link the objects to final executable
+# ./simplecpp.exe 
+1347861486 = 80.86.187.238</screen>
             <para>Use ldd to check which libraries are used by the executable and where they are located. This command is also used to check if a shared library is missing or if the executable is static.</para>
-            <para># ldd /sbin/ifconfig</para>
+            <screen># ldd /sbin/ifconfig                           # list dynamic object dependencies
+# ar rcs staticlib.a *.o                       # create static archive
+# ar t staticlib.a                             # print the objects list from the archive
+# ar x /usr/lib/libc.a version.o               # extract an object file from the archive
+# nm version.o                                 # show function members provided by object</screen>
         </section>
         <section>
             <info>
                 <title>Simple Makefile</title>
             </info>
-            <para>The corresponding minimal Makefile for the multi-source program is shown below. The lines with</para>
-            <para>instructions must begin with a tab! The back slash "\" can be used to cut long lines.</para>
-            <para>CC = g++</para>
-            <para>CFLAGS = -O</para>
-            <para>OBJS = IPv4.o simplecpp.o</para>
-            <para>simplecpp: ${OBJS}</para>
-            <para>${CC} -o simplecpp ${CFLAGS} ${OBJS}</para>
-            <para>clean:</para>
-            <para>rm -f ${TARGET} ${OBJS}</para>
+            <para>The corresponding minimal Makefile for the multi-source program is shown below. The lines with instructions must begin with a tab! The back slash "\" can be used to cut long lines.</para>
+            <programlisting>CC = g++
+CFLAGS = -O
+OBJS = IPv4.o simplecpp.o
+
+simplecpp: ${OBJS}
+	${CC} -o simplecpp ${CFLAGS} ${OBJS}
+clean:
+	rm -f ${TARGET} ${OBJS}</programlisting>
         </section>
     </section>
     <section>
         <info>
-            <title>ONLINE HELP</title>
+            <title>Online Help</title>
         </info>
         <section>
             <info>
                 <title>Documentation</title>
             </info>
-            <para>Linux Documentation en.tldp.org</para>
-            <para>Linux Man Pages www.linuxmanpages.com</para>
-            <para>Linux commands directory www.oreillynet.com/linux/cmd</para>
-            <para>Linux doc man howtos linux.die.net</para>
-            <para>FreeBSD Handbook www.freebsd.org/handbook</para>
-            <para>FreeBSD Man Pages www.freebsd.org/cgi/man.cgi</para>
-            <para>FreeBSD user wiki www.freebsdwiki.net</para>
-            <para>Solaris Man Pages docs.sun.com/app/docs/coll/40.10</para>
+            <para><link xlink:href="http://en.tldp.org/">Linux Documentation</link> en.tldp.org</para>
+            <para><link xlink:href="http://www.linuxmanpages.com/">Linux Man Pages</link> www.linuxmanpages.com</para>
+            <para><link xlink:href="http://www.oreillynet.com/linux/cmd/">Linux commands directory</link> www.oreillynet.com/linux/cmd</para>
+            <para><link xlink:href="http://linux.die.net/">Linux doc man howtos</link> linux.die.net</para>
+            <para><link xlink:href="http://www.freebsd.org/handbook/">FreeBSD Handbook</link> www.freebsd.org/handbook</para>
+            <para><link xlink:href="http://www.freebsd.org/cgi/man.cgi">FreeBSD Man Pages</link> www.freebsd.org/cgi/man.cgi</para>
+            <para><link xlink:href="http://www.freebsdwiki.net/">FreeBSD user wiki</link> www.freebsdwiki.net</para>
+            <para><link xlink:href="http://docs.sun.com/app/docs/coll/40.10">Solaris Man Pages</link> docs.sun.com/app/docs/coll/40.10</para>
         </section>
         <section>
             <info>
                 <title>Other Unix/Linux references</title>
             </info>
-            <para>Rosetta Stone for Unix bhami.com/rosetta.html (a Unix command translator)</para>
-            <para>Unix guide cross reference unixguide.net/unixguide.shtml</para>
-            <para>Linux commands line list www.linuxguide.it/commands_list.php</para>
-            <para>Short Linux reference www.pixelbeat.org/cmdline.html</para>
-            <para>That's all folks!</para>
-            <para>This document: "Unix Toolbox revision 11" is licensed under a Creative Commons Licence</para>
+            <para><link xlink:href="http://bhami.com/rosetta.html">Rosetta Stone for Unix</link> bhami.com/rosetta.html (a Unix command translator)</para>
+            <para><link xlink:href="http://unixguide.net/unixguide.shtml">Unix guide cross reference</link> unixguide.net/unixguide.shtml</para>
+            <para><link xlink:href="http://www.linuxcmd.org/">Linux commands line list</link> www.linuxguide.it/commands_list.php</para>
+            <para><link xlink:href="http://www.pixelbeat.org/cmdline.html">Short Linux reference</link> www.pixelbeat.org/cmdline.html</para>
+            <para><link xlink:href="http://www.shell-fu.org/">Little command line goodies</link> www.shell-fu.or</para>
         </section>
+    </section>
+    <section>
+        <title>That's all folks!</title>
+        <para>This document: "Unix Toolbox revision 11" is licensed under a Creative Commons Licence</para>
     </section>
 </article>
