@@ -1,42 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
     <info>
         <title>Сборка на другом компьютере</title>
+        <abstract>
+            <para>Ссылка на оргинал: <link xlink:href="http://ru.gentoo-wiki.com/wiki/HOWTO_%D0%A1%D0%B1%D0%BE%D1%80%D0%BA%D0%B0_%D0%BD%D0%B0_%D0%B4%D1%80%D1%83%D0%B3%D0%BE%D0%BC_%D0%BA%D0%BE%D0%BC%D0%BF%D1%8C%D1%8E%D1%82%D0%B5%D1%80%D0%B5">http://ru.gentoo-wiki.com/wiki/HOWTO_Сборка_на_другом_компьютере</link></para>
+        </abstract>
     </info>
     <para>Существует много методов добиться этого, но мы используем самый удобный — тот, что работает с портежами. </para>
     <para>Другие методы могут быть более подходящими для других ситуаций, когда главная проблема не только медленный процессор и долгое время сборки, например, если надо перенести Gentoo на систему, которая не может загружаться с CD или сети. </para>
     <para>Скомпилировать Gentoo для старых систем x86 (например, Pentium Pro 200MHz с небольшим количеством RAM) можно на x86_64-системе с работающей Gentoo. Обратный трюк, собрать 64-битную систему на 32-битном компьютере, невозможен. </para>
     <para>Я собирал систему в chroot-окружении согласно Gentoo-handbook, используя мою 64bit-Gentoo вместо "живого" CD: </para>
-    <para># mkdir /your/new/gentoo</para>
-    <para># tar xjvpf stage3-x86-*.tar.bz2 -C /your/new/gentoo</para>
+    <screen><prompt>#</prompt> <userinput>mkdir /your/new/gentoo</userinput>
+<prompt>#</prompt> <userinput>tar xjvpf stage3-x86-*.tar.bz2 -C /your/new/gentoo</userinput></screen>
     <para>Отредактируйте переменные CHOST и CFLAGS, соответствующие вашей целевой системе (не изменяйте CHOST, если используете стадию 2 или 3 — возмите стадию для соответствующей платформы). У меня было: </para>
-    <para># CHOST="i686-pc-linux-gnu"</para>
-    <para># CFLAGS="-march=pentiumpro -Os -momit-frame-pointer -pipe" </para>
-    <para># CXXFLAGS="$CFLAGS"</para>
+    <example>
+        <title>Файл: <filename>/etc/make.conf</filename></title>
+        <programlisting>CHOST="i686-pc-linux-gnu"
+CFLAGS="-march=pentiumpro -Os -fomit-frame-pointer -pipe"
+CXXFLAGS="$CFLAGS"</programlisting>
+    </example>
+    <note>
+        <para>Флагом -Os задана оптимизация по размеру исполняемого файла. Если размер не важен, возможно стоит указать -O2 для увеличения производительности. -Os флаг активирует все флаги оптимизации из -O2, в основном те, которые не увеличивают размер выходного файла. В дальнейшем выполняются оптимизации по уменьшению размера кода. Более подробную информацию можно посмотреть в HOWTO Использование CFLAGS для оптимизации собранных программ.</para>
+    </note>
     <para>Далее переходим в chroot-окружение и выполняем все шаги, описанные в <link xlink:href="#">Руководстве Gentoo по установке</link>. </para>
     <para>Чтобы собрать ядро для i386 на x86_64-машине добавьте ARCH=i386 при конфигурации и компиляции ядра. </para>
-    <para># make menuconfig ARCH=i386</para>
-    <para># make clean dep modules modules_install bzImage ARCH=i386</para>
-    <para># cp arch/i386/boot/bzImage /boot/vmlinuz</para>
+    <screen><prompt>#</prompt> <userinput>make menuconfig ARCH=i386</userinput>
+<prompt>#</prompt> <userinput>make clean dep modules modules_install bzImage ARCH=i386</userinput>
+<prompt>#</prompt> <userinput>cp arch/i386/boot/bzImage /boot/vmlinuz</userinput></screen>
     <para>Размечать диск и создавать файловые системы на старом компьютере вам придется с помощью "живого" CD или другой системы Linux. </para>
     <para>Переносим готовую систему на старый компьютер: </para>
-    <para># cd /your/new/gentoo</para>
-    <para># echo "/sys/*" &gt;&gt; tar_exclusions</para>
-    <para># echo "/var/run/*" &gt;&gt; tar_exclusions</para>
-    <para># echo "/tmp/*" &gt;&gt; tar_exclusions</para>
-    <para># echo "/proc/*" &gt;&gt; tar_exclusions</para>
-    <para>#</para>
-    <para># tar -C /your/new/gentoo -X tar_exclusions --preserve -cf ../gentoo.tar .</para>
-    <para>## можете добавить -v для подробного вывода или -j / -z для компрессии</para>
-    <para># scp [-P ssh_port]  ../gentoo.tar user@dest_pc:</para>
+    <screen>cd /your/new/gentoo
+echo "/sys/*" >> tar_exclusions
+echo "/var/run/*" >> tar_exclusions
+echo "/tmp/*" >> tar_exclusions
+echo "/proc/*" >> tar_exclusions
+tar -C /your/new/gentoo -X tar_exclusions --preserve -cf ../gentoo.tar .
+scp [-P ssh_port] ../gentoo.tar user@dest_pc:/dest_folder </screen>
+    <note>
+        <para>Если существуют проблемы с каналом и scp за один раз может просто не передать арxив - рекомендую воспользоваться rsync:</para>
+        <screen><prompt>#</prompt> <userinput>rsync --partial --progress --rsh=ssh ../gentoo.tar user@dest_pc:/dest_folder</userinput></screen>
+    </note>
     <para>На старой машине подготавливаем диски и распаковываем систему: </para>
-    <para># tar -C /your/new/system --preserve -xf ~user/gentoo.tar </para>
+    <screen><prompt>#</prompt> <userinput>tar -C /your/new/system --preserve -xf ~user/gentoo.tar</userinput></screen>
     <para>Теперь вы можете войти в chroot-окружение. Сконфигурируйте системный загрузчик и перегрузитесь. Теперь вы находитесь в новой, с иголочки, Gentoo. </para>
     <para>Система теперь должна работать, но я заметил проблему — я не могу ничего скомпилировать. Похоже, что не работает ни C-препроцессор, ни gcc (обычно configure говорит, что /lib/cpp fails sanity check). Не знаю почему, но копирование /usr/include из chroot-каталога с исходной машины на старый компьютер эту проблему решило. </para>
     <para>Удачи! </para>
-    <para>Оригинал на http://gentoo-wiki.com/HOWTO_Compile_on_another_computer </para>
+    <para>Оригинал доступен на <link xlink:href="http://gentoo-wiki.info/HOWTO_Compile_on_another_computer">Gentoo Wiki Archives</link>.</para>
     <para>Перевод Poor Fred</para>
 </article>
