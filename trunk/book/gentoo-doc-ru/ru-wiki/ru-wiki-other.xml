@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Прочее</title>
+    </info>
+        <section>
+            <info>
+                <title>Разделы MS Windows по-русски</title>
+            </info>
+            <section>
+                <info>
+                    <title>Введение</title>
+                </info>
+                <para>Достаточно часто возникает необходимость подмонтировать раздел с установленным M$ Windows. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Ядро </title>
+                </info>
+                <para>Для того, чтобы система могла работать с разделами FAT или NTFS, необходимо включить их поддержку в ядре.</para>
+                <para> Linux Kernel Configuration: Filesystems </para>
+                <para>File systems -&gt;
+                </para>
+                <para>  DOS/FAT/NT Filesystems -&gt;</para>
+                <para>    (M) DOS FAT fs support</para>
+                <para>    (M)   MSDOS fs support</para>
+                <para>    (M)   VFAT (Windows-95) fs support</para>
+                <para>    (M) NTFS file system support</para>
+                <para>Также надо включить поддержку следующих кодировок: </para>
+                <para>Linux Kernel Configuration: Native Language Support </para>
+                <para>File systems -&gt;
+                </para>
+                <para>  Native Language Support -&gt;</para>
+                <para>    &lt;M&gt; Windows CP1251 (Bulgarian, Belarusian)</para>
+                <para>    &lt;M&gt; Codepage 866 (Cyrillic/Russian)</para>
+            </section>
+            <section>
+                <info>
+                    <title>Монтирование </title>
+                </info>
+                <para>Теперь можно примонтировать любой windows-раздел программой mount. mount -t file_system /dev/device /mnt/dir В нашем случае в качестве file_system необходимо указывать vfat или ntfs, в зависимости от файловой системы раздела с windows. </para>
+                <para>Монтирование FAT</para>
+                <para>Для монтирования разделов FAT нужно использовать следующую команду: </para>
+                <para>mount -t vfat -o codepage=866,iocharset=koi8-r,quiet,umask=000 /dev/hdd2 /mnt/win1</para>
+                <para>Для украинских символов: </para>
+                <para>mount -t vfat -o codepage=866,iocharset=koi8-u,quiet,umask=000 /dev/hdd2 /mnt/win1 </para>
+                <para>Мы использовали дополнительные опции iocharset, codepage, quiet и umask. </para>
+                <para>Рассмотрим их внимательнее: </para>
+                <orderedlist>
+                    <listitem>
+                        <para>codepage — это кодовая страница используемая на монтируемой ФС. Так как мы из России,то нужно писать codepage=866. Эта опция нужна для перекодировки имен файлов. </para>
+                    </listitem>
+                    <listitem>
+                        <para>iocharset — указывает какую кодировку использовать для ввода/вывода.Нужно указать свою системную локаль. Локаль можно узнать командой locale. (Здесь под вводом/выводом понимается ввод с и вывод на терминал. Иммено поэтому нужно указывать кодировку локали, т.е. кодировку которую используют программы запущенные в терминале.) </para>
+                    </listitem>
+                    <listitem>
+                        <para>quiet — при копировании на файловую систему FAT программа попытается записать права доступа, владельца и т.д., но на FAT их сохранить нельзя и будет выведено сообщение об ошибке ( хотя файл скопируется ). Чтобы ошибки не появлялись мы просим смонтировать в "молчаливом" режиме </para>
+                    </listitem>
+                    <listitem>
+                        <para>umask — в некоторых случаях у простого пользователя может не хватить прав на чтение или запись файлов из-за неправильно установленных прав на файлы и директории. Поскольку у файловой системы FAT нет прав доступа, они выставляются операционной системой ( в данном случае Linux ) на лету в соответствии с указанным значением umask. Про umask смотрите в umask(2) </para>
+                    </listitem>
+                </orderedlist>
+                <para>Параметры codepage и iocharset можно задать прямо в ядре. Тогда не нужно будет писать их каждый раз:</para>
+                <para>Linux Kernel Configuration: FAT </para>
+                <para>File systems -&gt;
+                </para>
+                <para>  DOS/FAT/NT Filesystems -&gt;</para>
+                <para>    (utf8) Default iocharset for FAT</para>
+                <para>    (866) Default codepage for FAT</para>
+                <para>То есть вместо </para>
+                <para>mount -t vfat -o codepage=866,iocharset=utf8,quiet,umask=000 /dev/hdd2 /mnt/win1 можно писать </para>
+                <para>mount -t vfat -o quiet,umask=000 /dev/hdd2 /mnt/win1 </para>
+                <para>Монтирование NTFS</para>
+                <para>Для монтирования NTFS разделов опции mount немного изменяться. Делаем это так: </para>
+                <para>mount -t ntfs -o nls=koi8-r,umask=0,ro /dev/hdd2 /mnt/win1 </para>
+                <para>Для украинских символов:</para>
+                <para>mount -t ntfs -o nls=koi8-u,umask=0,ro /dev/hdd2 /mnt/win1 </para>
+                <para>Вот что они значат: </para>
+                <para>nls — указывает на вашу системную локаль. Отсутствие опций codepage и iocharset связано с тем,что NTFS разделы используют юникод для хранения имен файла. </para>
+                <para>umask — указывает на то что читать файлы с этого раздела могут все. А вот писать не разрешает опция ro. Мы рекомендуем ее поставить,так как функция записи на разделы NTFS еще не отлажена. </para>
+                <para>В случае если вы в качестве системной кодировки используете utf-8, то опции mount должны быть следующими: mount -t ntfs -o utf8,umask=0,ro /dev/hdd2 /mnt/win1 </para>
+                <para>utf8 — использовать UTF-8 для перекодировки имён файлов. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Автомонтирование</title>
+                </info>
+                <para>Если у вас все еще есть разделы ОС Windows на харде,то можно добавить монтирование этих разделов при загрузке.Для этого необходимо отредактировать файл /etc/fstab. Файл: /etc/fstab </para>
+                <para>...</para>
+                <para>/dev/hda9 /mnt/win1 vfat auto,codepage=866,iocharset=koi8-r,quiet,umask=000 0 0 </para>
+                <para>#/dev/hda9 /mnt/win1 vfat auto,codepage=866,iocharset=koi8-u,quiet,umask=000 0 0 </para>
+                <para>/dev/hda3 /mnt/win2 ntfs auto,nls=koi8-r,umask=0,user 0 0 </para>
+                <para>еще к опциям можно добавить showexec, чтобы все файлы не выглядели исполняемыми, в случае с FAT32</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Udev</title>
+            </info>
+            <section>
+                <info>
+                    <title>Настройка системы </title>
+                </info>
+                <para>Установка необходимых программ </para>
+                <para>emerge udev hotplug coldplug </para>
+            </section>
+            <section>
+                <info>
+                    <title>Конфигурация ядра </title>
+                </info>
+                <para>Для активизации udev нам необходимо ядро 2.6. Лично у меня 2.6.12-mm1. </para>
+                <para>General setup ---&gt;</para>
+                <para> [*] Support for hot-pluggable devices</para>
+                <para>File systems ---&gt;</para>
+                <para> Pseudo filesystems ---&gt;</para>
+                <para>  [ ] /dev file system support (OBSOLETE)</para>
+                <para>  [ ]   Automatically mount at boot (NEW)</para>
+                <para>  [*] Virtual memory file system support (former shm fs)</para>
+                <para>Примечание: devfs Может быть включен, но автоматическое монтирование обязано быть выключено. А с учетом того, что из 2.6.13 его вообще собираются убрать... ну смотрите сами. </para>
+                <para>Примечание: Во всяком случае, из 2.6.14 убрали </para>
+            </section>
+            <section>
+                <info>
+                    <title>Ядро собираем и устанавливаем. </title>
+                </info>
+                <para>Конфигурация системы </para>
+                <para>Не буду рассматривать как udev работает из таррбола, рассматриваю вариант чистого udev. </para>
+                <para>/etc/conf.d/rc: </para>
+                <para>...</para>
+                <para>RC_DEVICE_TARBALL="no"</para>
+                <para>...</para>
+                <para>RC_DEVFSD_STARTUP="yes"</para>
+                <para>...</para>
+                <para>Примечание: Последнюю опцию можно поставить в "no", когда мы убедимся в нормальной работоспособности udev </para>
+                <para>rc-update add coldplug boot rc-update add hotplug default </para>
+                <para>Конфигурация процесса загрузки </para>
+                <para>GrUB </para>
+                <para>К строке kernel от старого ядра необходимо дописать: </para>
+                <para>kernel /boot/kernel-2.6.9-r4 root=/dev/hda3 gentoo=noudev</para>
+                <para>А в строке kernel для нового ядра прописать: </para>
+                <para>kernel /boot/kernel-2.6.10-r6 root=/dev/hda3 gentoo=nodevfs</para>
+            </section>
+            <section>
+                <info>
+                    <title>Troubleshuting </title>
+                </info>
+                <para>Попытка номер раз </para>
+                <para>В принципе можно перегружаться, но нас ждет одно неприятное сообщение. Вот примерно такое: </para>
+                <para>WARNING: Unable to open an initial console </para>
+                <para>Для того чтобы все было хорошо, нам необходимо загрузиться с другого носителя (например любой LiveCD) подмонтировать наш корневой раздел, и в каталоге /dev (каталог по идее должен оказаться абсолютно пустым) проделать следующее: Code: </para>
+                <para># mknod -m 660 console c 5 1</para>
+                <para># mknod -m 660 null c 1 3</para>
+                <para>POMAH007: Зачем же так жестоко — заставлять грузиться с компакта? Согласно udev guide с www.gentoo.org (http://www.gentoo.org/doc/en/udev-guide.xml), доступ к девственному /dev можно получить альтернативно: Code: Code Listing 3.1: Listing device nodes available at boot </para>
+                <para># mkdir test</para>
+                <para># mount --bind / test</para>
+                <para># cd test/dev</para>
+                <para># ls</para>
+                <para>Попытка номер два </para>
+                <para>С консолью вроде все в порядке, а вот иксы не хотят... грузимся в шелл и в файле конфигурации Xorg прописываем в разделе мыши: </para>
+                <para>Option "Device" "/dev/input/mice" </para>
+                <para>PS </para>
+                <para>Ну теперь вроде все так как было раньше. и старая конфигурация тоже работает. Если старая конфигурация не нужна, то убираем все из загрузчика, ставим в /etc/conf.d/rc — "no" и живем спокойно под udev. </para>
+                <para>PPS </para>
+                <para>Кстати тарболл может потребоваться пользователям нестандартных устройств, а так же некоторых сторонних модулей ядра</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Использование CFLAGS для оптимизации собранных программ</title>
+            </info>
+            <section>
+                <info>
+                    <title>Для чего все это надо?</title>
+                </info>
+                <para>Стремление выжать из своего компьютера максимум производительности есть в каждом, ну почти в каждом ;-). Особенно его много в русских линуксоидах Gentoo'шниках ;) Мы попытаемся путем изменения флагов оптимизации ускорить работу приложений нашей системы. </para>
+                <para>ВНИМАНИЕ: Некоторые флаги могут сделать приложения нестабильными, так что нужно быть аккуратным. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Оптимизация</title>
+                </info>
+                <para>Переменная окружения CFLAGS</para>
+                <para>Для указания параметров оптимизации компилятору GCC, используется переменная окружения CFLAGS. Эта переменная определена в /etc/make.conf, её можно изменить двумя способами: </para>
+                <para>Отредактировать эту переменную в /etc/make.conf; </para>
+                <para>Экспортировать ее в окружение (emerge будет использовать эти параметры, но каждый раз выполнять export неудобно): </para>
+                <para>export CFLAGS='параметры оптимизации' </para>
+                <para>Уровни оптимизации</para>
+                <para>Для gcc версий 3.x и выше существует только 5 уровней оптимизации: -O0 (без оптимизации), -O1, -O2 и -O3 (O3 — самый высокий уровень), а так же -Os. </para>
+                <para>Примечание: Если вы используете несколько -O опций, то только последняя объявленная будет оказывать влияние на процесс компиляции. </para>
+                <para>-O0 </para>
+                <para>Отключает оптимизацию. Только переменные, объявленные register, сохраняются в регистрах. </para>
+                <para>-O(-O1) </para>
+                <para>Включает оптимизацию. Пытается уменьшить размер кода и ускорить работу программы. Соответственно увеличивается время компиляции. При указании -O активируются следующие флаги: -fthread-jumps, -fdefer-pop. </para>
+                <para>На машинах, у которых есть слоты задержки, включается опция -fdelayed-branch. </para>
+                <para>На тех машинах, которые способны поддерживать отладку даже без указателя на стек функции, также включается опция -fomit-frame-pointer. </para>
+                <para>На других машинах могут быть включены и другие флаги. </para>
+                <para>-O2 </para>
+                <para>Оптимизирует еще больше. GCC выполняет почти все поддерживаемые оптимизации, которые не включают уменьшение времени исполнения за счет увеличения длины кода. Компилятор не выполняет раскрутку циклов или подстановку функций, когда вы указываете -O2. По сравнения с -O, эта опция увеличивает как время компиляции, так и эффективность сгенерированного кода. </para>
+                <para>-O2 включает все флаги оптимизации наследованные от -O. Также включает следущие флаги оптимизации: </para>
+                <para>          -fforce-mem -foptimize-sibling-calls</para>
+                <para>          -fstrength-reduce -fcse-follow-jumps  -fcse-skip-blocks</para>
+                <para>          -frerun-cse-after-loop  -frerun-loop-opt -fgcse  -fgcse-lm</para>
+                <para>          -fgcse-sm -fgcse-las -fdelete-null-pointer-checks -fexpensive-optimizations</para>
+                <para>          -fregmove -fschedule-insns  -fschedule-insns2 -fsched-interblock</para>
+                <para>          -fsched-spec -fcaller-saves -fpeephole2 -freorder-blocks</para>
+                <para>          -fre-order-functions -fstrict-aliasing -funit-at-a-time -falign-functions</para>
+                <para>          -falign-jumps -falign-loops  -falign-labels -fcrossjumping</para>
+                <para>-O3 </para>
+                <para>Оптимизирует еще немного. Включает все оптимизации -O2 и также включает флаг -finline-functions и -fweb. </para>
+                <para>-Os </para>
+                <para>Включает оптимизацию по размеру. -Os флаг активирует все флаги оптимизации из -O2, в основном те, которые не увиличивают размер выходного файла. В дальнейшем выполняются оптимизации по уменьшению размера кода. </para>
+                <para>-Os выключает следущие флаги оптимизации: -falign-functions, -falign-jumps, -falign-loop, -falign-labels, -freorder-blocks, -fprefetch-loop-arrays. </para>
+                <para>Примечание: Более полное описание флагов -Ox, -fflag смотрите в man gcc </para>
+                <para>Оптимизация под тип процессора</para>
+                <para>Не все процессоры одинаковы,поэтому давайте укажем компилятору на наш тип процессора. Для этого есть опции -mtune и -march.Отличие в том,что с опцией -mtune компилятор сделает код,который будет совместим с более младшими моделями процессора,в то время как с -march этого не происходит.Вот список возможных значений для данных опций: </para>
+                <para>i386 </para>
+                <para>i486 </para>
+                <para>i586 </para>
+                <para>i686 </para>
+                <para>pentium </para>
+                <para>pentium-mmx </para>
+                <para>pentiumpro </para>
+                <para>pentium2 </para>
+                <para>pentium3 </para>
+                <para>pentium4 </para>
+                <para>pentium-m </para>
+                <para>prescott </para>
+                <para>nocona </para>
+                <para>k6 </para>
+                <para>k8 </para>
+                <para>k6-2 (не рекомендуется ставить, из-за багов в компиляторе, заменять на i686) </para>
+                <para>k6-3 </para>
+                <para>athlon </para>
+                <para>athlon-tbird </para>
+                <para>athlon-4 </para>
+                <para>athlon-xp </para>
+                <para>athlon-mp </para>
+                <para>athlon64 </para>
+                <para>opteron </para>
+                <para>winchip-c6 </para>
+                <para>winchip2 </para>
+                <para>c3. </para>
+                <para>Внимание! pentium-m — это аналог для pentium3. Если процессор в вашем ноутбуке Mobile Intel Pentium 4 — M, то нужно ставить опцию pentium4 или pentium4m (они равнозначны) </para>
+                <para>Примечание(JohnBat26) (обновлено в 1.5): Если Вы используете компилятор версии 4.2.0 и выше, то вместо указания специфичного типа процессора, можно указывать одно из двух (в параметрах: -march и -mtune):</para>
+                <orderedlist>
+                    <listitem>
+                        <para>generic: если Вы хотите, чтобы Ваш скомпилированный код запускался на всех процессорах, архитектуры x86;</para>
+                    </listitem>
+                    <listitem>
+                        <para>native: если Вы хотите оптимизировать код только для Вашего процессора. В этом случае компилятор будет брать сведения о процессоре путем вызова cpuid ! .</para>
+                    </listitem>
+                </orderedlist>
+                <para>Выбор оптимальных параметров </para>
+                <para>Для этого есть очень интересная утилита. emerge acovea </para>
+                <para>Правда существующие профили рассчитаны только на pentium 3/4, и на gcc 3.3/3.4, Но в принципе добавить свою конфигурацию тоже не составляет труда. Также рекомендуется добавить в конфигурацию опции -ftracer и -mfpmath=sse. В некоторых случаях они дают значительный прирост производительности сгенерированного кода. </para>
+                <para>После чего вызываем утилиту runacovea -config gcc33_pentium3.acovea -bench evobench.c Ждем несколько часов и получаем оптимальные флаги компиляции. </para>
+                <para>Возможны различные тесты, которые хранятся в каталоге /usr/share/acovea/benchmarks, И различные конфигурации платформы /usr/share/acovea/config, к которым при желании можно добавить свою.</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Редактор nano</title>
+            </info>
+            <para>nano — Nano's ANOther editor</para>
+            <para>Nano — достаточно простой и удобный текстовый редактор, клон редактора pico </para>
+            <section>
+                <info>
+                    <title>Установка</title>
+                </info>
+                <para>emerge nano </para>
+                <para>Конфигурация</para>
+                <para>Файл: /etc/nanorc </para>
+            </section>
+            <section>
+                <info>
+                    <title>Запуск</title>
+                </info>
+                <para>Запуск редактора </para>
+                <para>nano -w somefile </para>
+                <para>Параметр -w здесь означает запрет переноса строк.</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Udev и автомонтирование носителей</title>
+            </info>
+            <section>
+                <info>
+                    <title>Введение </title>
+                </info>
+                <para>В данной статье речь пойдет о том, как настроить udev для автоматического монтирования и отмонтирования usb-носителей. Ведь согласитесь, неудобно каждый раз монтировать флэшки из консоли. А когда вам нужно быстро что-то скинуть с одной флэшки на другую? Здесь я привожу одно из возможных решений. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Требования </title>
+                </info>
+                <para>У меня установлена следующая версия udev: </para>
+                <para>sys-fs/udev-069 </para>
+                <para>Я умышленно не ставлю более новые версии, т.к. с ними возникают проблемы при загрузке firmware на моем компьютере. Возможно в более новых версиях что-то работает по-другому, но суть одна и та же. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Настраиваем udev </title>
+                </info>
+                <para>Создаем правила для flash-носителей </para>
+                <para>Правила udev, в соответствии с которыми устройствам назначаются имена, а также выполняются специфические действия, расположены в /etc/udev/rules.d/*. В этой директории уже есть файлы, содержащие правила, у меня их было 2: </para>
+                <para># ls /etc/udev/rules.d</para>
+                <para>05-udev-early.rules</para>
+                <para>50-udev.rules</para>
+                <para>Такие названия им были даны неспроста. Дело в том, что udev обрабатывает файлы в этой директории в алфавитном порядке по возрастанию. Вообще, при написании правил udev следует помнить 2 главные вещи: </para>
+                <para>Udev считывает файлы из /etc/udev/rules.d в алфавитном порядке. </para>
+                <para>Найдя первое подходящее правило для устройства, udev прекращает дальнейший поиск. </para>
+                <para>Давайте добавим свой файл с правилами так, чтобы он обрабатывался раньше, чем файл с правилами по умолчанию (50-udev.rules). Назовем его 10-udev-my.rules. Содержимое нового файла будет следующим: </para>
+                <para>Файл: /etc/udev/rules.d/10-udev-my.rules </para>
+                <para># First rule</para>
+                <para>SUBSYSTEM=="block", KERNEL=="sd*", ACTION=="add", NAME="%k", GROUP="disk", RUN+="/etc/udev/scripts/udev-flash-mount add %k"</para>
+                <para>#Second rule</para>
+                <para>SUBSYSTEM=="block", KERNEL=="sd*", ACTION=="remove", RUN+="/etc/udev/scripts/udev-flash-mount remove %k"</para>
+                <para>Теперь разберемся в том, что написали. </para>
+                <para>Первое правило (добавление устройства) </para>
+                <para>SUBSYSTEM=="block" При добавлении нового устройства в систему возникает множество событий разных классов. block — это класс для блочных устройств, который нам больше всего подходит для составления правила. Для просмотра значений всех переменных, возникающих событий используйте udevmonitor --env Т.о. здесь мы реагируем только на событие, в окружении которого есть переменная SUBSYSTEM со значением block . </para>
+                <para>KERNEL=="sd*" Эта часть правила сравнивает имя устройства, которое было дано по умолчанию ядром, с шаблоном. В данном случае нам нужны такие имена как: sda, sda1, sdb, sdb1 и т.д. </para>
+                <para>ACTION=="add" Реагируем на событие добавления устройства. Например, usb флэшка была вставлена в разьем. </para>
+                <para>NAME="%k" Обратите внимание на то, что здесь стоит один знак равенства, а не два, как в предыдущих частях правила. Это говорит о присваивании, а не сравнении. Здесь мы присваиваем вставленному устройству имя, которое соответствует тому, что было дано по умолчанию ядром. %k это одна из переменных окружения. Подробнее о них можно прочитать в man udev. </para>
+                <para>GROUP="disk" Причисляем устройство к группе дисковых. </para>
+                <para>RUN+="/etc/udev/scripts/udev-flash-mount add %k" Это самая интересная часть скрипта. Здесь мы добавляем ("+=") одно из действий, которое произойдет после обработки правила. В данном случае мы запускаем скрипт (он будет рассмотрен далее) /etc/udev/scripts/udev-flash-mount и передаем ему 2 параметра. Первый указывает на то что нужно выполнить действия по добавлению и инициализации нового устройства, а второй содержит имя устройства, с которым нужно выполнять действия. </para>
+                <para>Второе правило (удаление устройства) </para>
+                <para>ACTION=="remove" Реагируем на удаление устройства. </para>
+                <para>RUN+="/etc/udev/scripts/udev-flash-mount remove %k" Здесь мы запускаем скрипт, использовавшийся в первом правиле, но уже для выполнения действий после удаления устройства из системы. Этот скрипт будет выполнен как только ядро заметит, что устройство было удалено из системы. Это не самое лучшее решение, т.к. данные могут быть утеряны, но об этом в следующем разделе. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Пишем скрипт </title>
+                </info>
+                <para>Теперь напишем скрипт, который будет выполняться после добавления устройства и после его удаления. Допустим он будет размещен в /usr/bin/. Итак, от пользователя root: </para>
+                <para># su</para>
+                <para>Создадим файл: </para>
+                <para># touch /etc/udev/scripts/udev-flash-mount</para>
+                <para>Сделаем его исполняемым: </para>
+                <para># chmod u+x /etc/udev/scripts/udev-flash-mount</para>
+                <para>Напишем в нем следующее: Файл: /etc/udev/scripts/udev-flash-mount </para>
+                <para>#!/bin/bash</para>
+                <para>LOG="/var/log/udev"</para>
+                <para> </para>
+                <para>sleep 3</para>
+                <para>  </para>
+                <para>DEV=`echo $2 | sed -n '/^sd[a-z][1-9]\?/p'`</para>
+                <para>if [ "$1" = "add" ]; then</para>
+                <para>  if [ "$DEV" != "" ]; then</para>
+                <para>    echo "--- `date` ---" &gt;&gt; $LOG</para>
+                <para>    echo "Mounting /dev/$DEV" &gt;&gt; $LOG</para>
+                <para>    mkdir /mnt/$DEV &gt;&gt; $LOG 2&gt;&amp;1</para>
+                <para>    chmod a+rwx /mnt/$DEV &gt;&gt; $LOG 2&gt;&amp;1</para>
+                <para>    mount /dev/$DEV /mnt/$DEV -o sync,umask=0000,iocharset=cp1251 &gt;&gt; $LOG 2&gt;&amp;1</para>
+                <para>  fi</para>
+                <para>elif [ "$1" = "remove" ]; then</para>
+                <para>  if [ "$DEV" != "" ]; then</para>
+                <para>    echo "--- `date` ---" &gt;&gt; $LOG</para>
+                <para>    echo "Unmounting /dev/$DEV" &gt;&gt; $LOG</para>
+                <para>    umount /dev/$DEV &gt;&gt; $LOG 2&gt;&amp;1</para>
+                <para>    rm -rf /mnt/$DEV &gt;&gt; $LOG 2&gt;&amp;1</para>
+                <para>  fi</para>
+                <para>fi</para>
+                <para>Задержка в 3 или более секунд необходима для того, чтобы ядро успело выполнить свои действия по инициализации устройства. Если не лень, то поэкспериментируйте с задержкой. Если скрипту был передан параметр add, то он создает папку с именем устройства, затем пытается примонтировать устройство в эту папку. Весь вывод, в том числе и ошибки, выводятся в файл лога. Соответственно, при вызове скрипта с параметром remove, он пытается отмонтировать устройство и удалить ранее созданную папку. Предупреждение: Опция sync в параметрах mount является необходимой, т.к. форсирует мгновенную запись на устройство. Если ее не будет, то когда вы удалите устройство из системы, данные не будут записаны на него. Поэтому, чтобы избежать проблем такого рода, дождитесь пока индикатор на носителе перестанет мигать и после этого извлеките устройство. НО для файловой системы fat c версии ядра linux 2.6.13 sync ставить нельзя т.к. функционирование данной опции сильно изменилось и максимальная
+                    скорость записи на usb2.0 это 200 клибойт в секунду а для usb1.0 это где то 10 — 20 килобайт в секунду. Кроме того, опция sync в параметрах mount убьет Вашу флешку с гарантией за 6 месяцев использования. См. http://bugs.debian.org/309625 </para>
+                <para>Предупреждение: Внимание! Если какая-либо запущенная программа просматривает содержимое папки, в которую смонтировано устройство, то скрипт не сможет отмонтировать его и удалить папку. Поэтому сначала убедитесь в том, что ни одна из программ не использует эту папку. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Заключение </title>
+                </info>
+                <para>Последний скрипт можно немного модернизировать. Предположим, если вы монтируете свою камеру, чтобы просмотреть фотографии, то можно передать скрипту еще один параметр из udev правила, например, с производителем устройства. Либо можно проанализировать содержимое каталога и на основе этого выполнить какие-либо действия. Все в ваших руках, дерзайте</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title> Оптимизация glibc</title>
+            </info>
+            <section>
+                <info>
+                    <title>Введение </title>
+                </info>
+                <para>Glibc — свободная библиотека, предоставляющая системные вызовы и другие основные операторы для основных систем GNU/Linux. Если C является наиболее распространённым языком, используемым для программирования в Linux, такая же судьба постигла и glibc — она является продуманной частью ядра системы. Glibc может быть оптимизирована на вашей системе для ускорения операций различными способами. Оптимизация, естественно, зависит от вашей системы и её использования. Это также зависит от установки флагов USE, доступных при выполнении emerge. До применения рекомендаций рекомендуется узнать о назначении и использовании флагов USE. Есть неплохая инструкция здесь. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Оптимизация компиляции Glibc </title>
+                </info>
+                <para>Эффект CFLAGS </para>
+                <para>Компиляция Glibc с возможностями GCC используется в основном коде glibc. Glibc идентифицирует GCC как компилятор и использует установленный флаги CFLAGS.Подробней здесь. Используя правильные флаги CFLAGS для вашей системы, вы можете хорошо оптимизировать glibc. </para>
+                <para>Улучшение оптимизации </para>
+                <para>Если вы использовали -fomit-frame-pointer, вы можете также поместить glibc-omitfp во флаги USE. Повторно пересоберите glibc. Code: Remerging glibc </para>
+                <para>emerge --newuse -v world</para>
+                <para>При этом соберутся Glibc и её зависимости. При компиляции glibc этот флаг активизирует флаг -enable-omitfp, который, в свою очередь, указывает glibc на использование --fomit-frame-pointer. В результате более безопасно устанавливается указатель кадра. Этот флаг устанавливает максимальную оптимизацию glibc и предоставляет два типа библиотек — 'оптимизированная' и 'стандартная'. То есть, по умолчанию будут использоваться оптимизированные библиотеки, но при необходимости можно будет использовать 'стандартную' версию. Это увеличит размер glibc и приведет к обычному поведению при установленном --fomit-frame-pointer, т.е. сделает невозможным отладку (debug) программ, так что не используйте этот флаг если вы планируете заниматься разработкой программ. Теоретически этот флаг может вызвать некоторые ошибки компилятора, хотя на практике он достаточно безопасен, тем не менее вы были предупреждены. </para>
+                <para>Модели потоков </para>
+                <para>glibc поддерживает 2 различных модели потоков — старую linuxthreads и новую nptl. По умолчанию, если не был указан флаг nptlonly, кроме nptl собирается и версия с linuxthreads. В случае, если у вас нет устаревшего программного обеспечения, вы можете указать флаг nptl. Если у вас современная система без сторонних бинарных пакетов, будет лучше указать nptlonly, чтобы избежать сборки glibc дважды (с поддежкой linuxthreads и без неё). </para>
+            </section>
+            <section>
+                <info>
+                    <title>Локализация </title>
+                </info>
+                <para>В основном это основано на еженедельном новостном бюллетене Gentoo от 8 ноября 2004 года, который можно найти здесь (en:TIP Specifying only needed locales). Вы можете выбрать, какие локали (включая раскладки и установки клавиатуры, времени и т.д.) будут собраны при установке. Если вы не ограничите локали, используемые в вашей системе, будут собраны все имеющиеся локали, начиная с aa_DJ (локаль Афар для Джибути) через en_GB (английская локаль для Великобритании) и заканчивая zu_ZA.utf8 (локаль Зулу для Южной Африки). При ограничении сборки локалей вы можете сохранить до 90% места, необходимого для Glibc в вашей системе, сохранить время, необходимое на сборку ненужных вам локале и, как следствие, уменьшить общее время компиляции. Если вы действительно не нуждаетесь в них всех (а трудно представить, кому это могло бы понадобиться), вы можете ограничить их необходимым минимумом. </para>
+                <para>Используйте флаг USE userlocales для сборки только тех локалей, которые указаны в /etc/locales.build. </para>
+                <para>Отредактируйте /etc/make.conf в вашем любимом редакторе и поместите userlocales где-нибудь между "" в строке USE="". </para>
+                <para>Другой способ — изменить /etc/portage/package.use используя данную команду: Code: Activating the userlocales USE flag for glibc </para>
+                <para>echo "sys-libs/glibc userlocales" &gt;&gt; /etc/portage/package.use</para>
+                <para>После этого вы можете указать локали, которые хотите использовать: </para>
+                <para>Файл: nano -w /etc/locales.build </para>
+                <para>#Читайте комментарии в начале файла для большей информации!</para>
+                <para>en_US/ISO-8859-1</para>
+                <para>en_US.UTF-8/UTF-8</para>
+                <para>#en_GB/ISO-8859-1</para>
+                <para>#en_GB.UTF-8/UTF-8</para>
+                <para>de_DE/ISO-8859-1</para>
+                <para>de_DE@euro/ISO-8859-15</para>
+                <para>ru_RU.UTF-8/UTF-8</para>
+                <para>В glibc-2.3.6-r4 или glibc-2.4-r2, был удалён флаг userlocales. Вы должны править файл /etc/locale.gen и удалить /etc/locales.build. </para>
+                <para>Вы можете воспользоваться для этого следующими командами: Code: Convert locales.build to locale.gen </para>
+                <para>cd /etc</para>
+                <para>grep '^[^#].*' locales.build | sed 's:/: :' &gt; locale.gen</para>
+                <para>rm locales.build</para>
+                <para>nano -w locale.gen</para>
+                <para>Файл: nano -w /etc/locale.gen </para>
+                <para>#Читайте комментарии в начале файла для большей информации!</para>
+                <para>en_US.UTF-8 UTF-8</para>
+                <para>en_US ISO-8859-1</para>
+                <para>ru_RU.UTF-8 UTF-8</para>
+                <para>de_DE ISO-8859-1</para>
+                <para>de_DE@euro ISO-8859-15</para>
+                <para>Вы можете найти правильные значения локалей в файле /usr/share/i18n/SUPPORTED. </para>
+                <para>Помогите! Я не знаю, какими должны быть настройки моей локали! </para>
+                <para>Не волнуйтесь, это просто. Записи в этом файле должны быть в формате &lt;locale&gt;/&lt;charmap&gt;. &lt;locale&gt; это локаль из каталога /usr/share/i18n/locales, а &lt;charmap&gt; — это имя одного из файлов каталога /usr/share/i18n/charmaps/. Нужно только понимать два момента: первое, локаль с новой валютой, такой как евро, требует изменения @euro, описанного в примере выше. Второе, локали UTF-8 требуют от вас добавления .UTF-8 в конец определения локали (нет, я не знаю, зачем, но иначе оно не работает). </para>
+                <para>Если вы В САМОМ ДЕЛЕ хотите минимизировать ваши локали, вам всего лишь нужно перевести вашу систему на Юникод. Вообще-то пока есть причины этого не делать, но это уже становится стандартом de facto, так как несёт множество преимуществ перед старыми форматами ISO, ASCII и другими. Больше об этом можно прочесть здесь и здесь, а также непосредственно в соответствующем руководстве с сайта Gentoo. </para>
+                <para>Вам просто нужно определить следующее: Файл: nano -w /etc/locales.build </para>
+                <para>#Как раньше!</para>
+                <para>en_US.UTF-8/UTF-8</para>
+                <para>ru_RU.UTF-8/UTF-8</para>
+                <para>Обратите внимание, я оставил строку US UTF-8. Её лучше не убирать, так как некоторые программы не соберутся без неё. </para>
+                <para>Сделайте это до установки Gentoo </para>
+                <para>Вы можете выполнить эти настройки до началасборки системы с нуля. Просто следуйте инструкциям из Gentoo Handbook. Это позволит меньше волноваться о возможных недоделках программ после сборки и наслаждаться быстрой сборкой. </para>
+                <para>Сделайте это после установки Gentoo </para>
+                <para>Если glibc уже установлена, вам потребуется пересобрать glibc:</para>
+                <para>Code: Пересборка glibc </para>
+                <para>emerge glibc</para>
+                <para>Вы также можете пересобрать world, если пакеты были скомпилированы с поддержкой множества локалей, но полученное ускорение работы пакетов и сэкономленное дисковое пространство не стоят затрат времени. Придётся затратить очень много времени на пересборку всей системы. </para>
+                <para>Возможно, вам стоит обратить внимание на пакет localepurge, который может очистить систему от любых установленных man страниц или info-файлов на языках не используемых в вашей системе. Вначале прочитайте man к localepurge, что бы определить локали, которые необходимо пропустить в /etc/locale.nopurge. </para>
+                <para>Для большей инфомации об управлении локалями читайте: </para>
+                <para>
+                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/guide-localization.xml">Gentoo Linux Localization Guide</link>. </para>
+                <para>Или на русском языке <link xlink:href="#">Руководство по русской локализации Gentoo Linux</link>. </para>
+                <para>Эта оптимизация полностью безопасна (Кроме случаев, если вы не можете читать на языке, который установили!). </para>
+            </section>
+            <section>
+                <info>
+                    <title>Безопасность </title>
+                </info>
+                <para>Как безопасность относится к оптимизации? Итак, это оптимизация безопасности, поскольку ранее было сказано, как оптимизация зависит от вашей системы и как всё это работает. Если это сервер, вы, к примеру, можете пожертвовать оптимизацией в угоду безопасности, или выполнить обе оптимизации. </para>
+                <para>Стабилизация Glibc </para>
+                <para>Это предполагает (как вы, возможно, догадывались...) использование флага USE hardened. Это сделает вашу систему более устойчивой к нападениям разного вида. </para>
+                <para>Усиление стека </para>
+                <para>Используйте флаг erandom если вам необходимо использование модуля случайных чисел, установленного в вашем ядре.</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Подключение USB-flash</title>
+            </info>
+            <section>
+                <info>
+                    <title>Подключение USB-flash к компьютеру</title>
+                </info>
+                <para>Введение</para>
+                <para>В Linux я пользователь новый и с этим вопросом никогда не сталкивался, и более того — ядро по жизни собирал без поддержки USB устройств, т.к. ничего такого у меня просто нет :), но вот, как говорится — пришлось и срочно. И как оказалось — это довольно несложно. </para>
+                <para>Итак, по прочтении парочки-тройки вопросов связанных с USB, и небольшого количества теории — я без проблем подмонтировал USB флешку. Примечание: Что такое флешка и USB описывать не буду, т.к. если читатель этого не знает — то имхо ему следует сначала прочесть несколько других статей. </para>
+                <para>Итак, начнем </para>
+                <para>Конфигурация ядра</para>
+                <para>USB флешки видны в Linux как scsi устройства,ибо поддержка usb устройств в ядре Linux реализуется именно посредством эмуляции скази, т.е. типа /dev/sda1(2,3) и т.д, смотря сколько партиций. </para>
+                <para>Следовательно, чтобы была возможность подключения флешки, сначала необходимо добавить поддержку scsi в ядро </para>
+                <para>Linux Kernel Configuration: Включаем поддержку SCSI </para>
+                <para>Device Drivers ---&gt;
+                </para>
+                <para> SCSI device support</para>
+                <para>  &lt;*&gt;legacy /proc/scsi/ support</para>
+                <para>  --- SCSI support type (disk, tape, CD-ROM)</para>
+                <para>  &lt;*&gt; SCSI disk support</para>
+                <para>  &lt;*&gt; SCSI generic support</para>
+                <para>  --- Some SCSI devices (e.g. CD jukebox) support multiple LUNs</para>
+                <para>  &lt;*&gt; Probe all LUNs on each SCSI device</para>
+                <para>Далее добавляем непосредственно поддержку USB (я не говорю о клавиатурах или других устройствах USB, а говорю только о флешке) </para>
+                <para>Linux Kernel Configuration: Поддержка USB </para>
+                <para>Device Drivers ---&gt;</para>
+                <para> USB support</para>
+                <para>  &lt;*&gt; Support for Host-side USB</para>
+                <para>  &lt;*&gt; USB device filesystem</para>
+                <para>  &lt;*&gt; EHCI HCD (USB 2.0) support</para>
+                <para>  &lt; &gt; OHCI HCD support</para>
+                <para>  &lt;*&gt; UHCI HCD (most Intel and VIA) support</para>
+                <para>  &lt;*&gt; USB Mass Storage support</para>
+                <para>Примечание: В разделе USB Mass Storage support есть куча других устройств — я там не отмечал ничего, у меня заработало и так. Подозреваю, что для специфических устройств (всмысле каких то навороченных флешок) нужно будет что нибудь еще там отметить. </para>
+                <para>Кроме того, для этих всяких сложных флешок скорее всего придется добавить MTD в ядро</para>
+                <para>Linux Kernel Configuration: MTD </para>
+                <para>Device Drivers ---&gt;</para>
+                <para> Memory Technology Devices (MTD) ---&gt;</para>
+                <para>ну и там смотрим, что нужно. Примечание: Для большинства современных флэшек, USB носителей и цифровых фотоаппаратов поддержка MTD не требуется. </para>
+                <para>Монтирование</para>
+                <para>После загрузки с новым ядром, нажимаем Alt+F12 и вставляем флешку — если с ядром все ок- то сразу появятся сообщения, что мол есть устройство USB , потом пишется, что есть /dev/uba ну и т.п. </para>
+                <para>Если этого не происходит, делаем </para>
+                <para>dmesg | grep usb </para>
+                <para>Если и здесь ничего нет, то советую перегрузиться и посмотреть включены ли USB контроллеры в BIOS :) как это не смешно звучит, но я сам себе это отрубил, когда ядро собирал, а потом включить забыл, и минут 15 гадал — чего же оно не работает :) </para>
+                <para>Если dmesg | grep usb выдает результат, а когда вставляем флешку — никакой реакции, то нужно проверить еще раз — все ли отмечено в ядре. </para>
+                <para>Вобщем — надеемся , что все заработало и теперь нужно смонтировать флешку. </para>
+                <para>Добавляем в /etc/fstab строку </para>
+                <para>Файл: /etc/fstab </para>
+                <para>/dev/uba1 /mnt/usbdir auto user,noauto,rw 0 0 </para>
+                <para>и можно монтировать! но есть одно но, в опциях я не указал кодировки, т.к. кодировка по умолчанию указанна в разделе Native Languages конфигурации ядра. </para>
+                <para>Не будет лишним напомнить отмонтировать флешку перед тем как вытаскивать ее! </para>
+                <para>Если такой вариант вас не устраивает, то вы можете установить пакет submount и монтировать флэшку вот так: </para>
+                <para>Файл: /etc/fstab </para>
+                <para> /dev/uba1 /mnt/usb  subfs  fs=vfat,auto,umask=0,quiet,sync 0 0 </para>
+                <para>Параметр sync необходим чтобы отключить отложенную запись и избежать потерю данных при копировании файлов на флэшку. </para>
+                <para>Вроде бы все. Удачи всем! </para>
+                <para>И естественно- за любые комментарии, дополнения, уточнения и исправления ошибок – буду только благодарен :) </para>
+                <para>надеюсь, кому-то помог tradakad </para>
+                <para>исправил касательно монтирования при помощи submount (dernik) </para>
+            </section>
+            <section>
+                <info>
+                    <title>Монтирование под kde</title>
+                </info>
+                <para>Установите пакеты: hal, dbus, and hotplug </para>
+                <para>Добавьте флаг hal в /etc/make.conf </para>
+                <para>emerge -avt kdebase-kioslaves </para>
+                <para>Убедитесь, что hal используется всеми пакетами: </para>
+                <para>emerge -DNu world</para>
+                <para>rc-update add dbus default</para>
+                <para>/etc/init.d/dbus start</para>
+                <para>rc-update add hald default</para>
+                <para>/etc/init.d/hald start</para>
+                <para>так же можно монтировать устройства без изменения /etc/fstab с помощью </para>
+                <para>emerge -av pmount</para>
+                <para>Добавьте себя в групп plugdev </para>
+                <para>gpasswd -a USER plugdev</para>
+                <para>Включите "Storage media" ("Устройства хранения данных" в русском варианте) в systray (на панель). Наслаждайтесь :) </para>
+            </section>
+            <section>
+                <info>
+                    <title>Автоматическое монтирование </title>
+                </info>
+                <para>Если лень замарачиваться каждый раз при втыкании флэшки или сидюка, а хочется, чтоб как в одной другой ОС, добавьте параметр managed в /etc/fstab к требуемому устройству, например </para>
+                <para>Файл: /etc/fstab </para>
+                <para> /dev/cdrw    /mnt/cdrom    iso9660    user,noauto,ro,managed          0 0</para>
+                <para> /dev/sda     /mnt/flash    vfat       exec,user,noauto,sync,managed    0 0</para>
+                <para>Типа, все, теперь при появлении флэшки в системе будет появляться иконка на рабочем столе. </para>
+                <para>ps. распишите эту статью подробнее. Добавьте gpasswd в статью:</para>
+                <para> <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-wiki.com/HOWTO_D-BUS,_HAL,_KDE_media:/">http://gentoo-wiki.com/HOWTO_D-BUS,_HAL,_KDE_media:/</link>
+                </para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Чтение-запись NTFS с использованием драйвера ntfs-3g</title>
+            </info>
+            <section>
+                <info>
+                    <title>Введение</title>
+                </info>
+                <para>"Драйвер ntfs-3g является открытым, лицензированным по GPL, драйвером NTFS для Linux, созданным в рамках проекта Linux-NTFS. Он предоставляет полный доступ к разделам NTFS (чтение-запись), кроме работы с зашифрованными файлами и записи сжатых файлов. Так же не поддерживается смена владельца файла и его прав доступа. Технически он является сильно усовершенствованным драйвером ntfsmount. Улучшена функциональность, качество и добавлены дополнительные возможности." (Szakacsits Szabolcs, автор ntfs-3g) </para>
+                <para>Автор создал драйвер, который гораздо лучше пригоден для использования, чем другие драйвера NTFS для Linux, и при этом не менее быстрый, чем драйвера родных файловых систем Linux — временами в два раза быстрее чем родной модуль файловой системы EXT3 в ядре. </para>
+                <para>Для получения более подробной информации посетите: [1]</para>
+                <para>Предупреждение: Драйвер имеет статус BETA, имеются некоторые не решённые вопросы, возможна потеря данных и/или зависания при попытке примонтировать раздел. Он НЕ работает на архитектурах, отличных от x86 и amd64. </para>
+                <para>СДЕЛАЙТЕ РЕЗЕРВНУЮ КОПИЮ ДАННЫХ ПЕРЕД ЛЮБЫМИ ПОПЫТКАМИ ИСПОЛЬЗОВАНИЯ !!! В ЛЮБОМ СЛУЧАЕ — ВЫ ПРЕДУПРЕЖДЕНЫ !!! </para>
+            </section>
+            <section>
+                <info>
+                    <title>Установка</title>
+                </info>
+                <para>ebuild драйвера зависит от sys-fs/fuse (portage установит его автоматически). </para>
+                <para>Поскольку это программное обеспечение находится на стадии бета-тестирования, вы должны размаскировать его: </para>
+                <para># echo "sys-fs/ntfs3g ~x86" &gt;&gt; /etc/portage/package.keywords</para>
+                <para>И установить его: </para>
+                <para># emerge sys-fs/ntfs3g</para>
+                <para>Модуль ядра fuse должен быть загружен перед использованием драйвера </para>
+                <para># modules-update</para>
+                <para># modprobe fuse</para>
+                <para>Примеры использования</para>
+                <para>Монтирование раздела: </para>
+                <para># ntfs-3g /dev/hda1 /mnt/windows</para>
+                <para>Полный доступ для всех пользователей, без ограничений прав доступа, и поддержкой заданной локали (В примере используется ru_RU.utf8, однако у вас она может отличаться): </para>
+                <para># ntfs-3g /dev/hda1 /mnt/windows -o silent,umask=0,locale=ru_RU.utf8 </para>
+                <para>Размонтирование </para>
+                <para># fusermount -u /mnt/windows</para>
+                <para>Прочтите страницу руководства по ntfs-3g для получения более подробной информации. </para>
+                <para>$ man ntfs-3g</para>
+                <para>Монтирование при загрузке:</para>
+                <para>Для автоматической загрузки модуля fuse при старте системы выполните: </para>
+                <para># echo "fuse" &gt;&gt; /etc/modules.autoload.d/kernel-2.6</para>
+                <para>Отредактируйте /etc/fstab: </para>
+                <para># echo "/dev/hda1 /mnt/windows ntfs-3g silent,umask=0,locale=ru_RU.utf8 0 0" &gt;&gt; /etc/fstab</para>
+            </section>
+            <section>
+                <info>
+                    <title>Вопрос обновления ядра</title>
+                </info>
+                <para>Если после обновления ядра драйвер перестал работать, сделайте следующее: </para>
+                <para># emerge sys-fs/fuse</para>
+                <para># modules-update</para>
+                <para># modprobe fuse</para>
+            </section>
+            <section>
+                <info>
+                    <title>Отказ от гарантий</title>
+                </info>
+                <para>Автор этого документа не отвечает за какие либо последтсвия, связанные с использованием этого драйвера. Всё что вы делаете — вы делаете на свой страх и риск.</para>
+            </section>
+        </section>
+</article>

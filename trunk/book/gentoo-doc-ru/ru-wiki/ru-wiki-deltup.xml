@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Экономия трафика с помощью deltup</title>
+    </info>
+    <section>
+        <info>
+            <title>Что это такое?</title>
+        </info>
+        <para>Как известно, программы в Gentoo Linux устанавливаются из исходников. Это чистый текст. Однако, такие программы как, например, gcc или openoffice весят непростительно много. А у большинства из нас интернет не позволяет качать файлы больших объемов, а пользователи модемов вообще толком ничего обновить не могут. Для людей, которые экономят свои деньги, и была написана программа deltup. Вместо wget мы заставляем emerge использовать getdelta. Эта программа скачивает со специального сайта не весь архив программы, а только разницу между требуемой версией и тем, что у вас есть. Если у вас нет предыдущей версии программы, то придется качать весь архив. </para>
+    </section>
+    <section>
+        <info>
+            <title>Установка и настройка</title>
+        </info>
+        <para>Установка deltup</para>
+        <para>Теперь установим deltup:</para>
+        <para>emerge deltup и getdelta: emerge getdelta </para>
+        <para>Примечание: Если при выполнении emerge deltup выйдет ошибка "!!!All ebuilds that could satisfy "deltup" have been masked." перед командой добавьте ACCEPT_KEYWORDS="~x86" </para>
+        <section>
+            <info>
+                <title>Настройка emerge</title>
+            </info>
+            <para>Теперь нужно предупредить emerge о том что мы хотим использовать getdelta вместо wget. Для этого добавим в /etc/make.conf параметр FETCHCOMMAND: Файл: File /etc/make.conf </para>
+            <para>FETCHCOMMAND="/usr/bin/getdelta.sh \${URI}"</para>
+        </section>
+        <section>
+            <info>
+                <title>Конфигурация getdelta</title>
+            </info>
+            <para>У getdelta есть свой файл конфигурации:/etc/deltup/getdelta.rc. Рассмотрим некоторые полезные параметры: </para>
+            <para>DELTUP_SERVER — указывает на используемый deltup сервер. Рекомендуется оставить без изменений, так как deltup-сервера сейчас собраны в сеть обращение к которой идёт через один сервер linux01.gwdg.de. </para>
+            <para>QUEUERETRY — количество секунд, которые будет ждать getdelta,пока сервер не сделает dtu-файл. </para>
+            <para>MAXIMUM_ACCEPTABLE_QUEUEPOS — максимальный номер в очереди ожидания. В связи с ростом загруженности deltup-сервера имеет смысл установить число побольше. </para>
+            <para>REMOVE_OLD — удалять старые версии файлов. Полезно, если вы не хотите складировать дистфайлы. </para>
+            <para>DO_NOT_REMOVE — путь к файлу, содержащему имена файлов, которые не следует удалять при включенной опции REMOVE_OLD </para>
+        </section>
+        <section>
+            <info>
+                <title>Дополнительно</title>
+            </info>
+            <para>Могут возникнуть проблемы если вы скачали часть файла нужного для установки. Дело в том, что для продолжения докачки emerge использует не FETCHCOMMAND, а RESUMECOMMAND. Однако не следует менять RESUMECOMMAND на getdelta, так как getdelta не поддерживает докачку.</para>
+        </section>
+    </section>
+</article>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>HOWTO Обновление пакетов без доступа в интернет непосредственно из системы</title>
+    </info>
+    <para>В моем случае это понадобилось в следующей (я полагаю довольно распространенной) ситуации: дома — нет интернета (дорогой, медленный — нужное подчеркнуть :) ), а на работе — хороший и бесплатный. Итак для начала необходимо получить список нужных пакетов. В этом примере мы хотим установить/обновить glibc baselayout texinfo gettext zlib binutils gcc ncurses. Список мы сохраняем на устаревший магнитный носитель, но счастливые обладатели более надежных носителей естественно могут пользоваться ими. </para>
+    <para>Получение списка для скачивания: </para>
+    <para>(Не забывайте '2' перед '&gt;') Code: </para>
+    <para># emerge -fp glibc baselayout gettext zlib binutils gcc ncurses 2&gt; stage1.list</para>
+    <para># mount -t vfat /dev/fd0 /mnt/floppy</para>
+    <para># cp /mnt/gentoo/stage1.list /mnt/floppy</para>
+    <para># umount /mnt/floppy </para>
+    <para>Теперь вставляем дискету в компьютер с хорошим каналом. (В моем случае это рабочий компьютер.) Если заглянуть в файл stage1.list, можно увидеть, что в нем перечисляются несколько ссылок на каждую загрузку. К сожалению, это не совсем то, что нам надо. Сначала список надо почистить от лишнего: </para>
+    <para>Очистка от лишних ссылок: </para>
+    <para>Этот скрипт привязан к формату вывода emerge, который может измениться без предварительного предупреждения — используйте с осторожностью! # cut -f 1 -d ' ' stage1.list &gt; stage1.download </para>
+    <para>Теперь используем wget для загрузки списка пакетов: </para>
+    <para># wget -N -i stage1.download </para>
+    <para>Получив все файлы, переносим их в наш компьютер в /mnt/gentoo/usr/portage/distfiles. И для проверки запустим </para>
+    <para># emerge -pv glibc baselayout gettext zlib binutils gcc ncurses </para>
+    <para>Если в строке Total Download: указана цифра 0 — значит все было сделано верно. Можно теперь запускать установку: </para>
+    <para># emerge glibc baselayout gettext zlib binutils gcc ncurses </para>
+    <para>У всего вышеописанного есть один недостаток. В фаиле stage1.download есть все необходимые для установки фаилы. Даже те, которые у вас могут быть в distfiles. А как вырезать ссылки из stage1.download на имеющиеся в distfiles фаилы я не знаю. Если кто знает — напишите. </para>
+    <para>Взято с Gentoo.org: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gentoo.org/doc/ru/altinstall.xml">http://www.gentoo.org/doc/ru/altinstall.xml</link></para>
+</article>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Система Portage</title>
+    </info>
+    <section>
+        <info>
+            <title>Portage через NFS</title>
+        </info>
+        <section>
+            <info>
+                <title>Проблемы </title>
+            </info>
+            <itemizedlist>
+                <listitem>
+                    <para>Слишком долгое время выполнения 'emerge --sync' на всех серверах в LAN.</para>
+                </listitem>
+                <listitem>
+                    <para>Согласно этикету gentoo, вы не можете синхронизироваться чаще одного раза в день.</para>
+                </listitem>
+            </itemizedlist>
+        </section>
+        <section>
+            <title>Решение </title>
+            <para>Общий NFS portage. Одна машина синхронизируется под управлением cron, остальные машины монтируют свою директорию /usr/portage с помощью NFS. </para>
+        </section>
+        <section>
+            <title>Общее представление </title>
+            <orderedlist>
+                <listitem>
+                    <para>Обязательная поддержка nfs в ядре. В случае компиляции ее как модуля, добавить соответствующие строчки в modules.autoload </para>
+                </listitem>
+                <listitem>
+                    <para>Если потребуется, перезагрузить или загрузить модуль nfs </para>
+                </listitem>
+                <listitem>
+                    <para>Выполнить emerge nfs-utils</para>
+                </listitem>
+                <listitem>
+                    <para>Настроить NFS/fstab для автоматического монтирования общего репозитария portage.</para>
+                </listitem>
+                <listitem>
+                    <para>Установить локальный PORTAGE_TMPDIR на локальную файловую систему.</para>
+                </listitem>
+            </orderedlist>
+        </section>
+        <section>
+            <title>Выгоды </title>
+            <itemizedlist>
+                <listitem>
+                    <para>Только один сервер заботится о синхронизации portage (ночью по заданию cron'а). </para>
+                </listitem>
+                <listitem>
+                    <para>Не нужен локальный rsync сервер. </para>
+                </listitem>
+                <listitem>
+                    <para>Общий для всех каталог <filename>/usr/portage/distfiles</filename> означает, что вам не нужно скачивать одно и то же каждый раз, чтобы синхронизировать репозитарий portage на ваших ваши компьютерах. </para>
+                </listitem>
+                <listitem>
+                    <para>И вообще, NFS — это классная штука ;) </para>
+                </listitem>
+            </itemizedlist>
+            <warning>
+                <para>NFS является очень скудным протоколом по части безопасности. Убедитесь, что используете его только в пределах вашей локальной сети, где вы полностью доверяете вашим пользователям. Мы вас предупредили! </para>
+            </warning>
+        </section>
+        <section>
+            <title>Подробный процесс </title>
+            <section>
+                <title>Поддержка ядра </title>
+                <para>У вас ДОЛЖНА быть включена поддержка NFS в вашем ядре, либо вкомпиленная в ядро (в таком случае необходимо будет перезагрузиться): </para>
+                <example>
+                    <title>Конфигурация ядра Linux: Встроенная поддержка </title>
+                    <screen>File systems --->
+                        Network File Systems --->
+                        &lt;*> NFS file system support
+                        [*]   Provide NFSv3 client support
+                        [ ]   Provide NFSv4 client support (EXPERIMENTAL)
+                        [ ]   Allow direct I/O on NFS files (EXPERIMENTAL)
+                        &lt;*> NFS server support
+                        [*]   Provide NFSv3 server support
+                        [ ]     Provide NFSv4 server support (EXPERIMENTAL)
+                        [ ]   Provide NFS server over TCP support (EXPERIMENTAL)</screen>
+                </example>
+                <para>либо в качестве модулей: </para>
+                <example>
+                    <title>Конфигурация ядра Linux: Включение модулей</title>
+                    <screen>File systems --->
+                        Network File Systems --->
+                        &lt;M> NFS file system support
+                        [*]   Provide NFSv3 client support
+                        [ ]   Provide NFSv4 client support (EXPERIMENTAL)
+                        [ ]   Allow direct I/O on NFS files (EXPERIMENTAL)
+                        &lt;M> NFS server support
+                        [*]   Provide NFSv3 server support
+                        [ ]     Provide NFSv4 server support (EXPERIMENTAL)
+                        [ ]   Provide NFS server over TCP support (EXPERIMENTAL)</screen>
+                </example>
+                <para>Добавляем NFS server support, так как на данной машине будет размещаться общий каталог portage. Поддержку клиента NFS можно добавить по желанию. </para>
+                <para>Сохраните конфиг вашего ядра и пересоберите его.</para>
+                <example>
+                    <title>Пересборка ядра</title>
+                    <screen>gentoo # mount /boot //если это еще не сделано
+                        gentoo # cd /usr/src/linux
+                        <lineannotation>Для ядер 2.4:</lineannotation>
+                        gentoo # make dep &amp;&amp; make bzImage modules modules_install install
+                        <lineannotation>Для ядер 2.6:</lineannotation>
+                        gentoo # make &amp;&amp; make modules_install</screen>
+                </example>
+            </section>
+            <section>
+                <title>Включение поддержки</title>
+                <para>Перезагрузитесь, если включили поддержку NFS в ядро, или, если вы собрали ее как модули, просто запустите: <command>modprobe nfs</command></para>
+            </section>
+            <section>
+                <title>Установка и настройка</title>
+                <para>Установите пакет nfs-utils:</para>
+                <screen><prompt>#</prompt> <userinput>emerge nfs-utils</userinput></screen>
+                <para>Настраиваем автоматическое монтирование общего portage </para>
+                <screen><prompt>#</prompt> <userinput>rc-update add portmap default</userinput>
+                    <prompt>#</prompt> <userinput>rc-update add nfs default</userinput></screen>
+                <para>Отредактируйте crontab на сервере (метод зависит от того, какой cron вы используете). Для vixie-cron и dcron команда выглядит так: <command>crontab -e</command></para>
+                <para>Добавьте код: </para>
+                <programlisting>0 0 * * * emerge --sync &gt; /dev/null 2&gt;&amp;1 || true --nospinner &amp;&amp; emerge world -vup</programlisting>
+                <para>Отредактируйте файл <filename>/etc/exports</filename> на сервере, чтобы в нем были следующие строчки: </para>
+                <programlisting>/usr/portage    ip_range/subnet(sync,no_root_squash,rw)</programlisting>
+                <para>Отредактируйте <filename>/etc/fstab</filename> на клиентах, добавив в него следующий код: </para>
+                <programlisting>SERVER_IP:/usr/portage  /usr/portage  nfs  bg,hard 0 0</programlisting>
+                <para>Отредактируйте <filename>/etc/modules.autoload.d/kernel-version</filename>, добавив следующую строку:</para>
+                <programlisting>nfs</programlisting>
+                <note>
+                    <para>Кеш портежей не расшарен через nfs. Если каждый раз вас докучает обновление кеша при команде emerge сразу после синхронизации, попробуйте добавить следующее в crontab клиентов. Это обновит кеш на компьютерах ваших клиентов спустя 10 минут после старта синхронизации на сервере. Установите время согласно скорости вашего подключения.</para>
+                    <programlisting>10 0 * * * emerge --metadata </programlisting>
+                </note>
+            </section>
+            <section>
+                <title>PORTAGE_TMPDIR</title>
+                <para><envar>PORTAGE_TMPDIR</envar> должен быть локальным каталогом (для скорости). </para>
+                <para>Переменная <envar>PORTAGE_TMPDIR</envar> устанавливается в файле <filename>/etc/make.conf</filename> и по умолчанию указывает на <filename>/var/tmp</filename>, то есть на локальную файловую систему, но просто для того, чтобы увериться в том, что это так, а не иначе, сделайте: emerge info Если всё прошло успешно (а всё так и должно быть), вы спокойно можете очистить содержимое каталога <filename>/usr/portage</filename> на КЛИЕНТСКОЙ машине (например, чтобы освободить дополнительное свободное место на диске) </para>
+            </section>
+        </section>
+        <section>
+            <title>Пояснение кода </title>
+            <para>Запись crontab'а </para>
+            <programlisting>0 0 * * * emerge --sync &gt; /dev/null 2&gt;&amp;1 || true --nospinner &amp;&amp; emerge world -vup</programlisting>
+            <para>говорит о том, что раз в сутки, в полночь будут выполнятся синхронизация с перенаправлением вывода в мусор и без бегунка и <command>emerge world -vup</command> и отправка письма root'у о том, что должно быть обновлено — настройте корректно почту). </para>
+            <para><filename>/etc/exports</filename>:</para>
+            <para>"<code>/usr/portage</code>" — каталог для экспорта</para>
+            <para>"<code>ip_range/subnet</code>" — только компьютеры из этого диапазона могут подключать его по сети</para>
+            <para>"<code>(sync,no_root_squash,rw)</code>" — полезные параметры, всегда мною используемые </para>
+            <para><filename>/etc/fstab</filename>:</para>
+            <para>"<code><replaceable>SERVER_IP</replaceable>:/usr/portage</code>" — что вы хотите подключить</para>
+            <para>"<code>/usr/portage</code>" — куда вы хотите подключить</para>
+            <para>"<code>nfs</code>" — ФС ресурса</para>
+            <para>"<code>bg,hard 0 0</code>" — полезные параметры, всегда мною используемые </para>
+            <para><filename>/etc/modules.autoload.d/kernel-version</filename>:</para>
+            <para>"<code>nfs</code>" сообщает какой модуль загружать при загрузке ядра версии kernel-version </para>
+        </section>
+        <section>
+            <title>Комментарии </title>
+            <para>Советы? Пожелания? Похвала? <link xlink:href="http://ru.gentoo-wiki.com/w/index.php?title=%D0%9E%D0%B1%D1%81%D1%83%D0%B6%D0%B4%D0%B5%D0%BD%D0%B8%D0%B5:HOWTO_Using_a_shared_portage_via_NFS&amp;action=edit&amp;redlink=1">Дайте нам знать</link>.</para>
+            <para>Если вы получаете ошибку "Error starting NFS daemon" попробуйте </para>
+            <screen><prompt>#</prompt> <userinput>mount -t nfsd nfsd /proc/fs/nfsd</userinput></screen>
+            <para>это работает для меня.</para>
+        </section>
+    </section>
+</article>

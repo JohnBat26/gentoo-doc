@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Настройка Portage</title>
+    </info>
+    <section>
+        <info>
+            <title>Portage Setup Howto </title>
+        </info>
+        <section>
+            <info>
+                <title>Целевая аудитория </title>
+            </info>
+            <para>Это руководство создается для людей, которые хотят использовать все возможности системы Portage. </para>
+        </section>
+        <section>
+            <info>
+                <title>Зачем нужно это howto? </title>
+            </info>
+            <para><indexterm>
+                <primary>Portage</primary>
+            </indexterm>Portage — это система управления пакетами Gentoo Linux. Ее возможности довольно велики — сборка пакетов из исходников, включая конфигурирование пакета на основе пользовательских USE-флагов; начальная настройка приложений; установка предкомпилированных пакетов; удаление програм; автоматическое обновление, и т. д. Однако, как показывает опыт, несмотря на отличную документацию, большинство пользователей не знают всех возможностей этой замечательной системы, поэтому очень часто Gentoo Linux подвергается незаслуженной критике. Данный документ — это попытка восполнить этот пробел. </para>
+        </section>
+        <section>
+            <info>
+                <title>Профили Portage (Portage profiles) </title>
+            </info>
+            <para>Gentoo — многоплатформенная система, при этом количество поддерживаемых архитектур постоянно увеличивается. Поэтому возникает необходимость в так называемых профилях сборки. Профиль — это набор настроек по умолчанию для определенной архитектуры, или определенного класса задач (например, для систем с повышенной безопасностью существуют профили hardened и selinux). Наличие профилей, которые легко создавать, позволяет называть Gentoo не дистрибутивом, а метадистрибутивом, то есть дистрибутивом для создания других дистрибутивов ;). Но не об этом сейчас разговор. </para>
+            <para>Итак, для того, чтобы иметь работающую Gentoo-систему, необходимо выбрать себе нужный профиль. Профили по умолчанию находятся в каталоге /usr/portage/profiles. По названию профиля легко определить тот, который нужен вам. Например, 'default-x86-2004.2' — это стандартный профиль для архитектуры x86 версии 2004.2. Если в каталоге с профилем есть файл deprecated, то это означает, что данный профиль больше не поддерживается и выбирать его не следует. </para>
+            <para>После того как вы определились с выбранным профилем необходимо создать симлинк <filename>/etc/make.profile</filename> на каталог с выбранным профилем. Например, <command>ln -s /usr/portage/profiles/default-x86-2004.2 /etc/make.profile</command> Когда выйдет новая версия Gentoo, вам не надо бежать в магазин, покупать новые диски. Достаточно просто поменять симлинк <filename>/etc/make.profile</filename> на симлинк, указывающий на каталог с новым профилем. </para>
+            <note>
+                <para>Сейчас идет переход на новый вид профилей — Cascading Profiles. Такие профили имеют вид: </para>
+                <para><filename>default-linux/x86/2004.2/</filename>
+                </para>
+                <para>То есть настройки, общие для нескольких профилей не надо записывать по несколько раз. Пока что это экспериментальная фича, но если вы хотите помочь ее протестировать, то используйте на здоровье ;). </para>
+            </note>
+            <note>
+                <para>Вообще-то переход на cascading profiles уже произошел, посему надо обновить то, что написано выше в этой секции "Portage profiles" </para>
+            </note>
+        </section>
+        <section>
+            <info>
+                <title>Настройки профилей </title>
+            </info>
+            <para>В профилях содержится следующая информация: </para>
+            <orderedlist>
+                <listitem>
+                    <para>use-флаги использующиеся по умолчанию; </para>
+                </listitem>
+                <listitem>
+                    <para>системные пакеты, то есть такие пакеты, которые устанавливаются при <command>emerge system</command>; </para>
+                </listitem>
+                <listitem>
+                    <para>маскированные пакеты; </para>
+                </listitem>
+                <listitem>
+                    <para>Настройки сборки пакетов по умолчанию. (CFLAGS, CHOST и другие);</para>
+                </listitem>
+                <listitem>
+                    <para>Какие пакеты надо устанавливать при наличии альтернативных. (например, xorg или xfree) </para>
+                </listitem>
+            </orderedlist>
+            <para>Конфигурацию профилей напрямую менять не следует, так как ваши настройки будут удалены после следующей синхронизации с rsync-сервером. О том как правильно настраивать portage будет рассказано в следующем разделе. </para>
+        </section>
+        <section>
+            <title>/etc/portage и /etc/make.conf </title>
+            <para>Для того, чтобы изменить конфигурацию выбранного профиля, нужно использовать конфигурационные файлы в /etc/portage. Если у вас нет этого каталога, то его необходимо создать. Вот список конфигурационных файлов, которые читает Portage во время своей работы: </para>
+            <section>
+                <title>/etc/portage/package.mask </title>
+                <para>Синтаксис: в каждой строке содержится DEPEND ATOM, то есть один из знаков &gt;, &lt;, &gt;=, &lt;=, =, категорию, название и версию пакета. Логические знаки обязательны если указана версия пакета. </para>
+                <para>Например: &gt;=net-www/mozilla-1.7 </para>
+                <para>Неправильные примеры: </para>
+                <para>net-www/mozilla-1.7 (нет логической операции) </para>
+                <para>&gt;=mozilla-1.7 (нет категории) </para>
+                <para>Предназначение: Маскирует пакеты. Может использоваться для того, чтоб Portage не обновлял нужный вам пакет. Например, если вы хотите использовать apache-1.3 вместо apache-2.0 </para>
+            </section>
+            <section>
+                <title>/etc/portage/package.unmask </title>
+                <para>Синтаксис: такой же, как и у package.mask </para>
+                <para>Предназначение: Демаскирует пакеты, которые маскированы в профиле. Используется для установки нестабильных пакетов. Рекомендуется использовать только тем, кто хочет протестировать какой-то нестабильный пакет. </para>
+            </section>
+            <section>
+                <title>/etc/portage/profile/package.provided </title>
+                <para>Синтаксис: В каждой строчке содержится полное имя пакета, то есть category/name-version</para>
+                <para>Например: dev-lang/ghc-6.2.1-r1 </para>
+                <para>Предназначение: Замена 'emerge --inject'. При наличии пакета в package.provided Portage будет считать, что этот пакет уже установлен в системе.</para>
+                <note>
+                    <para>Иногда этого бывает недостаточно и пакет приходится вносить в <filename>/etc/make.profile/package.provided</filename> (который удаляется после каждого <command>emerge sync</command>) </para>
+                </note>
+            </section>
+            <section>
+                <title>/etc/portage/mirrors </title>
+                <para>Синтаксис: Такой же как и у файла <filename>/usr/portage/profiles/thirdpartymirrors</filename>. Предназначение: Список зеркал, которые будут использоватся в первую очередь. Можно также указать зеркала sourceforge или gnu, которые будут использоватся в первую очередь. </para>
+                <para>Например: <code>sourceforge http://keihanna.dl.sourceforge.net/sourceforge</code></para>
+                <para>Так же можно использовать тип миррора 'local'. Такое зеркало будет проверятся, даже если в ebuild'е пакета есть RESTRICT="NOMIRROR". Например: </para>
+                <para>local ftp://gentoo.linux.kiev.ua/pub/Linux/Gentoo/distfiles/ </para>
+            </section>
+            <section>
+                <title>/etc/portage/package.use </title>
+                <para>Синтаксис: DEPEND ATOM USE-флаги </para>
+                <para>Например: x11-libs/gtk+ doc </para>
+                <para>Предназначение: Установка индивидуальных USE-флагов для отдельных пакетов </para>
+            </section>
+            <section>
+                <title>/etc/portage/package.keywords </title>
+                <para>Синтаксис: DEPEND ATOM KEYWORD KEYWORD — это идентификатор, который показывает, насколько стабилен пакет на данной архитектуре. Всего есть 4 вида KEYWORDS: </para>
+                <para>  arch — пакет стабилен на архитектуре arch </para>
+                <para>~arch — пакет стабилен на архитекруре arch, но еще не прошло время тестирования </para>
+                <para> -arch — у пакета наблюдаются проблемы на архитектуре arch. </para>
+                <para>      -* — пакет нестабилен на всех архитектурах </para>
+                <para>Например: &gt;=app-editors/emacs-cvs-21.3 ~x86 </para>
+                <para>Предназначение: Установка индивидуальных KEYWORDS для отдельных пакетов. Используйте если хотите, чтоб в вашей стабильной системе были отдельные нестабильные пакеты или наоборот :) </para>
+            </section>
+            <section>
+                <title>/etc/portage/categories </title>
+                <para>Синтаксис: В каждой строке содержится название категории. Предназначение: Используется для создание новых категорий для Portage. </para>
+                <para>Например: app-vasia </para>
+                <para>Теперь вы можете создать ebuild для пакетов категории app-vasia. emacs ${PORTDIR_OVERLAY}/app-vasia/pupkin/pupkin-0.0.1.ebuild </para>
+            </section>
+            <section>
+                <title>/etc/make.conf </title>
+                <para>Файл /etc/make.conf служит для настройки самого процесса сборки пакетов. Никаких сложных опций там нет, читайте внимательно комментарии в /etc/make.conf.example. </para>
+            </section>
+        </section>
+        <section>
+            <title>$PORTDIR_OVERLAY</title>
+            <para>Представьте себе такую ситуацию: вы хотите установить пакет, ebuild'а которого нет в официальном дереве, но кто-то уже его написал. Или вы собираетесь самостоятельно научится писать ebuild'ы, и вы хотите, чтоб Portage мог устанавливать нужные вам программы. Если вы запишете свой ebuild в /usr/portage, то он сотрется при следующей синхронизации с rsync-сервером. Для того, чтобы third-party ebuild'ы сохранялись, необходимо создать каталог для их хранения (например, /usr/local/portage) и записать его имя в переменную $PORTDIR_OVERLAY в файле /etc/make.conf. Теперь вы можете размещать свои ebuild'ы в этом каталоге, пример был показан в предыдущем разделе.</para>
+        </section>
+    </section>
+</article>

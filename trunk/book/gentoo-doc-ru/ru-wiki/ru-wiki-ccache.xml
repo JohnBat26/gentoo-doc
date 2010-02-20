@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Тонкость работы ccache с emerge</title>
+    </info>
+    <para>Вы пробовали оценить эффективность работы ccache при пересборке системы? Проделайте опыт: очистите кэш (ccache -C) и запустите пересборку (emerge --emptytree world). После пересборки десятка-другого пакетов прервите процесс и посмотрите статистику (ccache -s) Запустите пересборку по новой и опять прервитесь на старом месте. Что показывает статистика? Много ли совпадений? </para>
+    <para>А теперь добавьте в /etc/make.conf строчки </para>
+    <para>CC=gcc </para>
+    <para>CXX=g++ </para>
+    <para>очистите кэш и статистику и повторите эксперимент заново. Не правда ли, что после этого кэш только и заработал? </para>
+    <para>Суть: по состоянию на апрель 2005 ccache опознает как компилятор только стандартные имена типа gcc, g++ и не опознает такие имена как i686-pc-linux-gnu-gcc. Однако именно такие имена и используют пакеты в качестве компилятора после работы скриптов кофигурации configure </para>
+</article>

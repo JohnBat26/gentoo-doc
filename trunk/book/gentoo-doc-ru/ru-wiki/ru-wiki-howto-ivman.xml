@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>HOWTO Ivman</title>
+    </info>
+    <section>
+        <info>
+            <title>Цель</title>
+        </info>
+        <para><indexterm>
+            <primary>ivman</primary>
+        </indexterm>Целью статьи является установка <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ivman.sourceforge.net/">ivman</link> для автомонтирования устройств. </para>
+        <warning>
+            <para>Внимание: часть информации может быть недействительна для старых версий Ivman, особенно Ivman 0.5.x. Пожалуйста, используйте последние стабильные версии Ivman. </para>
+        </warning>
+    </section>
+    <section>
+        <info>
+            <title>Требуемые программы</title>
+        </info>
+        <orderedlist>
+            <listitem>
+                <para>
+                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/HOWTO_Udev">UDEV</link>
+                </para>
+            </listitem>
+            <listitem>
+                <para>HAL </para>
+            </listitem>
+            <listitem>
+                <para>D-BUS </para>
+            </listitem>
+            <listitem>
+                <para>pmount </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ivman.sourceforge.net/">ivman</link>
+                </para>
+            </listitem>
+        </orderedlist>
+        <para>Все требуемые пакеты есть в портежах, поэтому минимальным действием будет: </para>
+        <screen><prompt>#</prompt> <userinput>emerge -av ivman</userinput></screen>
+        <para>Размаскируйте требуемые пакеты, если необходимо. </para>
+        <para>Если установка HAL выдаёт предупреждения, что не установлены "u64" или "BLKGETSIZE64"и вы используете ядро 2.6, обновите пакет linux-headers: </para>
+        <screen><prompt>#</prompt> <userinput>emerge --oneshot linux-headers</userinput></screen>
+        <para>Когда linux-headers полностью обновится, пересоберите glibc: </para>
+        <screen><prompt>#</prompt> <userinput>emerge --oneshot glibc</userinput></screen>
+    </section>
+    <section>
+        <info>
+            <title>Использование</title>
+        </info>
+        <para>Есть два пути использования Ivman: от root, или от обычного пользователя. У любого из методов имеются как преимущества, так и недостатки. </para>
+        <section>
+            <info>
+                <title>Запуск Ivman от root</title>
+            </info>
+            <orderedlist>
+                <listitem>
+                    <para>Для запуска Ivman выполните: <command>/etc/init.d/ivman start</command></para>
+                </listitem>
+                <listitem>
+                    <para>Чтобы Ivman стартовал при каждом запуске выполните: <command>rc-update add ivman default</command></para>
+                </listitem>
+                <listitem>
+                    <para>Все действия Ivman после запуска выполняются с привилегиями пользователя «ivman» и группы «plugdev». </para>
+                </listitem>
+                <listitem>
+                    <para>По умолчанию, сменные устройства будут монтироваться для доступа на чтение/запись только входящим в группу «plugdev» (группа пользователей, которым разрешено использовать pmount). Это более безопасно, чем запуск Ivman от обычного пользователя. </para>
+                </listitem>
+                <listitem>
+                    <para>Размонтирование дисков обычным пользователем может быть затруднено. Вам может потребоваться использование sudo pumount или sudo umount. Размонтирование используя 'media:/' ioslave в KDE может не работать. </para>
+                </listitem>
+                <listitem>
+                    <para>Для легкого размонтирования дисков обычными пользователями отредактируйте файл <filename>/usr/share/hal/fdi/policy/10osvendor/10-storage-policy.fdi</filename>, изменив user на users в строке <code>&lt;merge key="storage.policy.default.mount_option.user" type="bool"&gt;true&lt;/merge&gt;</code>. Если у вас нет такого файла, поищите похожий в <filename>/usr/share/hal</filename>. (Внимание: это работает для ivman 0.5.x, но не для последних версий ivman.) </para>
+                </listitem>
+            </orderedlist>
+        </section>
+        <section>
+            <info>
+                <title>Запуск Ivman от обычного пользователя</title>
+            </info>
+            <orderedlist>
+                <listitem>
+                    <para>Для начала, у вас должен быть запущен HAL. Выполните как root: <command>/etc/init.d/hald start</command></para>
+                </listitem>
+                <listitem>
+                    <para>Для запуска HAL каждый раз при загрузке выполните: <command>rc-update add hald default</command>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>Для запуска Ivman единично выполните команду ivman под вашим пользовательским аккаунтом. Чтобы Ivman запускался автоматически, когда вы входите в систему, вы должны сделать следующее: </para>
+                </listitem>
+                <listitem>
+                    <para>Ivman запустится под вашим пользовательским аккаунтом. </para>
+                    <note>
+                        <para>Вы можете не находиться в группе plugdev, потому что сейчас устройства монтируются так, что только вы имеете к ним доступ.</para>
+                    </note>
+                </listitem>
+                <listitem>
+                    <para>По умолчанию сменные устройства будут монтироваться на запись/чтение для вас и не допускать больше никого. </para>
+                </listitem>
+                <listitem>
+                    <para>Размонтирование работает как обычно. Работает стандартный pumount. Размонтирование используя 'media:/' ioslave в KDE работает. </para>
+                </listitem>
+                <listitem>
+                    <para>Когда возможно (а, как правило, это возможно), запускайте Ivman одновременно от root и от обычного пользователя. В этом случае автомонтирование будет произведено от пользовательского запуска Ivman, а если пользовательский Ivman отсутствует, автомонтирование будет автоматически передано запуску Ivman от root. Не запускайте более одного пользовательского Ivman, даже под различающимися пользовательскими аккаунтами – это приведёт к войне за ресурсы. </para>
+                </listitem>
+            </orderedlist>
+            <para>Ivman не требует дополнительной конфигурации для автомонтирования. Данные fstab игнорируются, сменные устройства/диски будут смонтированы в <filename>/media</filename>. Однако, Ivman может быть использован не только для монтирования. Обретите свободу для добавления ваших супер-правил на этой странице  :-) </para>
+        </section>
+        <section>
+            <info>
+                <title> Примеры некоторых правил</title>
+            </info>
+            <example>
+                <title>Code: Смонтировать всё, что есть</title>
+                <programlisting>&lt;ivm:Match name="ivm.mountable" value="true"&gt;
+                     &lt;ivm:Option name="mount" value="true" /&gt;
+                    &lt;/ivm:Match&gt;</programlisting>
+            </example>
+            <example>
+                <title>Code: Открыть мой MP3-плеер в mc, когда он подключен </title>
+                <programlisting>&lt;ivm:Match name="hal.info.product" value="IAUDIO"&gt;
+                     &lt;ivm:Option name="exec" value="xterm -e mc /home/share/music /media/IAUDIO" /&gt;
+                    &lt;/ivm:Match&gt;</programlisting>
+            </example>
+            <example>
+                <title>Code: Открыть мою камеру в mc, когда она подключена</title>
+                <programlisting>&lt;ivm:Match name="hal.info.vendor" value="FUJIFILM"&gt;
+                      &lt;ivm:Option name="exec" value="xterm -e mc /home/share/pics /media/usbdisk/DCIM/100_FUJI" /&gt;
+                    &lt;ivm:Option name="exec" value="xterm -e mc /home/share/pics /media/usbdisk/DCIM/100_FUJI" /&gt;</programlisting>
+            </example>
+            <para>Для KDE </para>
+            <example>
+                <title>Code: Выводит всплывающее окошко, когда что-нибудь подключено</title>
+                <programlisting>&lt;ivm:Match name="hal.info.category" value="storage"&gt;
+                    &lt;ivm:Match name="hal.storage.bus" value="usb"&gt;
+                    &lt;ivm:Option name="exec"
+                    value="kdialog --passivepopup 'USB storage device detected: $hal.info.vendor$ $hal.info.product$' 4"
+                    /&gt;
+                    &lt;/ivm:Match&gt;
+                    &lt;/ivm:Match&gt;</programlisting>
+            </example>
+        </section>
+    </section>
+    <section>
+        <title>Проблемы</title>
+        <section>
+            <title>Использование записей в fstab (ivman 0.6.x или более новый)</title>
+            <para>Ivman 0.6.x или более новый использует pmount для монтирования устройств, и не нуждается в записях fstab. Но если хочеться, то можно.</para>
+            <para>pmount (и Ivman, таким образом) будет автоматически учитывать записи fstab. С версии 0.6.0, на каждую символьную ссылку будет создано правило, без использования <filename>IvmConfigMappings.xml</filename>. Устройства, не отмеченные в <filename>fstab</filename>, будут монтироваться в <filename>/media</filename>. </para>
+        </section>
+        <section>
+            <title>Использование записей в fstab (ТОЛЬКО ivman 0.5.x!)</title>
+            <para>Ivman 0.5.x может использовать ваш /etc/fstab. Если вы до этого пользовались supermount, вам необходимо изменить записи для использования ivman. Например: </para>
+            <programlisting>/dev/cdroms/cdrom0      /mnt/cdrom      iso9660   noauto,ro     0 0</programlisting>
+            <para>Может также потребоваться отключение devfs. </para>
+        </section>
+        <section>
+            <title>Монтирование устройств с размонтированием от обычного пользователя (ТОЛЬКО ivman 0.5.x!)</title>
+            <para>Когда вы подключаете USB-носитель, ivman, запущеный от root монтирует его автоматически, но вы не можете размонтировать его иначе, чем от root. Это можно устранить, настроив HAL на монтирование всех устройств хранения данных с опцией "users", чего вам может очень не хотеться. </para>
+            <para>Создайте файл с названием <filename>whatever.fdi</filename> в директории <filename>/usr/share/hal/fdi/95userpolicy/</filename> со следующим содержимым: </para>
+            <example>
+                <title>Файл: <filename>whatever.fdi</filename></title>
+                <programlisting>&lt;?xml version="1.0" encoding="ISO-8859-1"?> &lt;!-- -*- SGML -*- --> 
+                    &lt;deviceinfo version="0.2"> 
+                    &lt;!-- Append users to default mount options --> 
+                    &lt;device> 
+                    &lt;merge key="storage.policy.default.mount_option.users" type="bool">true&lt;/merge> 
+                    &lt;/device> 
+                    &lt;/deviceinfo></programlisting>
+            </example>
+            <para>Для дополнительной информации смотрите <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://cvs.freedesktop.org/*checkout*/hal/hal/doc/spec/hal-spec.html">HAL Specifications</link>. </para>
+        </section>
+        <section>
+            <title>Решение проблемы неразмонитирования флешки после ее физического удаления</title>
+            <para>Иногда может возникать ситуация что после удаления флешки команда mount выдает что она подмонтирована, в результате следующие подсоединение флешки приводит к тому что ей присваевается следующая буква и в резульатет чего возникает множество мертвых точек монтирования </para>
+            <example>
+                <title>Code: Пример ситуации когда два раза вынута и вставлена одна и таже флешка</title>
+                <screen><prompt>#</prompt> <userinput>mount</userinput>
+                    /dev/sdb1 on /media/sdb1 type vfat (rw,noexec,nosuid,nodev,quiet,shortname=mixed,uid=104,gid=412,umask=007,fmask=0117,dmask=0007,iocharset=utf8)
+                    /dev/sdc1 on /media/sdc1 type vfat (rw,noexec,nosuid,nodev,quiet,shortname=mixed,uid=104,gid=412,umask=007,fmask=0117,dmask=0007,iocharset=utf8)</screen>
+            </example>
+            <para>это происходит из за того что по умолчанию ivman для размонтирования вызывает команду pumount /dev/sdb1, которая нечего не выполняет выдавая что <filename>/dev/sdb1</filename> нет (<systemitem class="daemon">udev</systemitem> успевает удалить это устройсво) </para>
+            <para>решение проблемы следующее правим <filename>/etc/ivman/IvmConfigBase.xml</filename> таким образом </para>
+            <example>
+                <title>Файл: <filename>/etc/ivman/IvmConfigBase.xml</filename></title>
+                <programlisting>&lt;!-- mount command.  default is autodetected.  Must be specified with umountcommand. --&gt;
+                    &lt;ivm:Option name="mountcommand" value="/usr/bin/pmount -u 007 '$hal.block.device$'" /&gt;
+                    
+                    &lt;!-- umount command.  default is autodetected.  Must be specified with mountcommand. --&gt;
+                    &lt;ivm:Option name="umountcommand" value="/usr/bin/sudo /bin/umount -l '$hal.block.device$'" /&gt;</programlisting>
+            </example>
+            <para>а так же добавляя в <filename>/etc/sudoers</filename> строчку </para>
+            <example>
+                <title>Файл: <filename>/etc/sudoers</filename></title>
+                <programlisting>ivman   ALL = NOPASSWD: /bin/umount</programlisting>
+            </example>
+            <para>sudo конечно же должен быть установлен. </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title>Разное</title>
+        </info>
+        <para>HAL может потребовать добавление coldplug на уровень загрузки boot для работы распознавания USB-устройств. </para>
+        <para>Если у вас проблемы с пользовательскими запусками ivman для автомонтирования USB flash, вам может потребоваться включить поддержку utf-8 в вашем ядре. Смотрите это <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://forums.gentoo.org/viewtopic-p-3283175.html#3283175">обсуждение на форуме</link> для подробностей. </para>
+    </section>
+    <section>
+        <info>
+            <title>Другие проблемы</title>
+        </info>
+        <para>Если ivman не работает, для начала остановите его: </para>
+        <screen><prompt>#</prompt> <userinput>/etc/init.d/ivman stop</userinput></screen>
+        <para>Отредактируйте базовые настройки: </para>
+        <screen><prompt>#</prompt> <userinput>nano -w /etc/ivman/IvmConfigBase.xml</userinput></screen>
+        <para>Отключите fork, и включите отладку. Потом запустите ivman из консоли. Смотрите сообщения. </para>
+        <para>Источник — «<link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://ru.gentoo-wiki.com/HOWTO_Ivman">http://ru.gentoo-wiki.com/HOWTO_Ivman</link>»</para>
+    </section>
+</article>

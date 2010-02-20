@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Настройка дисковой подсистемы</title>
+    </info>
+        <section>
+            <info>
+                <title>Всеобщий ликбез</title>
+            </info>
+            <para>Под IDE понимаются устройства, подключаемые к IDE-интерфейсу. Обычно это жесткие диски и дисководы CD-ROM. Эти устройства должны быть документированы, как:</para>
+            <orderedlist>
+                <listitem>
+                    <para>IDE </para>
+                </listitem>
+                <listitem>
+                    <para>ATA </para>
+                </listitem>
+                <listitem>
+                    <para>ATAPI </para>
+                </listitem>
+                <listitem>
+                    <para>Enhanced IDE (EIDE) </para>
+                </listitem>
+                <listitem>
+                    <para>Fast ATA или Fast ATA-2 </para>
+                </listitem>
+            </orderedlist>
+            <para>IDE устройства могут передавать данные по шине в двух режимах — PIO и DMA. Учтите, что это именно передача данных по шине, с пластины данные читаются медленнее, а вот из аппаратного кеша на полной скорости. </para>
+            <para><indexterm>
+                    <primary>PIO</primary>
+                </indexterm>PIO — Программный ввод/вывод, метод передачи данных между двумя устройствами, использующий процессор как часть маршрута данных (процессор выполняет команду чтения порта, считывает байт или слово данных в свой регистр, после чего переписывает его в память, затем повторяет эту процедуру до тех пор, пока вся необходимая информация не будет считана из устройства в память). </para>
+            <para>Бывает PIO Mode 0 1 2 3 4. Чем больше номер режима, тем быстрее. IDE ZIP100 приводы от Iomega например умеют только PIO mode 0. Старые CD-ROM обычно умеют PIO mode 4, если не могут DMA.</para>
+            <orderedlist>
+                <listitem>
+                    <para>PIO Mode 0 = 3.3 Mb/s </para>
+                </listitem>
+                <listitem>
+                    <para>PIO Mode 1 = 5.2 Mb/s </para>
+                </listitem>
+                <listitem>
+                    <para>PIO Mode 2 = 8.3 Mb/s </para>
+                </listitem>
+                <listitem>
+                    <para>PIO Mode 4 = 11.1 Mb/s </para>
+                </listitem>
+                <listitem>
+                    <para>PIO Mode 5 = 16.7 Mb/s </para>
+                </listitem>
+            </orderedlist>
+            <para><indexterm>
+                    <primary>Direct Memory Access</primary>
+                </indexterm><indexterm>
+                    <primary>DMA</primary>
+                </indexterm>DMA — Direct Memory Access — прямой доступ к памяти — собирательное название протоколов, позволяющих периферийному устройству передавать информацию непосредственно в системную память без участия центрального процессора, жесткие диски используют эту возможность в сочетании с возможностью перехватывать управление шиной и самостоятельно управлять передачей информации (bus mastering), что уменьшает нагрузку на процессор и повышает скорость передачи данных. </para>
+            <para>DMA встречается двух типов: UDMA и MDMA. </para>
+            <para>UDMA — ultra DMA — наиболее предпочитаемый тип, основной на сегодня. Бывает UDMA 0 1 2 3 4 5 6. Реально встречаются:</para>
+            <orderedlist>
+                <listitem>
+                    <para>UDMA 2 = 33 mb/s </para>
+                </listitem>
+                <listitem>
+                    <para>UDMA 4 = 66 mb/s </para>
+                </listitem>
+                <listitem>
+                    <para>UDMA 5 = 100 mb/s </para>
+                </listitem>
+                <listitem>
+                    <para>UDMA 6 = 133 mb/s </para>
+                </listitem>
+            </orderedlist>
+            <para>Последний встречается на не Intel матерях и не все винты его умеют. Кстати SATA винчестеры используют UDMA = 150 Mb/s. </para>
+            <para>Для UDMA 66 — 100 — 133 необходим 80-жильный шлейф, кроме того старые матери умеют его не на всех каналах, смотрите в инструкцию. Форсирование этих режимов с 40-жильным шлейфом может убить Ваши данные. </para>
+            <para>MDMA — multiword dma, более древний режим, предпочтителен для старых винчестеров и CD-ROM.</para>
+            <orderedlist>
+                <listitem>
+                    <para>MDMA0 = 4.2 mb/s </para>
+                </listitem>
+                <listitem>
+                    <para>MDMA1 = 13.3 mb/s </para>
+                </listitem>
+                <listitem>
+                    <para>MDMA2 = 16.7 mb/s </para>
+                </listitem>
+            </orderedlist>
+            <para>На большинстве современных систем ядро автоматически определяет и настраивает IDE подсистему на максимальную производительность, если правильно его сконфигурировать. Но настроить что-нибудь всё равно можно. </para>
+            <important>
+                <para>ОЧЕНЬ ВАЖНО </para>
+                <para>Всё нижеописанное может убить Ваши данные, сломать Вам винчестер, спалить Вашу машину, удивить Вашу кошку и т.п. отмазы :) </para>
+                <para>Всё нижеописанное тестировалось, работало и работает на пяти машинах с ядром 2.6.9-gentoo-r4 и hdparm-5.7-r1, ACCEPT_KEYWORDS="~x86". </para>
+            </important>
+            <para>У Вас что-нибудь может не работать, работать не так. </para>
+            <important>
+                <para>Всё нижеописанное не относится к SATA дискам работающим через libata интерфейс (то есть видимым как sdX а не hdX). Поскольку sata интерфейс гораздо ближе к scsi чем к pata, разработчики вполне обоснованно используют scsi подсистему для работы с sata. Поэтому на текущий момент настройка sata винчестеров средствами hdparm невозможна, так как в libata не реализована специфичная для подобных програм функциональность. </para>
+            </important>
+            <para>В Сети есть патчик на ядро, добавляющий нужный функционал, но он ОЧЕНЬ сыр и с вероятностью в 100% убьёт вам раздел. Даже ссылку давать не буду, если Вы камикадзе, сами найдёте. </para>
+            <section>
+                <info>
+                    <title>Для начала</title>
+                </info>
+                <para>Убедитесь, что Ваши IDE диски используют DMA интерфейс, и ядро правильно настроено. </para>
+                <para>Для этого сделайте :</para>
+                <screen><prompt>#</prompt> <userinput>dmesg | less</userinput></screen>
+                <para>или загляните в логи. </para>
+                <para>Нас будут интересовать сообщения о настройке ide контроллера и дисков. Мой кусок <filename>kern.log</filename> выглядит так (с моими комментариями): </para>
+                <programlisting>Nov 14 17:45:54 tsoptimus kernel: ide: Assuming 33MHz system bus speed for PIO modes; override with idebus=xx
+                                       <lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                       Можно при загрузке сказать ядру idebus=66, но это работает только для
+                                       не использующих DMA винчестеров и сидиромов. Подробности в
+                                       /usr/src/linux/Documentation/ide.txt</lineannotation>
+Nov 14 17:45:54 tsoptimus kernel: ICH2: IDE controller at PCI slot 0000:00:1f.1
+Nov 14 17:45:54 tsoptimus kernel: ICH2: chipset revision 2
+                                  <lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                  Определили первый контроллер.</lineannotation>
+Nov 14 17:45:54 tsoptimus kernel: ICH2: not 100%% native mode: will probe irqs later
+                                  <lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                  Это из-за того что интеловский контроллер использует разные прерывания для
+                                  каждого из каналов. Это нормально.</lineannotation>
+Nov 14 17:45:54 tsoptimus kernel:     ide0: BM-DMA at 0xf000-0xf007, BIOS settings: hda:DMA, hdb:pio
+                                            <lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                       контроллер работает в busmaster режиме, dma для первого диска
+                                       включен в BIOS.</lineannotation>
+Nov 14 17:45:54 tsoptimus kernel:     ide1: BM-DMA at 0xf008-0xf00f, BIOS settings: hdc:pio, hdd:DMA
+Nov 14 17:45:54 tsoptimus kernel: Probing IDE interface ide0...
+Nov 14 17:45:54 tsoptimus kernel: hda: ST340016A, ATA DISK drive
+Nov 14 17:45:54 tsoptimus kernel: ide0 at 0x1f0-0x1f7,0x3f6 on irq 14
+Nov 14 17:45:54 tsoptimus kernel: Probing IDE interface ide1...
+Nov 14 17:45:54 tsoptimus kernel: hdd: DV-516E, ATAPI CD/DVD-ROM drive
+Nov 14 17:45:54 tsoptimus kernel: ide1 at 0x170-0x177,0x376 on irq 15
+Nov 14 17:45:54 tsoptimus kernel: PDC20265: IDE controller at PCI slot 0000:02:0a.0
+                                  <lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                  Определили интегрированный promise контроллер</lineannotation>
+Nov 14 17:45:54 tsoptimus kernel: ACPI: PCI interrupt 0000:02:0a.0[A] -> GSI 17 (level, low) -> IRQ 17
+Nov 14 17:45:54 tsoptimus kernel: PDC20265: chipset revision 2
+Nov 14 17:45:54 tsoptimus kernel: PDC20265: 100%% native mode on irq 17
+Nov 14 17:45:54 tsoptimus kernel: PDC20265: (U)DMA Burst Bit ENABLED Primary MASTER Mode Secondary MASTER Mode.
+                                  <lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                  BIOS этого уродца не включает DMA, поэтому его включило ядро :)</lineannotation>
+Nov 14 17:45:54 tsoptimus kernel:     ide2: BM-DMA at 0xac00-0xac07, BIOS settings: hde:pio, hdf:pio
+                                                                                    <lineannotation>^^^^^^^
+                                                                                    Что мы собсно и наблюдаем.</lineannotation>
+Nov 14 17:45:54 tsoptimus kernel:     ide3: BM-DMA at 0xac08-0xac0f, BIOS settings: hdg:pio, hdh:pio
+Nov 14 17:45:54 tsoptimus kernel: Probing IDE interface ide2...
+Nov 14 17:45:54 tsoptimus kernel: hde: FUJITSU MPG3204AT E, ATA DISK drive
+Nov 14 17:45:54 tsoptimus kernel: ide2 at 0x9c00-0x9c07,0xa002 on irq 17
+Nov 14 17:45:54 tsoptimus kernel: Probing IDE interface ide3...
+Nov 14 17:45:54 tsoptimus kernel: hda: max request size: 128KiB
+Nov 14 17:45:54 tsoptimus kernel: hda: 78165360 sectors (40020 MB) w/2048KiB Cache, CHS=65535/16/63, UDMA(100)
+                                                                                                     <lineannotation>^^^^^^^^
+                                                                                        Говорит само за себя</lineannotation>
+Nov 14 17:45:54 tsoptimus kernel: hda: cache flushes not supported
+                                  <lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                  А вот это странно :( Ядро не сможет принудительно синхронизировать
+                                  аппаратный кеш винчестера, в случае panic или oops будет не сладко.
+                                  До этого было supported, разберусь...</lineannotation>
+Nov 14 17:45:54 tsoptimus kernel:  /dev/ide/host0/bus0/target0/lun0: p1 p2 p3 p4
+Nov 14 17:45:54 tsoptimus kernel: hde: max request size: 128KiB
+Nov 14 17:45:54 tsoptimus kernel: hde: 40031712 sectors (20496 MB) w/512KiB Cache, CHS=39714/16/63, UDMA(100)
+Nov 14 17:45:54 tsoptimus kernel: hde: cache flushes not supported
+Nov 14 17:45:54 tsoptimus kernel:  /dev/ide/host2/bus0/target0/lun0: p1 p2
+Nov 14 17:45:54 tsoptimus kernel: hdd: ATAPI 48X DVD-ROM drive, 256kB Cache, UDMA(33)
+Nov 14 17:45:54 tsoptimus kernel: Uniform CD-ROM driver Revision: 3.20 
+</programlisting>
+                <para>Проверьте настройки ядра. Мой кусок касающийся IDE выглядит так (с моими комментариями) </para>
+                <programlisting># ATA/ATAPI/MFM/RLL support
+#
+CONFIG_IDE=y
+CONFIG_BLK_DEV_IDE=y
+
+#
+# Please see Documentation/ide.txt for help/info on IDE drives
+#
+# CONFIG_BLK_DEV_IDE_SATA is not set
+# CONFIG_BLK_DEV_HD_IDE is not set
+CONFIG_BLK_DEV_IDEDISK=y
+#CONFIG_IDEDISK_MULTI_MODE is not set
+CONFIG_BLK_DEV_IDECD=y
+# CONFIG_BLK_DEV_IDETAPE is not set
+# CONFIG_BLK_DEV_IDEFLOPPY is not set
+# CONFIG_BLK_DEV_IDESCSI is not set
+<lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Был нужен для пишущих cdrom, сейчас не нужен (даже вреден)</lineannotation>
+
+CONFIG_IDE_TASK_IOCTL=y
+CONFIG_IDE_TASKFILE_IO=y
+<lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^
+Не разбирался :)</lineannotation>
+
+#
+# IDE chipset support/bugfixes
+#
+# CONFIG_IDE_GENERIC is not set
+<lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Не нужон если Ваши IDE контроллеры известны ядру. У 99% людей они известны. Посему выключен.</lineannotation>
+
+# CONFIG_BLK_DEV_CMD640 is not set
+CONFIG_BLK_DEV_IDEPCI=y
+CONFIG_IDEPCI_SHARE_IRQ=y
+<lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^
+Разрешает устройству совместно использовать одно прерывание с другими устройствами.
+В случае проблем можно выключить.</lineannotation>
+
+# CONFIG_BLK_DEV_OFFBOARD is not set
+# CONFIG_BLK_DEV_GENERIC is not set
+# CONFIG_BLK_DEV_OPTI621 is not set
+# CONFIG_BLK_DEV_RZ1000 is not set
+CONFIG_BLK_DEV_IDEDMA_PCI=y
+# CONFIG_BLK_DEV_IDEDMA_FORCED is not set
+<lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ОПАСНО!!!! Если ваш винт или контроллер совсем никак не умеет DMA
+или blacklisted, то есть риск потерять раздел.</lineannotation>
+
+CONFIG_IDEDMA_PCI_AUTO=y
+<lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^
+А вот это значительно нежнее :) Если с винтом и контроллером всё в порядке, ядро само включит Вам DMA.</lineannotation>
+
+# CONFIG_IDEDMA_ONLYDISK is not set
+<lineannotation>Ежели ваш CDROM глючит с DMA или работает медленне чем в PIO режиме, ядро включит DMA только для винчестеров.</lineannotation>
+
+# CONFIG_BLK_DEV_AEC62XX is not set
+# CONFIG_BLK_DEV_ALI15X3 is not set
+# CONFIG_BLK_DEV_AMD74XX is not set
+# CONFIG_BLK_DEV_ATIIXP is not set
+# CONFIG_BLK_DEV_CMD64X is not set
+# CONFIG_BLK_DEV_TRIFLEX is not set
+# CONFIG_BLK_DEV_CY82C693 is not set
+# CONFIG_BLK_DEV_CS5520 is not set
+# CONFIG_BLK_DEV_CS5530 is not set
+# CONFIG_BLK_DEV_HPT34X is not set
+# CONFIG_BLK_DEV_HPT366 is not set
+# CONFIG_BLK_DEV_SC1200 is not set
+CONFIG_BLK_DEV_PIIX=y
+<lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Контроллер моей материнки</lineannotation>
+
+# CONFIG_BLK_DEV_NS87415 is not set
+CONFIG_BLK_DEV_PDC202XX_OLD=y
+<lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Второй контроллер моей материнки</lineannotation>
+
+CONFIG_PDC202XX_BURST=y
+<lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Форсируем DMA для promise, так как его биос DMA не включает. Странный он.</lineannotation>
+
+# CONFIG_BLK_DEV_PDC202XX_NEW is not set
+# CONFIG_BLK_DEV_SVWKS is not set
+# CONFIG_BLK_DEV_SIIMAGE is not set
+# CONFIG_BLK_DEV_SIS5513 is not set
+# CONFIG_BLK_DEV_SLC90E66 is not set
+# CONFIG_BLK_DEV_TRM290 is not set
+# CONFIG_BLK_DEV_VIA82CXXX is not set
+# CONFIG_IDE_ARM is not set
+CONFIG_BLK_DEV_IDEDMA=y
+# CONFIG_IDEDMA_IVB is not set
+<lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Форсирование UDMA4 5 6 если ядро само его не включает.
+ОПАСНО — если у Вас 40-жильный или повреждённый шлейф, вы можете убить данные.</lineannotation>
+
+CONFIG_IDEDMA_AUTO=y
+# CONFIG_BLK_DEV_HD is not set
+</programlisting>
+            </section>
+            <section>
+                <info>
+                    <title>Ускоряемся :)</title>
+                </info>
+                <para>Сделайте, если ещё не сделали, </para>
+                <screen><prompt>#</prompt> <userinput>emerge hdparm</userinput></screen>
+                <para>На одной консоли сделайте:</para>
+                <screen><prompt>#</prompt> <userinput>man hdparm</userinput></screen>
+                <para>А на другой мы начнём играться :) </para>
+                <para>Делайте: </para>
+                <screen><prompt>#</prompt> <userinput>hdparm -tT /dev/hd<replaceable>X</replaceable></userinput></screen>
+                <para>Где X — буква вашего винчестера </para>
+                <para>Мы запустили тест скорости чтения из кеша и с пластины. Для усреднения результатов запустите его несколько раз. </para>
+                <para>Должны увидеть следующее:</para>
+                <screen>/dev/hda:
+Timing cached reads:   616 MB in  2.00 seconds = 307.74 MB/sec
+Timing buffered disk reads:   74 MB in  3.04 seconds =  42.33 MB/sec
+</screen>
+                <para>Первый результат с учётом программного кеширования, он у всех большой :) </para>
+                <para>Второй — собственно чтение с диска с учётом аппаратного кеширования. </para>
+                <para>Второй результат мы собственно и будем улучшать :) Цифры в районе 35-55 mb/s хороший результат, выше 50 без raid контроллера вы на парралельном интерфейсе вряд ли получите (хотя... кто знает...). Но в любом случае кроме скорости можно </para>
+                <section>
+                    <title>Разбираемся с железом на железном уровне</title>
+                    <para>Имеет смысл заглянуть в BIOS и в корпус. </para>
+                    <warning>
+                        <para>ВНИМАНИЕ!!! Если вы страдаете хронической неуверенностью, криворукостью, боитесь потерять гарантию, пропустите этот раздел! </para>
+                    </warning>
+                    <para>Иногда сборщики компьютеров страдают излишней жадностью или криворукостью, поэтому всегда имеет смысл проверить, всё ли внутри корпуса как надо. </para>
+                    <para>Каждый канал IDE/AТА интерфейса поддерживает подключение двух устройств — master и slave. Конфигурация обычно задается перемычкой на устройстве. Кроме этих двух позиций там обычно присутствует и третья — cable select. Для работы устройств в положении перемычки cable select требуется специальный Y-образный шлейф, центральный разъем которого подключается к материнской плате. Крайние разъемы такого кабеля неравноправны — устройство, подключенное к одному разъему, автоматически становится master, к другому — slave. </para>
+                    <itemizedlist>
+                        <listitem>
+                            <para>Проверьте, чтобы шлейфы были 80-жильные, на 40-жильных вы не сильно ускоритесь :). </para>
+                        </listitem>
+                        <listitem>
+                            <para>Каждый канал в каждый момент времени может обрабатывать только один запрос к одному устройству. Следующий запрос, пусть даже к другому устройству, будет ожидать завершения текущего. Разные каналы при этом могут работать независимо. Поэтому не стоит подключать два активно используемых устройства (например, два жестких диска), к одному каналу. </para>
+                        </listitem>
+                        <listitem>
+                            <para>В идеале каждое IDE-устройство стоит подключать к отдельному каналу (в этом заключается основное преимущество SATA). </para>
+                        </listitem>
+                        <listitem>
+                            <para>Практически все современные чипсеты поддерживают возможность использования различных режимов передачи данных для устройств, подключенных к одному каналу. Однако злоупотреблять этим все-таки не стоит. Два устройства, существенно различающихся по скорости, лучше все-таки разнести по разным каналам. </para>
+                        </listitem>
+                        <listitem>
+                            <para>Не рекомендуется подключать к одному каналу жесткий диск и ATAPI-устройство (например, CD-ROM). Как было сказано выше, протокол ATAPI использует другую систему команд, и, кроме того, даже самые быстрые ATAPI-устройства намного медленнее жесткого диска, что может замедлить работу последнего.</para>
+                        </listitem>
+                    </itemizedlist>
+                    <para><emphasis role="bold">Идеальная конфигурация. </emphasis></para>
+                    <para>Каждый винт и CD-ROM на отдельном шлейфе. </para>
+                    <para><emphasis role="bold">Приемлемая конфигурация. </emphasis></para>
+                    <para>На первом канале основной винт, на втором дополнительный master и CD-ROM slave</para>
+                    <para><emphasis role="bold">Тоже неплохо. </emphasis></para>
+                    <para>На первом канале два винчестера одного поколения, CD-ROM на втором.</para>
+                    <para><emphasis role="bold">Плохо!!! </emphasis></para>
+                    <para>На одном канале современный винт и древняя древность на полтора гига :) </para>
+                    <para>Смотрим в BIOS. Включаем UDMA где только можно, включаем Bus master для контроллеров IDE, включаем IDE Block mode. </para>
+                </section>
+                <section>
+                    <title>Разбираемся с железом на софтварном уровне</title>
+                    <para>А что умеет наш винчестер? И что у него включено сейчас?</para>
+                    <para>Делаем: </para>
+                    <screen><prompt>#</prompt> <userinput>hdparm -iIv /dev/hdX | less</userinput></screen>
+                    <para>Получаем длинный листинг с описанием возможностей нашего винчестера. Пример моего с комментариями приведён ниже. </para>
+                    <para>Эта секция коротко описывает, что у нас включено прямо сейчас.</para>
+                    <screen>/dev/hda:
+multcount    = 16 (on)
+IO_support   =  1 (32-bit)
+unmaskirq    =  1 (on)
+using_dma    =  1 (on)
+keepsettings =  0 (off)
+readonly     =  0 (off)
+readahead    = 256 (on)
+geometry     = 65535/16/63, sectors = 40020664320, start = 0
+</screen>
+                    <para>Эта секция показывает необработанные для читабельности данные, прочитанные напрямую с винчестера. </para>
+                    <screen>Model=ST340016A, FwRev=3.19, SerialNo=3HS9R2GG
+Config={ HardSect NotMFM HdSw>15uSec Fixed DTR>10Mbs RotSpdTol>.5% }
+RawCHS=16383/16/63, TrkSize=0, SectSize=0, ECCbytes=4
+BuffType=unknown, BuffSize=2048kB, MaxMultSect=16, MultSect=16
+CurCHS=4047/16/255, CurSects=16511760, LBA=yes, LBAsects=78165360
+IORDY=on/off, tPIO={min:240,w/IORDY:120}, tDMA={min:120,rec:120}
+PIO modes:  pio0 pio1 pio2 pio3 pio4
+DMA modes:  mdma0 mdma1 mdma2
+UDMA modes: udma0 udma1 udma2 udma3 udma4 *udma5
+AdvancedPM=no WriteCache=enabled
+Drive conforms to: device does not report version:
+
+* signifies the current active mode
+</screen>
+                    <para>А вот это более интересно. Читайте комментарии в ней самой. </para>
+                    <screen>ATA device, with non-removable media
+       Model Number:       ST340016A
+       Serial Number:      3HS9R2GG
+       Firmware Revision:  3.19
+Standards:
+       Supported: 5 4 3 2
+       Likely used: 6
+Configuration:
+       Logical         max     current
+       cylinders       16383   4047
+       heads           16      16
+       sectors/track   63      255
+       --
+       CHS current addressable sectors:   16511760
+       LBA    user addressable sectors:   78165360
+       device size with M = 1024*1024:       38166 MBytes
+       device size with M = 1000*1000:       40020 MBytes (40 GB)
+Capabilities:
+       LBA, IORDY(can be disabled)
+       bytes avail on r/w long: 4      Queue depth: 1
+       Standby timer values: spec'd by Standard
+       R/W multiple sector transfer: Max = 16  Current = 16
+       <lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+       Аппаратное блочное чтение. Может читать зараз 16 блоков. Так и делает.</lineannotation>
+
+       Recommended acoustic management value: 128, current value: 254
+       <lineannotation>^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+       Управление акустикой. Чем больше значение, тем шумнее и быстрее.</lineannotation>
+
+       DMA: mdma0 mdma1 mdma2 udma0 udma1 udma2 udma3 udma4 *udma5
+            Cycle time: min=120ns recommended=120ns
+       PIO: pio0 pio1 pio2 pio3 pio4
+<lineannotation>       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+       Поддерживаемые режимы передачи. Звёздочка показывает текущий.</lineannotation>
+
+            Cycle time: no flow control=240ns  IORDY flow control=120ns
+Commands/features:
+       Enabled Supported:
+          *    READ BUFFER cmd
+          *    WRITE BUFFER cmd
+          *    Host Protected Area feature set
+          *    Look-ahead
+          *    Write cache
+          *    Power Management feature set
+               Security Mode feature set
+          *    SMART feature set
+               Device Configuration Overlay feature set
+          *    Automatic Acoustic Management feature set
+               SET MAX security extension
+          *    DOWNLOAD MICROCODE cmd
+Security:
+       Master password revision code = 65534
+               supported
+       not     enabled
+       not     locked
+       not     frozen
+       not     expired: security count
+       not     supported: enhanced erase
+HW reset results:
+       CBLID- above Vih
+       Device num = 1
+Checksum: correct
+</screen>
+                    <para>Имея эту информацию, мы можем ручками настраивать наш винчестер. Те параметры, которые и так настроены, настраивать не обязательно :). Сверяйтесь с man для hdparm, я расскажу про наиболее интересные параметры. \</para>
+                </section>
+                <section>
+                    <title>Собственно настраиваем</title>
+                    <para>Итак, параметры мы передаём как:</para>
+                    <screen><prompt>#</prompt> <userinput>hdparm -<replaceable>параметр</replaceable> <replaceable>/имя/диска</replaceable></userinput></screen>
+                    <para>Если <command>hdparm</command> ругается, значит или режим не поддерживается, или параметр не верный. Если режим не поддерживается, команда dmesg покажет нам последней строчкой ругань драйвера.</para>
+                    <section>
+                        <title>Интересные параметры </title>
+                        <para><parameter>-a</parameter> Количество секторов упреждающего чтения для файловой системы, то есть софтварное упреждающее чтение. Обычно значение по дефолту приемлемое, а наличие аппаратного упреждающего чтения смазывает эффект. Чем меньше, тем лучше в случае чтения кучи мелких файлов разбросанных хаотично по диску. Чем больше число, тем лучше для копирования фильмов и mp3. </para>
+                        <para><parameter>-A</parameter> Включение аппаратного упреждающего чтения винчестером. Обычно всегда включено по дефолту. Изменять следует, если в вышеописаном информационном выводе не стоит звёздочка перед Look-ahead в разделе Enabled Supported. 1 — включено, 0 — выключено. </para>
+                        <para><parameter>-B</parameter> Имеет смысл для нотебуков, управляет настройкой энергосбережения. Чем значение ниже, тем больше у винта желание остановить блин и заснуть :), от чего растёт время отклика. Значение 255 вырубает управление питанием, соответственно уменьшая время отклика. Не все винчестеры имеют собственное управление питанием. Проверьте параметр AdvancedPM= в коротком листинге с сырыми данными. </para>
+                        <para><parameter>-c</parameter> Значение 1 включает 32 битную передачу по внутренней шине, по шлейфу возможно только 16 бит. Значение 3 включает то-же самое с контролем чётности. Это более надёжно, но чуть медленне чем 1. По умолчанию всегда выключено, имеет смысл включить. разницы между 1 и 3 не заметил ни по скорости, ни по надёжности. </para>
+                        <para><parameter>-d</parameter> 1 — включено, 0 — нет. Признак использования DMA. Если у Вас стоит звёздочка напротив одного из dma режимов в вышеприведённых листингах, значит Вам этот параметр не нужен. Если не стоит, можно попробовать включить. ВНИМАНИЕ!!! Машина может зависнуть, раздел может навернуться!!! Если это случилось, что-то крепко не в порядке с железом или ядром!!! </para>
+                        <para><parameter>-E</parameter> Скорость cdrom. Если сильно воет... Просто укажите желаемую скорость. Для винтов бесполезен :) </para>
+                        <para><parameter>-k</parameter> и <parameter>-K</parameter> Сохранение настроек и опций винчестером. Это не означает что они автоматически сохранятся после перезагрузки. Это означает, что они сохранятся, если драйвер сделает reset контроллеру, или после спячки, но не гибернации (aka suspend to disk). 1 — сохранять. 0 — нет. </para>
+                        <para><parameter>-m</parameter> Количество секторов для аппаратного упреждающего чтения. Не может быть больше чем умеет винт. Смотреть в диагностический листинг, параметр MaxMultSect=. По дефолту обычно всегда максимум. </para>
+                        <para><parameter>-M</parameter> Управление акустикой. 254 — шумно и быстро. 0 — медленно и тихо. Многие драйвы умеют только 128 и 254. Многие вообще нисколько не умеют :) </para>
+                        <para><parameter>-P</parameter> Ещё одна ручка для регулирования аппаратного упреждающего чтения. Не работает ни на одном виденном мною винте. Может у Вас заработает? </para>
+                        <para><parameter>-u</parameter> Включить размаскирование прерываний. Если значение 1, то контроллер разрешает другие прерывания во время операции ввода-вывода. Это снижает нагрузку на систему и повышает отклик. Нужно включать. По умолчанию выключено. На оччень древних контроллерах система может повиснуть. </para>
+                        <para><parameter>-W</parameter> 1 — включает кеширование записи. Включено по дефолту у всех виденных мною винтов. Но пригодится может. </para>
+                        <para><parameter>-X</parameter> Самый мощный параметр. Позволяет вам принудительно выставить режим работы DMA. В последних версиях hdparm задаётся буквенно, например -X udma5. Внимание!!! Не включайте режимы, не поддерживаемые Вашим контроллером, или с плохим (40-жильным) шлейфом!!! Обычно ядро само выбирает максимальный режим DMA, и если оно не смогло, или выбрало как Вам кажется меньший режим чем можно, ПОДУМАЙТЕ!!! Вдруг тому есть ОБЪЕКТИВНЫЕ причины?.</para>
+                        <para>Пробуйте параметры по одному, запускайте <command>hdparm -tT</command>, смотрите в dmesg. </para>
+                        <para>Сидиромы понимают не все параметры из указанных выше. У разных винчестеров понимание тоже может отличаться :)</para>
+                        <para>После того как наиграетесь, будем закреплять. </para>
+                    </section>
+                </section>
+                <section>
+                    <title>Закрепляем</title>
+                    <para>В <filename>/etc/conf.d/hdparm</filename> заносим понравившиеся параметры. У меня это выглядит так: </para>
+                    <programlisting>hda_args="-u1c3M254Kk"
+hde_args="-u1c3M254Kk"
+#hdd — cdrom
+hdd_args="-u1c3Kk"
+</programlisting>
+                    <para>Делаем: <command>rc-update add hdparm default</command></para>
+                    <para>Затем: <command>/etc/init.d/hdparm start</command></para>
+                </section>
+            </section>
+            <section>
+                <title>Выбор планировщика ввода-вывода</title>
+                <para>В ядрах 2.6 появилась возможность выбирать между четырьмя планировщиками ввода-вывода. У каждого планировщика есть свои достоинства и недостатки. По дефолту в ядро всунуты все четыре, и выбран anticipatory io cheduler. Кратенько опишу их. </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>no-op — очень мелкий и лёгкий планировщик. Мало чего умеет. Для винтов не пригоден. В основном используется если вместо винта — флеш. </para>
+                    </listitem>
+                    <listitem>
+                        <para>anticipatory — выбирается по дефолту. Середина-наполовину для всего на свете. И там хорош, и тут хорош. </para>
+                    </listitem>
+                    <listitem>
+                        <para>deadline — более лёгкий и простой чем anticipatory, лучше себя ведёт при "взрывных" нагрузках. При равномерной нагрузке имеет особенность задумываться и притормаживать. </para>
+                    </listitem>
+                    <listitem>
+                        <para>CFQ — размазывает ввод-вывод равномерно между всеми процессами. Ввод-вывод медленный, но плавный и равномерный независимо от загрузки. Это мой выбор на сегодня. </para>
+                    </listitem>
+                </itemizedlist>
+                <section>
+                    <title>Как попробовать?</title>
+                    <para>Передайте ядру в строке загрузки GRUB или другого загрузчика параметр <parameter>elevator=[cfq|as|deadline|noop]</parameter>, поработайте, сравните. Ненужные планировщики ввода/вывода можно убрать из конфигурации ядра перед его компиляцией. Подробней можно узнать в статье "Компиляция ядра Linux". Они в </para>
+                    <screen>general setup ->
+   Configure standart kernel features...</screen>
+                    <para>Как нибудь потом расскажу про тюнинг vm и свопа ... </para>
+                </section>
+            </section>
+        </section>
+</article>

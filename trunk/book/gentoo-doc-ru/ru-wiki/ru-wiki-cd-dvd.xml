@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Работа с CD/DVD</title>
+    </info>
+    <section>
+        <info>
+            <title>Основные программы </title>
+        </info>
+        <para>Для начала, убедитесь что у вас установлены программы cdrecord и mkisofs, которые входят в пакет cdrtools. Если нет — установите его: </para>
+        <screen><prompt>#</prompt> <userinput>emerge cdrtools</userinput></screen>
+    </section>
+    <section>
+        <title>Конфигурация ядра и загрузчика</title>
+        <para>Убедитесь, что у вас ядро настроено соответствующим образом. </para>
+        <section>
+            <title>Ядра серии 2.4.x</title>
+            <para>Для ядер серии 2.4.x в ядро необходимо включить поддержку SCSI эмуляции:</para>
+            <example>
+                <title>Конфигурация ядра Linux: Конфигурация ядра 2.4.x </title>
+                <screen>ATA/IDE/MFM/RLL Support -->
+                    IDE, ATA, and ATAPI Block Devices -->
+                    &lt;M> SCSI Emulation Support
+                    SCSI Support -->
+                    &lt;M> SCSI Support
+                    &lt;M> SCSI CDROM Support
+                    &lt;M> SCSI Generic Support</screen>
+            </example>
+            <para>Теперь, еще необходимо ядру при загрузке передать параметр <parameter>hdc=ide-scsi</parameter> (в данном случае предполагается, что ваш CD привод — это <filename>hdc</filename>). </para>
+            <para>Т.е. если вы используете grub, то его конфиг должен выглядеть примерно так: </para>
+            <example>
+                <title>Файл: <filename>/boot/grub/grub.conf</filename></title>
+                <programlisting>title Gentoo Linux
+                    root (hd#,#)
+                    kernel (hd#,#)/YOUR_KERNEL_NAME_HERE root=/dev/hdx# hdc=ide-scsi <replaceable>ANY_OTHER_KERNEL_OPTIONS_NEEDED</replaceable></programlisting>
+            </example>
+            <para>Т.е. если вы используете grub, то его конфиг должен выглядеть примерно так: </para>
+            <example>
+                <title>Файл: <filename>/boot/grub/grub.conf</filename></title>
+                <programlisting># Linux bootable partition config
+                    image  = /boot/<replaceable>YOUR_KERNEL_NAME_HERE</replaceable>
+                    append = "hdc=ide-scsi"
+                    root   = /dev/hd<replaceable>x</replaceable>#
+                    label  = Gentoo
+                    read-only</programlisting>
+            </example>
+        </section>
+        <section>
+            <title>Ядра серии 2.6.x </title>
+            <para>В ядрах серии 2.6.x вам уже нет необходимости включать SCSI (и, следовательно, не надо переконфигурировать загрузчик). Вместо этого, надо указать поддержку ATAPI CDROM:</para>
+            <example>
+                <title>Конфигурация ядра Linux: Конфигурация ядра 2.6.x</title>
+                <screen>Device Drivers  -->
+                    ATA/ATAPI/MFM/RLL support -->
+                    &lt;*> Enhanced IDE/MFM/RLL disk/cdrom/tape/floppy support
+                    &lt;*> Include IDE/ATAPI CDROM support</screen>
+            </example>
+        </section>
+    </section>
+    <section>
+        <title>Подготовка ISO образа</title>
+        <para>Для начала, создайте папку: </para>
+        <screen><prompt>#</prompt> <userinput>mkdir /tmp/iso</userinput></screen>
+        <para>а затем скопируйте все файлы, которые вы хотите записать, в созданную папку:</para>
+        <screen><prompt>#</prompt> <userinput>cp *.doc /tmp/iso</userinput></screen>
+        <para>Затем создайте <filename>image.iso</filename></para>
+        <screen><prompt>#</prompt> <userinput>mkisofs -o /tmp/image.iso /tmp/iso</userinput></screen>
+        <section>
+            <title>Дополнительные опции при создании ISO образа </title>
+            <itemizedlist>
+                <listitem>
+                    <para><parameter>-r</parameter>: добавляет (частично) поддержку так называемых расширений Rock Ridge, т.е. сохраняет специфичные для unix аттрибуты файлов. Например, добавляет поддержку длинных имён (до 255 символов, но не для MS Windows), символических ссылок. В отличие от опции -R, которая полностью соответсвует Rock Ridge, права доступа на файлы не сохраняются, они становятся доступны для чтения любому пользователю. </para>
+                </listitem>
+                <listitem>
+                    <para><parameter>-jcharset=koi8-r</parameter>: подразумевает под собой 2 опции: 1) -J включает поддержку Joliet, которая используется для распознавания длинных имён файлов под MS Windows; 2) -input-charset: устанавливает перекодировку символов для корректного отображения русских имён файлов. ("koi8-r" здесь дано для примера — замените на кодироку, используемую в вашей системе) </para>
+                </listitem>
+                <listitem>
+                    <para><parameter>-joliet-long</parameter>: Позволяет, чтобы имена Joliet могли быть установлены в 103 Unicode сивволы.  Это нарушает Joliet спецификацию — но работает. Используйте с осторожностью.</para>
+                </listitem>
+                <listitem>
+                    <para><parameter>-f</parameter>: следование символическим ссылкам. Если вместо копирования файлов в /tmp/iso, вы просто создаёте в этой директории симлинки на них, то вы должны включить эту опцию. </para>
+                </listitem>
+                <listitem>
+                    <para><parameter>-C</parameter>: эта опция необходима, если вы хотите дописать мультисессионный диск (см. раздел <link xlink:href="#">Как дописывать диски</link>) </para>
+                </listitem>
+            </itemizedlist>
+        </section>
+    </section>
+    <section>
+        <title>Определение ATAPI-приводов </title>
+        <para>Выполните</para>
+        <screen><prompt>#</prompt> <userinput>cdrecord --dev=ATAPI --scanbus</userinput></screen>
+        <para>Вы должны увидеть нечто похожее на следующее: </para>
+        <screen>Cdrecord-Clone 2.01a25 (i686-pc-linux-gnu) Copyright (C) 1995-2004 J?rg Schilling
+            scsidev: 'ATAPI'
+            devname: 'ATAPI'
+            scsibus: -2 target: -2 lun: -2 
+            Warning: Using ATA Packet interface.
+            Warning: The related libscg interface code is in pre alpha. 
+            Warning: There may be fatal problems. 
+            Using libscg version 'schily-0.8'.
+            scsibus0:
+            0,0,0     0) 'SONY    ' 'CD-RW  CRX175A1 ' '5YS2' Removable CD-ROM
+            0,1,0     1) *
+            0,2,0     2) *
+            0,3,0     3) *
+            0,4,0     4) *
+            0,5,0     5) *
+            0,6,0     6) *
+            0,7,0     7) *</screen>
+        <para>Здесь показано, что на шине 0,0,0 есть CD-RW привод.</para>
+        <warning>
+            <para>В новых версиях cdrtools (2.01.01) и ядра 2.6.x надо писать</para>
+            <screen><prompt>#</prompt> <userinput>cdrecord --dev=ATA --scanbus</userinput></screen>
+        </warning>
+    </section>
+    <section>
+        <title>Запись ISO образа </title>
+        <screen><prompt>#</prompt> <userinput>cdrecord --dev=ATA:0,0,0 /tmp/image.iso</userinput></screen>
+        <para>(Замените шину 0,0,0 на необходимую)</para>
+        <note>
+            <para>Вместо <parameter>dev=ATA:0,0,0</parameter> можно указывать просто имя устройства, напирмер, <parameter>dev=/dev/cdrw</parameter></para>
+        </note>
+        <section>
+            <title>Дополнительные возможности </title>
+            <para>Используйте опцию <parameter>--speed=<replaceable>#</replaceable></parameter> для указания скорости записи </para>
+            <screen><prompt>#</prompt> <userinput>cdrecord --dev=ATAPI:0,0,0 --speed=4 /tmp/image.iso</userinput></screen>
+            <para>Используйте <parameter>--blank=fast</parameter> для быстрой очистки CD-RW диска. </para>
+            <screen><prompt>#</prompt> <userinput>cdrecord --dev=ATAPI:0,0,0 --blank=fast</userinput></screen>
+            <para>Большинство современных записывающих устройств поддерживает технологию BURN-free. К сожалению она не включена по умолчанию при запуске cdrecord. Для включения, добавьте опцию <parameter>--driveropts=burnfree</parameter>. Вы можете посмотреть, какие ещё опции поддерживает ваш CD-ROM посредством команды</para>
+            <screen><prompt>#</prompt> <userinput>cdrecord dev=/dev/cdrw driveropts=help -checkdrive</userinput></screen>
+            <para>Если в файле <filename>/etc/default/cdrecord</filename> установить переменную <code>CDR_DEVICE=ATAPI:0,0,0</code> (можно и <code>CDR_DEVICE=/dev/hdc</code>), то не придется каждый раз указывать устройство (ключ <parameter>--dev=ATAPI:0,0,0</parameter>) и тогда для очистки CD-RW диска понадобится набрать только следуюшее: </para>
+            <screen><prompt>#</prompt> <userinput>cdrecord --blank=fast</userinput></screen>
+            <para>Если нужно разрешить пользователю запись на CD, то включите его в группу <systemitem class="groupname">cdrom</systemitem>.</para>
+        </section>
+    </section>
+    <section>
+        <title>Копирование дисков </title>
+        <para>Если у вас всего один CD-ROM, то необходимо вначале создать файл-образ диска. Это можно сделать многими способами (с помощью <command>dd</command>, <command>cat</command>, <command>cdrdao</command>, <command>readcd</command> и т.д.). Лучше воспользоваться <command>readcd</command>, т.к. он уже входит в пакет <package>cdrtools</package>, и имеет множество интересных опций (смотри <command>man readcd</command>):</para>
+        <screen><prompt>#</prompt> <userinput>readcd dev=/dev/cdrw -clone f=/tmp/image.iso</userinput></screen>
+        <para>После этого запишем образ на болванку с помощью <command>cdrecord</command>:</para>
+        <screen><prompt>#</prompt> <userinput>cdrecord -v -eject dev=/dev/cdrw -raw96r -clone /tmp/image.iso</userinput></screen>
+        <important>
+            <para>Ключи <parameter>-raw96r</parameter> и <parameter>-clone</parameter> необходимы ТОЛЬКО если вы создавали файл-образ с помощью команды <command>readcd -clone</command>.</para>
+        </important>
+    </section>
+    <section>
+        <title>Как дописывать диски </title>
+        <para>Прежде всего, при создании и последующем дописывании мульти-сессионных дисков, необходимо всегда для <command>cdrecord</command> указывать опцию <parameter>-multi</parameter>, а для <command>mkisofs</command> использовать ключ <parameter>-r</parameter> или <parameter>-R</parameter> (т.е. включать расширение Rock Ridge). Таким образом создание первой сессий будет выглядить примерно так:</para>
+        <screen><prompt>#</prompt> <userinput>mkisofs -r -f -jcharset=koi8-r -o /tmp/image.iso /tmp/iso/</userinput>
+            <prompt>#</prompt> <userinput>cdrecord -v -multi driveropts=burnfree -eject dev=/dev/cdrw /tmp/image.iso</userinput></screen>
+        <para>Для создания последующих сессий, нам нужна информация о номере начального сектора последней сессии и о номере сектора с которого будет начинаться новая сессия. Эта пара чисел выводится командой</para>
+        <screen><prompt>#</prompt> <userinput>cdrecord -msinfo dev=/dev/cdrw</userinput></screen>
+        <para>После этого данные числа указываются в команде <command>mkisofs</command> в качетстве аргументов к опции <parameter>-C</parameter>. Также, чтобы были видны файлы из предыдущей сессии, необходим ключ <parameter>-M</parameter>, аргументом к ключу <parameter>-М</parameter> служит имя устройства вашего CD-ROM (т.е. в нашем примере — это <filename>/dev/cdrw</filename>). Команда cdrecord остаётся такой же. Резюмируя вышесказанное получаем для записи последующей сессии:</para>
+        <screen><prompt>#</prompt> <userinput>mkisofs -r -f -jcharset=koi8-r -C $(cdrecord dev=/dev/cdrw -msinfo) -M /dev/cdrw -o /tmp/image.iso /tmp/iso/</userinput>
+            <prompt>#</prompt> <userinput>cdrecord -v -multi driveropts=burnfree -eject dev=/dev/cdrw /tmp/image.iso</userinput></screen>
+    </section>
+    <section>
+        <title>Полезные ссылки </title>
+        <para>Классическое how-to по записи дисков на английском языке: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.tldp.org/HOWTO/CD-Writing-HOWTO.html%20">http://www.tldp.org/HOWTO/CD-Writing-HOWTO.html </link>
+        </para>
+        <para>То же самое на русском: <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.opennet.ru/docs/HOWTO-RU/CD-Writing-HOWTO.html%20">http://www.opennet.ru/docs/HOWTO-RU/CD-Writing-HOWTO.html </link>
+        </para>
+        <para>Создание аудио дисков (на английском языке): <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://gentoo-wiki.com/HOWTO_Create_an_Audio_CD">HOWTO Create an Audio CD</link>
+        </para>
+    </section>
+</article>
