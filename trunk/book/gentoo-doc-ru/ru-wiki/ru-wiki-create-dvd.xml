@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
     <info>
         <title>Создание DVD</title>
+        <abstract>
+            <para>Ссылка на оригинал: <link xlink:href="http://ru.gentoo-wiki.com/wiki/HOWTO_%D0%97%D0%B0%D0%BF%D0%B8%D1%81%D1%8C_%D1%81%D0%BE%D0%B1%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE_DVD_%D0%B2%D0%B8%D0%B4%D0%B5%D0%BE_%D0%B4%D0%B8%D1%81%D0%BA%D0%B0">http://ru.gentoo-wiki.com/wiki|/HOWTO_Запись_собственного_DVD_видео_диска</link></para>
+        </abstract>
     </info>
     <section>
         <title>Введение</title>
@@ -22,39 +23,42 @@
             <itemizedlist>
                 <listitem>
                     <para>transcode </para>
-                    <para>emerge -n transcode </para>
+                    <para><command>emerge -n transcode</command></para>
                 </listitem>
                 <listitem>
                     <para>cdrecord и mkisofs </para>
-                    <para>emerge -n cdrtools </para>
+                    <para><command>emerge -n cdrtools</command></para>
                 </listitem>
                 <listitem>
                     <para>growisofs </para>
-                    <para>emerge -n dvd+rw-tools </para>
+                    <para><command>emerge -n dvd+rw-tools</command></para>
                 </listitem>
                 <listitem>
-                    <para>dvdauthor </para>
-                    <para>emerge -n dvdauthor </para>
+                    <para>dvdauthor</para>
+                    <para><command>emerge -n dvdauthor</command></para>
                 </listitem>
+            </itemizedlist>
+            <para>также могут пригодиться:</para>
+            <itemizedlist>
                 <listitem>
-                    <para>также могут пригодиться: kino </para>
-                    <para>emerge -n kino </para>
+                    <para>kino</para>
+                    <para><command>emerge -n kino</command></para>
                 </listitem>
                 <listitem>
                     <para>cinelerra </para>
-                    <para>emerge -n cinelerra-cvs </para>
+                    <para><command>emerge -n cinelerra-cvs</command></para>
                 </listitem>
                 <listitem>
                     <para>dvdrip </para>
-                    <para>USE='cdr mplayer ogg subtitles xvid rar' emerge -n dvdrip </para>
+                    <para><command>USE='cdr mplayer ogg subtitles xvid rar' emerge -n dvdrip</command></para>
                 </listitem>
                 <listitem>
                     <para>replex </para>
-                    <para>emerge -n replex </para>
+                    <para><command>emerge -n replex</command></para>
                 </listitem>
                 <listitem>
                     <para>cdrecord-prodvd </para>
-                    <para>emerge -n cdrecord-prodvd </para>
+                    <para><command>emerge -n cdrecord-prodvd</command></para>
                 </listitem>
             </itemizedlist>
         </section>
@@ -65,77 +69,77 @@
             <title>Использование transcode для декодирования видео произвольного формата и кодирования его в формат MPEG2, совместимый с DVD</title>
             <para>Хотелось бы заметить, что если вы не любители программ с кучей непонятных опций, то вам следует попробовать программу dvdrip, которая является неплохим фронтендом для transcode с понятным интерфейсом. </para>
             <para>Transcode, пожалуй, лучший инструмент для нашей задачи. Вам, возможно, придётся заглянуть в man страницу по transcode, чтобы понять те команды, которые используются здесь. Также вам могут пригодиться и другие инструменты для декодирования и кодирования вашего формата, так что не поленитесь заглянуть и в их man странички. Здесь будет приведен пример того, как конвертировать стандартный divx файл в широэкранный формат (без черных полос сверху и снизу). Затем мы конвертируем все это в формат letterbox 1.5:1. Зачем, спросите вы. Затем, что изначально широкоэкранный формат имеет соотношение 1.73 (16:9) с разрешением 720x416. DVD в свою очередь поддерживает размеры изображения только 720x480, 704x480, 352x480 и 352x240 (возможно это не все). Поэтому самое простое и качественное решение здесь — это привести наше видео к формату 720x480 (соотношение 1.5), добавив по 32 черных полоски сверху и снизу к изображению. </para>
-            <para>transcode -i test-divx.avi -V -y mpeg -F d -Y -32,0,-32,0 -E 44100 -b 128 -o showgirls-dvd</para>
+            <screen>transcode -i test-divx.avi -V -y mpeg -F d -Y -32,0,-32,0 -E 44100 -b 128 -o showgirls-dvd</screen>
             <para>Отрицательные значения для параметра -Y сообщают transcode о том, чтобы добавить нужное количество черных полосок сверху и снизу. Если использовать положительные значения, то полоски будут соответственно убираться сверху и снизу. Часто вам может попасться видео уже в формате 720x480 или еще каком-то "хорошем" формате, тогда не нужно изменять его размеры, то есть просто не используйте опцию -Y. </para>
-            <para>Here's what some of those command line arguments mean: Вот, что означают остальные опции: </para>
-            <para>-V     использовать YV12/I420 в качестве встроенного видео кодека [выключено изначально]</para>
-            <para>       Это, как правило, намного быстрее чем RGB процессинг, но </para>
-            <para>       некоторые импортированные модули могут не поддерживать этот формат.</para>
-            <para>       Используйте эту опцию всегда, когда это возможно.</para>
-            <para>-y vmod[,amod]</para>
-            <para>       видео[,аудио] модули для эксопртирования [отсутствуют изначально].  </para>
-            <para>       Если опустить, то transcode не будет кодировать никаким модулем.</para>
-            <para>       Полностью установленный transcode имеет следующие модули:</para>
-            <para> &lt;вырезано&gt;</para>
-            <para> mpeg — (видео) MPEG 1/2 | (аудио) MPEG 1 Layer II</para>
-            <para>     nasm должен быть доступен во время компиляции. Этот модуль не имеет</para>
-            <para>     зависимостей.  Этот модуль хорошо поддерживается.</para>
-            <para>         Инетрфейс к библиотеке bbmpeg (включена в transcode). Может</para>
-            <para>         кодировать в mpeg1, VCD, SVCD, MPEG2 и DVD видео форматы.</para>
-            <para>         Кодированое видео является отдельным файлом, который следует объединить</para>
-            <para>         с соответствующим аудио файлом после кодирования.</para>
-            <para>-F codec_string</para>
-            <para>       параметры енкодера [зависят от модуля].</para>
-            <para>       Параметр -F имеет разные значения для разных модулей.</para>
-            <para>&lt;вырезано&gt;</para>
-            <para>        -y mpeg:</para>
-            <para>          Синтаксис: -F "&lt;base-profile&gt;[,&lt;resizer-mode&gt;[,user-profile]]"</para>
-            <para>            &lt;base-profile&gt; может быть одним из:</para>
-            <para>              '1' = MPEG 1 (по умолчанию)</para>
-            <para>              'b' = big MPEG 1 (экспериментальный)</para>
-            <para>              'v' = VCD</para>
-            <para>              's' = SVCD</para>
-            <para>              '2' = MPEG2</para>
-            <para>              'd' = DVD совместимый</para>
-            <para>            &lt;resizer-mode&gt; может быть одним из:</para>
-            <para>               0 = выключить resizer (по умолчанию)</para>
-            <para>               1 = 352x288</para>
-            <para>               2 = 480x480</para>
-            <para>               3 = 480x576</para>
-            <para>               4 = 352x240</para>
-            <para>            &lt;user-profile&gt; Имя файла профиля. Вы можете</para>
-            <para>        можно указать как абсолютный путь так и относительный</para>
-            <para>        (относительно директории из которой запускаете transcode).</para>
-            <para>-Y top[,left[,bottom[,right]]]</para>
-            <para>       определить (для енкодера) рамку по котрой будет обрезано изображение. </para>
-            <para>       Отрицаельные значения будут добавлять рамку [отключено изначально].</para>
-            <para>-E r[,b[,c]]</para>
-            <para>       частота сэмплирования выходного аудио [Гц], битов на сэмпл и каналы</para>
-            <para>       [входящие данные]. Опция "-J resample" должна быть передана</para>
-            <para>       не совместимым с ресэмплингом.</para>
-            <para>-B n[,m[,M]]</para>
-            <para>       изменить размеры до высота-n*M горизонтальных полосок </para>
-            <para>       [,ширина-m*M] вертикальных полосок [отключено изначально,32].</para>
-            <para>       M должно иметь одно из значений 8, 16 или 32. Неважно какое M </para>
-            <para>       вы используете. Также взгляниет на флаг fast опции -Z если</para>
-            <para>       не хотите считать n и m вручную.</para>
-            <para>-b b[,v,[q,[m]]]</para>
-            <para>       битрейт аудио енкодера кБит/с [,vbr[,quality[,mode]]] [128,0,5,0]</para>
-            <para>       Параметр mode оперделяет какие модули будет использовать lame</para>
-            <para>       при кодировании.  Возможные значения для mode:</para>
-            <para>          0    Joint Stereo (по умолчанию)</para>
-            <para>          1    Full stereo</para>
-            <para>          2    Mono</para>
-            <para>-o file</para>
-            <para>       имя выходного файла, по умолчанию [/dev/null].</para>
+            <para>Вот, что означают остальные опции: </para>
+            <screen>-V     использовать YV12/I420 в качестве встроенного видео кодека [выключено изначально]
+       Это, как правило, намного быстрее чем RGB процессинг, но
+       некоторые импортированные модули могут не поддерживать этот формат.
+       Используйте эту опцию всегда, когда это возможно.
+-y vmod[,amod]
+       видео[,аудио] модули для эксопртирования [отсутствуют изначально].
+       Если опустить, то transcode не будет кодировать никаким модулем.
+       Полностью установленный transcode имеет следующие модули:
+ &lt;вырезано>
+ mpeg - (видео) MPEG 1/2 | (аудио) MPEG 1 Layer II
+     nasm должен быть доступен во время компиляции. Этот модуль не имеет
+     зависимостей.  Этот модуль хорошо поддерживается.
+         Инетрфейс к библиотеке bbmpeg (включена в transcode). Может
+         кодировать в mpeg1, VCD, SVCD, MPEG2 и DVD видео форматы.
+         Кодированое видео является отдельным файлом, который следует объединить
+         с соответствующим аудио файлом после кодирования.
+-F codec_string
+       параметры енкодера [зависят от модуля].
+       Параметр -F имеет разные значения для разных модулей.
+&lt;вырезано>
+        -y mpeg:
+          Синтаксис: -F "&lt;base-profile>[,&lt;resizer-mode>[,user-profile]]"
+            &lt;base-profile> может быть одним из:
+              '1' = MPEG 1 (по умолчанию)
+              'b' = big MPEG 1 (экспериментальный)
+              'v' = VCD
+              's' = SVCD
+              '2' = MPEG2
+              'd' = DVD совместимый
+            &lt;resizer-mode> может быть одним из:
+               0 = выключить resizer (по умолчанию)
+               1 = 352x288
+               2 = 480x480
+               3 = 480x576
+               4 = 352x240
+            &lt;user-profile> Имя файла профиля. Вы можете
+        можно указать как абсолютный путь так и относительный
+        (относительно директории из которой запускаете transcode).
+-Y top[,left[,bottom[,right]]]
+       определить (для енкодера) рамку по котрой будет обрезано изображение.
+       Отрицаельные значения будут добавлять рамку [отключено изначально].
+-E r[,b[,c]]
+       частота сэмплирования выходного аудио [Гц], битов на сэмпл и каналы
+       [входящие данные]. Опция "-J resample" должна быть передана
+       не совместимым с ресэмплингом.
+-B n[,m[,M]]
+       изменить размеры до высота-n*M горизонтальных полосок 
+       [,ширина-m*M] вертикальных полосок [отключено изначально,32].
+       M должно иметь одно из значений 8, 16 или 32. Неважно какое M
+       вы используете. Также взгляниет на флаг fast опции -Z если
+       не хотите считать n и m вручную.
+-b b[,v,[q,[m]]]
+       битрейт аудио енкодера кБит/с [,vbr[,quality[,mode]]] [128,0,5,0]
+       Параметр mode оперделяет какие модули будет использовать lame
+       при кодировании.  Возможные значения для mode:
+          0    Joint Stereo (по умолчанию)
+          1    Full stereo
+          2    Mono
+-o file
+       имя выходного файла, по умолчанию [/dev/null].</screen>
             <para>Если бы, к примеру, наше видео имело формат 728x424, то следовало бы воспользоватья командой типа следующей: </para>
-            <para>transcode -i showgirls-divx.avi -V -y mpeg -F d -B 1,1,8 -E 44100 -b 128 -o showgirls-dvd</para>
+            <screen>transcode -i showgirls-divx.avi -V -y mpeg -F d -B 1,1,8 -E 44100 -b 128 -o showgirls-dvd</screen>
             <para>Также обратитесь к опции -X для того, чтобы увеличить размеры видео. </para>
         </section>
         <section>
             <title>Использование tcmplex для объединения аудио и видео данных</title>
             <para>Transcode должен был создать *.m2v (mpeg-2 видео) и *.mpa (аудио) файлы в текущей директории. Теперь мы их объединим так: </para>
-            <para>tcmplex -o showgirls-dvd.vob -i showgirls-dvd.m2v -p showgirls-dvd.mpa -m d</para>
+            <screen>tcmplex -o showgirls-dvd.vob -i showgirls-dvd.m2v -p showgirls-dvd.mpa -m d</screen>
         </section>
         <section>
             <title>Использование kino (альтернатива transcode+tcmplex)</title>
@@ -148,12 +152,12 @@
             <para>"Эти инструкции были испробованы на записях формата DVB-C, сделанных в Финляндии" </para>
             <para>Примечание: пожалуй, для России эта глава абсолютно бесполезна, но если есть большое желание, то я переведу и её. Мало ли, кто где живет ;) </para>
             <para>Digital television streams are transmitted as MPEG2-TS in which the TS stands for Transport Stream. This means that extra information, such as multiple audio streams, could be transferred along with the actual video. Quite fortunately, the video stream is already suitable for DVD without re-encoding which is both time consuming and stupid as it lowers the quality. Enter replex. First use czap for tuning into some channel: </para>
-            <para>czap -r -n 3</para>
+            <screen>czap -r -n 3</screen>
             <para>This tunes the DVB card to channel number 3. Now, record some data by typing: </para>
-            <para>cat /dev/dvb/adapter0/dvr0 &gt; stream.ts</para>
+            <screen>cat /dev/dvb/adapter0/dvr0 &gt; stream.ts</screen>
             <para>This simply writes raw data from the first tuner card into a file. After awhile press CTRL-C to stop recording. </para>
             <para>Now, you should have a blob of data which could be played with e.g. mplayer. Next, you should use replex to transform TS format suitable for DVD. Enter following command: </para>
-            <para>replex -k -i TS -t DVD -o stream.dvd stream.ts</para>
+            <screen>replex -k -i TS -t DVD -o stream.dvd stream.ts</screen>
             <para>This command ignores possible errors in original stream (-k), assumes that input file is in TS format (-i TS), outputs format suitable for DVD (-t DVD), writes to a file called stream.dvd (-o stream.dvd) and reads its input from the file entered as a last parameter (stream.ts). </para>
             <para>After a moment a file called stream.dvd should appear in the same directory where above command was entered. Now just follow the instructions from the next chapter onwards to burn this baby on a DVD. </para>
         </section>
@@ -166,10 +170,10 @@
     <section>
         <title>Создание DVD образа для записи</title>
         <para>Если директории AUDIO_TS и VIDEO_TS созданы у вас в директории bar, которая в свою очередь находится в текущей директории, то введите команду: </para>
-        <para>mkisofs -dvd-video -o ./bar.img ./bar/</para>
+        <screen>mkisofs -dvd-video -o ./bar.img ./bar/</screen>
         <para>и вы получите образ bar.img в текущей директории, который теперь следует записать на диск вашей любимой программой для записи дисков. </para>
         <para>Или можете записать диретории AUDIO_TS и VIDEO_TS прямо из каталога bar/ набрав: </para>
-        <para>growisofs -Z /dev/dvd -dvd-video -V название_диска . </para>
+        <screen>growisofs -Z /dev/dvd -dvd-video -V <replaceable>название_диска</replaceable> . </screen>
         <para>Где /dev/dvd — ваш DVD-writer. </para>
     </section>
     <section>
@@ -183,13 +187,14 @@
         <section>
             <title>Из командной строки</title>
             <para>Можно записать образ ещё и так: </para>
-            <para>cdrecord-ProDVD -dao -speed=4 -dev=/dev/dvd ./bar.img</para>
+            <screen>cdrecord-ProDVD -dao -speed=4 -dev=/dev/dvd ./bar.img</screen>
             <para>Воспользуйтесь командой cdrecord -scanbus предварительно, чтобы определить какое устройство использовать для записи. Для устройств ATAPI используйте формат -dev=/dev/dvd или -dev=/dev/hdd (зависит от машины), для эмуляции SCSI устройств используйте -dev=0,0,0 или -dev=0,0,1 (зависит от машины). </para>
             <para>Если у вас нет cdrecord-ProDVD можете использовать growisofs. </para>
-            <para>growisofs -dvd-compat -Z /dev/dvd=./bar.img</para>
+            <screen>growisofs -dvd-compat -Z /dev/dvd=./bar.img</screen>
             <para>Подсказка: С помощью growisofs вы можете писать диски налету (без создания четырёхгигабайтного файла .iso): </para>
-            <para>growisofs -dvd-compat -Z /dev/dvd -dvd-video ./bar</para>
-            <para>Можно также воспользоваться скриптом, который расположен по адресу http://james.nontrivial.org/projdvd.htm </para>
+            <screen>growisofs -dvd-compat -Z /dev/dvd -dvd-video ./bar</screen>
+            <para>Можно также воспользоваться скриптом, который расположен по адресу <link xlink:href="http://james.nontrivial.org/projdvd.htm">http://james.nontrivial.org/projdvd.htm</link>
+            </para>
         </section>
     </section>
 </article>

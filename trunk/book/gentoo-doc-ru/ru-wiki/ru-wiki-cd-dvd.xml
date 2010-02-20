@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
     <info>
         <title>Работа с CD/DVD</title>
+        <abstract>
+            <para>Ссылка на оргинал: <link xlink:href="http://ru.gentoo-wiki.com/wiki/HOWTO_%D0%97%D0%B0%D0%BF%D0%B8%D1%81%D1%8C_CD">http://ru.gentoo-wiki.com/wiki/HOWTO_Запись_CD</link></para>
+        </abstract>
     </info>
     <section>
         <info>
@@ -22,30 +23,30 @@
             <example>
                 <title>Конфигурация ядра Linux: Конфигурация ядра 2.4.x </title>
                 <screen>ATA/IDE/MFM/RLL Support -->
-                    IDE, ATA, and ATAPI Block Devices -->
-                    &lt;M> SCSI Emulation Support
-                    SCSI Support -->
-                    &lt;M> SCSI Support
-                    &lt;M> SCSI CDROM Support
-                    &lt;M> SCSI Generic Support</screen>
+    IDE, ATA, and ATAPI Block Devices -->
+         &lt;M> SCSI Emulation Support
+SCSI Support -->
+    &lt;M> SCSI Support
+    &lt;M> SCSI CDROM Support
+    &lt;M> SCSI Generic Support</screen>
             </example>
             <para>Теперь, еще необходимо ядру при загрузке передать параметр <parameter>hdc=ide-scsi</parameter> (в данном случае предполагается, что ваш CD привод — это <filename>hdc</filename>). </para>
             <para>Т.е. если вы используете grub, то его конфиг должен выглядеть примерно так: </para>
             <example>
                 <title>Файл: <filename>/boot/grub/grub.conf</filename></title>
                 <programlisting>title Gentoo Linux
-                    root (hd#,#)
-                    kernel (hd#,#)/YOUR_KERNEL_NAME_HERE root=/dev/hdx# hdc=ide-scsi <replaceable>ANY_OTHER_KERNEL_OPTIONS_NEEDED</replaceable></programlisting>
+root (hd#,#)
+kernel (hd#,#)/YOUR_KERNEL_NAME_HERE root=/dev/hdx# hdc=ide-scsi <replaceable>ANY_OTHER_KERNEL_OPTIONS_NEEDED</replaceable></programlisting>
             </example>
             <para>Т.е. если вы используете grub, то его конфиг должен выглядеть примерно так: </para>
             <example>
                 <title>Файл: <filename>/boot/grub/grub.conf</filename></title>
                 <programlisting># Linux bootable partition config
-                    image  = /boot/<replaceable>YOUR_KERNEL_NAME_HERE</replaceable>
-                    append = "hdc=ide-scsi"
-                    root   = /dev/hd<replaceable>x</replaceable>#
-                    label  = Gentoo
-                    read-only</programlisting>
+    image  = /boot/<replaceable>YOUR_KERNEL_NAME_HERE</replaceable>
+    append = "hdc=ide-scsi"
+    root   = /dev/hd<replaceable>x</replaceable>#
+    label  = Gentoo
+    read-only</programlisting>
             </example>
         </section>
         <section>
@@ -54,9 +55,9 @@
             <example>
                 <title>Конфигурация ядра Linux: Конфигурация ядра 2.6.x</title>
                 <screen>Device Drivers  -->
-                    ATA/ATAPI/MFM/RLL support -->
-                    &lt;*> Enhanced IDE/MFM/RLL disk/cdrom/tape/floppy support
-                    &lt;*> Include IDE/ATAPI CDROM support</screen>
+    ATA/ATAPI/MFM/RLL support -->
+        &lt;*> Enhanced IDE/MFM/RLL disk/cdrom/tape/floppy support
+            &lt;*> Include IDE/ATAPI CDROM support</screen>
             </example>
         </section>
     </section>
@@ -95,22 +96,22 @@
         <screen><prompt>#</prompt> <userinput>cdrecord --dev=ATAPI --scanbus</userinput></screen>
         <para>Вы должны увидеть нечто похожее на следующее: </para>
         <screen>Cdrecord-Clone 2.01a25 (i686-pc-linux-gnu) Copyright (C) 1995-2004 J?rg Schilling
-            scsidev: 'ATAPI'
-            devname: 'ATAPI'
-            scsibus: -2 target: -2 lun: -2 
-            Warning: Using ATA Packet interface.
-            Warning: The related libscg interface code is in pre alpha. 
-            Warning: There may be fatal problems. 
-            Using libscg version 'schily-0.8'.
-            scsibus0:
-            0,0,0     0) 'SONY    ' 'CD-RW  CRX175A1 ' '5YS2' Removable CD-ROM
-            0,1,0     1) *
-            0,2,0     2) *
-            0,3,0     3) *
-            0,4,0     4) *
-            0,5,0     5) *
-            0,6,0     6) *
-            0,7,0     7) *</screen>
+scsidev: 'ATAPI'
+devname: 'ATAPI'
+scsibus: -2 target: -2 lun: -2 
+Warning: Using ATA Packet interface.
+Warning: The related libscg interface code is in pre alpha. 
+Warning: There may be fatal problems. 
+Using libscg version 'schily-0.8'.
+scsibus0:
+       0,0,0     0) 'SONY    ' 'CD-RW  CRX175A1 ' '5YS2' Removable CD-ROM
+       0,1,0     1) *
+       0,2,0     2) *
+       0,3,0     3) *
+       0,4,0     4) *
+       0,5,0     5) *
+       0,6,0     6) *
+       0,7,0     7) *</screen>
         <para>Здесь показано, что на шине 0,0,0 есть CD-RW привод.</para>
         <warning>
             <para>В новых версиях cdrtools (2.01.01) и ядра 2.6.x надо писать</para>
@@ -151,12 +152,12 @@
         <title>Как дописывать диски </title>
         <para>Прежде всего, при создании и последующем дописывании мульти-сессионных дисков, необходимо всегда для <command>cdrecord</command> указывать опцию <parameter>-multi</parameter>, а для <command>mkisofs</command> использовать ключ <parameter>-r</parameter> или <parameter>-R</parameter> (т.е. включать расширение Rock Ridge). Таким образом создание первой сессий будет выглядить примерно так:</para>
         <screen><prompt>#</prompt> <userinput>mkisofs -r -f -jcharset=koi8-r -o /tmp/image.iso /tmp/iso/</userinput>
-            <prompt>#</prompt> <userinput>cdrecord -v -multi driveropts=burnfree -eject dev=/dev/cdrw /tmp/image.iso</userinput></screen>
+<prompt>#</prompt> <userinput>cdrecord -v -multi driveropts=burnfree -eject dev=/dev/cdrw /tmp/image.iso</userinput></screen>
         <para>Для создания последующих сессий, нам нужна информация о номере начального сектора последней сессии и о номере сектора с которого будет начинаться новая сессия. Эта пара чисел выводится командой</para>
         <screen><prompt>#</prompt> <userinput>cdrecord -msinfo dev=/dev/cdrw</userinput></screen>
         <para>После этого данные числа указываются в команде <command>mkisofs</command> в качетстве аргументов к опции <parameter>-C</parameter>. Также, чтобы были видны файлы из предыдущей сессии, необходим ключ <parameter>-M</parameter>, аргументом к ключу <parameter>-М</parameter> служит имя устройства вашего CD-ROM (т.е. в нашем примере — это <filename>/dev/cdrw</filename>). Команда cdrecord остаётся такой же. Резюмируя вышесказанное получаем для записи последующей сессии:</para>
         <screen><prompt>#</prompt> <userinput>mkisofs -r -f -jcharset=koi8-r -C $(cdrecord dev=/dev/cdrw -msinfo) -M /dev/cdrw -o /tmp/image.iso /tmp/iso/</userinput>
-            <prompt>#</prompt> <userinput>cdrecord -v -multi driveropts=burnfree -eject dev=/dev/cdrw /tmp/image.iso</userinput></screen>
+<prompt>#</prompt> <userinput>cdrecord -v -multi driveropts=burnfree -eject dev=/dev/cdrw /tmp/image.iso</userinput></screen>
     </section>
     <section>
         <title>Полезные ссылки </title>
