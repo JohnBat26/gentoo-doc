@@ -1,0 +1,950 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Настройка X</title>
+    </info>
+        <section>
+            <info>
+                <title>Настройка русских шрифтов в X</title>
+            </info>
+            <section>
+                <info>
+                    <title>Введение </title>
+                </info>
+                <para>Введение временное </para>
+                <para>Ну вот и начался этот проект, призванный восполнить достаточно широкий пробел в документации по настройке шрифтов в Иксах. Надеюсь многочисленные русские пользователи проявят некую сознательность и отпишут сюда пару строчек. </para>
+                <para>Кто принимает участие </para>
+                <para>Macil — линуксоид из Ярославля. Обитает на yar.lancktelecom.ru/talk, forum.median.ru, а также Macil [at] jabber.ru </para>
+                <para>Wanderer — пользователь Linux из Москвы. Всерьез занимаюсь изучением и использоваением Linux последние 4 года, до этого просто приглядывался ;-). На Gentoo пересел почти год назад и ничуть не жалею и даже наоборот, очень этим доволен. Связаться со мной можно посредством e-mail (wanderer_mg [at] mail.ru) или jabber (wanderer [at] jabber.ru). </para>
+            </section>
+            <section>
+                <info>
+                    <title>Две системы рисования шрифтов </title>
+                </info>
+                <para>Исторически в X Window System существует 2 системы рисования шрифтов. Родная (core) и Xft. </para>
+                <para>Родная система – прямой потомок системы рисования шрифтов, введенной в X11R1, выпущенной в 1987 году. Изначально она могла рисовать только монохромные растровые шрифты, но на протяжении всех этих лет предпринимались более-менее успешные попытки заставить ее работать с векторными шрифтами. </para>
+                <para>Xft не является неотъемлемой частью X, хотя возможно будет ей в будущем. Это значит, что она распространяется не со всеми реализациями X. Она проектировалась для работы с векторными шрифтами, и делает это достаточно эффективно. В отличие от родной системы рисования, Xft поддерживает anti-aliasing и sub-pixel rasterisation. Кроме того, она позволяет приложениям полностью контролировать то, как будут рисоваться шрифты, обеспечивая возможность создания WYSIWYG приложений. </para>
+                <para>Нужно ли уточнять что эти две подсистемы совершенно не совместимы на уровне API? Из-за достаточно анархичного развития X в последнее время, возникла большая путаница в определениях и версиях используемых библиотек. </para>
+                <para>//Источник: вольный перевод файла README.fonts </para>
+            </section>
+            <section>
+                <info>
+                    <title>Хft </title>
+                </info>
+                <para>Введение в Xft </para>
+                <para>Xft это библиотека, которая предоставляет клиентский API для рисования шрифтов. В настоящее время версия Xft 2.0 использует библиотеки fontconfig и freetype для выбора шрифтов и их рисования, соответственно. Xft 1.0 использовала внутренний механизм конфигурации, что было не очень хорошей идеей так как KDE и Pango "заимствовали" механизм конфигурации шрифтов и создали еще большую путаницу. Подробности можно посмотреть [здесь]. </para>
+                <para>Нужно запомнить 3 вещи: </para>
+                <para>fontconfig — для конфигурации </para>
+                <para>freetype — для рисования </para>
+                <para>XFT — связывает все во едино </para>
+                <para>Freetype — библиотека рисования шрифтов </para>
+                <para>[Freetype] — совершенно независимый от кого-либо проект по созданию библиотеки рисования шрифтов. Библиотека предоставляет достаточно простой API, но поскольку обычные приложения заинтересованы в более высокоуровневых сервисах, в чистом виде не используется. Вместе с X идет модифицированная freetype, предназначенная для поддержки векторных шрифтов родной системой рисования. Я не вижу смысла даже пытаться ее компилировать (она компилируется в модуль freetype), так как большинство приложений перешли на использование Xft и путанице со шрифтами приходит конец. Рендеринг векторных шрифтов очень сложный процесс, и к сожалению, freetype не может его выполнять до конца и в некоторых шрифтах появляются не очень приятные артефакты. Но ничего лучшего (открытого и бесплатного) пока нет... Как обычно, существует 2 версии freetype: freetype1 и freetype2. Отличия их в том, что freetype1 может рисовать тоько шрифты формата TrueType. Сложно найти современный дистрибутив, где
+                    отсутствует freetype2. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Теория рендеринга векторных шрифтов </title>
+                </info>
+                <para>Что такое hinting </para>
+                <para>На английском много информации о hinting можно найти тут http://www.myfonts.com/activity/hinting/ </para>
+                <para>Не уверен, однако, что можно тут публиковать такие ссылки. </para>
+                <para>Это — незавершённая статья. Вы можете помочь проекту, исправив и дополнив материал.</para>
+                <para>Что такое anti-aliasing </para>
+                <para>Это методы избавления от артефактов, возникающих при отрисовке векторного изображения в растовое. Когда вектороное изображение (не дискретное, к примеру, формула y=2*x) отрисовывается в растовое, то в результате погрешностей и того, что цвет каждого пискселя строго зависит от формулы, возникают артефакты. То есть наклонную линию мы будем видеть ступенчато, а не плавно. Методы anti-aliasing, в основном, базируются на отрисовке изображения в большее разрешение и приведение к обычному путём билинейной фильтрации, т.е. цвет пикселя будет строиться из цветов нескольких пикселей большого изображения. Шрифты после применения anti-aliasing выглядят более гладко, т.к. более точно соответствуют "векторной формуле". </para>
+                <para>Это — незавершённая статья. Вы можете помочь проекту, исправив и дополнив материал.</para>
+                <para>Шрифты из Microsoft Windows </para>
+                <para>Установка шрифтов Microsoft Windows имея доступ в интернет </para>
+                <para>Если есть доступ к интернету, то можно просто установить пакет corefonts: emerge corefonts </para>
+            </section>
+            <section>
+                <info>
+                    <title>Настройка родной подсистемы </title>
+                </info>
+                <para>Настройка Xft </para>
+                <para>Все настройки Xft хранятся в файлах /etc/fonts/fonts.conf и /etc/fonts/local.conf. Все изменения нужно производить в файле /etc/fonts/local.conf. Изменение файла /etc/fonts/fonts.conf не рекомендуется, т.к. при обновлении пакета fontconfig он будет перезаписан и все настройки потеряны. </para>
+                <para>Отключение сглаживания для шрифтов меньше определенного размера </para>
+                <para>По умолчанию сглаживание действует для всех шрифтов, но для шрифтов маленького размера его лучше отключить, т.к. смотрится это почти всегда плохо. </para>
+                <para>Ниже приведен пример конфига /etc/fonts/local.conf, в котором указана отмена сглаживания для шрифтов, размер которых меньше 14. Code: /etc/fonts/local.conf </para>
+                <para>&lt;?xml version="1.0"?&gt;</para>
+                <para>&lt;!DOCTYPE fontconfig SYSTEM "fonts.dtd"&gt;</para>
+                <para>&lt;!-- /etc/fonts/local.conf file for local customizations --&gt;</para>
+                <para>&lt;fontconfig&gt;</para>
+                <para>&lt;!--  Enable sub-pixel rendering  --&gt;</para>
+                <para>        &lt;match target="font"&gt;</para>
+                <para>                &lt;edit name="rgba" mode="assign"&gt;&lt;const&gt;rgb&lt;/const&gt;&lt;/edit&gt;</para>
+                <para>        &lt;/match&gt;</para>
+                <para>        &lt;match target="font"&gt;</para>
+                <para>            &lt;test name="size" compare="less_eq"&gt;</para>
+                <para>                &lt;double&gt;14&lt;/double&gt;</para>
+                <para>            &lt;/test&gt;</para>
+                <para>            &lt;edit name="antialias" mode="assign"&gt;</para>
+                <para>                &lt;bool&gt;false&lt;/bool&gt;</para>
+                <para>            &lt;/edit&gt;</para>
+                <para>        &lt;/match&gt;</para>
+                <para>        &lt;match target="font"&gt;</para>
+                <para>            &lt;test name="pixelsize" compare="less_eq"&gt;</para>
+                <para>                &lt;double&gt;14&lt;/double&gt;</para>
+                <para>            &lt;/test&gt;</para>
+                <para>            &lt;edit name="antialias" mode="assign"&gt;</para>
+                <para>                &lt;bool&gt;false&lt;/bool&gt;</para>
+                <para>            &lt;/edit&gt;</para>
+                <para>        &lt;/match&gt;</para>
+                <para>&lt;/fontconfig&gt;</para>
+            </section>
+            <section>
+                <info>
+                    <title>Настройка Qt и Gtk </title>
+                </info>
+                <para>Для Qt</para>
+                <para>emerge qt qtconfig </para>
+                <para>Для Gtk</para>
+                <para>emerge gtk-theme-switch switch2 </para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Настройка размера шрифтов в X</title>
+            </info>
+            <section>
+                <info>
+                    <title>Введение </title>
+                </info>
+                <para>Столкнулся с проблемой (и не я один) размера шрифтов. </para>
+                <para>Процесс сталкивания выглядел так: </para>
+                <para>~ $ emerge xorg-x11</para>
+                <para>...</para>
+                <para>~ $ emerge kde</para>
+                <para>...</para>
+                <para>startx</para>
+                <para>Попал я, естессна сразу в KDE. И увидел очень мелкие шрифты, очень мелкие, похожие на точечки. Примерно такие:</para>
+                <para>Естессна, первое, что я сделал — полез в центр управления и установил размер, соответствующий моему зрению. Им оказался 40. Немало. Тогда я понял, что что-то неправильно. Порылся в инете, не нашел ничего. Смирился. Однако вскоре узнал, что та же проблема у меня и в KDM, только там изменить размер немного сложнее. Изменил. Но проблему это не решило, потому что нашлись еще всякие шибко умные проги, которые пользовались собственными настройками шрифтов. Их (настройки) искать оказалось очень сложно и пришлось брать быка за рога. Итак, </para>
+            </section>
+            <section>
+                <info>
+                    <title>Суть проблемы </title>
+                </info>
+                <para>Она состоит в том, что шрифты ориентированы на определенное физическое разрешение экрана — dpi (точек на дюйм). В винде по дефолту оно идет равным 96. X11 решил, что это слишком сложно не знаю для кого и, как выяснилось позже, выставил себе аж целых 25 dots per inch. В переводе в метрическую систему это около 1 точки на миллиметр. Соответсвенно, экран разрешением 1024х768 должен быть шириной в метр, высотой 77 см, чтоб читалось все как надо. Ну а поскольку реально экран у нас меньше, мы видели то, что мы видели. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Неправильный ход мысли </title>
+                </info>
+                <para>но полезный совет. Увеличть размер шрифта для KDM можно в этом файле: </para>
+                <para>/usr/kde/3.5/share/config/kdm/kdmrc</para>
+                <para>Но это не выход, как я уже говорил. Кстати, GDM настраивается в другом файле, его я не знаю, потому что пришел к следующему пункту: </para>
+            </section>
+            <section>
+                <info>
+                    <title>Правильный ход мысли </title>
+                </info>
+                <para>Надо изменить разрешение, те самые dpi. Где? Как? </para>
+                <para>Меняем dpi </para>
+                <para>Тут, кстати, возможны варианты. Если Вы запускаете иксы из консоли по мере необходимости командой startx, то Вам сюда. Если иксы стартуют сами при загрузке системы — то сюда. В идеале стоит проделать оба варианта. </para>
+                <para>Для команды startx </para>
+                <para>Лезем туда, где этот стартикс лежит и правим его </para>
+                <para>~ $ find /usr -name startx</para>
+                <para>У меня он оказался в /usr/bin, и с вероятностью 99,(9)% там же он будет и у Вас. </para>
+                <para>Вписать в него надо всего ничего параметр -dpi 96 в ключ defaultserverargs </para>
+                <para>defaultserverargs="-dpi 96"</para>
+                <para>Те параметры, которые там есть не удаляйте, у них свое назначение, этот просто допишите к ним.</para>
+                <para>В принципе, на этом все. Можно </para>
+                <para>~ $ startx</para>
+                <para>Жизнь удалась. </para>
+                <para>Для пользователей KDM, XDM и тому подобного </para>
+                <para>Вооружитесь калькулятором. В файле xorg.conf Вам надо изменить параметр DisplaySize. По умолчанию, он устанавливается равным разрешению (помните, я говорил в начале статьи), но ваш-то монитор меньше. Можно померять линейкой, можно посчитать, какие значения ему присвоить: </para>
+                <para>X = x * 25,4 / dpi</para>
+                <para>Y = y * 25,4 / dpi</para>
+                <para>где X, Y — значения, которые надо присвоить DisplaySize </para>
+                <para>x, y — разрешение монитора (x — ширина, y — высота) </para>
+                <para>dpi — то физическое разрешение, которое должно получиться </para>
+                <para>У меня при разрешении 1024x768 получилось так: </para>
+                <para>~ $ vi /etc/X11/xorg.conf</para>
+                <para>Section "Monitor"</para>
+                <para>       Identifier   "Monitor0"</para>
+                <para>       VendorName   "HSD"</para>
+                <para>       ModelName    "HSD150PX17-A"</para>
+                <para>       DisplaySize  270.9 203.2 # mm</para>
+                <para>EndSection</para>
+                <para>Вывод </para>
+                <para>Ерунда какая, ничего сложного, если сразу заглянуть в xorg.conf и почитать комментарии, то этого можно избежать. Но я не избежал и, кстати, долго с этим мучился. </para>
+                <para>Вывод-то в чем: будьте внимательнее! </para>
+                <para>P.S. </para>
+                <para>В Gnome есть такая настроечка, как dpi, сам не видел, но знающие люди говорят, что есть и рекомендуют ее тоже выставить на 96 или то, которое принято везде.</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Xorg X11 и прозрачность</title>
+            </info>
+            <section>
+                <info>
+                    <title>Введение</title>
+                </info>
+                <para>Это руководство поможет в установке X.org на Linux/Gentoo машине, хотя общие настройки должны работать и на любом другом дистрибутиве. </para>
+                <para>Шаг за шагом</para>
+            </section>
+            <section>
+                <info>
+                    <title>Установка X.org</title>
+                </info>
+                <para>Установите последнюю версию X.org с помощью команды emerge xorg-x11 </para>
+                <para>После компиляции необходимо настроить X.org путем редактирования /etc/X11/xorg.conf </para>
+                <para>Если у вас было установленно XFree86 то рабочий /etc/X11/XF86Config будет автоматически использоватся для работы X.org. Для обеспечения целостности рекомендуется переименовать /etc/X11/XF86Config в /etc/X11/xorg.conf. </para>
+                <para>Для загрузки X.org выполните команду startx </para>
+            </section>
+            <section>
+                <info>
+                    <title>Установка X Composite Extension</title>
+                </info>
+                <para>Откройте /etc/X11/xorg.conf для редактирования nano -w /etc/X11/xorg.conf пользуйте ваш любимый редактор ;) </para>
+                <para>Добавьте следующие строки в любом месте конфиг файла Файл: /etc/X11/xorg.conf </para>
+                <para>Section "Extensions"</para>
+                <para>    Option "Composite" "Enable"</para>
+                <para>    Option "RENDER" "Enable"</para>
+                <para>EndSection</para>
+                <para>При следующей перезагрузке X.org у вас будет включен Composite Extension. Это расширение включает предварительную отрисовку вне экрана, чтобы на экран выводилось уже законченное изображение. Это позволяет использовать различные эффекты (например прозарчность и тени). </para>
+                <para>Для достоверности можно проверить лог файл grep COMPOSITE /var/log/Xorg.0.log </para>
+                <para>(II) Initializing built-in extension COMPOSITE</para>
+                <para>Включение теней и настоящей прозрачности</para>
+            </section>
+            <section>
+                <info>
+                    <title>KDE 3.4 или более поздняя</title>
+                </info>
+                <para>Начиная с версии 3.4 KDE поддерживает прозрачность через Xorg. На заголовке любого окна щелкните правой кнопкой мыши, выбирите "настройка поведения окна" и в списке слева надите пункт полупрозрачность. Поставьте флажок "использовать прозрачность/тени", после чего станут доступны множество настроек прозрачности (активного,неактивного окна, окна при перетаскивании, плавные переходы прозрачности и т.д.) и теней. </para>
+                <para>xcompmgr и transset</para>
+                <para>Многие WM еще не обладают поддержкой новых функций X.org, так что нам придется использовать дополнительные инструменты для наших эффектов. </para>
+                <para>Вначале нам надо установить xcompmgr </para>
+                <para>echo "x11-misc/xcompmgr ~x86" &gt;&gt; /etc/portage/package.keywords </para>
+                <para>emerge xcompmgr </para>
+                <para>Затем установим transset </para>
+                <para>echo "x11-misc/transset ~x86" &gt;&gt; /etc/portage/package.keywords </para>
+                <para>emerge transset </para>
+                <para>Теперь у нас есть все необходимое, чтобы включить тени, затенение и настоящую прозрачность. Запустите из Xterm xcompmgr xcompmgr -c Эта команда позволит вам увидеть эффекты от запущенного xcompmgr, если они вам не понравятся, то CTRL+C в консоли позволит вам убить процесс, а если они вам нравятся, то надо убить процесс и запустить его в фоновом режиме (сзади консоли): xcompmgr -c &amp; Примечание: символ &amp; позволяет запустить xcompmgr в фоновом режиме, но при этом если убить сам терминал — процесс тоже сдохнет, чтобы этого не произошло можно использовать утилиту nohup: nohup xcompmgr -c &amp; При этом весь вывод будет направлен в nohup.out </para>
+                <para>Таким образом xcompmgr включит "мягкие" тени. Если будет использован флаг -s то будут "грубые" тени. </para>
+                <para>Рабочий пример для xcompmgr с тенью и затенением xcompmgr -cCfF -r7 -o.65 -l-10 -t-8 -D7 &amp; </para>
+                <para>Теперь о прозрачности. Выполните в консоли transset Теперь ваш курсор изменился, вы можете кликнуть на окне которое хотите сделать прозрачным. Если запустить transset с цифровым значением от 0 до 1 то это укажет насколько прозрачным должно быть окно </para>
+                <para>0 — полностью прозрачно </para>
+                <para>1 — не прозрачно </para>
+                <para>Попробуйте выполнить transset 0.2 </para>
+                <para>Для возвращения окна назад просто выполните transset и кликните по прозрачному окну. </para>
+                <para>Как это выглядит</para>
+                <para>Изображение взято на http://www.grebowiec.net/archives/xorg4.html </para>
+                <para> </para>
+                <para>Выключение эффектов</para>
+                <para>Для выключения всех эффектов выполните killall xcompmgr </para>
+                <para>Примечание</para>
+                <para>NVIDIA</para>
+                <para>При использовании NVIDIA видео карточек рекомендуется добавить в /etc/X11/xorg.conf нижеприведенные строки для того, чтобы можно было использовать расширение "Composite" и увеличить производительность при его использовании. Файл: /etc/X11/xorg.conf </para>
+                <para>Section "Device"</para>
+                <para>...</para>
+                <para>Option "RenderAccel" "true"</para>
+                <para>Option "AllowGLXWithComposite" "true"</para>
+                <para>...</para>
+                <para>EndSection </para>
+                <para>ВАЖНО: При использовании RenderAccel у вас могут возникнуть проблемы со стабильностью, так как эта опция экспериментальная и использовать ее вам предлагается на свой страх и риск.</para>
+                <para>При использовании AllowGLXWithComposite у вас могут возникнуть проблемы с opengl приложениями. Могут появляться артефакты, так как glx и composite не рекомендуется использовать одновременно. </para>
+                <para>ATI </para>
+                <para>При использовании ATI видео карточек совместно с ATI драйверами, дополните /etc/X11/xorg.conf опцией backingstore, для включения поддержки backing store, механизма с помощью которого пиксельные данные закрытого окна запоминаются Х сервером и снимает необходимость посылки сообщений к Х клиенту когда надо обновить изображение Файл: /etc/X11/xorg.conf </para>
+                <para>Section "Device"</para>
+                <para>...</para>
+                <para>Option "backingstore" "true"</para>
+                <para>...</para>
+                <para>EndSection </para>
+            </section>
+            <section>
+                <info>
+                    <title>Заключение</title>
+                </info>
+                <para>Эти разработки находятся в самой начальной стадии и мы можем использовать их уже в X.org версии 6.8. По мере развития WM и приложений будет возможность воспользоваться новым функционалом X.org в полную меру без установки дополнительных приложений. Некоторые программы, kwin к примеру, уже портируются.</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Xorg. Переключение раскладок</title>
+            </info>
+            <para>Переключение USA/RUS + Scroll Lock Led </para>
+            <para>В секции InputDevice для клавиатуры надо дописать следующее: </para>
+            <para>Section "InputDevice"</para>
+            <para>   Identifier        "Keyboard1"</para>
+            <para>   Driver        "kbd"</para>
+            <para>   Option        "AutoRepeat"        "500 30"</para>
+            <para>   Option "XkbModel"        "pc105"</para>
+            <para>   Option "XkbLayout"        "us,ru(winkeys)"</para>
+            <para>   Option "XkbOptions"        "grp:alt_shift_toggle, grp_led:scroll"</para>
+            <para>EndSection</para>
+            <para>Раскладки будут переключаться по Alt+Shift, с индикацией на Scroll Lock Led </para>
+            <para>Если, конечно, не забыть, что в Section "ServerLayout" должно быть прописано InputDevice "Keyboard1". По умолчанию там как раз Keyboard0, так что будьте внимательны. </para>
+            <para>а если вы захотите что-бы CTRL-C CTRL-V работали во всех раскладках так-же четко как в микрософт виндовс — то этого увы вам никто не расскажет :) — надо править запутанные конфиги xkb </para>
+            <para>Возможно, вариант русской раскладки winkeys у вас не заработает. Тогда измените следующую строку: </para>
+            <para>   Option "XkbLayout" "us,ru"</para>
+            <para>и добавьте </para>
+            <para>   Option "XkbVariant" ",winkeys"</para>
+            <para>Обратите внимание на запятую, она указывает на то, что вариант "winkeys" применяется именно к русской раскладке!</para>
+        </section>
+        <section>
+            <info>
+                <title>Установка Xgl</title>
+            </info>
+            <section>
+                <info>
+                    <title>Введение</title>
+                </info>
+                <para>Проект Xgl позволяет ускорять посредством подсистемы OpenGL вывод примитивов X сервера, а также обеспечивать ускорение composite и render. На данный момент мы можем получить быструю работу с прозрачностью, тенью и отрисовкой окон. </para>
+                <para>Более подробное руководство на английском языке рамещено по адресу en:HOWTO XGL </para>
+            </section>
+            <section>
+                <info>
+                    <title>Инсталяция</title>
+                </info>
+                <para>Xorg</para>
+                <para>Нам понадобится последняя версия Xorg. Необходимо размаскировать нужные пакеты и установить Xorg-7.0emerge xorg-x11 Примечание: Дополнительно можно почитать статью Настройка Portage </para>
+                <para>glitz</para>
+                <para>Так же необходимо скачать из CVS последнюю версию glitz. cvs -d:pserver:anoncvs@cvs.freedesktop.org:/cvs/cairo co glitz Установить ее.autogen.sh &amp;&amp; ./configure --prefix=/usr/ &amp;&amp; make &amp;&amp; make install </para>
+                <para>glxcompmgr</para>
+                <para>Для работы с расширением composite скачаем утилиту glxcompmgr cvs -d :pserver:anoncvs@cvs.freedesktop.org:/cvs/xorg co app/glxcompmgr Скомпилируем и установимautogen.sh &amp;&amp; ./configure --prefix=/usr/ &amp;&amp; make &amp;&amp; make install </para>
+                <para>metacity</para>
+                <para>Так уж сложилось, что пока glxcompmgr может себя показать во всей красе только с оконным менеджером metacity, да, он способен работать и с kwin, но при этом запуск kdesktop вызовет прекращение нормальной работы glxcompmgr. metacity </para>
+                <para>MesaLib</para>
+                <para>Если мы хотим использовать composite, необходимо собрать библиотеку libGL.so.1.2 из пакета MesaLib-6.4.1 с патчем mesa-glx-x11-render-texture-3.diff, который лежит в каталоге glxcompmgr.patch -p0 &lt;mesa-glx-x11-render-texture-3.diff &amp;&amp; ./configure --prefix=/usr/ &amp;&amp; make Нет необходимости переустанавливать весь пакет т.к. нас интересует только файл ./lib/libGL.so.1.2. Заменим старый файл.cp ./lib/libGL.so.1.2 /usr/lib/opengl/xorg-x11/lib/ </para>
+                <para>Xgl</para>
+                <para>Теперь скачаем. cvs -d:pserver:anoncvs@cvs.freedesktop.org:/cvs/xorg login </para>
+                <para>CVS password: нажмите Enter </para>
+                <para>cvs -d:pserver:anoncvs@cvs.freedesktop.org:/cvs/xorg co -r xgl-0-0-1 xserver </para>
+                <para>Код находится в ./hw/xql </para>
+                <para>И установим сам Xgl сервер. ./configure --prefix=/usr/ --enable-xglserver --enable-glx --enable-xkb &amp;&amp; make &amp;&amp; make install </para>
+            </section>
+            <section>
+                <info>
+                    <title>Запуск сервера для видеокарт nvidia</title>
+                </info>
+                <para>"Голый" сервер</para>
+                <para>Убедимся, что мы используем libGL.so.1.2 от nvidiaeselect opengl set nvidia Для запуска сервера в отдельном окне откройте свой любимый терминал и выполните командуXgl :1 -ac -accel xv -accel glx:pbuffer -screen 800x600 &amp; Если сервер не запускается, то, возможно, необходимо отключить расширение xkb, добавив опцию -kb Xgl :1 -kb -ac -accel xv -accel glx:pbuffer -screen 800x600 &amp; Также могут возникнуть проблемы с шрифтами, тогда путь к ним надо указать вручную Xgl :1 -kb -ac -accel xv -accel glx:pbuffer -fp /usr/share/fonts/misc/ -screen 800x600 &amp; Для запуска сервера в полноэкранном режиме можно использовать опцию -fullscreenXgl :1 -kb -ac -accel xv -accel glx:pbuffer -fp /usr/share/fonts/misc/ -fullscreen &amp; </para>
+                <para>Для запуска на ATI картах с установленными драйверами fglrx необходимо вместо ... -accel xv... Использовать ... -accel xv:pbuffer... </para>
+                <para>Запускаем glxcompmgr</para>
+                <para>Сначала для примера запустим xterm и metacity из терминала. export DISPLAY=:1xterm &amp;metacity &amp; После этого необходимо переключиться на использование библиотеки libGL.so.1.2 из пакета MesaLibeselect opengl set xorg-x11 После этого можно запускать glxcompmgr.glxcompmgr shadow wobbly &amp; После этого уже должен быть виден интересный эффект на запущеном xterm'е. </para>
+                <para>KDE, GNOME</para>
+                <para>Для запуска kde или Gnome необходимо запустить сначало metacity затем kde(Gnome) и в последнюю очередь glxcompmgr. </para>
+                <para>Возможные проблемы</para>
+                <para>Возможно у вас не получится запустить сервер т.к. файл /usr/lib/libGL.so.1 будет указывать не на /usr/lib/opengl/nvidia/lib/libGL.so.1.2, а на /usr/lib/libnvidia-tls.so.1. Поменяйте симлинк и сервер запустится.</para>
+                <para>Для переключения раскладки подойдет программа xruskb.</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>XGL</title>
+            </info>
+            <section>
+                <info>
+                    <title>Введение </title>
+                </info>
+                <para>Xgl это X сервер, который использует OpenGL для прорисовки обьектов. Вместе с композитным оконным менеджерами Compiz или новой версией Metacity позволяет получить превосходное качество 3D и 2D эффектов рабочего стола. Xgl базируется на расширении Mesa, GLX_EXT_texture_from_pixmap, который представлен только в версиях Mesa 6.5 и старше. </para>
+                <para>На the XOrg mailing list предлагается написать спецификацию GLX_EXT_texture_from_pixmap расширения совместно с NVIDIA. Бета версия драйверов уже выпущеных NVIDIA, версия 9625, поддерживают это расширение, это означает что Xgl уже не нуждается в использовании Compiz на NVIDIA картах, кроме этого использование данной конфигурации приветствуется. Для информации об этом методе использования Xgl, пожалуйста ознакомтесь на en:HOWTO nVidia GL Desktop Effects </para>
+                <para>Кроме того, Compiz тесно связан с GNOME-компонентами, Xgl и Compiz работают прекрасно во всех окружениях рабочих столов (KDE/GNOME/Xfce/*box). Если Вы всё же не используете GNOME, будте готовы к установке необходимых библиотек и утилит. </para>
+                <para>Предупреждение: Данное программное обеспечение ещё не является стабильным, и хотя оно почти всегда работает, всё же используйте его с осторожностью. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Системные требования</title>
+                </info>
+                <para>см. the article on video card support under Xgl. </para>
+                <para>Установка Xgl Примечание: Установка должна быть произвадена на системе с работающей X сессией используя эмулятор терминала типа konsole или gterm, выполнение этого условия необходимо для запуска gconf-editor или gset-compiz для конфигурации Compiz в конце установки. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Требования к програмному обеспечению</title>
+                </info>
+                <para>Обновите Ваше локальное дерево портажей. </para>
+                <para>emerge --sync </para>
+                <para>Вам необходима модульная версия XOrg (версия 7.x). Для установки модульной версии XOrg ознакомтесь с официальной Gentoo документацией или соответствующей статьёй wiki. </para>
+                <para>en:HOWTO Modular Xorg </para>
+            </section>
+            <section>
+                <info>
+                    <title>Официальное руководство </title>
+                </info>
+                <para>Модульный XOrg (версия 7.x) был опубликован в стабильнй ветке дерева портажей, поэтому Вы можете пропустить эту главу если Ваш Gentoo полностью обновлен. </para>
+                <para>Compiz использует рабочую оболочку GNOME GConf для конфигурации, и некоторые из опций конфигурации будут приведены здесь. Наиболее легким и популярным способом конфигурации является программа gconf-editor, одна из приложений GNOME. Конечно, и менее известная KDE программа KConfigEditor также может использоваться для конфигурации. Правда для этой программы пока не существует ebuild файла, но Вы можете загрузить исходный код этой программы с extragear.kde.org. Пожалуй самый нежелательный из способов это редактирование gconf конфигурационных файлов вручную, что является скучным и неблагодарным занятием. </para>
+                <para>Если Вы хотите использовать gconf-editor, то его необходимо установить. </para>
+                <para>emerge -nav gconf-editor </para>
+                <para>Также Вам необходимо установить Subversion с включенной поддержкой webdav. Вы должны отключить флаг nowebdav. Добавте добавте при необходимости следующую строку в /etc/portage/package.use: Примечание: Тут используется двойное отрицание в использовании USE флага. </para>
+                <para>echo "dev-util/subversion -nowebdav" &gt;&gt; /etc/portage/package.use </para>
+                <para>затем, </para>
+                <para>emerge -nav subversion </para>
+            </section>
+            <section>
+                <info>
+                    <title>Загрузка Portage оверлея</title>
+                </info>
+                <para>Существуют два метода для создания требуемого оверлея; оверлей можно загрузить используя svn утилиту или использовать layman утилиту которая будет управлять оверлеями вместо Вас. Используя layman производить обновление системы проще, так что решать Вам. Вне зависимости, что Вы будете использовать результат будет одним и темже. </para>
+                <para>Метод по умолчанию: использование Layman утилиты</para>
+                <para>Если вы ещё не установили Layman, сделайте это сейчас. </para>
+                <para>emerge -nav layman </para>
+                <para>Также Вам необходимо добавить следующую строку в Ваш make.conf. </para>
+                <para>echo "source /usr/portage/local/layman/make.conf" &gt;&gt;/etc/make.conf </para>
+                <para>Если Вы используете Eix Caching System, удостовертесь что Вы используете самую новую версию; старые версии не поддерживают чтение внешних файлов make.conf. </para>
+                <para>Измените "nocheck" переменную на значение "yes" в конфигурационном файле утилиты layman. (/etc/layman/layman.cfg) </para>
+                <para>Затем добавте оверлей с помощью Layman утилиты: </para>
+                <para>layman -f</para>
+                <para>layman -a xeffects </para>
+                <para>если вы используете layman версии 1.0.7 или позже, то оверлеи с неправильными атрибутами будут проигнорированы. Используйте опцию -k для обхода этой ситуации. </para>
+                <para>layman -k -a xeffects </para>
+            </section>
+            <section>
+                <info>
+                    <title>Альтернативный метод: Создание оверлея вручную</title>
+                </info>
+                <para>Если Вы хотите обслуживать Вашь оверлей самостоятельно, то сделайте следующее. Иначе (если используется lanman), вы можете перейти к главе Размаскирование необходимых пакетов. Примечание: Лучше всего не смешивать оверлеи и использовать их отдельно друг от друга. </para>
+                <para>Перейдите в Вашу директорию оверлеев </para>
+                <para>cd /usr/local/overlays </para>
+                <para>Загрузите последнюю версию из CoffeeBuzz's Subversion репозитория в директорию 'xgl-coffee' </para>
+                <para>svn co http://svn.xgl-coffee.org/xgl-coffee/trunk xgl-coffee </para>
+                <para>Теперь Вы создали оверлей дерева портежей в /usr/local/overlays/xgl-coffee. </para>
+                <para>Добавьте следующий путь в переменную PORTDIR_OVERLAY в /etc/make.conf. </para>
+                <para>Файл: /etc/make.conf </para>
+                <para>PORTDIR_OVERLAY="${PORTDIR_OVERLAY} /usr/local/overlays/xgl-coffee"</para>
+            </section>
+            <section>
+                <info>
+                    <title>Размаскирование необходимых пакетов</title>
+                </info>
+                <para>Много пакетов маркированы как нестабильные и должны быть размаскированы чтобы их можно было установить из дерева портажей Добавте следующие строки к файлу /etc/portage/package.keywords или /etc/portage/package.unmask </para>
+                <para>Файл: /etc/portage/package.keywords </para>
+                <para># Зависимости</para>
+                <para>dev-util/git</para>
+                <para>media-libs/glitz</para>
+                <para>media-libs/mesa</para>
+                <para>x11-apps/mesa-progs</para>
+                <para>sys-apps/man</para>
+                <para>x11-libs/cairo</para>
+                <para>dev-python/pycairo</para>
+                <para>x11-libs/qt</para>
+                <para>x11-misc/util-macros</para>
+                <para>x11-proto/glproto</para>
+                <para>x11-apps/xvinfo</para>
+                <para>x11-apps/xlsclients</para>
+                <para>x11-libs/libwnck</para>
+                <para>x11-misc/xwinwrap</para>
+                <para>virtual/xft</para>
+                <para>gnome-base/gconf</para>
+                <para>gnome-base/libgnomeui</para>
+                <para>x11-libs/gtk+</para>
+                <para>dev-libs/glib</para>
+                <para>x11-libs/libdrm</para>
+                <para>#XGL пакет</para>
+                <para>x11-base/xgl</para>
+                <para># старые версии Compiz</para>
+                <para>x11-wm/compiz-quinnstorm</para>
+                <para>x11-misc/compiz-quinnstorm-plugins</para>
+                <para>x11-wm/compiz</para>
+                <para>x11-wm/cgwd</para>
+                <para>x11-misc/csm</para>
+                <para>x11-misc/cgwd-themes</para>
+                <para>x11-misc/cgwd-themes-extra</para>
+                <para>x11-misc/gset-compiz</para>
+                <para>x11-misc/compiz-manager</para>
+                <para># новая ветка Beryl для Compiz</para>
+                <para>x11-wm/beryl-core</para>
+                <para>x11-plugins/beryl-plugins</para>
+                <para>x11-misc/beryl-manager</para>
+                <para>x11-misc/beryl-settings</para>
+                <para>x11-wm/emerald</para>
+                <para>x11-misc/emerald-themes</para>
+                <para>Удостоверьтесь что флаги glitz, pdf и png включены в переменную USE для Cairo. Возможно Вам понадобится добавить следующую строку к файлу package.use: </para>
+                <para>Файл: /etc/portage/package.use </para>
+                <para>x11-libs/cairo glitz pdf png</para>
+            </section>
+            <section>
+                <info>
+                    <title>Установка Xgl</title>
+                </info>
+                <para>Новые бета драйверы с закрытым исходным кодом от nVidia (версия 1.0.9625) уже включают в себя поддержку XGL. Поэтому не нужно более никаких установок. Если вы не хотите использовать новейшие бета драйвера, то следуйте к главе "не-nVidia пользователи". Данный способ работает на nVidia картах при этом установка и использование новых nVidia драйверов намного проще. Если Вы хотите использовать новейшие бета драйвера тогда Вы должны перейти к главе "nVidia Пользователи". </para>
+                <para>Не-nVidia пользователи</para>
+                <para>Во-первых Вы должны установить Cairo. Используй опуцию --oneshot чтобы не записывать этот пакет в список world (не захламляй свой world список). </para>
+                <para># emerge --oneshot --ask --verbose cairo </para>
+                <para>Переинсталируй pango и gtk+ с использованием новоустановленного Cairo пакета. </para>
+                <para># emerge --oneshot --ask --verbose pango gtk+ </para>
+                <para>Далее у Вас есть выбор между beryl и compiz ветками: </para>
+                <para>compiz это оригинальное приложение написанное Давидом Равеманом (David Reveman) из Новел (Novell). Это приложение уже включено в дерево портажей. </para>
+                <para>beryl это снимок Quinnstorm's Ubuntu кодовой базы с некоторыми экспериментальными плагинами. Формально эта ветка известна под названием compiz-quinnstorm. Использует emerald как window decorator. это отдельный пакет не включенный в дерево портежей. </para>
+                <para>Проверьте что флаги dbus и svg включены в переменную USE для Compiz. Возможно Вам потребуется добавить следующую строку в package.use: Файл: /etc/portage/package.use </para>
+                <para>x11-wm/compiz dbus svg</para>
+                <para>Проверьте что пакеты glproto и libdrm установлены. Установите их если это требуется: </para>
+                <para># emerge --ask --verbose --oneshot --noreplace glproto libdrm </para>
+                <para>В конечном итоге Вы должны будете установить Xgl и Mesa, которые автоматичеси скомпилируют и установят Compiz а также все его плагины и Xgl сервер. </para>
+                <para># emerge --ask --verbose --oneshot --noreplace mesa </para>
+                <para>Опция 1: Для использования vanilla compiz: </para>
+                <para># emerge --ask --verbose xgl compiz </para>
+                <para>Опция 2: Для использования beryl мета пакета: </para>
+                <para># emerge --ask --verbose xgl beryl-core </para>
+                <para>Примечание: Установка beryl также устанавливает декоратор окон emerald и его темы. Таким образом emerald не надо устанавливать отдельно. </para>
+                <para>Примечание: NVIDIA пользователи пожалуйста переустановите nvidia-drivers после установки Xgl </para>
+                <para>Примечание: Если неудается скомпилировать xgl, проверте заплатку на </para>
+                <para>http://forums.xgl-coffee.org/viewtopic.php?t=178 </para>
+                <para>Примечание: Если неудается скомпилировать beryl из за dbus, попробуйте обновить пакет dbus </para>
+                <para>Примечание: Если неудается скомпилировать xgl и компиляция обрывается на fbmmx.c или fbedge.c, попробуйте удалить флаг "-fforce-addr" из переменной CFLAGS. Также ознакомтесь с документацией на форуме </para>
+                <para>Если всё прошло удачно, то Cairo должен присутствовать в системе как зависимость. Примечание: Для следующей проверки необходим установленый пакет gentoolkit. </para>
+                <para>Проверите с помощью следующей команды </para>
+                <para># equery d -o -p cairo </para>
+                <para>Предупреждение: Если команда не возвращает никаких пакетов, то значит чтото прошло не правильно! </para>
+                <para>После произведенных действий Вы должны получить функционирующую установку Xgl. Пожалуйста ознакомтесь с Глава работающий Xgl. </para>
+                <para>nVidia пользователи</para>
+                <para>nVidia драйвер версии 9625 BETA и старше содержат XGL и AIGLX-подобные расширения и могут быть использованы совмесно с другими композитными менеджерами окон. см. en:HOWTO nVidia GL Desktop Effects для более детальной информации. </para>
+            </section>
+            <section>
+                <info>
+                    <title>Обновление Xgl </title>
+                </info>
+                <para>Из-за быстрой разработки Xgl и Compiz, оверлей обновляется как минимум один раз в неделю. Используйте один из приведённых методов для обновления оверлея. </para>
+                <para>Обновление с помощью Layman утилиты</para>
+                <para>Обновление оверлея с помощью Layman утилиты очень просто: </para>
+                <para>layman -s xeffects </para>
+                <para>Обновление вручную</para>
+                <para>Для обновления оверлея вручную, перейдите в директорию оверлея и введите ./svnup.sh. этот скрипт также выведет список изменений. </para>
+                <para>cd /usr/local/overlays/xgl-coffee/</para>
+                <para>./svnup.sh</para>
+            </section>
+            <section>
+                <info>
+                    <title>Запуск Xgl </title>
+                </info>
+                <para>Конфигурация Compiz </para>
+                <para>Для начала надо сконфигурировать Compiz и его плагинов. Если никакие плагины не указаны, тогда окна останутся без декораций! (не будет кнопок minimize/maximize/close, невозможно будет изменять размеры окна, ничего вообще толком не будет.) </para>
+                <para>Существуют два пути указания плагинов. Вы можете указать плагины в командной строке или использовать оконный редактор конфигурации например с помощью программ gconf-editor или gset-compiz. Но вы не можете использовать оба способа одновременно! Если gconf указан в командной строке, тогда Compiz проигнорирует все другие плагины указанные в командной сторке и возьмёт список плагинов из вашей конфигурации gconf. </para>
+                <para>Таким образом если Вы впервые запускаете Xgl и Вы хотите конфигурировать в оконном редакторе, наступило время сделать это, до того как Вы выйдете из Вашей X сессии. </para>
+                <para>Способ "По умолчанию": Использование gconf-editor </para>
+                <para># gconf-editor</para>
+                <para>Перейдите в apps --&gt; compiz --&gt; general --&gt; allscreens --&gt; options и отредактируйте узел active_plugins находящийся справа. Примечание: Если в gconf-editor нет вкладок Сompiz, тогда это можно исправить таким образом: </para>
+                <para> # export GCONF_CONFIG_SOURCE="xml:merged:/etc/gconf/gconf.xml.defaults"</para>
+                <para> # gconftool-2 --makefile-install-rule /etc/gconf/schemas/compiz.schemas</para>
+                <para>Способ "По умлочанию" для compiz-quinnstorm: Использование csm</para>
+                <para># csm</para>
+                <para>Плагины могут быть активированы кликая в checkbox после имени. Индивидуальная конфигурация плагинов осуществляется после щелчка мышью на имени плагина. Примечание: Compiz-quinnstorm поставляется вместе с Compiz Manager (compiz-manager). Это оконное приложение находящееся в системной панели и включает в себя Compiz Settings Manager (csm) и Compiz Theme Manager (gcompizthemer). Запустив на выполнение эти две утилиты (управляйте compiz и темами), перестартуйте оконный менеджер или декоратор из системной панели и установите запасной оконный менеджер который будет использоваться в случае неудачного старта. </para>
+                <para># compiz-manager</para>
+                <para> or (if any dbus problem) :</para>
+                <para># dbus-launch compiz-manager</para>
+                <para>Альтернативный способ: Испльзование gconftool-2</para>
+                <para># gconftool-2 -s /apps/compiz/general/allscreens/options/active_plugins "[gconf,decoration,wobbly,fade,minimize,cube,switcher,move,resize,place,rotate,zoom,scale]" -t list --list-type=string</para>
+                <para>Укажите активные плагины внутри квадратных скобок. </para>
+                <para>Альтернативный способ: Использование gset-compiz Предупреждение: </para>
+                <para>gset-compiz больше не пытается использовать все возможности Compiz. Используйте лучше gconf-editor или более новые программы для возможностей которыми не располагает gset-compiz. </para>
+                <para># gset-compiz</para>
+                <para>Плагин можно активировать поставив галочку сразу возле его имени. Конфигурация индивидуальных настроек плагина доступна после нажатия кнопки Plugins находящейся сразу под меню. </para>
+                <para>Как минимум, потребуются пакеты gconf и decoration. Также, если Вы хотите включить все доступные эффекты, надо также добавить wobbly, fade, switcher, move, resize, place, minimize, cube, rotate, zoom, и scale. Из имени пакета Вы сами можете догадаться, что выполняет каждый из плагинов, так что не торопитесь включать их все. Это как предпочтения "сладостей для глаз", установите плагины move и resize — у Вас появится возможность работать с их функциями. </para>
+                <para>Using Quinnstorm's compiz &amp; cgwd </para>
+                <para>Quinnstorm's new compiz doesn't use gconf plugin anymore (so settings). To use it, replace any instance of compiz --replace gconf found in this document with dbus-launch compiz --replace dbus csm. And set it by csm or dbus-launch csm. </para>
+                <para>Quinnstorm's new window decorator must be called instead of gnome-window-decorator in order to function. If you chose to emerge cgwd, just replace any instance of gnome-window-decorator found in this document with dbus-launch cgwd. </para>
+                <para>Оконный режим </para>
+                <para>Запустив Xgl таким способом мы создадим новое окно с включенным Xgl сервером. Это отличный способ протестировать правильность установки прежде чем запускать XGL в полноэкранном режиме. </para>
+                <para>Чтобы попробовать его работу в оконном режиме при уже запущенном X сервере: Code: Для ati пользователей </para>
+                <para>Xgl :1 -ac -accel glx:pbuffer -accel xv:pbuffer -fp /usr/share/fonts/misc,/usr/share/fonts/other_fonts</para>
+                <para>Code: Для nVidia пользователей </para>
+                <para>Xgl :1 -ac -accel glx:pbuffer -accel xv -fp /usr/share/fonts/misc,/usr/share/fonts/other_fonts</para>
+                <para>Примечание: Обсуждение использования pbuffer или fbo как аргументов accel, можно почитать здесь http://forums.gentoo.org/viewtopic-t-455153-highlight-.html </para>
+                <para>Примечание: Xgl не будет считывать значение FontPath из xorg.conf, по-этому, лучше в конце строки после опции -fp прописать пути к шрифтам разделяя их запятой. Используйте этот скрипт для получения путей к шрифтам прописанным в файле xorg.conf: </para>
+                <para> grep -i fontpath /etc/X11/xorg.conf | egrep -v "[:space:]*#" | sed "s/.\+\"\(.\+\)\"/\1,/g" | xargs echo | sed "s/\ //g" | sed "s/,\$//"</para>
+                <para>Протестируйте Вашу конфигурацию: </para>
+                <para>Запустите композитный оконный менеджер (compiz or compiz-quinnstorm), запустите декоратор окон (gnome-window-decorator or cgwd) и запустите приложение (xterm). Code: Для большинства: Если Вы используете compiz совмесно с gnome-window-decorator </para>
+                <para>Учтите что название gnome-window-decorator изменилось на gtk-window-decorator 22 Сентября 2006 года. </para>
+                <para>LD_LIBRARY_PATH=/usr/lib/opengl/xorg-x11/lib/ \</para>
+                <para>DISPLAY=:1 compiz gconf</para>
+                <para>DISPLAY=:1 gnome-window-decorator</para>
+                <para>DISPLAY=:1 xterm</para>
+                <para>Code: Альтернатива 1: если Вы используете compiz-quinnstorm совмесно с gnome-window-decorator </para>
+                <para>LD_LIBRARY_PATH=/usr/lib/opengl/xorg-x11/lib/ \</para>
+                <para>DISPLAY=:1 dbus-launch compiz dbus csm</para>
+                <para>DISPLAY=:1 gnome-window-decorator</para>
+                <para>DISPLAY=:1 xterm</para>
+                <para>Code: Альтернатива 2: Если вы используете compiz-quinnstorm с cgwd </para>
+                <para>LD_LIBRARY_PATH=/usr/lib/opengl/xorg-x11/lib/ \</para>
+                <para>DISPLAY=:1 dbus-launch compiz dbus csm</para>
+                <para>DISPLAY=:1 dbus-launch cgwd</para>
+                <para>DISPLAY=:1 xterm</para>
+                <para>Если всё прошло успешно, мы можем начать конфигурировать Вашу систему для запуска Xgl с Вашим графическим менеджером аутентификации. Следуйте инструкциям которые помогут Вам настр�ить менеджер аутентификации. Это последний шаг необходим для удобного использования Xgl. </para>
+                <para>startx (Для пользователей startx) </para>
+                <para>Если вы обычно загружаетесь в консоль и Xorg сервер запускается через startx, а .xinitrc загружает ваш менеджер окон на DISPLAY:0, то вам нужно: написать скрипт startxgl для запуска сервера Xgl, а так же файл .xglinitrc для загрузки менеджера окон на DISPLAY:1. Эти действия не изменят вашей текущей конфигурации и вы сможете в любой момент вернутся в нормальный Xorg сервер. </para>
+                <para>1) Скопируйте startx (cp /usr/bin/startx /usr/local/bin/startxgl) и отредактируйте 2 строки: Файл: /usr/local/bin/startxgl </para>
+                <para> ## userclientrc=$HOME/.xinitrc</para>
+                <para> userclientrc=$HOME/.xglinitrc</para>
+                <para> ## xinit $clientargs -- $serverargs -deferglyphs 16 &amp;</para>
+                <para> # ATI</para>
+                <para> xinit $clientargs -- /usr/bin/Xgl :1 $serverargs -ac -accel xv -accel glx:pbuffer -deferglyphs 16 &amp;</para>
+                <para> # NVIDIA</para>
+                <para> xinit $clientargs -- /usr/bin/Xgl :1 $serverargs -ac -accel xv -accel glx:fbo -deferglyphs 16 &amp;</para>
+                <para>2) создайте файл ~/.xglinitrc (vi ~/.xglinitrc) Файл: ~/.xglinitrc </para>
+                <para> sleep 2 # give Xgl some extra time to start</para>
+                <para> DISPLAY=:1 KDEWM=compiz-decorator startkde</para>
+                <para>Примечание: Пользователи Gnome должны вписать gnome-session вместо startkde и WINDOW_MANAGER вместо KDEWM. Пользователи других DM вписывают соответствующие им команды запуска. Для уточнения проверте ваш ~/.xinitrc. </para>
+                <para>3) создайте файл compiz-decorator (vi /usr/local/bin/compiz-decorator) Файл: /usr/local/bin/compiz-decorator </para>
+                <para>## Start compiz or compiz-quinnstorm</para>
+                <para>## compiz --replace gconf &amp;</para>
+                <para>## dbus-launch compiz --replace dbus csm &amp;</para>
+                <para>compiz --replace gconf &amp;</para>
+                <para>sleep 2</para>
+                <para>## Start gnome-window-decorator or cgwd</para>
+                <para>## gnome-window-decorator &amp;</para>
+                <para>## dbus-launch cgwd &amp;</para>
+                <para>gnome-window-decorator &amp;</para>
+                <para>Примечание: Команды для запуска и использования compiz-quinnstorm и cgwd в скрипте закоментированны. Если вы хотите пользоваться ими то незабудте закоментировать текущие </para>
+                <para>Смените права доступа на /usr/local/bin/compiz-decorator что бы сделать его исполняемым: </para>
+                <para># chmod +x /usr/local/bin/compiz-decorator</para>
+                <para>4) Для запуска вашего оконного менеджера в XOrg используйте startx, для запуска в Xgl используйте startxgl. </para>
+                <para>Скрипты тестировались на связке ATI и KDE. --Ash 17:48, 11 Сентября 2006 (UTC) </para>
+                <para>XDM (Базовая графическая система аутентификации) </para>
+                <para>Измените ссылку на X сервер: Файл: /etc/X11/xdm/Xservers </para>
+                <para>:0 local /usr/bin/Xgl vt7</para>
+                <para>KDM (для пользователей KDM) </para>
+                <para>Замените строку с ServerCmd в kdmrc на одну из следующих:</para>
+                <para>Файл: /usr/kde/&lt;your version&gt;/share/config/kdm/kdmrc </para>
+                <para># NVidia Command</para>
+                <para>ServerCmd=/usr/bin/Xgl -br -ac -accel glx:pbuffer -accel xv</para>
+                <para># ATI Command</para>
+                <para>ServerCmd=/usr/bin/Xgl -br -ac -accel glx:pbuffer -accel xv:pbuffer</para>
+                <para>Вы также должны поменять занчение ServerTimeout так как Xgl запускается немного дольше, чем нормальный Х сервер: </para>
+                <para>Файл: /usr/kde/&lt;your version&gt;/share/config/kdm/kdmrc </para>
+                <para>ServerTimeout=30</para>
+                <para>Если kdm не смог загрузится, измените значение ServerTimeout на 600. Учтите, что в этом случае время загрузки Xgl значительно увеличится. </para>
+                <para>Не используйте скрипт /usr/kde/3.5/share/config/kdm/Xstartup для запуска Compiz. Для его выполнения нужны права пользователя root. </para>
+                <para>Скопируйте скрипт в другое место, например сюда: Файл: /usr/local/bin/compiz-decorator </para>
+                <para>## Start compiz or compiz-quinnstorm</para>
+                <para>## compiz --replace gconf &amp;</para>
+                <para>## dbus-launch compiz --replace dbus csm &amp;</para>
+                <para>compiz --replace gconf &amp;</para>
+                <para>sleep 2</para>
+                <para>## Start gnome-window-decorator or cgwd</para>
+                <para>## gnome-window-decorator &amp;</para>
+                <para>## dbus-launch cgwd --replace &amp;</para>
+                <para>gnome-window-decorator --replace &amp;</para>
+                <para>Примечание: Команды для запуска и использования compiz-quinnstorm и cgwd в скрипте закоментированны. Если вы хотите пользоваться ими то незабудте закоментировать текущие. </para>
+                <para>Сделайте вновь созданный скрипт /usr/local/bin/compiz-decorator исполняемым: </para>
+                <para># chmod +x /usr/local/bin/compiz-decorator</para>
+                <para>Далее измените: </para>
+                <para>Файл: /etc/env.d/99kde-env </para>
+                <para>KDEWM=compiz-decorator</para>
+                <para>И наконец, выполните команду: </para>
+                <para># env-update</para>
+                <para>Теперь после перезагрузки или выполнения комманды /etc/init.d/xdm start вы запустите полнофункциональный Xgl со всеми эффектами без пользовательского вмешательства и аутентификацией с помощью KDM. </para>
+                <para>GDM (для пользователей GNOME) </para>
+                <para>Вы должны сделать 3 вещи, чтобы заставить Xgl работать с GDM и использовать Compiz для автоматической загрузке при авторизации пользователя. </para>
+                <para>Сконфигурируйте GDM для Xgl с отложенным запуском, чтобы при запуске нельзя было сказать, что она не работает </para>
+                <para>Сконфигурируйте GDM для использования с Xgl-сервером </para>
+                <para>Установите сессию GNOME для автоматического запуска из Compiz Примечание: Конфигурирование gdm для отложенного запуска Xgl доступно с gdm-2.14.1 и поздних версий. Если Вы используете раннюю версию, начинте с шага 2, но, возможно, Вам не удастся заставить gdm работать с Xgl. Также использование gdmsetup для конфигурирования gdm на испольльзоваине Xgl-сервера (Раздел 2a) может быть недоступно для версий gdm ранее 2.14.0. Если недоступны необходимые Вам функции, самостоятельно отредактируйте конфигурационный файл GDM (Раздел 2b). </para>
+                <para>Конфигурирование Gdm на отложенный запуск для запуска Xgl </para>
+                <para>Gdm сконфигурирована по умолчанию на завершение (kill) X-сервера, если загрузка заняла более 10 секунд. К сожадению, новые версии Xgl могут загружаться дольше. Пользователи Xgl в Gentoo, могут сконфигурировать Gdm (пример по версии 2.14.1) на ожидание более 10 секунд. </para>
+                <para># emerge --ask --verbose &gt;=gdm-2.14.1</para>
+                <para>Добавьте/измените следующие команды секции [daemon] файла /etc/X11/gdm/custom.conf. Строка: Файл: /etc/X11/gdm/custom.conf </para>
+                <para>GdmXserverTimeout=30</para>
+                <para>Если /etc/X11/gdm/custom.conf не существует, попробуйте /etc/X11/gdm/gdm.conf-custom или /etc/X11/gdm/gdm.conf. </para>
+                <para>Конфигурирование Gdm для использования сервера Xgl </para>
+                <para>Использование gdmsetup </para>
+                <para>Для начала сделайте резервную копию файла gdm.conf </para>
+                <para>cp /etc/X11/gdm/gdm.conf /etc/X11/gdm/gdm.conf.bak </para>
+                <para>Запустите gdmsetup </para>
+                <para>Выберите раздел Security </para>
+                <para>Щёлкните кнопку Configure X Server, расположенную снизу-справа раздела </para>
+                <para>Для начала мы удалим значения для стандартного X-сервера </para>
+                <para>Нажмите по стандартному серверу, ктороы находится в списке Servers to Start </para>
+                <para>Нажмите Remove Button </para>
+                <para>Сейчас мы создадим значения для сервера Xgl </para>
+                <para>Нажмите кнопку Add/Modify </para>
+                <para>Задайте использование нового сервера VT 1. Используйте Standard для Server опцию — она отображает, какой профиль использовать для сервера, в идеале мы должны создать новый "Xgl"-профиль, а в настоящее время при помощи gdmsetup это сделать невозможно, так что отредактируем настройки для профиля Standard. Не воодите здесь каких-либо опций. Нажмите Ok по завершении. </para>
+                <para>В Server Settings измените Server Name на "Xgl" </para>
+                <para>Введите команду Xgl в поле Command, например, для пользователей ATI: </para>
+                <para>/usr/bin/Xgl :1 -ac -accel glx:pbuffer -accel xv:pbuffer</para>
+                <para>NVIDIA users should use: </para>
+                <para>/usr/bin/Xgl -br -ac -accel glx:pbuffer -accel xv</para>
+                <para>Измените в выпадающем списке Launch значение на Greeter </para>
+                <para>Установите Logins are handled by this computer </para>
+                <para>Установите Flexible (on demand) </para>
+                <para>Save и Close </para>
+                <para>Перезапустите gdm </para>
+                <para>Ручная настройка </para>
+                <para>Для начала сделайте резервную копию файла gdm.conf </para>
+                <para>cp /etc/X11/gdm/gdm.conf /etc/X11/gdm/gdm.conf.bak</para>
+                <para>Now open /etc/X11/gdm/gdm.conf in a text editor and search for the [servers] section. This should be near the end of the file. </para>
+                <para>Comment out 0=Standard and add a new line that reads 0=inactive and one that reads 1=Xgl. </para>
+                <para>Add the server information for the Xgl server, remember to substitute the correct Xgl server command! The one below is for ATI cards. </para>
+                <para>The modified /etc/X11/gdm/gdm.conf: </para>
+                <para>[servers]</para>
+                <para>#0=Standard</para>
+                <para>1=Xgl</para>
+                <para># Definition of the xgl X server.</para>
+                <para>[server-Xgl]</para>
+                <para>name=Xgl</para>
+                <para>command=/usr/bin/Xgl :1 -ac -accel xv:pbuffer -accel glx:pbuffer</para>
+                <para>flexible=true</para>
+                <para>chooser=false</para>
+                <para>handled=true</para>
+                <para>priority=0 </para>
+                <para>Restart gdm Примечание: For i810 users (not necessarly i915; this would kill my xorg sessions, I had to use the ATI command), the command for the above should be:</para>
+                <para>[server-xgl]</para>
+                <para>name=Xgl server</para>
+                <para>command=/usr/bin/Xgl -accel xv -accel glx:pbuffer -accel xv:pbuffer -ac -audit 0 -br -dpms -dpi 72</para>
+                <para>flexible=true</para>
+                <para>Via xsession </para>
+                <para>You can add another session for Xgl on display :1 (leaving the standard server on :0). It is a 2 step setup and imho the best option, first create a file to start Xgl and second create a new xsession file. </para>
+                <para>Create a new file startxgl.sh in /usr/bin which starts Xgl. </para>
+                <para>vim /usr/bin/startxgl.sh</para>
+                <para>And add one of the four options below. </para>
+                <para>NVIDIA (using GNOME) </para>
+                <para>#!/bin/bash</para>
+                <para>Xgl -fullscreen :1 -audit 0 -ac -br -accel glx:pbuffer -accel xv:fbo &amp;</para>
+                <para>sleep 2 &amp;&amp; DISPLAY=:1 gnome-session</para>
+                <para>NVIDIA (using KDE) </para>
+                <para>#!/bin/bash</para>
+                <para>Xgl -fullscreen :1 -audit 0 -ac -br -accel glx:pbuffer -accel xv:fbo &amp;</para>
+                <para>sleep 2 &amp;&amp; DISPLAY=:1 startkde</para>
+                <para>ATI and Intel (using GNOME) </para>
+                <para>#!/bin/bash</para>
+                <para>Xgl -fullscreen :1 -audit 0 -ac -br -accel glx:pbuffer -accel xv:pbuffer &amp;</para>
+                <para>sleep 2 &amp;&amp; DISPLAY=:1 gnome-session</para>
+                <para>ATI and Intel (using KDE) </para>
+                <para>#!/bin/bash</para>
+                <para>Xgl -fullscreen :1 -audit 0 -ac -br -accel glx:pbuffer -accel xv:pbuffer &amp;</para>
+                <para>sleep 2 &amp;&amp; DISPLAY=:1 startkde</para>
+                <para>Create a new xsession file: Файл: /usr/share/xsessions/xgl.desktop </para>
+                <para>[Desktop Entry]</para>
+                <para> Encoding=UTF-8</para>
+                <para> Name=Xgl</para>
+                <para> Comment=Start an Xgl Session</para>
+                <para> Exec=/usr/bin/startxgl.sh</para>
+                <para> Icon=</para>
+                <para> Type=Application</para>
+                <para>Now you will be able to select a new session via gdm's option menu. Options -&gt; Select Session </para>
+                <para>The benefit is that it will not replace your normal XOrg server. So when you "break" your Xgl you can return to the normal XOrg server. </para>
+                <para>Adding Compiz to your GNOME session (replacing Metacity) </para>
+                <para>Here is a little startscript, which I've placed in /usr/bin/. Useful if you do not always run Xgl. Change or remove the setxkbmap line according to your keyboard layout. Файл: /usr/bin/compizrc </para>
+                <para>#!/bin/bash</para>
+                <para>#</para>
+                <para># Start compiz within gnome-session</para>
+                <para>#</para>
+                <para>if [ `ps -A -o comm | grep -c '^Xgl$'` == "1" ]; then</para>
+                <para>        DISPLAY=:1 LD_LIBRARY_PATH=/usr/lib/opengl/xorg-x11/lib/ compiz --replace gconf &amp;</para>
+                <para>        DISPLAY=:1 gnome-window-decorator &amp;</para>
+                <para>#       DISPLAY=:1 setxkbmap -model pc105 -layout it -variant basic # Change according to your needs, and uncomment if needed</para>
+                <para>#       Or like that, if you need to switch between layouts.</para>
+                <para>#       setxkbmap -model pc105 -layout "us,ru(winkeys)" -variant winkeys -option "grp:alt_shift_toggle,grp_led:scroll"</para>
+                <para>else echo "${0}: Error: Compiz and g-w-d not launched. Xgl not running?"</para>
+                <para>fi</para>
+                <para>Файл: /usr/bin/compizrc.modified </para>
+                <para>#!/bin/bash</para>
+                <para>#</para>
+                <para># Start compiz within gnome-session</para>
+                <para>#</para>
+                <para>if [ `ps -A -o comm | grep -c '^Xgl$'` == "1" ]; then</para>
+                <para># For old versions</para>
+                <para>#       DISPLAY=:0 LD_LIBRARY_PATH=/usr/lib/opengl/xorg-x11/lib/ compiz --replace gconf &amp;</para>
+                <para># For Compiz-Quinnstorm with csm</para>
+                <para>        DISPLAY=:0 LD_LIBRARY_PATH=/usr/lib/opengl/xorg-x11/lib/ compiz --replace dbus csm &amp;</para>
+                <para>        DISPLAY=:0 dbus-launch cgwd --replace &amp;</para>
+                <para>#       DISPLAY=:0 setxkbmap -model br-abnt2 -layout br -variant br</para>
+                <para>else echo "${0}: Error: Compiz and cgwd not launched. Xgl not running?"</para>
+                <para>fi</para>
+                <para>Code: Make the script executable </para>
+                <para>chmod 755 /usr/bin/compizrc </para>
+                <para>After logging into GNOME, start System-&gt;Settings-&gt;Sessions. Here you go to the 3rd tab Startup Programs and press the Add button. Enter the path to your Compiz startscript (e.g., /usr/bin/compizrc). </para>
+                <para>After logging out and back in Compiz will start, but you'll see no decorations and effects. Thats because the Compiz gconf tree for the current user has just been created — without any plugins! </para>
+                <para>So start your configuration editor and go to apps/compiz/general/allscreens/options and edit the active_plugins key. This should contain the following items in this order: gconf decoration wobbly fade minimize cube rotate zoom scale move resize place menu switcher </para>
+                <para>If the key is not there, make it with a type of List </para>
+                <para>After restarting your Xgl Server should be accessible with GDM &amp; gnome-session. </para>
+                <para>Xsession (Modifying startx)Примечание: This is for NVIDIA users. </para>
+                <para>Предупреждение: This currently will not work for ATI users because of the display issues, requiring to be run on DISPLAY=:1. </para>
+                <para>Примечание: I use simmilar configuration (see startx section) on ATI. Consider /usr/bin/Xgl :1 instead of /usr/bin/Xgl and starting Gnome at :1 as well, if DISPLAY:0 is problematic. --Ash 17:57, 11 September 2006 (UTC) </para>
+                <para>Copy /usr/bin/startx to /usr/bin/startxgl and change the following line towards the end of the file: Файл: /usr/bin/startxgl </para>
+                <para>xinit $clientargs -- $serverargs -deferglyphs 16 &amp;</para>
+                <para>to </para>
+                <para>xinit $clientargs -- /usr/bin/Xgl $serverargs -ac -accel xv -accel glx:pbuffer -deferglyphs 16 &amp;</para>
+                <para>This does not start Compiz so create a small start script and add it to the gnome-session manager (Once GNOME is up. The first time, you will have to open a terminal and call the script manually.) Файл: /usr/bin/compizrc </para>
+                <para>#!/bin/bash</para>
+                <para>#</para>
+                <para># Start compiz within gnome-session</para>
+                <para>#</para>
+                <para>if [ `ps -A | grep Xgl | wc -l` == "1" ]; then</para>
+                <para>        LD_LIBRARY_PATH=/usr/lib/opengl/xorg-x11/lib/ compiz --replace gconf &amp;</para>
+                <para>        gnome-window-decorator &amp;</para>
+                <para>#       setxkbmap -model pc105 -layout it -variant basic # Change according to your needs, and uncomment if needed</para>
+                <para>#       Or like that, if you need to switch between layouts.</para>
+                <para>#       setxkbmap -model pc105 -layout "us,ru(winkeys)" -variant winkeys -option "grp:alt_shift_toggle,grp_led:scroll"</para>
+                <para>fi</para>
+                <para>Примечание: This should start the desktop environment configured via XSESSION in /etc/rc.conf </para>
+                <para>Xfce4 </para>
+                <para>With xfce4-session</para>
+                <para>xfce4-session is installed by default as part of the xfce4 meta-package. If you installed xfce4 this way, the following will work. </para>
+                <para>First, it is necessary to create a script that will start Compiz and gnome-window-decorator with the correct libraries and switches. Файл: /usr/bin/compizrc </para>
+                <para>LD_LIBRARY_PATH=/usr/lib/opengl/xorg-x11/lib compiz --replace gconf &amp;</para>
+                <para>gnome-window-decorator</para>
+                <para>Code: Make the script executable </para>
+                <para>chmod 755 /usr/bin/compizrc</para>
+                <para>Now, edit the xfce4-session settings to point to this rather than xfwm4. Файл: /etc/xdg/xfce4-session/xfce4-session.rc </para>
+                <para>[Failsafe Session]</para>
+                <para>Count=4</para>
+                <para>Client0_Command=compizrc</para>
+                <para>Client0_PerScreen=False</para>
+                <para>Client1_Command=xfce4-panel</para>
+                <para>Client1_PerScreen=True</para>
+                <para>Client2_Command=xftaskbar4</para>
+                <para>Client2_PerScreen=True</para>
+                <para>Client3_Command=xfdesktop</para>
+                <para>Client3_PerScreen=False</para>
+                <para>Примечание: Instead of editing system-wide file you may also add above section to ~/.config/xfce4-session/xfce4-session.rc file. Note also that you may need to delete content of the ~/.cache/sessions directory, if you still have xfwm4 rather than Compiz running. </para>
+                <para>Finally, create a script to start Xgl with Xfce4. Файл: /usr/bin/startxgl for NVIDIA </para>
+                <para>#!/bin/bash</para>
+                <para>Xgl -ac -accel xv:fbo -accel glx:pbuffer &amp;</para>
+                <para>xfce4-session</para>
+                <para>Файл: /usr/bin/startxgl for ATi </para>
+                <para>#!/bin/bash</para>
+                <para>Xgl -ac -accel xv:pbuffer -accel glx:pbuffer &amp;</para>
+                <para>xfce4-session</para>
+                <para>Code: Make the script executable </para>
+                <para>chmod 755 /usr/bin/startxgl</para>
+                <para>You will notice that xfce4-panel is now transparent, just like if you were using xfwm4's compositor. The pager will be distorted, but otherwise everything works beautifuly. Windows even minimize to the correct spot on the taskbar. </para>
+                <para>Without xfce4-session</para>
+                <para>If you compiled a minimal Xfce (without xfce4-session, xffm4, etc.), then you can use this altered startxgl script from the gnome script above: </para>
+                <para>#!/bin/bash</para>
+                <para>echo "&gt;Starting XGL at Display: $1"</para>
+                <para>echo "========= XGL ============"</para>
+                <para>Xgl :$1 -ac -accel xv -accel glx:pbuffer &amp;</para>
+                <para>sleep 3</para>
+                <para>echo "======= COMPIZ ==========="</para>
+                <para>DISPLAY=:$1 LD_LIBRARY_PATH=/usr/lib/opengl/xorg-x11/lib/ compiz --replace switcher decoration wobbly fade minimize cube rotate zoom scale move resize place &amp;</para>
+                <para>sleep 3</para>
+                <para>echo "======= XFCE ============"</para>
+                <para>DISPLAY=:$1 xfce-mcs-manager</para>
+                <para>DISPLAY=:$1 gnome-window-decorator &amp;</para>
+                <para>DISPLAY=:$1 xftaskbar4 &amp;</para>
+                <para>DISPLAY=:$1 xfdesktop &amp;</para>
+                <para>DISPLAY=:$1 exec xfce4-panel</para>
+                <para>Again, xfce4-panel will be transparent as if you had the X.org composite extension turned on (but you don't) or if you use xfce4-svn, and the pager will be distorted. Everything else should be fine. </para>
+                <para>With startxfce4</para>
+                <para>To do it the old fashioned, or 'normal' way via startx/startxfce4 I did the following. First, startxfce4 shouldn't be called I don't think. just use an .xinitrc in your homedir and startx. Файл: ~/.xinitrc </para>
+                <para>#!/bin/sh</para>
+                <para>/usr/bin/startxfce4</para>
+                <para>Now as root, we create compizrc, like above. Note however that for me, it worked best/only without the DISPLAY variable. Файл: /usr/bin/compizrc </para>
+                <para>#!/bin/bash</para>
+                <para>LD_LIBRARY_PATH=/usr/lib/opengl/xorg-x11/lib/ compiz --replace gconf &gt; ~/compiz.log 2&gt;&amp;1 &amp;</para>
+                <para>sleep 1;</para>
+                <para>gnome-window-decorator &gt; ~/gnome-window.log 2&gt;&amp;1 &amp;</para>
+                <para>Obviously the output redirections are optional (but handy for debugging). The sleep 1; might also be removed to speed things up. If things go TO fast however, you might get in trouble though. Don't forget to chmod 755 /usr/bin/compizrc </para>
+                <para>Lastly we need to use this new compizrc instead of the default xfce4 window manager. </para>
+                <para>Again, as root edit /etc/xdg/xfce4-session/xfce4-session.rc and replace xfwm4 with compizrc Файл: /etc/xdg/xfce4-session/xfce4-session.rc (old) </para>
+                <para>Client0_Command=xfwm4</para>
+                <para>Файл: /etc/xdg/xfce4-session/xfce4-session.rc (new) </para>
+                <para>Client0_Command=compizrc</para>
+                <para>Now only one thing is left, start Xgl. As above you can copy startx in /usr/bin/startx to /usr/bin/startxgl and make the following change: Файл: /usr/bin/startxgl (old) </para>
+                <para>xinit $clientargs -- $serverargs -deferglyphs 16 &amp; </para>
+                <para>Файл: /usr/bin/startxgl (new) </para>
+                <para>xinit $clientargs -- /usr/bin/Xgl -ac -accel xv -accel glx:pbuffer $serverargs -deferglyphs 16 &amp; </para>
+                <para>Примечание: Todo: Make Client0_Command depend on wether startx or startxgl is beeing used as 3D apps don't appear to work as they should and switching back to the 'old way' is required. </para>
+                <para>Edit: it seams that when using the startxfce4 script, the /etc/xdg/xfce4-session/xfce4-session.rc file (and the .xinitrc) get ignored thus starting a non Xgl desktop. Making 'switchin' not needed. startxfce4 for oldschool, startxgl for new style </para>
+                <para>Entrance </para>
+                <para>Emerge latest entrance: </para>
+                <para>echo "=x11-misc/entrance-0.9.0.007 ~x86" &gt;&gt; /etc/portage/package.keywords</para>
+                <para>emerge -av entrance</para>
+                <para>Use the ecore_config utility to change the xserver string (choose according to your video card): </para>
+                <para># ATI</para>
+                <para>ecore_config -k "/entranced/xserver" -s "/usr/bin/Xgl -ac -accel xv:pbuffer -accel glx:pbuffer -nolisten tcp"  -c /etc/entrance_config.cfg</para>
+                <para># NVIDIA</para>
+                <para>ecore_config -k "/entranced/xserver" -s "/usr/bin/Xgl -ac -accel xv:fbo -accel glx:pbuffer -nolisten tcp"  -c /etc/entrance_config.cfg</para>
+                <para>Restart entrance.</para>
+                <para>Qingy </para>
+                <para>It is quite easy to change Qingy to start Xgl instead of a regular X server. All you need to do to make it start Xgl is change 2 lines in /etc/qingy/settings Файл: /etc/qingy/settings </para>
+                <para>...</para>
+                <para># x_server = "/usr/X11R6/bin/XFree86"</para>
+                <para>x_server = "/usr/bin/Xgl"</para>
+                <para># x_args = "-nolisten tcp"</para>
+                <para>x_args = "-ac -accel xv -accel glx:pbuffer -nolisten tcp"</para>
+                <para>...</para>
+                <para>Now Qingy should start Xgl instead of regular X. To make KDE and GNOME load Compiz you need to export a variable. KDEWM for KDE and WINDOW_MANAGER for GNOME. It is easiest to do this in /etc/X11/Sessions. </para>
+                <para>You need to have followed the instructions for adding plugins to gconf-editor. Then make a /usr/bin/compizrc as shown and chmod +x it. Файл: /usr/bin/compizrc </para>
+                <para>#!/bin/bash</para>
+                <para>LD_LIBRARY_PATH=/usr/lib/opengl/xorg-x11/lib compiz --replace gconf &amp;</para>
+                <para>sleep 2</para>
+                <para>gnome-window-decorator &amp;</para>
+                <para>setxkbmap -model itouch -layout gb &amp; ## Change/Remove as appropriate</para>
+                <para>Then edit the appropriate file (or both) in /etc/X11/Sessions</para>
+                <para>For KDE: Файл: /etc/X11/Sessions/kde-3.5 </para>
+                <para>#!/bin/sh</para>
+                <para>export KDEWM="/usr/bin/compizrc"</para>
+                <para>exec /usr/kde/3.5/bin/startkde</para>
+                <para>Or for GNOME add this to the top of the file : Файл: /etc/X11/Sessions/Gnome </para>
+                <para>#!/bin/sh</para>
+                <para>export WINDOW_MANAGER="/usr/bin/compizrc"</para>
+                <para>...</para>
+                <para>For Xfce4 edit /etc/xdg/xfce4-session/xfce4-session.rc as shown in a previous section.</para>
+                <para>Hopefully Qingy should now start Xgl and Compiz instead of X and some other WM. </para>
+                <para>Generic startxgl script</para>
+                <para>There is a generic startup script in the overlay. For usage instructions start it without arguments. </para>
+                <para>Currently it support Xfce, Xfce-svn, GNOME and KDE. </para>
+                <para>cd /usr/local/overlays/xgl-coffee</para>
+                <para>./startxgl</para>
+            </section>
+        </section>
+        <section>
+            <info>
+                <title>Автоматическое переключение раскладок</title>
+            </info>
+            <para>Для начала сделаем ebuild в portage overlay </para>
+            <para>Создаём каталог:</para>
+            <para>mkdir -p /usr/local/portage/x11-misc/xneur cd /usr/local/portage/x11-misc/xneur </para>
+            <para>Создаём ebuild:</para>
+            <para> nano -w xneur-0.1.0_1.ebuild Файл: /usr/local/portage/x11-isc/xneur/xneur-0.1.0_1.ebuild </para>
+            <para># Copyright 1999-2005 Gentoo Foundation</para>
+            <para># Distributed under the terms of the GNU General Public License v2</para>
+            <para>DESCRIPTION="It's program like Punto Switcher, but has other final aim."</para>
+            <para>SRC_URI="http://www.xneur.ru/xneur/${P}.tar.gz"</para>
+            <para>HOMEPAGE="http://www.xneur.ru/"</para>
+            <para>DEPEND="virtual/x11"</para>
+            <para>LICENSE="GPL-2"</para>
+            <para>SLOT="0"</para>
+            <para>KEYWORDS="~x86 ~amd64 ~sparc ~alpha ~ppc ~hppa ~ppc64"</para>
+            <para>src_install () {</para>
+            <para>       make DESTDIR=${D} install || die</para>
+            <para>       #dodoc AUTHORS README COPYING INSTALL NEWS ChangeLog TODO .xneurrc</para>
+            <para>}</para>
+            <para>pkg_postinst() {</para>
+            <para>      # einfo "Run:"</para>
+            <para>      # einfo "gzcat /usr/doc/${P}/.xneurrc.gz &gt; ~/.xneurrc"</para>
+            <para>}</para>
+            <para>Далее: ebuild xneur-0.1.0_1.ebuild digest Поскольку у нас бэта: echo "x11-misc/xneur ~x86" &gt;&gt; /etc/portage/package.keywords emerge xneur ;) </para>
+            <para>А за подробностями на <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.xneur.ru/">http://www.xneur.ru/</link>
+            </para>
+        </section>
+        <section>
+            <info>
+                <title>Cedega 5.1</title>
+            </info>
+            <section>
+                <info>
+                    <title>Введение</title>
+                </info>
+                <para>Cedega — коммерческая версия ПО для реализации WinAPI на *nix-платформах WINE, разработанная Transgaming, ранее известная как Winex. Поддерживается большинство популярных игр. В последней версии добавилась официальная поддержка Sid Meier's Civilization® IV, FIFA® 06 и Need for Speed™: Most Wanted. </para>
+                <para>Cedega 5.1 состоит из двух компонентов: </para>
+                <para>Point-to-play — графический интерфейс для простой установки игр, распространяется в виде .rpm/.deb/.tgz </para>
+                <para>Engine / engine update — модифицированный WINE, распространяется в виде файлов .cpkg — tar архивы, содержащие tgz архив и файл manifest с номером версии . </para>
+            </section>
+            <section>
+                <info>
+                    <title>Установка</title>
+                </info>
+                <para>Установка самого эмулятора, без неудобного в использовании Point-to-play выглядит так: </para>
+                <para>Code: Установка Cedega </para>
+                <para>su</para>
+                <para>tar -zxf cedega-engine-5.1-local-update.i386.cpkg</para>
+                <para>tar -C /usr -zxf cedega_5.1-1.i386.p2p.tgz bin winex</para>
+                <para>mv /usr/share/share/doc/* /usr/share/doc</para>
+                <para>mv /usr/share/share/man/man1/* /usr/share/man1</para>
+                <para>mv /usr/bin/winex3 /usr/bin/cedega</para>
+                <para>mkdir /usr/lib/transgaming/cedega; mv /usr/winex /usr/lib/transgaming_cedega</para>
+                <para>exit</para>
+                <para>Первоначальная настройка</para>
+                <para>Code: Первоначальная настройка </para>
+                <para>tar -C $HOME -zxf cedega_5.1-1.i386.p2p.tgz .transgaming</para>
+                <para>nano ~/.transgaming/config</para>
+                <para>Проверка</para>
+                <para>cedega -version</para>
+            </section>
+        </section>
+</article>

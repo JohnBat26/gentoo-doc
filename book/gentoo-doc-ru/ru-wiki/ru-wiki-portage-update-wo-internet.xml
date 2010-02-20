@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Обновление портежей без доступа в интернет непосредственно из системы</title>
+    </info>
+    <para>Данное руководство может помочь вам если с доступом в интернет из системы Gentoo проблемы. Однако у вас есть свежий portage-xxxxxxxx.tar.bz2. Если portage-xxxxxxxx.tar.bz2.md5sum не старше 40 дней(возможно это ограничение можно убрать, но автор этих строк не знает как) тогда проще сделать так : </para>
+    <para>Создаем папку /var/tmp/emerge-webrsync/ командой: </para>
+    <para># mkdir /var/tmp/emerge-webrsync/ </para>
+    <para>Копируем фаилы portage-xxxxxxxx.tar.bz2 и portage-xxxxxxxx.tar.bz2.md5, которые находятся к примеру, в корневом каталоге на CD-ROM диске (/mnt/cdrom/portage-xxxxxxxx.tar.bz2 и /mnt/cdrom/portage-xxxxxxxx.tar.bz2.md5sum), командами: </para>
+    <para># cp /mnt/cdrom/portage-xxxxxxxx.tar.bz2 /var/tmp/emerge-webrsync/ </para>
+    <para>#cp /mnt/cdrom/portage-xxxxxxxx.tar.bz2.md5sum /var/tmp/emerge-webrsync/</para>
+    <para>и обновляем портежи при помощи </para>
+    <para>emerge -webrsync: # emerge-webrsync </para>
+    <para>Теперь мы получили систему портежей по состоянию на xxxxxxxx. </para>
+    <para>Если же portage-xxxxxxxx.tar.bz2 старше 40 дней тогда: </para>
+    <para>Первым делом переименовываем каталог /usr/portage например в /usr/portage2: </para>
+    <para># mv /usr/portage /usr/portage2 </para>
+    <para>затем создаем переименнованный /usr/portage: </para>
+    <para># mkdir /usr/portage </para>
+    <para>Перемещаем из /usr/portage2/distfiles исходники (если вам они нужны :) ) обратно в /usr/portage/distfiles: </para>
+    <para># cp /usr/portage2/distfiles /usr/portage/distfiles </para>
+    <para>Теперь можно распаковывать наш новый portage-xxxxxxxx.tar.bz2, который находится, к примеру, в корневом каталоге на CD-ROM диске (/mnt/cdrom/portage-xxxxxxxx.tar.bz2), командой: </para>
+    <para># tar -xvjpf /mnt/cdrom/portage-xxxxxxxx.tar.bz2 -C /usr/portage </para>
+    <para>После достаточно продолжительной распаковки нужно обновить кэш системы портежей: </para>
+    <para># emerge metadata</para>
+    <para>Теперь мы получили систему портежей по состоянию на xxxxxxxx, а в каталоге /usr/portage2 — её бэкап. </para>
+    <para>Дополнительно можно прочитать:</para>
+    <para>
+        <link xlink:href="#">HOWTO Обновление пакетов без доступа в интернет непосредственно из системы.</link>
+    </para>
+</article>

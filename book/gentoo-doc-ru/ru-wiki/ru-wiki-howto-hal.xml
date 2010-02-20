@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>HOWTO hal и устройства ввода</title>
+        <abstract>
+            <para>Ссылка на оригинал: <link xlink:href="http://ru.gentoo-wiki.com/wiki/HOWTO_hal_%D0%B8_%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0_%D0%B2%D0%B2%D0%BE%D0%B4%D0%B0">http://ru.gentoo-wiki.com/wiki/HOWTO_hal_и_устройства_ввода</link></para>
+            <para>Дата:  28.01.2008</para>
+        </abstract>
+    </info>
+    <section>
+        <info>
+            <title>hal-0.5.10 </title>
+        </info>
+        <para>В связи с выходом hal-0.5.10 и включении поддержки hal в xorg возникло много вопросов: где раскладки, где мышка, где тачпад, и прочее. Сейчас xorg использует hal для устройств ввода и xorg.conf игнорирует Данное руководство предназначенно для безболезненного перехода на новую систему. </para>
+        <para>В данном руководстве используются пакеты из ~x86(~amd64) ветки. Посему заботу о keywords оставляю на вашей совести. </para>
+    </section>
+    <section>
+        <info>
+            <title>Обновляем portage </title>
+        </info>
+        <screen><prompt>#</prompt> <userinput>emerge --sync</userinput>
+            (<prompt>#</prompt> <userinput>eix-sync -v</userinput>) </screen>
+    </section>
+    <section>
+        <info>
+            <title>Обновляем установку xorg </title>
+        </info>
+        <screen><prompt>#</prompt> <userinput>emerge -avDNt xorg-x11</userinput></screen>
+        <para>убеждаемся в наличии флага hal. При отсутствии — включаем. В окончании сборки пакета xorg-server выведется список пакетов для пересборки, их надо пересобрать. Если не заметили или пропустили вот комманда для получения списка пакетов: </para>
+        <screen><prompt>#</prompt> <userinput>emerge portage-utils; qlist -I -C x11-drivers/</userinput></screen>
+    </section>
+    <section>
+        <info>
+            <title>Клавиатура </title>
+        </info>
+        <para>Правила(rules) пользователя можно разместить в каталогах: </para>
+        <para><filename>/usr/share/hal/fdi/policy/20thirdparty/</filename></para>
+        <para>или аналогичном <filename>/etc/hal/fdi/policy</filename></para>
+        <para>получить список устройств "узнанных" hal можно командой <command>lshal</command> у меня системе(ноутбук с мультимедийными клавишами) оказалось несколько устройств которые совместимы с понятием "клавиатура", но основная была описана так: </para>
+        <screen> udi = '/org/freedesktop/Hal/devices/platform_i8042_i8042_KBD_port_logicaldev_input'
+            info.addons.singleton = {'hald-addon-input'} (string list)
+            info.capabilities = {'input', 'input.keyboard', 'input.keypad', 'input.keys', 'button'} (string list)
+            info.category = 'input'  (string)
+            info.parent = '/org/freedesktop/Hal/devices/platform_i8042_i8042_KBD_port' (string)
+            info.product = 'AT Translated Set 2 keyboard'  (string)
+            info.udi = '/org/freedesktop/Hal/devices/platform_i8042_i8042_KBD_port_logicaldev_input'  (string)
+            input.device = '/dev/input/event2'  (string)
+            input.originating_device = '/org/freedesktop/Hal/devices/platform_i8042_i8042_KBD_port'  (string)
+            input.physical_device = '/org/freedesktop/Hal/devices/platform_i8042_i8042_KBD_port'  (string)
+            input.product = 'AT Translated Set 2 keyboard'  (string)
+            input.x11_driver = 'evdev'  (string)
+            input.xkb.layout = 'us'  (string)
+            input.xkb.model = 'evdev'  (string)
+            input.xkb.rules = 'base'  (string)
+            input.xkb.variant =   (string)
+            linux.device_file = '/dev/input/event2'  (string)
+            linux.hotplug_type = 2  (0x2)  (int)
+            linux.subsystem = 'input'  (string)
+            linux.sysfs_path = '/sys/devices/platform/i8042/serio0/input/input2/event2'  (string)</screen>
+        <para>Заметно что </para>
+        <screen> input.xkb.layout = 'us'
+            input.xkb.rules = 'base'
+            input.xkb.variant = </screen>
+        <para>нас не устраивает </para>
+        <para>Создаём новый файл </para>
+        <screen><prompt>#</prompt> <userinput>nano /usr/share/hal/fdi/policy/20thirdparty/10russian-layout.fdi</userinput></screen>
+        <para>со следующим содержимым: </para>
+        <example>
+            <title>Файл: /usr/share/hal/fdi/policy/20thirdparty/10russian-layout.fdi</title>
+            <programlisting>&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+                &lt;!-- -*- SGML -*- --&gt;
+                &lt;match key="input.product" contains="AT Translated Set 2 keyboard"&gt;
+                &lt;merge key="input.xkb.layout" type="string"&gt;us,ru&lt;/merge&gt;
+                &lt;merge key="input.xkb.variant" type="string"&gt;,winkeys&lt;/merge&gt;
+                &lt;merge key="input.xkb.options" type="string"&gt;grp:alt_shift_toggle,grp_led:scroll&lt;/merge&gt;
+                &lt;/match&gt;</programlisting>
+        </example>
+        <para>если у вас одно устройство ввода типа "клавиатура",то можно сточку </para>
+        <programlisting>&lt;match key="input.product" contains="AT Translated Set 2 keyboard"&gt;</programlisting>
+        <para>заменить на </para>
+        <programlisting>&lt;match key="info.capabilities" contains="input.keyboard"&gt;</programlisting>
+        <para>Так мы получим более универсальное правило. Можно заметить что названия опций перекликается с аналогами xorg.conf. Так и есть, в принципе здесь можно записать все те параметры которые вы использовали в xorg.conf только в приложении к XML. </para>
+        <important>
+            <para>Если у вас остались проблемы с расположением клавиш, то возможно так и следует сделать? </para>
+        </important>
+        <para>например: </para>
+        <programlisting>Option "XkbRules" "xorg"</programlisting>
+        <para>тоже самое что </para>
+        <programlisting>       &lt;merge key="input.xkb.rules" type="string"&gt;xorg&lt;/merge&gt;</programlisting>
+        <para>Если по каким-то причинам драйвер evdev(он используется по умолчанию) вас не устраивает, то его тоже можно изменить:</para>
+        <programlisting>Driver "kbd" </programlisting>
+        <para>= </para>
+        <programlisting>    &lt;merge key="input.x11_driver" type="string"&gt;kbd&lt;/merge&gt;</programlisting>
+        <para>Сохраняем файл. </para>
+        <screen><prompt>#</prompt> <userinput>/etc/init.d/hald restart</userinput></screen>
+        <para>Проверяем системный лог и убеждаемся, что правило успешно добавленно. </para>
+        <screen><prompt>#</prompt> <userinput>lshal</userinput></screen>
+        <para>должно вывести следующие строчки: </para>
+        <screen>...
+             input.x11_driver = 'evdev'  (string)
+             input.xkb.layout = 'us,ru'  (string)
+             input.xkb.model = 'evdev'  (string)
+             input.xkb.options = 'grp:alt_shift_toggle,grp_led:scroll'  (string)
+             input.xkb.rules = 'base'  (string)
+             input.xkb.variant = ',winkeys'  (string)
+            ...</screen>
+        <para>Если так и есть, то дело сделано. Если нет--внимательно перечитываем до просветления. </para>
+    </section>
+    <section>
+        <info>
+            <title>Перезапускаем X-ы </title>
+        </info>
+        <para>После чего можно перезапустить X-ы (перезагрузить компьтер, перезапустить <systemitem class="daemon">xdm</systemitem>). Проверяем. Радуемся. Если не получаеться, то внимательно читаем лог Xorg, Скорее всего там можно найти ответ. </para>
+    </section>
+    <section>
+        <info>
+            <title>Мышка</title>
+        </info>
+        <para>Пока проблема одна. Hal по умолчанию использует драйвер evdev,которые не всегда корректно работает в полноэкранных приложениях (игры) </para>
+        <screen><prompt>#</prompt> <userinput>echo "SDL_VIDEO_X11_DGAMOUSE=0" &gt;&gt;/etc/env.d/02locale</userinput>
+            <prompt>#</prompt> <userinput>env-update</userinput>
+            <prompt>#</prompt> <userinput>source /etc/profile</userinput></screen>
+        <para>Должно решить эту проблему.</para>
+    </section>
+    <section>
+        <info>
+            <title>Touchpad</title>
+        </info>
+        <para>Пока в разработке. </para>
+    </section>
+</article>

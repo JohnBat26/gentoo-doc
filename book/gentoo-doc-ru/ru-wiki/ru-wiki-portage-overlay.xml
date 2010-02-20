@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Portage Overlay</title>
+    </info>
+    <section>
+        <info>
+            <title>Создание локального оверлея </title>
+        </info>
+        <para>Это руководство расскажет о том как установить ebuild который не включен в официальное дерево портежей. </para>
+    </section>
+    <section>
+        <info>
+            <title>Установка Portage Overlay</title>
+        </info>
+        <para>Первым делом мы должны указать PORTAGE_OVERLAY директорию, для этого необходимо отредактировать файл /etc/make.conf </para>
+        <para>Файл: /etc/make.conf </para>
+        <para>PORTDIR_OVERLAY="/usr/local/portage" </para>
+        <para>Таким образом мы позволяем устанавливать дополнительные ebuild'ы при этом не нарушая процесс синхронизации основного дерева портежей. </para>
+    </section>
+    <section>
+        <info>
+            <title>Месторасположение ebuild</title>
+        </info>
+        <para>Проверьте наличие директории /usr/local/portage, и если ее нет создайте ее install -d /usr/local/portage </para>
+        <para>Когда помещаете новый ebuild в /usr/local/portage, вы должны использовать такую же схему как в /usr/portage (category/program/program.ebuild) </para>
+    </section>
+    <section>
+        <info>
+            <title>Создание digest-файлов</title>
+        </info>
+        <para>digest-файлы — это файлы, которые содержат md5 суммы файлов, необходимых для установки пакетов. После того, как Portage скачает необходимые файлы, будет сделана проверка на соответствие файлов их md5-суммам (это дает возможность убедиться в целостности файлов). Для того, чтобы Portage мог устанавливать пакеты, необходим digest-файл. Digest-файл можно создать с помощью команды ebuild /usr/local/portage/category/program/program.ebuild digest Вручную редактировать созданные этой командой файлы не следует. При этом надо учитывать требования к имени ebuild-а. При переименовании ebuild-а в произвольное имя, команда </para>
+        <para>ebuild /usr/local/portage/category/program/program.ebuild digest выдаст ошибку: </para>
+        <para>!!! /usr/local/portage does not seem to have a valid PORTDIR structure. </para>
+        <para>Чтобы этого не произошло необходимо переименовывать ebuild в то же самое имя, но с приставкой номера релиза. </para>
+        <para>Пример: </para>
+        <para>В портежах имеется ebuild: </para>
+        <para>/usr/portage/media-sound/ncmpc/ncmpc-0.11.1-r1.ebuild </para>
+        <para>И архив исходных кодов: </para>
+        <para>/usr/portage/distfiles/ncmpc-0.11.1.tar.gz для этого ebuild-а. </para>
+        <para>Вы хотите наложить свой патч и добавить ebuild вашего пропатченного пакета в систему. Для этого вы должны скопировать исходный ebuld в ваш новый, но добавить к нему приставку '-rN', где N — номер релиза. Если такая преставка уже есть — изменить её номер: </para>
+        <para>cp /usr/portage/media-sound/ncmpc/ncmpc-0.11.1-r1.ebuild /usr/local/portage/media-sound/ncmpc/ncmpc-0.11.1-r2.ebuild </para>
+        <para>После этого пропатчите исходные коды пакета, на который ссылается исходный </para>
+        <para>ebuild /usr/portage/distfiles/ncmpc-0.11.1.tar.gz</para>
+        <para>и сохраните его в /usr/portage/distfiles/ncmpc-0.11.1-r2.tar.gz </para>
+        <para>Далее, нам нужно будет поправить наш новый ebuild: </para>
+        <para>vi /usr/local/portage/media-sound/ncmpc/ncmpc-0.11.1-r2.ebuild </para>
+        <para>И изменить строку:</para>
+        <para>SRC_URI="http://mercury.chem.pitt.edu/~shank/${P}.tar.gz mirror://sourceforge/musicpd/${P}.tar.gz" </para>
+        <para>На строку: </para>
+        <para>SRC_URI="http://mercury.chem.pitt.edu/~shank/${P}-r2.tar.gz mirror://sourceforge/musicpd/${P}-r2.tar.gz" </para>
+        <para>Т.е. добавив наш префикс '-r2', чтобы система знала, какой именно файл с исходными кодами ей необходимо прописать. В данном случае скачать с сайта этот пакет конечно же не удастся, но нам этого и не требуется — нам необходимо установить нами поправленный пакет. </para>
+        <para>После этого даём команду </para>
+        <para>ebuild /usr/local/portage/media-sound/ncmpc/ncmpc-0.11.1-r2.ebuild digest, </para>
+        <para>после чего emerge будет знать о вашем пакете. </para>
+        <section>
+            <info>
+                <title>Установка нового ebuild</title>
+            </info>
+            <para>Когда вы будете устанавливать пакет используя новый ebuild, скорее всего он будет masked, поэтому надо добавить имя пакета в /etc/portage/package.keywords </para>
+            <para>Создайте директорию /etc/portage/, если она еще не создана, и затем выполните команду: </para>
+            <para>echo "&lt;category&gt;/&lt;package&gt; ~x86" &gt;&gt;/etc/portage/package.keywords </para>
+            <para>Теперь этот пакет можно установить как и любой другой: </para>
+            <para>emerge -p package </para>
+            <para>emerge package </para>
+        </section>
+        <section>
+            <info>
+                <title>Дополнительно</title>
+            </info>
+            <para>Unofficial ebuilds содержит список с коротким описанием сайтов где можно найти неофициальные пакеты Многие, написанные юзерами ebuild'ы, которые еще не попали в официальное дерево, находятся в Bugzill'е Gentoo. Найти нужные ebuild'ы можно с помощью поиска</para>
+        </section>
+    </section>
+</article>

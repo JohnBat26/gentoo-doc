@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Секреты командной строки</title>
+    </info>
+    <section>
+        <info>
+            <title/>
+        </info>
+        <section>
+            <info>
+                <title>Общие команды</title>
+            </info>
+            <para>поиск команды Linux, ее описания и номера секции man страниц </para>
+            <para>apropos word </para>
+            <para>закодировать файл file с помощью GnuPG </para>
+            <para>gpg -c file </para>
+            <para>раскодировать файл file </para>
+            <para>gpg file.gpg </para>
+            <para>быстрый поиск по словарю слов, начинающихся с word </para>
+            <para>look word </para>
+            <para>подсветить слово word в файле /somefile </para>
+            <para>grep --color word /somefile </para>
+            <para>запустить command с низким приоритетом </para>
+            <para>nice command </para>
+            <para>назначить низший приоритет текущему шеллу (и всем потомкам). Может быть полезно, если вашу систему сильно замедляет установка нового пакета (emerge). Кстати, для автоматического понижения приоритета emerge используется переменная PORTAGE_NICENESS в файле /etc/make.conf </para>
+            <para>renice 19 -p $$ </para>
+            <para>посмотреть код завершения предыдущей команды </para>
+            <para>echo $? </para>
+            <para>скачать список новых страничек с нашего сайта в 01:00 в текущую директорию </para>
+            <para>echo "wget http://ru.gentoo-wiki.com/Special:Newpages" | at 01:00 </para>
+            <para>в 17:45 послать пустое письмо с заголовком 'got the r00t?'на bugs@microsoft.com </para>
+            <para>echo "mail -s 'got the r00t?' bugs@microsoft.com &lt; /dev/null" | at 17:45 </para>
+            <para>напечатать 1234 в соответствии с настройками локали (в России обычно 1.234) </para>
+            <para>printf "%'d\n" 1234 </para>
+            <para>запускать просмотр прерываний каждую секунду </para>
+            <para>watch -n1 "cat /proc/interrupts" </para>
+            <para>посмотреть, сколько времени занимает выполнение команды </para>
+            <para>time command </para>
+            <para>удобный алиас для вывода дампа </para>
+            <para>alias hd='od -Ax -tx1z -v' </para>
+            <para>полный путь к команде command </para>
+            <para>which command </para>
+            <para>вывести в 9 колонок по ширине терминала </para>
+            <para>ls | pr -T9 -W$COLUMNS </para>
+            <para>установить время изменения для файла file (в формате YYMMDDhhmm) </para>
+            <para>touch -c -t 0304050607 file </para>
+            <para>показать иерархию запущенных процессов </para>
+            <para>pstree -p </para>
+            <para>показать процессы, использующие файл /dir/file (чаще всего использую нечто вроде 'lsof /mnt/cdrom'). Не забудьте сделать 'emerge -n lsof' </para>
+            <para>lsof /dir/file </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title/>
+        </info>
+        <section>
+            <info>
+                <title>Ввод-вывод</title>
+            </info>
+            <para>объединить stderr и stdout (вернее сказать перенаправить stderr в stdout) </para>
+            <para>gcc file.c 2&gt;&amp;1 | less </para>
+            <para>Перенаправить stderr в файл errors.log а stdout в файл compile.log для дальнейшего анализа </para>
+            <para>gcc file.c 2&gt;errors.log 1&gt;compile.log </para>
+            <para>Если нужно запретить вывод потока (например убрать в скрипте сообщения об ошибках) то достаточно перенаправить поток на устройство /dev/null, тогда сообщения уйдут в никуда: </para>
+            <para>rm -r /var/tmp/portage 2&gt;&amp;1 &gt;/dev/null или rm -r /var/tmp/portage &amp;&gt; /dev/null </para>
+            <para>Порой нужно обьединить выходной поток сразу нескольких комманд, а поток одной изних отключить, тогда группу нужно объединить в скобки: </para>
+            <para>( cat /etc/gentoo-release ; cat /etc/passwd &gt;/dev/null; cat /etc/group ) |less </para>
+            <para>Навигация по директориям.</para>
+            <para>вернуться в предыдущую директорию (не путать с 'cd ..') </para>
+            <para>cd — </para>
+            <para>вернуться в домашнюю директорию </para>
+            <para>cd </para>
+            <para>перейти в директорию dir, запустить command и автоматически вернуться назад </para>
+            <para>(cd dir; command) </para>
+            <para>добавить текущую директорию в стек, чтобы потом можно было сделать popd и вернуться к ней </para>
+            <para>pushd . </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title/>
+        </info>
+        <section>
+            <info>
+                <title>Дисковое пространство</title>
+            </info>
+            <para>показать список файлов с информацией о каждом файле (-l), отсортировав список по убыванию размера (-S) и перевернуть список (-r). Получим сортировку по возрастанию. </para>
+            <para>ls -lSr </para>
+            <para>показать, сколько места на диске занимает файл file и директория dir </para>
+            <para>du -sh file dir </para>
+            <para>показать свободное место на примонтированных ресурсах </para>
+            <para>df -h </para>
+            <para>то же самое но в инодах </para>
+            <para>df -i </para>
+            <para>показать геометрию размещения разделов жесткого диска (нужны права root) </para>
+            <para>fdisk -l </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title/>
+        </info>
+        <section>
+            <info>
+                <title>Работа с CD</title>
+            </info>
+            <para>создать iso-образ диска и заархивировать его </para>
+            <para>dd bs=1M if=/dev/cdrom | gzip &gt; cdrom.iso.gz </para>
+            <para>создать iso-образ из директории dir </para>
+            <para>mkisofs -r dir | gzip &gt; cdrom.iso.gz </para>
+            <para>смонтировать cdrom.iso в /mnt/dir (для просмотра и правки) </para>
+            <para>mount -o loop cdrom.iso /mnt/dir </para>
+            <para>записать архивированный образ на диск </para>
+            <para>gzip -dc cdrom.iso.gz | cdrecord dev=0,0,0 — </para>
+            <para>рипнуть дорожки с Audio-CD в текущую директорию (в формате .wav) </para>
+            <para>cdparanoia -B </para>
+            <para>создать Audio-CD из всех .wav файлов в текущей директории </para>
+            <para>cdrecord dev=0,0,0 -audio *.wav </para>
+            <para>конвертировать файл track.cdda.wav формат .ogg </para>
+            <para>oggenc --tracknum="track" track.cdda.wav -o "track.ogg" </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title/>
+        </info>
+        <section>
+            <info>
+                <title>Работа с архивами</title>
+            </info>
+            <para>создать архив директории dir </para>
+            <para>tar c dir/ | bzip2 &gt; dir.tar.bz2 </para>
+            <para>tar -cjf dir.tar.bz2 dir </para>
+            <para>извлечь архив в директорию /to/dir (без '-C /to/dir' в текущую директорию) </para>
+            <para>bzip2 -dc dir.tar.bz2 | tar x -С /to/dir </para>
+            <para>tar -xjf dir.tar.bz2 -C /to/dir </para>
+            <para>создать архив всех .png файлов в директории dir/ </para>
+            <para>find dir/ -name "*.png" | xargs tar rf dir.tar; bzip2 dir.tar </para>
+            <para>скопировать (с сохранением прав доступа!) директорию /dir/to/copy/ в /where/to/ </para>
+            <para>( tar cf — /dir/to/copy ) | ( cd /where/to/ &amp;&amp; tar xf — ) </para>
+            <para>скопировать (с сохранением прав доступа!) содержимое директории /dir/to/copy в /where/to/ </para>
+            <para>( cd /dir/to/copy &amp;&amp; tar cf — . ) | ( cd /where/to/ &amp;&amp; tar xf — ) </para>
+            <para>скопировать (с сохранением прав доступа!) директорию /dir/to/copy/ в директорию /where/to/ на удаленной машине </para>
+            <para>( tar cf — /dir/to/copy ) | gzip | ssh user@remote 'cd /where/to/ &amp;&amp; gzip -dc | tar xf -' </para>
+            <para>создать и сохранить бэкап жесткого диска на удаленной машине </para>
+            <para>dd bs=1M if=/dev/hda | gzip | ssh user@remote 'dd of=hda.gz' </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title/>
+        </info>
+        <section>
+            <info>
+                <title>Работа с файлами</title>
+            </info>
+            <para>удобный листинг по команде l </para>
+            <para>alias l='ls -l --color=auto' </para>
+            <para>вывести листинг с упорядочиванием по дате </para>
+            <para>ls -lrt </para>
+            <para>показать в папке dir файлы модифицированные раньше, чем 2 дня назад </para>
+            <para>find dir -mtime +2 </para>
+            <para>удаляем в папке dir файлы старше 1 часа </para>
+            <para>find dir -type f -mmin +60 -exec rm -f {} \; </para>
+            <para>удаляем в папке dir файлы старше 10 дней </para>
+            <para>find dir -type f -mtime +10 -exec rm -f {} \; </para>
+            <para>найти в текущей директории (и ниже) .c и .h файлы содержащие строку "search string" </para>
+            <para>find -name "*.[ch]" | xargs grep -E "search string" </para>
+            <para>искать строку "search string" только в обычных файлах </para>
+            <para>find -type f | xargs grep -E "search string" </para>
+            <para>искать строку "search string" только в текущей директории (не спускаться ниже) </para>
+            <para>find -type f -maxdepth 1 | xargs grep -E "search string" </para>
+            <para>в текущей директории найти все файлы с расширением sql содержащие USER1 и заменить в них USER1 на USER2 </para>
+            <para>tmp="/tmp/$RANDOM$$.tmp"; f="USER1"; r="USER2"; </para>
+            <para>find . -name '*.sql' -exec grep -l "$f" {} \; | </para>
+            <para>xargs --replace="{}" bash -c "( sed 's/$f/$r/g' &lt; {} &gt; $tmp &amp;&amp; cat $tmp &gt; {} &amp;&amp; rm -f $tmp )" </para>
+            <para>найти файл в базе данных программы slocate. Замечание: данное регулярное выражение эквивалентно маске *file*.txt </para>
+            <para>locate -r 'file[^/]*\.txt' </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title/>
+        </info>
+        <section>
+            <info>
+                <title>Работа с файловой системой</title>
+            </info>
+            <para>отформатировать флоппи-диск с FAT </para>
+            <para>mkdosfs -c -f 16 -n "название тома" /dev/fd0 или mkfs -t fat16 /dev/fd0 </para>
+            <para>"правильная" кодировка и права файлов для сменных носителей (floppy, CD, flash) </para>
+            <para>необходимо прописать в /etc/fstab!!! </para>
+            <para>для CDROM</para>
+            <para>/dev/cdrom /mnt/cdrom iso9660 ro,nosuid,noauto,exec,user,nodev 0 0 </para>
+            <para>для "дискетки"</para>
+            <para>/dev/fd0 /mnt/floppy vfat iocharset=koi8-r,sync,nosuid,codepage=866,user,--,noauto,nodev,unhide 0 0 </para>
+            <para>для раздела Windows</para>
+            <para>/dev/hda1 /mnt/win vfat user,exec,umask=0,codepage=866,iocharset=koi8-r 0 0 </para>
+            <para>для "флешки"</para>
+            <para>/dev/sda1 /mnt/flash vfat user,exec,umask=0,sync,codepage=866,iocharset=koi8-r 0 0 </para>
+            <para>вышенаписанное справедливо для локали koi8-r, ваша может отличаться (см. locale), в этом случае все "koi8-r" необходимо исправить на свои, и помните, что это, лишь, пример </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title/>
+        </info>
+        <section>
+            <info>
+                <title>Работа с календарем</title>
+            </info>
+            <para>вывести на экран календарь на текущий, предыдущий и следующий месяцы </para>
+            <para>cal -3 </para>
+            <para>на какой день недели выпал в этом году день рождения Linux? </para>
+            <para>date --date='25 Aug' +%A </para>
+            <para>конвертировать в дату (в соответствии с локалью) — 130204800 секунд, прошедшие с начала эпохи Unix </para>
+            <para>date --date '1970-01-01 UTC 130204800 seconds' </para>
+            <para>Сколько сейчас времени на западном побережьи США (используйте tzselect чтобы узнать параметр для TZ) </para>
+            <para>TZ="America/Los_Angeles" date </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title/>
+        </info>
+        <section>
+            <info>
+                <title>Работа с сетью</title>
+            </info>
+            <para>(Предварительно сделать emerge на net-tools, sys-apps/iproute2, net-dns/bind-tools)</para>
+            <para>показать сетевые интерфейсы </para>
+            <para>ip link show </para>
+            <para>показать статус сетевых интерфейсов </para>
+            <para>ethtool interface или /sbin/ifconfig </para>
+            <para>переименовать eth0 в wan </para>
+            <para>ip link set dev eth0 name wan </para>
+            <para>добавить ip 1.2.3.4 с маской 255.255.255.0 на eth0 </para>
+            <para>ip addr add 1.2.3.4/24 brd + dev eth0 </para>
+            <para>поднять интерфейс </para>
+            <para>ip link set dev interface up </para>
+            <para>опустить интерфейс </para>
+            <para>ip link set dev interface down </para>
+            <para>сделать шлюзом по умолчанию 1.2.3.254 </para>
+            <para>ip route add default via 1.2.3.254 </para>
+            <para>показать ip адрес для name </para>
+            <para>host name </para>
+            <para>показать прослушиваемые порты в системе (и кто их слушает) </para>
+            <para>netstat -lp --inet </para>
+            <para>показать активные соединения </para>
+            <para>netstat -p --inet </para>
+        </section>
+    </section>
+    <section>
+        <info>
+            <title/>
+        </info>
+        <section>
+            <info>
+                <title>Математика</title>
+            </info>
+            <para>простое вычисление </para>
+            <para>echo "(321-123)/123" | bc -l </para>
+            <para>простое целочисленное вычисление с использование bash </para>
+            <para>echo "$(( (51+123)/2 ))" </para>
+            <para>использование python для научных вычислений </para>
+            <para>echo "print (10E3-123)/123" | python </para>
+            <para>приведение систем счисления (в данном случае, десятичной к шестнадцатеричной) </para>
+            <para>echo "obase=16;ibase=10;123" | bc </para>
+            <para>Более сложное вычисление — максимальная скорость передачи (в пакетах в секунду) в Fast Ethernet сети (100Mb) </para>
+            <para>echo "framing=20; minsize=64; (100*10^6)/((framing+minsize)*8)" | bc </para>
+            <para>А здесь мы строим график зависимости скорости передачи от размера пакета всё в той же 100-мегабитной сети. </para>
+            <para>echo "framing=20; plot [64:1518] (100*10**6)/((framing+x)*8)" | gnuplot -persist </para>
+        </section>
+    </section>
+</article>
