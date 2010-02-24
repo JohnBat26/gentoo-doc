@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbookxi.rng" type="xml"?>
-<article xmlns="http://docbook.org/ns/docbook"
-        xmlns:xi="http://www.w3.org/2001/XInclude"
-        xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
     <info>
         <title>Keymap</title>
     </info>
-    <para>Варианты раскладок клавиатуры для прописывания в /etc/conf.d/keymaps (в старых версиях baselayout переменная находится в файле /etc/rc.conf) Файл: /etc/conf.d/keymaps </para>
-    <para>...</para>
-    <para>KEYMAP="-u ru4"</para>
-    <para>...</para>
-    <para>Доступные варианты: </para>
-    <para>ru — кодировка KOI-8, переключение [Right-Ctrl], одиночный символ [Right-Alt] </para>
-    <para>ru1 — кодировка KOI-8, переключение [Right-Alt] </para>
-    <para>ru2 — альтернативная кодировка (IBM866), переключение [Right-Alt] </para>
-    <para>ru3 — кодировка KOI-8, 102 кнопочная клавиатура, переключение [CapsLock], [Shift+CapsLock] — фиксация регистра </para>
-    <para>ru4 — кодировка KOI-8, 105 кнопочная клавиатура, переключение [CapsLock], [Shift+CapsLock] — фиксация регистра </para>
-    <para>ru-cp1251 — кодировка CP1251, переключение [Right-Ctrl], одиночный символ [Right-Alt] </para>
-    <para>ru-ms — раскладка как в Microsoft Cyrillic keyboard layout, переключение [Right-Ctrl] </para>
-    <para>ru_win — кодировка CP1251, переключение [Right-Ctrl], одиночный символ [Right-Alt] </para>
-    <para>ru-yawerty — кодировка KOI-8, раскладка "ЯВЕРТЫ" (это бывает удобно при работе на клавиатуре без русских символов), переключение [Right-Alt] </para>
-    <para>Вариант, которого нет в стандартной поставке, но весьма удобен ru-utf. Переключение [Right-Ctrl], одиночный символ [Right-Alt]. Брать тут: http://mlclm.narod.ru/ru-utf.map.gz, сохранить в каталог /usr/share/kbd/keymaps/i386/qwerty или в случае отсутствия этого, в каталог /usr/share/keymaps/i386/qwerty. </para>
-    <para>Кроме того есть вариант ru-mab. Он даёт переключение по [Ctrl+Shift]. Взять можно тут: http://moose.ylsoftware.com/gentoo.ru/ru-mab.map.gz Code: /etc/conf.d/keymaps </para>
-    <para>...</para>
-    <para>KEYMAP="ru-utf"</para>
+    <para>Варианты раскладок клавиатуры для прописывания в <filename>/etc/conf.d/keymaps</filename> (в старых версиях baselayout переменная находится в файле <filename>/etc/rc.conf</filename>) </para>
+    <example>
+        <title> Файл: /etc/conf.d/keymaps</title>
+        <programlisting>...
+KEYMAP="-u ru4"
+...</programlisting>
+    </example>
+    <para>Доступные варианты:</para>
+    <para><code>ru</code> — кодировка KOI-8, переключение <keycap>Right-Ctrl</keycap>, одиночный символ <keycap>Right-Alt</keycap></para>
+    <para><code>ru1</code> — кодировка KOI-8, переключение <keycap>Right-Alt</keycap></para>
+    <para><code>ru2</code> — альтернативная кодировка (IBM866), переключение <keycap>Right-Alt</keycap></para>
+    <para><code>ru3</code> — кодировка KOI-8, 102 кнопочная клавиатура, переключение <keycap>CapsLock</keycap>, <keycap>Shift+CapsLock</keycap> — фиксация регистра </para>
+    <para><code>ru4</code> — кодировка KOI-8, 105 кнопочная клавиатура, переключение <keycap>CapsLock</keycap>, <keycap>Shift+CapsLock</keycap> — фиксация регистра </para>
+    <para><code>ru-cp1251</code> — кодировка CP1251, переключение <keycap>Right-Ctrl</keycap>, одиночный символ <keycap>Right-Alt</keycap></para>
+    <para><code>ru-ms</code> — раскладка как в Microsoft Cyrillic keyboard layout, переключение <keycap>Right-Ctrl</keycap></para>
+    <para><code>ru_win</code> — кодировка CP1251, переключение <keycap>Right-Ctrl</keycap>, одиночный символ <keycap>Right-Alt</keycap></para>
+    <para><code>ru-yawerty</code> — кодировка KOI-8, раскладка "ЯВЕРТЫ" (это бывает удобно при работе на клавиатуре без русских символов), переключение <keycap>Right-Alt</keycap></para>
+    <para>Вариант, которого нет в стандартной поставке, но весьма удобен <code>ru-utf</code>. Переключение <keycap>Right-Ctrl</keycap>, одиночный символ <keycap>Right-Alt</keycap>. Брать тут: <link xlink:href="http://mlclm.narod.ru/ru-utf.map.gz">http://mlclm.narod.ru/ru-utf.map.gz</link>, сохранить в каталог <filename>/usr/share/kbd/keymaps/i386/qwerty</filename> или в случае отсутствия этого, в каталог <filename>/usr/share/keymaps/i386/qwerty</filename>.</para>
+    <para>Кроме того есть вариант <code>ru-mab</code>. Он даёт переключение по <keycombo><keycap>Ctrl</keycap><keycap>Shift</keycap></keycombo>. Взять можно тут: <link xlink:href="http://moose.ylsoftware.com/gentoo.ru/ru-mab.map.gz">http://moose.ylsoftware.com/gentoo.ru/ru-mab.map.gz</link></para>
+    <example>
+        <title>/etc/conf.d/keymaps</title>
+        <programlisting>...
+KEYMAP="ru-utf"
+...</programlisting>
+    </example>
 </article>
