@@ -5,10 +5,10 @@
 	<info>
 		<title>Новое и изменённое a.k.a changelog</title>
 	</info>
-	<para><emphasis role="bold">Версия 2.0-M2 от 03.01.2010</emphasis> </para>
+	<para><emphasis role="bold">Версия 2.0-M2 от 03.01.2010</emphasis>:</para>
         <orderedlist>
                 <listitem>
-                    <para>Новый участник проекта: Виктор Гайдов;</para>
+                    <para>Новый участник проекта: Виктор Гайдов.</para>
                 </listitem>
                 <listitem>
                     <para>Обновлен DocBook до версии 5.0.</para>
@@ -20,10 +20,10 @@
                     <para>Обновлены примеры конфигурационных файлов.</para>
                 </listitem>
         </orderedlist>
-	<para><emphasis role="bold">Версия 2.0-M1 от 23.04.2008</emphasis> </para>
+	<para><emphasis role="bold">Версия 2.0-M1 от 23.04.2008</emphasis>:</para>
 	<orderedlist>
 		<listitem>
-		    <para>Добавлен новый участник проекта: Алексей Гапоник a.k.a. HedgeHog;</para>		
+		    <para>Добавлен новый участник проекта: Алексей Гапоник a.k.a. HedgeHog.</para>
 		</listitem>
 		<listitem>
 		    <para>Произведена полная миграция проекта на в SVN.</para>
@@ -32,27 +32,27 @@
 		    <para>DocBook5 с RelaxNG теперь основной формат книги.</para>
 		</listitem>
 		<listitem>
-		    <para>Завершена основная реструктуризация книги.</para>		    
+		    <para>Завершена основная реструктуризация книги.</para>		
 		</listitem>
 		<listitem>
-		    <para>Обновлены разделы с общей информацией о Linux и UNIX.</para>		    
+		    <para>Обновлены разделы с общей информацией о Linux и UNIX.</para>		
 		</listitem>
 		<listitem>
-		    <para>Обновлен и отформатирован сборник: "Linux не для идиотов".</para>		    
+		    <para>Обновлен и отформатирован сборник: "Linux не для идиотов".</para>		
 		</listitem>
-                <listitem>
-		    <para>Добавлен раздел: "Список примеров".</para>		    
+		<listitem>
+		    <para>Добавлен раздел: "Список примеров".</para>		
 		</listitem>
 	</orderedlist>
-	<para><emphasis role="bold">Версия 1.5 от 02.04.2008</emphasis> </para>
+	<para><emphasis role="bold">Версия 1.5 от 02.04.2008</emphasis>:</para>
 	<orderedlist>
 		<listitem>
 			<para>Добавлены новые участники проекта:</para>
 			<itemizedlist>
 				<listitem>
-					<para>Калинников Вадим a.k.a. MooSe;</para>
+					<para>Калинников Вадим a.k.a. MooSe.</para>
 				</listitem>
-				<listitem>	
+				<listitem>
 					<para>Шевцов Константин a.k.a integer || night_fever.</para>
 				</listitem>
 			</itemizedlist>
@@ -70,7 +70,7 @@
 			<para>Добавлена статья: <link xlink:href="#">Unix Toolbox</link>.</para>
 		</listitem>
 		<listitem>
-			<para>Добавлена статья: <link xlink:href="#">Советы пользователям Gentoo (вариант 2)</link> (автор Алексеев А.);</para>
+			<para>Добавлена статья: <link xlink:href="#">Советы пользователям Gentoo (вариант 2)</link> (автор Алексеев А.).</para>
 		</listitem>
 		<listitem>
 			<para>Добавлена статья: <link xlink:href="#">Ещё раз о главном - жизнь после установки</link> (автор: gentoo).</para>
@@ -86,7 +86,7 @@
 			<itemizedlist>
 				<listitem>
 					<para>
-						<link xlink:href="#">Руководство по MySQL для начинающих;</link>
+						<link xlink:href="#">Руководство по MySQL для начинающих</link>.
 					</para>
 				</listitem>
 				<listitem>
@@ -100,23 +100,23 @@
 			<para>Создан новый раздел: <link xlink:href="#">Тюнинг Gentoo</link>, а в нём добавлены:</para>
 			<itemizedlist>
 				<listitem>
-					<para><link xlink:href="#">Ядро 2.6: Тонкости настройки</link>;</para>
+					<para><link xlink:href="#">Ядро 2.6: Тонкости настройки</link>.</para>
 				</listitem>
 				<listitem>
-					<para><link xlink:href="#">Тюнинг системы и запуска некоторых программ</link>;</para>
+					<para><link xlink:href="#">Тюнинг системы и запуска некоторых программ</link>.</para>
 				</listitem>
 				<listitem>
-					<para><link xlink:href="#">Тюнинг настроек программ из семейства Mozilla</link>;</para>
-				</listitem>	
+					<para><link xlink:href="#">Тюнинг настроек программ из семейства Mozilla</link>.</para>
+				</listitem>
 			</itemizedlist>
-			<para>перенесены:</para>
+			<para>Перенесены:</para>
 			<itemizedlist>
 				<listitem>
-					<para><link xlink:href="#">Руководство по предварительному связыванию в Gentoo Linux</link>;</para>
+					<para><link xlink:href="#">Руководство по предварительному связыванию в Gentoo Linux</link>.</para>
 				</listitem>
 				<listitem>
-					<para><link xlink:href="#">Тонкая настройка IDE дисков с помощью hdparm</link>;</para>
-				</listitem>	
+					<para><link xlink:href="#">Тонкая настройка IDE дисков с помощью hdparm</link>.</para>
+				</listitem>
 				<listitem>
 					<para><link xlink:href="#">Ускорение загрузки системы</link>.</para>
 				</listitem>
@@ -134,13 +134,13 @@
 				<para>Добавлена статья: <link xlink:href="#">Создание LiveCD дистрибутива на базе Gentoo Linux</link> (автор: Pizgin).</para>
 			</listitem>
 			<listitem>
-				<para> Добавлена статья: <link xlink:href="#">Что делать, если система «зависла»</link> (автор:  Perlovka)</para>
+				<para> Добавлена статья: <link xlink:href="#">Что делать, если система «зависла»</link> (автор: Perlovka).</para>
 			</listitem>
 			<listitem>
 				<para>Добавлена статья: Hardened Gentoo (автор: powerman).</para>
 			</listitem>
 			<listitem>
-				<para>Обновлен перевод статьи: Gentoo and KDE 4.0</para>
+				<para>Обновлен перевод статьи: Gentoo and KDE 4.0.</para>
 			</listitem>
 			<listitem>
 				<para>Исправлены многие орфографические ошибки.</para>
@@ -148,61 +148,61 @@
 			<listitem>
 				<para>Практически завершено форматирование текста.</para>
 			</listitem>
-			<listitem>
-				<para>Обновлены: "<link xlink:href="#">Примеры конфигурационных файлов</link>"</para>
-			</listitem>
+			<para>Обновлены:</para>
+			<itemizedlist>
+				<listitem>
+					<para><link xlink:href="#">Примеры конфигурационных файлов</link>".</para>
+				</listitem>
+			</itemisedlist>
 		</orderedlist>
-		
-		<para><emphasis role="bold">Версия 1.4 от 01.02.2008</emphasis> </para>
+
+		<para><emphasis role="bold">Версия 1.4 от 01.02.2008</emphasis>:</para>
 		<orderedlist>
 			<listitem>
-				<para>Добавлено: <xref xlink:href="#overview-appeal"/>.</para>
+				<para>Добавлено <xref xlink:href="#overview-appeal"/>.</para>
 			</listitem>
 			<listitem>
 				<para>Дополнены цели написания данного сборника. ;)</para>
 			</listitem>
 			<listitem>
-				<para>В связи с выходом KDE 4.0.0, оформил раздел: <link xlink:href="#">Gentoo и KDE</link>
-				</para>
+				<para>В связи с выходом KDE 4.0.0, оформлен раздел <link xlink:href="#">Gentoo и KDE</link>:</para>
 				<itemizedlist>
 					<listitem>
-						<para>добавлен собственный перевод статьи: <link xlink:href="#">Gentoo and KDE 4.0</link>
-						</para>
+						<para>Добавлен собственный перевод статьи <link xlink:href="#">Gentoo and KDE 4.0</link>.</para>
 					</listitem>
 					<listitem>
-						<para>добавлен материал: <link xlink:href="#">Способы переключения раскладок клавиатуры в KDE (3в1).</link></para>
-					</listitem>	
-				</itemizedlist>
-			</listitem>
-			<listitem>
-				<para>Так как мы используем Java, то  решено оформить раздел: <link xlink:href="#">Gentoo и Java</link>
-				</para>
-				<itemizedlist>
-					<listitem>
-						<para>заново переведена и дополнена статья: <link xlink:href="#">Gentoo Java Guide</link>;</para>		
-					</listitem>
-					<listitem>
-						<para>переведена статья: <link xlink:href="#">Gentoo Java Upgrade Guide</link>;</para>
+						<para>Добавлен материал: <link xlink:href="#">Способы переключения раскладок клавиатуры в KDE (3в1)</link>.</para>
 					</listitem>
 				</itemizedlist>
 			</listitem>
 			<listitem>
-				<para>Добавлена статья (автор: MooSe): <link xlink:href="#">Соединение нескольких офисов в одну сеть с помощью OpenVPN</link>.</para>
+				<para>Так как мы используем Java, то решено оформить раздел <link xlink:href="#">Gentoo и Java</link>:</para>
+				<itemizedlist>
+					<listitem>
+						<para>Заново переведена и дополнена статья <link xlink:href="#">Gentoo Java Guide</link>.</para>
+					</listitem>
+					<listitem>
+						<para>Переведена статья <link xlink:href="#">Gentoo Java Upgrade Guide</link>.</para>
+					</listitem>
+				</itemizedlist>
 			</listitem>
 			<listitem>
-				<para>Добавлена статья из русского wiki: <xref xlink:href="#gentoo-install-sheets"/>.</para>
+				<para>Добавлена статья <link xlink:href="#">Соединение нескольких офисов в одну сеть с помощью OpenVPN</link> (автор: MooSe).</para>
+			</listitem>
+			<listitem>
+				<para>Добавлена статья из русского Wiki: <xref xlink:href="#gentoo-install-sheets"/>.</para>
 			</listitem>
 			<listitem>
 				<para>Добавлено очень актуальное HOWTO: <link xlink:href="#">HOWTO hal и устройства ввода</link>.</para>
 			</listitem>
 			<listitem>
-				<para>Добавлено: <link xlink:href="#">Ebuild HOWTO (Англ)</link>.</para>
+				<para>Добавлено <link xlink:href="#">Ebuild HOWTO (Англ)</link>.</para>
 			</listitem>
 			<listitem>
-				<para>Изменена статья о <link xlink:href="#">XkbLayouts</link> в связи с переходом на  hal версии 0.5.10 и возникшими проблемами с переключением раскладки клавиатуры.</para>
+				<para>Изменена статья о <link xlink:href="#">XkbLayouts</link> в связи с переходом на hal версии 0.5.10 и возникшими проблемами с переключением раскладки клавиатуры.</para>
 			</listitem>
 			<listitem>
-				<para>Обновлено руководство: <link xlink:href="#">Power Management Guide (Англ.)</link></para>
+				<para>Обновлено руководство: <link xlink:href="#">Power Management Guide (Англ.)</link>.</para>
 			</listitem>
 			<listitem>
 				<para>Обновлена и перенесена статья: <link xlink:href="#">Windows-эквиваленты</link>.</para>
@@ -214,11 +214,11 @@
 				<para>Продолжено форматирование текста.</para>
 			</listitem>
 			<listitem>
-				<para>Обновлены: "<link xlink:href="#">Примеры конфигурационных файлов</link>"</para>
+				<para>Обновлены "<link xlink:href="#">Примеры конфигурационных файлов</link>".</para>
 			</listitem>
 		</orderedlist>
-		
-		<para><emphasis role="bold">Версия 1.3 от 01.11.2007</emphasis> </para>
+
+		<para><emphasis role="bold">Версия 1.3 от 01.11.2007</emphasis>:</para>
 		<orderedlist>
 			<listitem>
 				<para>Изменены цели написания данного сборника.</para>
@@ -233,7 +233,7 @@
 				<para>Сборник <xref xlink:href="#linuxndi"/> перенесён в начало сборника!</para>
 			</listitem>
 			<listitem>
-		        <para>Добавлен собственный перевод Wiki-статьи: HOWTO Xorg and Fonts. </para>
+		        <para>Добавлен собственный перевод Wiki-статьи: HOWTO Xorg and Fonts.</para>
 			</listitem>
 			<listitem>
 				<para>Оформлен новый раздел: "<link xlink:href="#">Gentoo и GPRS</link>".</para>
@@ -242,26 +242,26 @@
 					<para>Перенесены <link xlink:href="#">XkbOptions</link>.</para>
 				</listitem>
 				<listitem>
-					<para>Оформлен раздел: "<link xlink:href="#">Gentoo и X.Org</link>"</para>
+					<para>Оформлен раздел "<link xlink:href="#">Gentoo и X.Org</link>".</para>
 				</listitem>
 				<listitem>
-					<para>Создан новый раздел: "<link xlink:href="#">Файловые системы Linux</link></para>
+					<para>Создан новый раздел: "<link xlink:href="#">Файловые системы Linux</link>.</para>
 				</listitem>
 				<listitem>
 					<para>Заново импортирована: "<link xlink:href="#">Настольная книга по безопасности Gentoo</link>" т.к. безопасность это очень важный вопрос. Теперь на русском языке.</para>
 				</listitem>
 				<listitem>
-					<para>Обновлены: "<link xlink:href="#">Примеры конфигурационных файлов</link>"</para>
+					<para>Обновлены: "<link xlink:href="#">Примеры конфигурационных файлов</link>".</para>
 				</listitem>
 				<listitem>
-					<para>Обновлен и дополнен: "<link xlink:href="#">HOWTO Соединение с Internet</link>"</para>
+					<para>Обновлен и дополнен: "<link xlink:href="#">HOWTO Соединение с Internet</link>".</para>
 				</listitem>
 				<listitem>
 					<para>Продолжено форматирование текста.</para>
 				</listitem>
 			</orderedlist>
-			
-			<para><emphasis role="bold">Версия 1.2 от 01.09.2007</emphasis> </para>
+
+			<para><emphasis role="bold">Версия 1.2 от 01.09.2007</emphasis>:</para>
 			<orderedlist>
 				<listitem>
 					<para>Полностью переработан раздел по <link xlink:href="#">обновлению Gentoo</link>.</para>
@@ -270,7 +270,7 @@
 					<para>Произведено значительное форматирование текста.</para>
 				</listitem>
 				<listitem>
-					<para>Обновился раздел: <link xlink:href="#">Полезные утилиты Gentoo Linux</link></para>
+					<para>Обновился раздел: <link xlink:href="#">Полезные утилиты Gentoo Linux</link>.</para>
 				</listitem>
 				<listitem>
 					<para>Полностью оформлен и дополнен <link xlink:href="#gentoo-handbook">Handbook</link>!</para>
@@ -282,17 +282,25 @@
 					</para>
 				</listitem>
 				<listitem>
-					<para>Добавлено: <link xlink:href="#">Руководство по настройке GNOME</link>.</para>
+					<para>Добавлено <link xlink:href="#">Руководство по настройке GNOME</link>.</para>
 				</listitem>
 				<listitem>
-					<para>Добавлено: <link xlink:href="#">HOWTO fbsplash</link></para>
+					<para>Добавлено <link xlink:href="#">HOWTO fbsplash</link>.</para>
 				</listitem>
 			</orderedlist>
-			<para><emphasis role="bold">ерсия 1.1 от 15.07.2007</emphasis> В</para>
+			<para><emphasis role="bold">Версия 1.1 от 15.07.2007</emphasis>:</para>
 			<orderedlist>
 				<listitem>
-					<para>По просьбе Mati_maniak (linuxforum.ru):</para>
+						<para>По просьбе Mati_maniak (linuxforum.ru):</para>
 				</listitem>
+				<itemisedlist>
+					<listitem>
+							<para>«emerge --depclean world» исправлено на «emerge --depclean».</para>
+					</listitem>
+					<listitem>
+							<para>«--oneshot (-i)» исправлено на «--oneshot».</para>
+					</listitem>
+				</itemisedlist>
 				<listitem>
 					<para>Дополнительное форматирование текста.</para>
 				</listitem>
@@ -301,10 +309,10 @@
 						автор: Артем Капитула (no-dashi, dalth &amp; viking).</para>
 				</listitem>
 				<listitem>
-					<para>Добавлен: <link xlink:href="#">список IRC каналов</link>.</para>
+					<para>Добавлен <link xlink:href="#">список IRC каналов</link>.</para>
 				</listitem>
 				<listitem>
-					<para>Добавил: <link xlink:href="#">примеры моих конфигурационных файлов</link>.</para>
+					<para>Добавил <link xlink:href="#">примеры моих конфигурационных файлов</link>.</para>
 				</listitem>
 			</orderedlist>
 </article>
